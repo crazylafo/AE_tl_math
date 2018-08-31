@@ -219,7 +219,7 @@ MySimpleGainFunc16 (
 
 template <typename T>
 static double trig_function(
-                            std::string expression_string 
+    std::string expression_string
     )
 {
     typedef exprtk::symbol_table<T> symbol_table_t;
@@ -384,7 +384,9 @@ Render (
     miP.BlueIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
     miP.AlphaIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
     
-    std::string expression_string = std::string (seqP->exprMemoryAc.redExAc);
+    std::string expression_string = "cos(10)*10";
+    //expression_string.assign(seqP->exprMemoryAc.redExAc);
+
     miP.parseRed = A_long (ABS (trig_function<double>(expression_string)));
 	
 	if (PF_WORLD_IS_DEEP(output)){
