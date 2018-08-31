@@ -55,7 +55,7 @@ typedef short int			int16;
 #define	BUILD_VERSION	1
 
 typedef struct{
-    A_char redExAc ;
+    A_char* redExAc = "0";
     A_char greenExAc;
     A_char blueExAc;
     A_char alphaExAc;
@@ -100,6 +100,7 @@ typedef struct MathInfo{
     PF_FpLong	GreenIF;
     PF_FpLong	BlueIF;
     PF_FpLong	AlphaIF;
+    A_long     parseRed;
     
 } MathInfoP, *MathinfoP, **MathinfoH;
 

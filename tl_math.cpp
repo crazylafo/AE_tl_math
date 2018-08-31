@@ -178,16 +178,10 @@ SequenceSetup (
         if (seq_dataH){
             my_sequence_dataP seqP = static_cast<my_sequence_dataP>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             if (seqP){
-                std::string formulaStr = "if (yL == cos(xL*100) ) {return 1} else {return 0}";
-                seqP->exprMemoryAc.alphaExAc =1;
-                seqP->exprMemoryAc.redExAc =1;
-                seqP->exprMemoryAc.greenExAc =1;
-                seqP->exprMemoryAc.blueExAc =1;
-/*
-                strcpy(&seqP->exprMemoryAc.alphaExAc, formulaStr.c_str());
-                strcpy(&seqP->exprMemoryAc.redExAc, formulaStr.c_str());
-                strcpy(&seqP->exprMemoryAc.greenExAc , formulaStr.c_str());
-                strcpy(&seqP->exprMemoryAc.blueExAc , formulaStr.c_str());*/
+                seqP->exprMemoryAc.alphaExAc =0;
+                seqP->exprMemoryAc.redExAc =0;
+                seqP->exprMemoryAc.greenExAc = 0;
+                seqP->exprMemoryAc.blueExAc =0;
                 out_data->sequence_data = seq_dataH;
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
             }
@@ -223,24 +217,21 @@ MySimpleGainFunc16 (
 	return err;
 }
 
-static void
-mathParse8_function(
-                   A_long		xL,
-                   A_long		yL,
-                   PF_Pixel8	*inP,
-                   PF_Pixel8	*outP)
+template <typename T>
+static double trig_function(
+                            std::string expression_string 
+    )
 {
-    typedef exprtk::symbol_table<A_long>        symbol_table_t;
-    typedef exprtk::expression<A_long>        expression_t;
-    typedef exprtk::parser<A_long>            parser_t;
+    typedef exprtk::symbol_table<T> symbol_table_t;
+    typedef exprtk::expression<T>     expression_t;
+    typedef exprtk::parser<T>             parser_t;
     
-    std::string expression_string = "cos(x)*100";
     
-
+    
+    T x;
     
     symbol_table_t symbol_table;
-    symbol_table.add_variable("x",xL);
-    symbol_table.add_variable("y",yL);
+    symbol_table.add_variable("x",x);
     symbol_table.add_constants();
     
     expression_t expression;
@@ -248,10 +239,11 @@ mathParse8_function(
     
     parser_t parser;
     parser.compile(expression_string,expression);
-    A_u_char result = expression.value();
-    outP->red = inP->red*result/100;
-    outP->green = inP->green*result/100;
-    outP->blue = inP->blue*result/100;
+    
+    x =10;
+    T y = expression.value();
+    return y;
+
 }
 
 static PF_Err
@@ -265,27 +257,21 @@ MathFunc8 (
 	PF_Err		err = PF_Err_NONE;
 
 	MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
-	PF_FpLong	expRF	= 0;
-    PF_FpLong	expGF	= 0;
-    PF_FpLong	expBF	= 0;
-    PF_FpLong	expAF	= 0;
-
 
 	if (miP){
-		expRF = miP->RedIF * PF_MAX_CHAN8 / 100.0;
-        expGF = miP->GreenIF * PF_MAX_CHAN8 / 100.0;
-        expBF = miP->BlueIF * PF_MAX_CHAN8 / 100.0;
-        expAF = miP->AlphaIF * PF_MAX_CHAN8 / 100.0;
+        
         try {
-            mathParse8_function(xL,yL, inP, outP);
+            outP->alpha		=	inP->alpha;
+            outP->red		=	MIN( A_u_char (miP->parseRed), PF_MAX_CHAN8);
+            outP->green		=	inP->green;
+            outP->blue	= inP->blue;
         }catch(int e){
-            outP->alpha		=	MIN(expAF, PF_MAX_CHAN8);
-            outP->red		=	MIN(expRF, PF_MAX_CHAN8);
-            outP->green		=	MIN(expGF, PF_MAX_CHAN8);
-            outP->blue	=	MIN(expBF, PF_MAX_CHAN8);
+            outP->alpha		=	0;
+            outP->red		=	0;
+            outP->green		=	0;
+            outP->blue	=       0;
             
         }
-
 	}
 
 	return err;
@@ -308,7 +294,7 @@ PopDialog (
     A_char *resultAC =     NULL;
     A_char          scriptAC[4096] = {'\0'};
 
-    A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr, GreenExpr, BlueExpr, AlphaExpr) {\
+    A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr,GreenExpr,BlueExpr,AlphaExpr) {\
     var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\
     w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations must be written in C++.');\
     w.grp = w.add('group');\
@@ -319,23 +305,23 @@ PopDialog (
     w.grp.redC.orientation = 'row';\
     w.grp.redC.alignment = ['fill', 'fill'];\
     w.grp.redC.alignChildren = ['fill', 'fill'];\
-    w.grp.redC.redst = w.grp.redC.add ('statictext', undefined, 'Red Expr    :');\
-    w.grp.redC.redet = w.grp.redC.add ('edittext', undefined, 'redExpr');\
-    w.grp.greenC = w.grp.add('group');\
+    w.grp.redC.redst = w.grp.redC.add ('statictext', undefined,'Red Expr    :');\
+    w.grp.redC.redet = w.grp.redC.add ('edittext', undefined, redExpr);\
+    w.grp.greenC = w. grp.add('group');\
     w.grp.greenC.orientation = 'row';\
     w.grp.greenC.alignChildren = ['fill', 'fill'];\
-    w.grp.greenC.greenst = w.grp.greenC.add ('statictext', undefined, 'Green Expr :');\
-    w.grp.greenC.greenet = w.grp.greenC.add ('edittext', undefined, 'GreenExpr');\
+    w.grp.greenC.greenst = w.grp.greenC.add ('statictext', undefined,'Green Expr :');\
+    w.grp.greenC.greenet = w.grp.greenC.add ('edittext', undefined, GreenExpr);\
     w.grp.blueC = w.grp.add('group');\
     w.grp.blueC.orientation = 'row';\
     w.grp.blueC.alignChildren = ['fill', 'fill'];\
     w.grp.blueC.bluest = w.grp.blueC.add ('statictext', undefined, 'Blue Expr   :');\
-    w.grp.blueC.blueet = w.grp.blueC.add ('edittext', undefined, 'BlueExpr');\
+    w.grp.blueC.blueet = w.grp.blueC.add ('edittext', undefined, BlueExpr);\
     w.grp.alphaC = w.grp.add('group');\
     w.grp.alphaC.orientation = 'row';\
     w.grp.alphaC.alignChildren = ['fill', 'fill'];\
     w.grp.alphaC.alphast = w.grp.alphaC.add ('statictext', undefined, 'Alpha Expr :');\
-    w.grp.alphaC.alphaet = w.grp.alphaC.add ('edittext', undefined, 'AlphaExpr');\
+    w.grp.alphaC.alphaet = w.grp.alphaC.add ('edittext', undefined, AlphaExpr);\
     w.grp.btnGrp = w.grp.add('Group');\
     w.grp.btnGrp.orientation = 'row';\
     w.grp.btnGrp.Ok =w.grp.btnGrp.add ('button', undefined, 'ok');\
@@ -356,18 +342,22 @@ PopDialog (
     return result\
     }\
     expr(%d,%d,%d,%d);";
-    //[w.grp.redC.redet.text.length,w.grp.greenC.greenet.text.length,w.grp.blueC.blueet.length, w.grp.redC.redet.text, w.grp.greenC.greenet.text, w.grp.blueC.blueet,w.grp.alphaC.alphaet];\
     
+
     sprintf( scriptAC, SET_EXPR_SCRIPT, seqP->exprMemoryAc.redExAc,seqP->exprMemoryAc.greenExAc, seqP->exprMemoryAc.blueExAc, seqP->exprMemoryAc.alphaExAc);
-    ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+    
+
+    
+    ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, TRUE, &resultMemH, NULL));
     AEFX_CLR_STRUCT(resultAC);
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
     
     if  (atoi (resultAC) !=0){
-        seqP->exprMemoryAc.redExAc = *resultAC;
+        seqP->exprMemoryAc.redExAc = resultAC;
     }
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
-    out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE;
+    out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
+                            PF_OutFlag_FORCE_RERENDER;
     return err;
 }
 
@@ -381,6 +371,7 @@ Render (
 {
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
+    my_sequence_dataP	seqP	= reinterpret_cast<my_sequence_dataP>(DH(in_data->sequence_data));
 
 	/*	Put interesting code here. */
 	MathInfo			miP;
@@ -392,6 +383,9 @@ Render (
     miP.GreenIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
     miP.BlueIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
     miP.AlphaIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
+    
+    std::string expression_string = std::string (seqP->exprMemoryAc.redExAc);
+    miP.parseRed = A_long (ABS (trig_function<double>(expression_string)));
 	
 	if (PF_WORLD_IS_DEEP(output)){
 		ERR(suites.Iterate16Suite1()->iterate(	in_data,

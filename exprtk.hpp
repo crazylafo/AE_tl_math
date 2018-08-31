@@ -23176,7 +23176,7 @@ namespace exprtk
             split(param_seq);
          }
 
-         bool verify(const std::string& param_seq, std::size_t& pseq_index)
+         bool verifyD(const std::string& param_seq, std::size_t& pseq_index)
          {
             if (param_seq_list_.empty())
                return true;
@@ -23463,7 +23463,7 @@ namespace exprtk
 
          if (
               state_.type_check_enabled &&
-              !tc.verify(param_type_list, param_seq_index)
+              !tc.verifyD(param_type_list, param_seq_index)
             )
          {
             set_error(
@@ -23548,7 +23548,7 @@ namespace exprtk
 
          std::size_t param_seq_index = 0;
 
-         if (!tc.verify(param_type_list, param_seq_index))
+         if (!tc.verifyD(param_type_list, param_seq_index))
          {
             set_error(
                make_error(parser_error::e_syntax,
