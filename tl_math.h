@@ -13,6 +13,7 @@ typedef unsigned short		u_short;
 typedef unsigned short		u_int16;
 typedef unsigned long		u_long;
 typedef short int			int16;
+
 #define PF_TABLE_BITS	12
 #define PF_TABLE_SZ_16	4096
 
@@ -54,12 +55,10 @@ typedef short int			int16;
 #define	STAGE_VERSION	PF_Stage_DEVELOP
 #define	BUILD_VERSION	1
 
-typedef struct{
-    A_char* redExAc = "0";
-    A_char greenExAc;
-    A_char blueExAc;
-    A_char alphaExAc;
-}my_expr;
+typedef exprtk::symbol_table<PF_FpLong> symbol_table_t;
+typedef exprtk::expression<PF_FpLong>     expression_t;
+typedef exprtk::parser<PF_FpLong>             parser_t;
+
 
 
 typedef struct {
@@ -67,8 +66,20 @@ typedef struct {
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
 typedef struct {
-    my_expr		exprMemoryAc;
-} my_sequence_data, *my_sequence_dataP, **my_sequence_dataH;
+    A_char redExAc[PF_MAX_EFFECT_MSG_LEN + 1];
+    A_char greenExAc[PF_MAX_EFFECT_MSG_LEN + 1];
+    A_char blueExAc[PF_MAX_EFFECT_MSG_LEN + 1];
+    A_char alphaExAc[PF_MAX_EFFECT_MSG_LEN + 1];
+    A_Boolean	flatB;
+} Flat_Seq_Data;
+
+typedef struct {
+    A_Boolean	flatB;
+    A_char *redExAc;
+    A_char *greenExAc;
+    A_char *blueExAc;
+    A_char *alphaExAc;
+} Unflat_Seq_Data;
 
 /* Parameter defaults */
 
@@ -100,7 +111,18 @@ typedef struct MathInfo{
     PF_FpLong	GreenIF;
     PF_FpLong	BlueIF;
     PF_FpLong	AlphaIF;
-    A_long     parseRed;
+    
+    PF_FpLong  scale_x;
+    PF_FpLong  scale_y;
+    PF_FpLong layerWidthF;
+    PF_FpLong layerHeightF;
+    
+    expression_t    expression_t_red;
+    PF_FpLong    xLF;
+    PF_FpLong     yLF;
+    PF_FpLong     layerTime_sec;
+    PF_FpLong     layerTime_frame;
+    PF_FpLong     layerDuration;
     
 } MathInfoP, *MathinfoP, **MathinfoH;
 
