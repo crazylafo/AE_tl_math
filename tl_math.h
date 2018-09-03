@@ -66,11 +66,11 @@ typedef struct {
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
 typedef struct {
+	A_Boolean	flatB;
     A_char redExAc[PF_MAX_EFFECT_MSG_LEN + 1];
     A_char greenExAc[PF_MAX_EFFECT_MSG_LEN + 1];
     A_char blueExAc[PF_MAX_EFFECT_MSG_LEN + 1];
     A_char alphaExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-    A_Boolean	flatB;
 } Flat_Seq_Data;
 
 typedef struct {

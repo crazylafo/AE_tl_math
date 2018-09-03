@@ -173,6 +173,7 @@ SequenceSetup (
            Unflat_Seq_Data	*seqP = reinterpret_cast<Unflat_Seq_Data*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             if (seqP){
                 AEFX_CLR_STRUCT(*seqP);
+				seqP->flatB = FALSE;
                 seqP->alphaExAc = new A_char[strlen(STR(StrID_Default_expr)) + 1];
                 seqP->redExAc = new A_char[strlen(STR(StrID_Default_expr)) + 1];
                 seqP->greenExAc = new A_char[strlen(STR(StrID_Default_expr)) + 1];
@@ -191,7 +192,7 @@ SequenceSetup (
                 if (seqP->blueExAc){
                     suites.ANSICallbacksSuite1()->strcpy(seqP->blueExAc, STR(StrID_Default_expr));
                 }
-                seqP->flatB				= FALSE;
+               
                 out_data->sequence_data = seq_dataH;
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
             }
@@ -348,7 +349,7 @@ SequenceResetup (
     if (in_data->sequence_data){
         Flat_Seq_Data*	flatP = reinterpret_cast<Flat_Seq_Data*>(DH(in_data->sequence_data));
         
-        if (flatP){
+        if (flatP && flatP->flatB){
             PF_Handle unflat_seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(Unflat_Seq_Data));
             
             if (unflat_seq_dataH){
@@ -368,11 +369,18 @@ SequenceResetup (
                     unflatP->blueExAc	= new A_char[blueExprlengthS+ 1];
                     unflatP->alphaExAc	= new A_char[alphaExprlengthS+ 1];
                     
-                    if (unflatP){
-                        suites.ANSICallbacksSuite1()->strcpy(unflatP->redExAc, flatP->redExAc);
-                        suites.ANSICallbacksSuite1()->strcpy(unflatP->greenExAc, flatP->greenExAc);
-                        suites.ANSICallbacksSuite1()->strcpy(unflatP->blueExAc	,flatP->blueExAc);
-                        suites.ANSICallbacksSuite1()->strcpy(unflatP->alphaExAc, flatP->alphaExAc);
+					if (unflatP->redExAc) {
+						suites.ANSICallbacksSuite1()->strcpy(unflatP->redExAc, flatP->redExAc);
+					}
+					if (unflatP->greenExAc) {
+						suites.ANSICallbacksSuite1()->strcpy(unflatP->greenExAc, flatP->greenExAc);
+					}
+					if (unflatP->blueExAc) {
+						suites.ANSICallbacksSuite1()->strcpy(unflatP->blueExAc, flatP->blueExAc);
+					}
+					if (unflatP->alphaExAc){
+						suites.ANSICallbacksSuite1()->strcpy(unflatP->alphaExAc, flatP->alphaExAc);
+					}
                         // if it all went well, set the sequence data to our new, inflated seq data.
                         out_data->sequence_data = unflat_seq_dataH;
                     } else {
@@ -381,8 +389,14 @@ SequenceResetup (
                     suites.HandleSuite1()->host_unlock_handle(unflat_seq_dataH);
                 }
             }
-        }
+		    else {
+				out_data->sequence_data = in_data->sequence_data;
+		    }
+
     }
+	else {
+		err = SequenceSetup(in_data, out_data);
+	}
     return err;
 }
 
@@ -542,7 +556,7 @@ Render (
 {
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
-    Flat_Seq_Data	seqP				= *reinterpret_cast<Flat_Seq_Data*>(DH(in_data->sequence_data));
+    Flat_Seq_Data	seqP				= *reinterpret_cast<Flat_Seq_Data*>(DH(out_data->sequence_data));
 
 	/*	Put interesting code here. */
 	MathInfo			miP;
