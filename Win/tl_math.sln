@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tl_math", "tl_math.vcxproj", "{2C8DED3E-111D-4272-A54A-F1865F02A90E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "exprtk_simple_example_01", "..\..\..\..\..\..\..\Downloads\exprtk-master\exprtk_simple_example_01\exprtk_simple_example_01.vcxproj", "{7A20A97F-2518-41DF-92B5-ED0D787A4DFF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,12 +21,6 @@ Global
 		{2C8DED3E-111D-4272-A54A-F1865F02A90E}.Release|x64.Build.0 = Release|x64
 		{2C8DED3E-111D-4272-A54A-F1865F02A90E}.Release|x86.ActiveCfg = Release|Win32
 		{2C8DED3E-111D-4272-A54A-F1865F02A90E}.Release|x86.Build.0 = Release|Win32
-		{7A20A97F-2518-41DF-92B5-ED0D787A4DFF}.Debug|x64.ActiveCfg = Debug|Win32
-		{7A20A97F-2518-41DF-92B5-ED0D787A4DFF}.Debug|x86.ActiveCfg = Debug|Win32
-		{7A20A97F-2518-41DF-92B5-ED0D787A4DFF}.Debug|x86.Build.0 = Debug|Win32
-		{7A20A97F-2518-41DF-92B5-ED0D787A4DFF}.Release|x64.ActiveCfg = Release|Win32
-		{7A20A97F-2518-41DF-92B5-ED0D787A4DFF}.Release|x86.ActiveCfg = Release|Win32
-		{7A20A97F-2518-41DF-92B5-ED0D787A4DFF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
