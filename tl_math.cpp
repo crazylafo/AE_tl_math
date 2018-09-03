@@ -439,7 +439,7 @@ PopDialog (
     PF_Err err = PF_Err_NONE;
     AEGP_SuiteHandler	suites(in_data->pica_basicP);
     my_global_dataP		globP				= reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-    Flat_Seq_Data	seqP				= *reinterpret_cast<Flat_Seq_Data*>(DH(in_data->sequence_data));
+	Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
 
 
     AEGP_MemHandle     resultMemH          =     NULL;
@@ -556,7 +556,7 @@ Render (
 {
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
-    Flat_Seq_Data	seqP				= *reinterpret_cast<Flat_Seq_Data*>(DH(out_data->sequence_data));
+	Unflat_Seq_Data seqP			= *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
 
 	/*	Put interesting code here. */
 	MathInfo			miP;
