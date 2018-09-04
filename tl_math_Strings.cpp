@@ -37,7 +37,7 @@ TableString		g_strs[StrID_NUMTYPES] = {
     StrID_MBlue_Param_Name,         "blue Intesity",
     StrID_MAlpha_Param_Name,        "alpha Intesity",
     StrID_MExecute_Param_Name,      "Execute",
-    StrID_Default_expr,              "layerTime_frame/layerDuration"
+    StrID_Default_expr,              "layerTime_frame/(layerDuration*25)"
 };
 
 

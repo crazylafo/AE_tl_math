@@ -51,7 +51,6 @@
 				D0FE575E0993C4E900139A60 /* tl_mathPiPL.r */,
 				04C93F7B21387477000AB7E8 /* exprtk.hpp */,
 				D0FE57630993C4FD00139A60 /* Supporting Code */,
-				7EF36FB616F29701002A3CB3 /* Cocoa.framework */,
 				C4E6188C095A3C800012CA3F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,6 +66,7 @@
 		D0FE57630993C4FD00139A60 /* Supporting Code */ = {
 			isa = PBXGroup;
 			children = (
+				7EF36FB616F29701002A3CB3 /* Cocoa.framework */,
 				D0FE579A0993C5E500139A60 /* AEGP_SuiteHandler.cpp */,
 				D0FE579B0993C5E500139A60 /* AEGP_SuiteHandler.h */,
 				D0FE579C0993C5E500139A60 /* MissingSuiteError.cpp */,

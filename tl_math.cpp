@@ -47,7 +47,8 @@ GlobalSetup (
                            PF_OutFlag_NON_PARAM_VARY|
                            PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING;
     
-    out_data->out_flags2 =  PF_OutFlag2_SUPPORTS_GET_FLATTENED_SEQUENCE_DATA;
+    out_data->out_flags2 =  PF_OutFlag2_AE13_5_THREADSAFE	|
+                            PF_OutFlag2_SUPPORTS_GET_FLATTENED_SEQUENCE_DATA;
     
     
     
@@ -172,35 +173,24 @@ SequenceSetup (
         if (seq_dataH){
            Unflat_Seq_Data	*seqP = reinterpret_cast<Unflat_Seq_Data*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             if (seqP){
-                AEFX_CLR_STRUCT(*seqP);
 				seqP->flatB = FALSE;
-                seqP->alphaExAc = new A_char[strlen(STR(StrID_Default_expr)) + 1];
-                seqP->redExAc = new A_char[strlen(STR(StrID_Default_expr)) + 1];
-                seqP->greenExAc = new A_char[strlen(STR(StrID_Default_expr)) + 1];
-                seqP->blueExAc = new A_char[strlen(STR(StrID_Default_expr)) + 1];
-                
-                
-                if (seqP->alphaExAc){
-                    suites.ANSICallbacksSuite1()->strcpy(seqP->alphaExAc, STR(StrID_Default_expr));
+                if (seqP->initB != 1){
+                    seqP->redExAcP =STR(StrID_Default_expr);
+                    seqP->greenExAcP =STR(StrID_Default_expr);
+                    seqP->blueExAcP =STR(StrID_Default_expr);
+                    seqP->alphaExAcP =STR(StrID_Default_expr);
+                    seqP->initB = 1;
                 }
-                if (seqP->redExAc ){
-                    suites.ANSICallbacksSuite1()->strcpy(seqP->redExAc, STR(StrID_Default_expr));
-                }
-                if (seqP->greenExAc){
-                    suites.ANSICallbacksSuite1()->strcpy(seqP->greenExAc, STR(StrID_Default_expr));
-                }
-                if (seqP->blueExAc){
-                    suites.ANSICallbacksSuite1()->strcpy(seqP->blueExAc, STR(StrID_Default_expr));
-                }
-               
+
                 out_data->sequence_data = seq_dataH;
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
             }
-
+            
         } else {	// whoa, we couldn't allocate sequence data; bail!
             err = PF_Err_OUT_OF_MEMORY;
         }
     }
+    
     return err;
 }
 
@@ -215,10 +205,10 @@ SequenceSetdown (
     if (in_data->sequence_data){
         Unflat_Seq_Data	*seqP = reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
         if (seqP->flatB){
-            delete [] seqP->redExAc;
-            delete [] seqP->greenExAc;
-            delete [] seqP->blueExAc;
-            delete [] seqP->alphaExAc;
+            seqP->redExAcP.clear();
+            seqP->greenExAcP.clear();
+            seqP->blueExAcP.clear();
+            seqP->alphaExAcP.clear();
         }
        
         suites.HandleSuite1()->host_dispose_handle(in_data->sequence_data);
@@ -248,25 +238,25 @@ SequenceFlatten(
                 if (flat_seq_dataP){
                     AEFX_CLR_STRUCT(*flat_seq_dataP);
                     flat_seq_dataP->flatB		= TRUE;
-
+                    
                     
                     #ifdef AE_OS_WIN
-                    strncpy_s(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAc, PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
                     #else
-                    strncpy(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAc, PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
                     #endif
                     
                     // In SequenceSetdown we toss out the unflat data
-                    delete [] unflat_seq_dataP->redExAc;
-                    delete []unflat_seq_dataP->greenExAc;
-                    delete []unflat_seq_dataP->blueExAc;
-                    delete [] unflat_seq_dataP->alphaExAc;
+                    unflat_seq_dataP->redExAcP.clear();
+                    unflat_seq_dataP->greenExAcP.clear();
+                    unflat_seq_dataP->blueExAcP.clear();
+                    unflat_seq_dataP->alphaExAcP.clear();
                     suites.HandleSuite1()->host_dispose_handle(in_data->sequence_data);
                     
                     out_data->sequence_data = flat_seq_dataH;
@@ -308,15 +298,15 @@ GetFlattenedSequenceData(
                     
                     
                     #ifdef AE_OS_WIN
-                    strncpy_s(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAc, PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy_s(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
                     #else
-                    strncpy(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAc, PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAc, PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+                    strncpy(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
                     #endif
                     
                     // The whole point of this function is that we don't dispose of the unflat data!
@@ -359,28 +349,12 @@ SequenceResetup (
                     AEFX_CLR_STRUCT(*unflatP);
 
                     unflatP->flatB		= FALSE;
-                    A_short	redExprlengthS		= strlen(flatP->redExAc);
-                    A_short	greenExprlengthS	= strlen(flatP->greenExAc);
-                    A_short	blueExprlengthS		= strlen(flatP->blueExAc);
-                    A_short	alphaExprlengthS	= strlen(flatP->alphaExAc);
+                    unflatP->redExAcP = flatP->redExAc;
+                    unflatP->greenExAcP =flatP->greenExAc;
+                    unflatP->blueExAcP = flatP->blueExAc;
+                    unflatP->alphaExAcP = flatP->alphaExAc;
                     
-                    unflatP->redExAc	= new A_char[redExprlengthS+ 1];
-                    unflatP->greenExAc	= new A_char[greenExprlengthS+ 1];
-                    unflatP->blueExAc	= new A_char[blueExprlengthS+ 1];
-                    unflatP->alphaExAc	= new A_char[alphaExprlengthS+ 1];
-                    
-					if (unflatP->redExAc) {
-						suites.ANSICallbacksSuite1()->strcpy(unflatP->redExAc, flatP->redExAc);
-					}
-					if (unflatP->greenExAc) {
-						suites.ANSICallbacksSuite1()->strcpy(unflatP->greenExAc, flatP->greenExAc);
-					}
-					if (unflatP->blueExAc) {
-						suites.ANSICallbacksSuite1()->strcpy(unflatP->blueExAc, flatP->blueExAc);
-					}
-					if (unflatP->alphaExAc){
-						suites.ANSICallbacksSuite1()->strcpy(unflatP->alphaExAc, flatP->alphaExAc);
-					}
+                
                         // if it all went well, set the sequence data to our new, inflated seq data.
                         out_data->sequence_data = unflat_seq_dataH;
                     } else {
@@ -493,19 +467,36 @@ PopDialog (
     w.show();\
     return result\
     }\
-    expr(%d,%d,%d,%d);";
+    expr(%s,%s,%s,%s);";
     
+    std::string tempRedS ="'";
+    tempRedS.append(seqP.redExAcP.c_str());
+    tempRedS.append("'");
+    
+    std::string tempGreenS ="'";
+    tempGreenS.append(seqP.greenExAcP.c_str());
+    tempGreenS.append("'");
+    
+    std::string tempBlueS ="'";
+    tempBlueS.append(seqP.blueExAcP.c_str());
+    tempBlueS.append("'");
+    
+    std::string tempAlphaS ="'";
+    tempAlphaS.append(seqP.alphaExAcP.c_str());
+    tempAlphaS.append("'");
+    
+    
+    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str() , tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str() );
+    seqP.initB = TRUE;
 
-    sprintf( scriptAC, SET_EXPR_SCRIPT, seqP.redExAc,seqP.greenExAc, seqP.blueExAc, seqP.alphaExAc);
     
-
-    
-    ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, TRUE, &resultMemH, NULL));
+    ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
     AEFX_CLR_STRUCT(resultAC);
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
     
     if  (atoi (resultAC) !=0){
-        suites.ANSICallbacksSuite1()->strcpy(seqP.redExAc, resultAC);
+        seqP.redExAcP = resultAC;
+
     }
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
     out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
@@ -556,13 +547,14 @@ Render (
 {
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
-	Unflat_Seq_Data seqP			= *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
-
+    Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
 	/*	Put interesting code here. */
 	MathInfo			miP;
 	AEFX_CLR_STRUCT(miP);
 	A_long				linesL	= 0;
 	linesL 		= output->extent_hint.bottom - output->extent_hint.top;
+
+
     
 	miP.RedIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
     miP.GreenIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
@@ -586,7 +578,7 @@ Render (
     miP.yLF = 1;
 
     std::string expression_string_Safe = "1";
-    std::string expression_string(seqP.redExAc);  //= "if (xLF<layerWidth/2){layerTime_frame/(layerDuration*25)}";
+    std::string expression_string(seqP.redExAcP);
     
 
     
@@ -698,6 +690,7 @@ EntryPointFunc (
                 break;
             case PF_Cmd_SEQUENCE_RESETUP:
                 err = SequenceResetup(in_data,out_data);
+                break;
 
                 
             case PF_Cmd_PARAMS_SETUP:
@@ -708,6 +701,10 @@ EntryPointFunc (
                                   output);
                 break;
                 
+            case PF_Cmd_DO_DIALOG:
+                err = PopDialog(in_data,out_data,params,output);
+                break;
+
 
 				
 			case PF_Cmd_RENDER:
@@ -717,10 +714,8 @@ EntryPointFunc (
 								params,
 								output);
 				break;
-            case PF_Cmd_DO_DIALOG:
-                err = PopDialog(in_data,out_data,params,output);
-                break;
-
+            
+            
 		}
 	}
 	catch(PF_Err &thrown_err){

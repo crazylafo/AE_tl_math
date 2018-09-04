@@ -68,17 +68,18 @@ typedef struct {
 typedef struct {
 	A_Boolean	flatB;
     A_char redExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-    A_char greenExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-    A_char blueExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-    A_char alphaExAc[PF_MAX_EFFECT_MSG_LEN + 1];
+    A_char   greenExAc[PF_MAX_EFFECT_MSG_LEN + 1];
+    A_char  blueExAc[PF_MAX_EFFECT_MSG_LEN + 1];
+    A_char  alphaExAc[PF_MAX_EFFECT_MSG_LEN + 1];
 } Flat_Seq_Data;
 
 typedef struct {
     A_Boolean	flatB;
-    A_char *redExAc;
-    A_char *greenExAc;
-    A_char *blueExAc;
-    A_char *alphaExAc;
+    std::string redExAcP;
+    std::string greenExAcP;
+    std::string blueExAcP;
+    std::string alphaExAcP;
+    int initB =0;
 } Unflat_Seq_Data;
 
 /* Parameter defaults */
