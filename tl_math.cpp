@@ -151,7 +151,7 @@ ParamsSetup (
                                                                                                out_data);
     
     ERR(effect_ui_suiteP->PF_SetOptionsButtonName(in_data->effect_ref, "Expresion Math"));
-    
+
 
 	return err;
 }
@@ -173,14 +173,14 @@ SequenceSetup (
         if (seq_dataH){
            Unflat_Seq_Data	*seqP = reinterpret_cast<Unflat_Seq_Data*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             if (seqP){
+				AEFX_CLR_STRUCT(*seqP);
 				seqP->flatB = FALSE;
-                if (seqP->initB != 1){
-                    seqP->redExAcP =STR(StrID_Default_expr);
-                    seqP->greenExAcP =STR(StrID_Default_expr);
-                    seqP->blueExAcP =STR(StrID_Default_expr);
-                    seqP->alphaExAcP =STR(StrID_Default_expr);
-                    seqP->initB = 1;
-                }
+                seqP->redExAcP = STR(StrID_Default_expr);
+                seqP->greenExAcP =STR(StrID_Default_expr);
+                seqP->blueExAcP =STR(StrID_Default_expr);
+                seqP->alphaExAcP =STR(StrID_Default_expr);
+                seqP->initB = TRUE;
+                
 
                 out_data->sequence_data = seq_dataH;
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
@@ -298,7 +298,8 @@ GetFlattenedSequenceData(
                     
                     
                     #ifdef AE_OS_WIN
-                    strncpy_s(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
+
+                    strncpy_s(flat_seq_dataP->alphaExAc, unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
                     strncpy_s(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
                     strncpy_s(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
                     strncpy_s(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
@@ -413,9 +414,9 @@ PopDialog (
     PF_Err err = PF_Err_NONE;
     AEGP_SuiteHandler	suites(in_data->pica_basicP);
     my_global_dataP		globP				= reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-	Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
+	Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(out_data->sequence_data));
 
-
+	err = SequenceResetup(in_data, out_data);
     AEGP_MemHandle     resultMemH          =     NULL;
     A_char *resultAC =     NULL;
     A_char          scriptAC[4096] = {'\0'};
@@ -498,6 +499,7 @@ PopDialog (
         seqP.redExAcP = resultAC;
 
     }
+	err = SequenceFlatten(in_data, out_data);
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
     out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
                             PF_OutFlag_FORCE_RERENDER;
@@ -547,6 +549,7 @@ Render (
 {
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
+	
     Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
 	/*	Put interesting code here. */
 	MathInfo			miP;

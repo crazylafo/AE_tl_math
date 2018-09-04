@@ -79,7 +79,7 @@ typedef struct {
     std::string greenExAcP;
     std::string blueExAcP;
     std::string alphaExAcP;
-    int initB =0;
+    A_Boolean initB ;
 } Unflat_Seq_Data;
 
 /* Parameter defaults */
