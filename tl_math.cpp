@@ -416,7 +416,6 @@ PopDialog (
     my_global_dataP		globP				= reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 	Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(out_data->sequence_data));
 
-	err = SequenceResetup(in_data, out_data);
     AEGP_MemHandle     resultMemH          =     NULL;
     A_char *resultAC =     NULL;
     A_char          scriptAC[4096] = {'\0'};
@@ -499,7 +498,6 @@ PopDialog (
         seqP.redExAcP = resultAC;
 
     }
-	err = SequenceFlatten(in_data, out_data);
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
     out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
                             PF_OutFlag_FORCE_RERENDER;
@@ -519,15 +517,9 @@ MathFunc8 (
     MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
     PF_FpLong  red_result;
     
-
-    miP->xLF *= xL;
-    miP->yLF *= yL;
-    
-
-    AEFX_CLR_STRUCT(red_result);
-    red_result = MIN (miP-> expression_t_red.value(), 1);
-    
     if (miP){
+
+        red_result = MIN (miP-> expression_t_red.value(), 1);
 
         outP->alpha		=	inP->alpha;
         outP->red		=	A_u_char (red_result *PF_MAX_CHAN8);
@@ -577,18 +569,17 @@ Render (
     
     
 
-    miP.xLF = 1;
-    miP.yLF = 1;
 
     std::string expression_string_Safe = "1";
-    std::string expression_string(seqP.redExAcP);
+    std::string expression_string (seqP.redExAcP);
     
-
+    miP.xLF =0;
+    miP.yLF =0;
     
     symbol_table_t symbol_table;
   
-    symbol_table.add_variable("xLF",  miP.xLF);
-    symbol_table.add_variable("yLF", miP.yLF);
+    symbol_table.add_variable("xL",  miP.xLF);
+    symbol_table.add_variable("yL",  miP.yLF);
     symbol_table.add_constants();
     symbol_table.add_constant("layerWidth",miP.layerWidthF);
     symbol_table.add_constant("layerHeight",miP.layerHeightF);
@@ -617,6 +608,26 @@ Render (
 												MySimpleGainFunc16,				// pixel function pointer
 												output));
 	} else {
+        char	*localSrc, *localDst;
+        localSrc = reinterpret_cast<char*>(&params[MATH_INPUT]->u.ld.data),
+        localDst = reinterpret_cast<char*>(&output->data);
+        
+        for (int y = 0; y < linesL; y++)
+        {
+            for (int x = 0; x < in_data->width; x++)
+            {
+                MathFunc8((void*)&miP,
+                       0,
+                       0,
+                       reinterpret_cast<PF_Pixel8*>(localSrc),
+                       reinterpret_cast<PF_Pixel8*>(localDst));
+                localSrc += 16;
+                localDst += 16;
+            }
+            localSrc += (params[MATH_INPUT]->u.ld.rowbytes - in_data->width * 16);
+            localDst += (output->rowbytes - in_data->width * 16);
+        }
+        /*
 		ERR(suites.Iterate8Suite1()->iterate(	in_data,
 												0,								// progress base
 												linesL,							// progress final
@@ -624,7 +635,7 @@ Render (
 												NULL,							// area - null for all pixels
 												(void*)&miP,					// refcon - your custom data pointer
 												MathFunc8,				// pixel function pointer
-												output));	
+												output));	*/
 	}
 
 	return err;

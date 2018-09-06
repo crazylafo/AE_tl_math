@@ -117,7 +117,7 @@ typedef struct MathInfo{
     PF_FpLong  scale_y;
     PF_FpLong layerWidthF;
     PF_FpLong layerHeightF;
-    
+
     expression_t    expression_t_red;
     PF_FpLong    xLF;
     PF_FpLong     yLF;
