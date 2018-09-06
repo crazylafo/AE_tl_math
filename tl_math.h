@@ -118,12 +118,16 @@ typedef struct MathInfo{
     PF_FpLong layerWidthF;
     PF_FpLong layerHeightF;
 
-    expression_t    expression_t_red;
-    PF_FpLong    xLF;
-    PF_FpLong     yLF;
-    PF_FpLong     layerTime_sec;
-    PF_FpLong     layerTime_frame;
-    PF_FpLong     layerDuration;
+
+	PF_FpLong		inRedF;
+	PF_FpLong		inGreenF;
+	PF_FpLong		inBlueF;
+	PF_FpLong		inAlphaF;
+    PF_FpLong		xLF;
+    PF_FpLong		yLF;
+    PF_FpLong		layerTime_sec;
+    PF_FpLong		layerTime_frame;
+    PF_FpLong		layerDuration;
     
 } MathInfoP, *MathinfoP, **MathinfoH;
 

@@ -504,32 +504,6 @@ PopDialog (
     return err;
 }
 
-static PF_Err
-MathFunc8 (
-           void		*refcon,
-           A_long		xL,
-           A_long		yL,
-           PF_Pixel8	*inP,
-           PF_Pixel8	*outP)
-{
-    PF_Err		err = PF_Err_NONE;
-    
-    MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
-    PF_FpLong  red_result;
-    
-    if (miP){
-
-        red_result = MIN (miP-> expression_t_red.value(), 1);
-
-        outP->alpha		=	inP->alpha;
-        outP->red		=	A_u_char (red_result *PF_MAX_CHAN8);
-        outP->green		=	inP->green;
-        outP->blue      =   inP->blue;
-
-    }
-    
-    return err;
-}
 
 
 static PF_Err 
@@ -537,7 +511,7 @@ Render (
 	PF_InData		*in_data,
 	PF_OutData		*out_data,
 	PF_ParamDef		*params[],
-	PF_LayerDef		*output )
+	PF_LayerDef		*outputP )
 {
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
@@ -547,7 +521,8 @@ Render (
 	MathInfo			miP;
 	AEFX_CLR_STRUCT(miP);
 	A_long				linesL	= 0;
-	linesL 		= output->extent_hint.bottom - output->extent_hint.top;
+	linesL 		= outputP->extent_hint.bottom - outputP->extent_hint.top;
+	PF_EffectWorld		*inputP = &params[0]->u.ld;
 
 
     
@@ -571,34 +546,64 @@ Render (
 
 
     std::string expression_string_Safe = "1";
-    std::string expression_string (seqP.redExAcP);
-    
+    std::string expression_string_red = "xLF/layerWidth";
+	std::string expression_string_green = "yLF/layerHeight";
+	std::string expression_string_blue = "if (yLF>540-10)and (yLF<540+10)) 1 else 0";
+	std::string expression_string_alpha = "1";
     miP.xLF =0;
     miP.yLF =0;
     
     symbol_table_t symbol_table;
   
-    symbol_table.add_variable("xL",  miP.xLF);
-    symbol_table.add_variable("yL",  miP.yLF);
+    symbol_table.add_variable("xLF",  miP.xLF);
+    symbol_table.add_variable("yLF",  miP.yLF);
+	symbol_table.add_variable("inP_Red", miP.inRedF);
+	symbol_table.add_variable("inP_Green", miP.inGreenF);
+	symbol_table.add_variable("inP_Blue", miP.inBlueF);
+	symbol_table.add_variable("inP_Alpha", miP.inAlphaF);
     symbol_table.add_constants();
     symbol_table.add_constant("layerWidth",miP.layerWidthF);
     symbol_table.add_constant("layerHeight",miP.layerHeightF);
     symbol_table.add_constant("layerTime_sec",miP.layerTime_sec);
     symbol_table.add_constant("layerTime_frame",miP.layerTime_frame);
     symbol_table.add_constant("layerDuration",miP.layerDuration);
-    miP.expression_t_red.register_symbol_table(symbol_table);
-    parser_t parser;
-    parser.compile(expression_string, miP.expression_t_red);
-    //if error in expression
     
-    if (!parser.compile(expression_string, miP.expression_t_red))
+    parser_t parser;
+	expression_t    expression_t_red;
+	expression_t    expression_t_green;
+	expression_t    expression_t_blue;
+	expression_t    expression_t_alpha;
+
+	expression_t_red.register_symbol_table(symbol_table);
+	expression_t_green.register_symbol_table(symbol_table);
+	expression_t_blue.register_symbol_table(symbol_table);
+	expression_t_alpha.register_symbol_table(symbol_table);
+
+    parser.compile(expression_string_red, expression_t_red);
+	parser.compile(expression_string_green, expression_t_green);
+	parser.compile(expression_string_blue, expression_t_blue);
+	parser.compile(expression_string_alpha, expression_t_alpha);
+    //if error in expression
+    if (!parser.compile(expression_string_red, expression_t_red))
     {
-        parser.compile(expression_string_Safe, miP.expression_t_red);
+        parser.compile(expression_string_Safe, expression_t_red);
     }
+	if (!parser.compile(expression_string_green, expression_t_green))
+	{
+		parser.compile(expression_string_Safe, expression_t_green);
+	}
+	if (!parser.compile(expression_string_blue, expression_t_blue))
+	{
+		parser.compile(expression_string_Safe, expression_t_blue);
+	}
+	if (!parser.compile(expression_string_alpha, expression_t_alpha))
+	{
+		parser.compile(expression_string_Safe, expression_t_alpha);
+	}
    
 
 	
-	if (PF_WORLD_IS_DEEP(output)){
+	if (PF_WORLD_IS_DEEP(outputP)){
 		ERR(suites.Iterate16Suite1()->iterate(	in_data,
 												0,								// progress base
 												linesL,							// progress final
@@ -606,37 +611,58 @@ Render (
 												NULL,							// area - null for all pixels
 												(void*)&miP,					// refcon - your custom data pointer
 												MySimpleGainFunc16,				// pixel function pointer
-												output));
-	} else {
-        char	*localSrc, *localDst;
-        localSrc = reinterpret_cast<char*>(&params[MATH_INPUT]->u.ld.data),
-        localDst = reinterpret_cast<char*>(&output->data);
-        
-        for (int y = 0; y < linesL; y++)
-        {
-            for (int x = 0; x < in_data->width; x++)
-            {
-                MathFunc8((void*)&miP,
-                       0,
-                       0,
-                       reinterpret_cast<PF_Pixel8*>(localSrc),
-                       reinterpret_cast<PF_Pixel8*>(localDst));
-                localSrc += 16;
-                localDst += 16;
-            }
-            localSrc += (params[MATH_INPUT]->u.ld.rowbytes - in_data->width * 16);
-            localDst += (output->rowbytes - in_data->width * 16);
-        }
-        /*
-		ERR(suites.Iterate8Suite1()->iterate(	in_data,
-												0,								// progress base
-												linesL,							// progress final
-												&params[MATH_INPUT]->u.ld,	// src
-												NULL,							// area - null for all pixels
-												(void*)&miP,					// refcon - your custom data pointer
-												MathFunc8,				// pixel function pointer
-												output));	*/
+												outputP));
 	}
+	else {
+		// rewrite the itiration to safe access to math iteration with xL and yL values.
+		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data),
+							*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
+		A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
+				out_gutterL = (outputP->rowbytes / sizeof(PF_Pixel8)) - outputP->width;
+		PF_FpLong  red_result, green_result, blue_result, alpha_result;
+
+		for (register A_long yL = 0; yL < outputP->height; yL++) {
+			for (register A_long xL = 0; xL < inputP->width; xL++) {
+				AEFX_CLR_STRUCT(miP.xLF);
+				miP.xLF = xL;
+				AEFX_CLR_STRUCT(miP.yLF);
+				miP.yLF = yL;
+				AEFX_CLR_STRUCT(miP.inAlphaF);
+				miP.inAlphaF = bop_inP->alpha / PF_MAX_CHAN8;
+				AEFX_CLR_STRUCT(miP.inRedF);
+				miP.inRedF = bop_inP->red / PF_MAX_CHAN8;
+				AEFX_CLR_STRUCT(miP.inGreenF);
+				miP.inGreenF = bop_inP->green / PF_MAX_CHAN8;
+				AEFX_CLR_STRUCT(miP.inBlueF);
+				miP.inBlueF = bop_inP->blue / PF_MAX_CHAN8;
+				AEFX_CLR_STRUCT(red_result);
+				red_result = MIN(expression_t_red.value(), 1);
+				AEFX_CLR_STRUCT(green_result);
+				green_result = MIN(expression_t_green.value(), 1);
+				AEFX_CLR_STRUCT(blue_result);
+				blue_result = MIN(expression_t_blue.value(), 1);
+				AEFX_CLR_STRUCT(alpha_result);
+				alpha_result = MIN(expression_t_alpha.value(), 1);
+				bop_outP->alpha = A_u_char(alpha_result *PF_MAX_CHAN8);;
+				bop_outP->red = A_u_char(red_result *PF_MAX_CHAN8);
+				bop_outP->green = A_u_char(green_result *PF_MAX_CHAN8);
+				bop_outP->blue = A_u_char(blue_result *PF_MAX_CHAN8);
+				bop_outP++;
+				bop_inP++;
+			}
+			if (yL >= 0 && yL < inputP->height) {
+				bop_inP += in_gutterL;
+			}
+
+			bop_outP += out_gutterL;
+
+			// Check for interrupt!
+			if ((yL) && (err = PF_PROGRESS(in_data, yL + 1, outputP->height))) {
+				return err;
+			}
+		}
+	}
+
 
 	return err;
 }
