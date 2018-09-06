@@ -542,17 +542,17 @@ Render (
     miP.layerTime_frame = PF_FpLong(in_data->current_time/in_data->time_step);
     miP.layerDuration =PF_FpLong( in_data->total_time / in_data->time_scale);
     
-    
+	miP.xLF = 0;
+	miP.yLF = 0;
+
 
 
     std::string expression_string_Safe = "1";
     std::string expression_string_red = "xLF/layerWidth";
 	std::string expression_string_green = "yLF/layerHeight";
-	std::string expression_string_blue = "if (yLF>540-10)and (yLF<540+10)) 1 else 0";
+	std::string expression_string_blue = "yLF/layerHeight * abs(sin(xLF))*layerTime_frame/(layerDuration*25) ";
 	std::string expression_string_alpha = "1";
-    miP.xLF =0;
-    miP.yLF =0;
-    
+
     symbol_table_t symbol_table;
   
     symbol_table.add_variable("xLF",  miP.xLF);
