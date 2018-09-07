@@ -41,7 +41,8 @@ GlobalSetup (
 										STAGE_VERSION, 
 										BUILD_VERSION);
 
-	out_data->out_flags =  PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
+	out_data->out_flags =  PF_OutFlag_CUSTOM_UI			|
+                           PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
                            PF_OutFlag_I_DO_DIALOG|
                            PF_OutFlag_PIX_INDEPENDENT|
                            PF_OutFlag_NON_PARAM_VARY|
@@ -84,62 +85,89 @@ ParamsSetup (
 	AEFX_CLR_STRUCT(def);
 
 	PF_ADD_FLOAT_SLIDERX(	STR(StrID_MRed_Param_Name),
-							MATH_OPACITY_MIN,
-							MATH_OPACITY_MAX,
-							MATH_OPACITY_MIN,
-							MATH_OPACITY_MAX,
-							MATH_OPACITY_DFLT,
-							PF_Precision_HUNDREDTHS,
+							MATH_VAR_MIN,
+							MATH_VAR_MAX,
+							MATH_VAR_MIN,
+							MATH_VAR_MAX,
+							MATH_VAR_DFLT,
+							PF_Precision_THOUSANDTHS,
 							0,
 							0,
-							MATH_RED_OPACITY_DISK_ID);
+							MATH_RED_VAR_DISK_ID);
 
 	AEFX_CLR_STRUCT(def);
     
     PF_ADD_FLOAT_SLIDERX(	STR(StrID_MGreen_Param_Name),
-                         MATH_OPACITY_MIN,
-                         MATH_OPACITY_MAX,
-                         MATH_OPACITY_MIN,
-                         MATH_OPACITY_MAX,
-                         MATH_OPACITY_DFLT,
-                         PF_Precision_HUNDREDTHS,
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_DFLT,
+                         PF_Precision_THOUSANDTHS,
                          0,
                          0,
-                         MATH_GREEN_OPACITY_DISK_ID);
+                         MATH_GREEN_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
     PF_ADD_FLOAT_SLIDERX(	STR(StrID_MBlue_Param_Name),
-                         MATH_OPACITY_MIN,
-                         MATH_OPACITY_MAX,
-                         MATH_OPACITY_MIN,
-                         MATH_OPACITY_MAX,
-                         MATH_OPACITY_DFLT,
-                         PF_Precision_HUNDREDTHS,
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_DFLT,
+                         PF_Precision_THOUSANDTHS,
                          0,
                          0,
-                         MATH_BLUE_OPACITY_DISK_ID);
+                         MATH_BLUE_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
     PF_ADD_FLOAT_SLIDERX(	STR( StrID_MAlpha_Param_Name),
-                         MATH_OPACITY_MIN,
-                         MATH_OPACITY_MAX,
-                         MATH_OPACITY_MIN,
-                         MATH_OPACITY_MAX,
-                         MATH_OPACITY_DFLT,
-                         PF_Precision_HUNDREDTHS,
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_DFLT,
+                         PF_Precision_THOUSANDTHS,
                          0,
                          0,
-                         MATH_ALPHA_OPACITY_DISK_ID);
+                         MATH_ALPHA_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
-    PF_ADD_BUTTON( STR(StrID_MExecute_Param_Name),
-                   STR(StrID_MExecute_Param_Name),
-                  NULL,
-                  NULL,
-                  MATH_EXECUTE_DISK_ID);
+    
+    ERR(CreateDefaultArb(	in_data,
+                         out_data,
+                         &def.u.arb_d.dephault));
+    
+    PF_ADD_ARBITRARY2(	"data transfert",
+                      10,
+                      10,
+                      0,
+                      PF_PUI_CONTROL | PF_PUI_DONT_ERASE_CONTROL,
+                      def.u.arb_d.dephault,
+                      MATH_ARB_DATA,
+                      ARB_REFCON);
+    
+    if (!err) {
+        PF_CustomUIInfo			ci;
+        
+        ci.events				= PF_CustomEFlag_EFFECT;
+        
+        ci.comp_ui_width		= ci.comp_ui_height = 0;
+        ci.comp_ui_alignment	= PF_UIAlignment_NONE;
+        
+        ci.layer_ui_width		=
+        ci.layer_ui_height		= 0;
+        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
+        
+        ci.preview_ui_width		=
+        ci.preview_ui_height	= 0;
+        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
+        
+        err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
+    }
 
 	AEFX_CLR_STRUCT(def);
 	out_data->num_params = MATH_NUM_PARAMS;
@@ -419,6 +447,53 @@ PopDialog (
     AEGP_MemHandle     resultMemH          =     NULL;
     A_char *resultAC =     NULL;
     A_char          scriptAC[4096] = {'\0'};
+    
+    /*
+    AEGP_LayerH		layerH;
+    AEGP_StreamRefH  layer_base_streamH			= NULL,
+                     effects_streamH				= NULL;
+    PF_ParamIndex   param_index;
+ 
+
+        
+    AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(	in_data,
+                                                                                                             kAEGPPFInterfaceSuite,
+                                                                                                             kAEGPPFInterfaceSuiteVersion1,
+                                                                                                             out_data);
+    AEFX_SuiteScoper<AEGP_LayerSuite8> layerSuite = AEFX_SuiteScoper<AEGP_LayerSuite8>(	in_data,
+                                                                                           kAEGPLayerSuite,
+                                                                                           kAEGPLayerSuiteVersion8,
+                                                                                           out_data);
+    
+    AEFX_SuiteScoper<AEGP_StreamSuite4> StreamSuite = AEFX_SuiteScoper<AEGP_StreamSuite4>(	in_data,
+                                                                                       kAEGPStreamSuite,
+                                                                                       kAEGPStreamSuiteVersion4,
+                                                                                       out_data);
+    AEFX_SuiteScoper<AEGP_DynamicStreamSuite4> DynStreamSuite = AEFX_SuiteScoper<AEGP_DynamicStreamSuite4>(	in_data,
+                                                                                                            kAEGPDynamicStreamSuite,
+                                                                                                            kAEGPDynamicStreamSuiteVersion4,
+                                                                                                            out_data);
+    
+    
+    
+    
+    PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
+    DynStreamSuite->AEGP_GetNewStreamRefForLayer(globP->my_id, layerH, &layer_base_streamH);
+    
+    StreamSuite->AEGP_GetNewEffectStreamByIndex (globP->my_id, in_data->effect_ref, param_index,&streamPH);
+    StreamSuite->AEGP_GetLayerStreamValue
+    StreamSuite->AEGP_DisposeStream (valP);
+    //StreamSuite->AEGP_SetStreamValue(AEGP_PluginID aegp_plugin_id,   AEGP_StreamRefH streamH,   AEGP_StreamValue2 *valueP);
+    
+    //Don't forget to dispose stream
+    if (layer_base_streamH){
+        StreamSuite->AEGP_DisposeStream(layer_base_streamH);
+    }
+    if (effects_streamH){
+        StreamSuite->AEGP_DisposeStream(effects_streamH);
+    }*/
+    
+        
 
     A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr,GreenExpr,BlueExpr,AlphaExpr) {\
     var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\
@@ -493,6 +568,8 @@ PopDialog (
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
     AEFX_CLR_STRUCT(resultAC);
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+
+
     
     if  (atoi (resultAC) !=0){
         seqP.redExAcP = resultAC;
@@ -516,20 +593,22 @@ Render (
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
 	
-    Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
+    //Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
 	/*	Put interesting code here. */
 	MathInfo			miP;
 	AEFX_CLR_STRUCT(miP);
 	A_long				linesL	= 0;
 	linesL 		= outputP->extent_hint.bottom - outputP->extent_hint.top;
 	PF_EffectWorld		*inputP = &params[0]->u.ld;
-
+    
+    PF_Handle		arbH			= params[MATH_ARB_DATA]->u.arb_d.value;
+    m_ArbData		*arbP			= NULL;
 
     
-	miP.RedIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
-    miP.GreenIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
-    miP.BlueIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
-    miP.AlphaIF	= params[MATH_RED_OPACITY]->u.fs_d.value;
+	miP.RedIF	= params[MATH_RED_VAR]->u.fs_d.value;
+    miP.GreenIF	= params[MATH_RED_VAR]->u.fs_d.value;
+    miP.BlueIF	= params[MATH_RED_VAR]->u.fs_d.value;
+    miP.AlphaIF	= params[MATH_RED_VAR]->u.fs_d.value;
    
     //layer size
     miP.scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den,
@@ -545,13 +624,27 @@ Render (
 	miP.xLF = 0;
 	miP.yLF = 0;
 
-
+    
 
     std::string expression_string_Safe = "1";
-    std::string expression_string_red = "xLF/layerWidth";
-	std::string expression_string_green = "yLF/layerHeight";
-	std::string expression_string_blue = "yLF/layerHeight * abs(sin(xLF))*layerTime_frame/(layerDuration*25) ";
-	std::string expression_string_alpha = "1";
+    std::string expression_string_red= "1";
+    std::string expression_string_green= "1";
+    std::string expression_string_blue= "1";
+    std::string expression_string_alpha= "1";
+    
+
+    
+    if (!err){
+        arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+        if (arbP){
+            m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
+            expression_string_red = (tempPointer->redExAcP);
+            expression_string_green = tempPointer->greenExAcP;
+            expression_string_blue = tempPointer->blueExAcP;
+            expression_string_alpha  = tempPointer->alphaExAcP;
+            }
+        }
+    
 
     symbol_table_t symbol_table;
   
@@ -628,13 +721,13 @@ Render (
 				AEFX_CLR_STRUCT(miP.yLF);
 				miP.yLF = yL;
 				AEFX_CLR_STRUCT(miP.inAlphaF);
-				miP.inAlphaF = bop_inP->alpha / PF_MAX_CHAN8;
+				miP.inAlphaF = (PF_FpLong)bop_inP->alpha / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inRedF);
-				miP.inRedF = bop_inP->red / PF_MAX_CHAN8;
+				miP.inRedF = (PF_FpLong)bop_inP->red / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inGreenF);
-				miP.inGreenF = bop_inP->green / PF_MAX_CHAN8;
+				miP.inGreenF = (PF_FpLong)bop_inP->green / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inBlueF);
-				miP.inBlueF = bop_inP->blue / PF_MAX_CHAN8;
+				miP.inBlueF = (PF_FpLong)bop_inP->blue / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(red_result);
 				red_result = MIN(expression_t_red.value(), 1);
 				AEFX_CLR_STRUCT(green_result);
@@ -649,10 +742,10 @@ Render (
 				bop_outP->blue = A_u_char(blue_result *PF_MAX_CHAN8);
 				bop_outP++;
 				bop_inP++;
-			}
+                }
 			if (yL >= 0 && yL < inputP->height) {
 				bop_inP += in_gutterL;
-			}
+                }
 
 			bop_outP += out_gutterL;
 
@@ -662,8 +755,7 @@ Render (
 			}
 		}
 	}
-
-
+    PF_UNLOCK_HANDLE(arbH);
 	return err;
 }
 
@@ -679,6 +771,137 @@ GlobalSetdown(
     }
     
     return PF_Err_NONE;
+}
+
+
+static PF_Err
+HandleArbitrary(
+                PF_InData			*in_data,
+                PF_OutData			*out_data,
+                PF_ParamDef			*params[],
+                PF_LayerDef			*output,
+                PF_ArbParamsExtra	*extra)
+{
+    PF_Err 	err 	= PF_Err_NONE;
+    void 	*srcP	= NULL,
+		 	*dstP	= NULL;
+    
+    switch (extra->which_function) {
+            
+        case PF_Arbitrary_NEW_FUNC:
+            if (extra->u.new_func_params.refconPV != ARB_REFCON) {
+                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+            } else {
+                err = CreateDefaultArb(	in_data,
+                                       out_data,
+                                       extra->u.new_func_params.arbPH);
+            }
+            break;
+            
+        case PF_Arbitrary_DISPOSE_FUNC:
+            if (extra->u.dispose_func_params.refconPV != ARB_REFCON) {
+                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+            } else {
+                PF_DISPOSE_HANDLE(extra->u.dispose_func_params.arbH);
+            }
+            break;
+            
+        case PF_Arbitrary_COPY_FUNC:
+            if(extra->u.copy_func_params.refconPV == ARB_REFCON) {
+                ERR(CreateDefaultArb(	in_data,
+                                     out_data,
+                                     extra->u.copy_func_params.dst_arbPH));
+                
+                ERR(Arb_Copy(	in_data,
+                             out_data,
+                             &extra->u.copy_func_params.src_arbH,
+                             extra->u.copy_func_params.dst_arbPH));
+            }
+            break;
+        case PF_Arbitrary_FLAT_SIZE_FUNC:
+            *(extra->u.flat_size_func_params.flat_data_sizePLu) = sizeof(m_ArbData);
+            break;
+            
+        case PF_Arbitrary_FLATTEN_FUNC:
+            
+            if(extra->u.flatten_func_params.buf_sizeLu == sizeof(m_ArbData)){
+                srcP = (m_ArbData*)PF_LOCK_HANDLE(extra->u.flatten_func_params.arbH);
+                dstP = extra->u.flatten_func_params.flat_dataPV;
+                if (srcP){
+                    memcpy(dstP,srcP,sizeof(m_ArbData));
+                }
+                PF_UNLOCK_HANDLE(extra->u.flatten_func_params.arbH);
+            }
+            break;
+            
+        case PF_Arbitrary_UNFLATTEN_FUNC:
+            if(extra->u.unflatten_func_params.buf_sizeLu == sizeof(m_ArbData)){
+                PF_Handle	handle = PF_NEW_HANDLE(sizeof(m_ArbData));
+                dstP = (m_ArbData*)PF_LOCK_HANDLE(handle);
+                srcP = (void*)extra->u.unflatten_func_params.flat_dataPV;
+                if (srcP){
+                    memcpy(dstP,srcP,sizeof(m_ArbData));
+                }
+                *(extra->u.unflatten_func_params.arbPH) = handle;
+                PF_UNLOCK_HANDLE(handle);
+            }
+            break;
+            
+        case PF_Arbitrary_INTERP_FUNC:
+            if(extra->u.interp_func_params.refconPV == ARB_REFCON) {
+                ERR(CreateDefaultArb(	in_data,
+                                     out_data,
+                                     extra->u.interp_func_params.interpPH));
+                
+                ERR(Arb_Interpolate(	in_data,
+                                    out_data,
+                                    extra->u.interp_func_params.tF,
+                                    &extra->u.interp_func_params.left_arbH,
+                                    &extra->u.interp_func_params.right_arbH,
+                                    extra->u.interp_func_params.interpPH));
+            }
+            break;
+            
+        case PF_Arbitrary_COMPARE_FUNC:
+            ERR(Arb_Compare(	in_data,
+                            out_data,
+                            &extra->u.compare_func_params.a_arbH,
+                            &extra->u.compare_func_params.b_arbH,
+                            extra->u.compare_func_params.compareP));
+            break;
+            
+        case PF_Arbitrary_PRINT_SIZE_FUNC:
+            err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
+            break;
+            
+        case PF_Arbitrary_PRINT_FUNC:
+            
+            if (extra->u.print_func_params.refconPV == ARB_REFCON) {
+                ERR(Arb_Print(in_data,
+                              out_data,
+                              extra->u.print_func_params.print_flags,
+                              extra->u.print_func_params.arbH,
+                              extra->u.print_func_params.print_sizeLu,
+                              extra->u.print_func_params.print_bufferPC));
+            } else {
+                err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
+            }
+            break;
+            
+        case PF_Arbitrary_SCAN_FUNC:
+            if (extra->u.scan_func_params.refconPV == ARB_REFCON) {
+                ERR(Arb_Scan(	in_data,
+                             out_data,
+                             extra->u.scan_func_params.refconPV,
+                             extra->u.scan_func_params.bufPC,
+                             extra->u.scan_func_params.bytes_to_scanLu,
+                             extra->u.scan_func_params.arbPH));
+            } else {
+                err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
+            }
+            break;
+    }
+    return err;
 }
 
 
@@ -740,11 +963,14 @@ EntryPointFunc (
                                   params,
                                   output);
                 break;
+            case PF_Cmd_ARBITRARY_CALLBACK:
+                err = HandleArbitrary(	in_data, out_data, params, output, reinterpret_cast<PF_ArbParamsExtra*>(extra));
+                break;
+                
                 
             case PF_Cmd_DO_DIALOG:
                 err = PopDialog(in_data,out_data,params,output);
                 break;
-
 
 				
 			case PF_Cmd_RENDER:

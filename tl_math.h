@@ -27,6 +27,8 @@ typedef short int			int16;
 	#include <Windows.h>
 #endif
 
+//#include "AE_EffectUI.h"
+#include "AEFX_ArbParseHelper.h"
 #include "entry.h"
 #include "AE_Effect.h"
 #include "AE_EffectCB.h"
@@ -59,7 +61,13 @@ typedef exprtk::symbol_table<PF_FpLong> symbol_table_t;
 typedef exprtk::expression<PF_FpLong>     expression_t;
 typedef exprtk::parser<PF_FpLong>             parser_t;
 
-
+#define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
+typedef struct {
+    std::string redExAcP;
+    std::string greenExAcP;
+    std::string blueExAcP;
+    std::string alphaExAcP;
+} m_ArbData;
 
 typedef struct {
     AEGP_PluginID	my_id;
@@ -84,26 +92,26 @@ typedef struct {
 
 /* Parameter defaults */
 
-#define	MATH_OPACITY_MIN		0
-#define	MATH_OPACITY_MAX		100
-#define	MATH_OPACITY_DFLT		100
+#define	MATH_VAR_MIN		0
+#define	MATH_VAR_MAX		1
+#define	MATH_VAR_DFLT       1
 
 enum {
 	MATH_INPUT = 0,
-	MATH_RED_OPACITY,
-    MATH_GREEN_OPACITY,
-    MATH_BLUE_OPACITY,
-    MATH_ALPHA_OPACITY,
-    MATH_EXECUTE,
+	MATH_RED_VAR,
+    MATH_GREEN_VAR,
+    MATH_BLUE_VAR,
+    MATH_ALPHA_VAR,
+    MATH_ARB_DATA,
 	MATH_NUM_PARAMS
 };
 
 enum {
-	MATH_RED_OPACITY_DISK_ID = 1,
-    MATH_GREEN_OPACITY_DISK_ID,
-    MATH_BLUE_OPACITY_DISK_ID,
-    MATH_ALPHA_OPACITY_DISK_ID,
-    MATH_EXECUTE_DISK_ID,
+	MATH_RED_VAR_DISK_ID = 1,
+    MATH_GREEN_VAR_DISK_ID,
+    MATH_BLUE_VAR_DISK_ID,
+    MATH_ALPHA_VAR_DISK_ID,
+    MATH_ARB_DATA_DISK_ID,
 
 };
 
@@ -146,6 +154,59 @@ EntryPointFunc(
 
 #ifdef __cplusplus
 }
+
+
+PF_Err
+CreateDefaultArb(
+                 PF_InData			*in_data,
+                 PF_OutData			*out_data,
+                 PF_ArbitraryH		*dephault);
+
+
+PF_Err
+Arb_Copy(
+         PF_InData				*in_data,
+         PF_OutData				*out_data,
+         const PF_ArbitraryH		*srcP,
+         PF_ArbitraryH			*dstP);
+
+PF_Err
+Arb_Interpolate(
+                PF_InData				*in_data,
+                PF_OutData				*out_data,
+                double					itrp_amtF,
+                const PF_ArbitraryH		*l_arbP,
+                const PF_ArbitraryH		*r_arbP,
+                PF_ArbitraryH			*result_arbP);
+
+PF_Err
+Arb_Compare(
+            PF_InData				*in_data,
+            PF_OutData				*out_data,
+            const PF_ArbitraryH		*a_arbP,
+            const PF_ArbitraryH		*b_arbP,
+            PF_ArbCompareResult		*resultP);
+
+PF_Err
+Arb_Print_Size();
+
+PF_Err
+Arb_Print(
+          PF_InData			*in_data,
+          PF_OutData			*out_data,
+          PF_ArbPrintFlags	print_flags,
+          PF_ArbitraryH		arbH,
+          A_u_long			print_sizeLu,
+          A_char				*print_bufferPC);
+PF_Err
+Arb_Scan(
+         PF_InData			*in_data,
+         PF_OutData			*out_data,
+         void 				*refconPV,
+         const char			*bufPC,
+         unsigned long		bytes_to_scanLu,
+         PF_ArbitraryH		*arbPH);
+
 #endif
 
 #endif // TLMATH
