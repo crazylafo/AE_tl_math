@@ -448,11 +448,18 @@ PopDialog (
     A_char *resultAC =     NULL;
     A_char          scriptAC[4096] = {'\0'};
     
-    /*
+    //strings to send expr to script
+    std::string tempRedS ="'";
+    std::string tempGreenS ="'";
+    std::string tempBlueS ="'";
+    std::string tempAlphaS ="'";
+    
     AEGP_LayerH		layerH;
-    AEGP_StreamRefH  layer_base_streamH			= NULL,
-                     effects_streamH				= NULL;
-    PF_ParamIndex   param_index;
+    AEGP_StreamRefH effect_streamH				= NULL;
+    AEGP_EffectRefH   thisEffect_refH;
+    AEGP_StreamValue2   valP;
+    
+    const A_Time currT = {0,100};
  
 
         
@@ -469,29 +476,41 @@ PopDialog (
                                                                                        kAEGPStreamSuite,
                                                                                        kAEGPStreamSuiteVersion4,
                                                                                        out_data);
-    AEFX_SuiteScoper<AEGP_DynamicStreamSuite4> DynStreamSuite = AEFX_SuiteScoper<AEGP_DynamicStreamSuite4>(	in_data,
-                                                                                                            kAEGPDynamicStreamSuite,
-                                                                                                            kAEGPDynamicStreamSuiteVersion4,
-                                                                                                            out_data);
-    
-    
     
     
     PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
-    DynStreamSuite->AEGP_GetNewStreamRefForLayer(globP->my_id, layerH, &layer_base_streamH);
+    PFInterfaceSuite->AEGP_GetNewEffectForEffect (globP->my_id, in_data->effect_ref,  &thisEffect_refH);
+    StreamSuite->AEGP_GetNewEffectStreamByIndex (globP->my_id, thisEffect_refH,  MATH_ARB_DATA,&effect_streamH);
+    StreamSuite->AEGP_GetNewStreamValue(globP->my_id, effect_streamH, AEGP_LTimeMode_LayerTime, &currT,FALSE, &valP );
     
-    StreamSuite->AEGP_GetNewEffectStreamByIndex (globP->my_id, in_data->effect_ref, param_index,&streamPH);
-    StreamSuite->AEGP_GetLayerStreamValue
-    StreamSuite->AEGP_DisposeStream (valP);
-    //StreamSuite->AEGP_SetStreamValue(AEGP_PluginID aegp_plugin_id,   AEGP_StreamRefH streamH,   AEGP_StreamValue2 *valueP);
+     PF_Handle		arbH = reinterpret_cast <PF_Handle>(valP.val.arbH);
+    m_ArbData		*arbP			= NULL;
     
-    //Don't forget to dispose stream
-    if (layer_base_streamH){
-        StreamSuite->AEGP_DisposeStream(layer_base_streamH);
+   
+    
+    
+    
+    if (!err){
+        arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+        if (arbP){
+            m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
+             tempRedS.append(tempPointer->redExAcP.c_str());
+            tempGreenS.append(tempPointer->greenExAcP.c_str());
+            tempBlueS.append(tempPointer->blueExAcP.c_str());
+            tempAlphaS.append(tempPointer->alphaExAcP.c_str());
+        }
     }
-    if (effects_streamH){
-        StreamSuite->AEGP_DisposeStream(effects_streamH);
-    }*/
+    PF_UNLOCK_HANDLE(arbH);
+    
+    
+    if (effect_streamH){
+        StreamSuite->AEGP_DisposeStream(effect_streamH);
+    }
+    
+    tempRedS.append("'");
+    tempGreenS.append("'");
+    tempBlueS.append("'");
+    tempAlphaS.append("'");
     
         
 
@@ -543,29 +562,12 @@ PopDialog (
     return result\
     }\
     expr(%s,%s,%s,%s);";
-    
-    std::string tempRedS ="'";
-    tempRedS.append(seqP.redExAcP.c_str());
-    tempRedS.append("'");
-    
-    std::string tempGreenS ="'";
-    tempGreenS.append(seqP.greenExAcP.c_str());
-    tempGreenS.append("'");
-    
-    std::string tempBlueS ="'";
-    tempBlueS.append(seqP.blueExAcP.c_str());
-    tempBlueS.append("'");
-    
-    std::string tempAlphaS ="'";
-    tempAlphaS.append(seqP.alphaExAcP.c_str());
-    tempAlphaS.append("'");
-    
-    
+
     sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str() , tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str() );
     seqP.initB = TRUE;
-
-    
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+
+    //AEGP SETSTREAMVALUR TO ARB
     AEFX_CLR_STRUCT(resultAC);
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
 
@@ -624,7 +626,7 @@ Render (
 	miP.xLF = 0;
 	miP.yLF = 0;
 
-    
+    // TO ADD TO GET THE COMP FPS ERR(suites.CompSuite10()->AEGP_GetCompFramerate(compPH, &fpsPF));
 
     std::string expression_string_Safe = "1";
     std::string expression_string_red= "1";
@@ -633,7 +635,6 @@ Render (
     std::string expression_string_alpha= "1";
     
 
-    
     if (!err){
         arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
         if (arbP){
