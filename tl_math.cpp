@@ -429,6 +429,93 @@ MySimpleGainFunc16 (
 }
 
 
+static PF_Err
+AEGP_GetParamStreamValue(PF_InData		*in_data,
+					PF_OutData		*out_data,
+					AEGP_PluginID   PlugId,
+					PF_ParamIndex	param_index,
+					PF_Handle		*arbH
+)
+{
+	PF_Err err = PF_Err_NONE;
+	AEGP_LayerH		layerH;
+	AEGP_StreamRefH effect_streamH = NULL;
+	AEGP_EffectRefH   thisEffect_refH;
+	AEGP_StreamValue2   valP;
+	const A_Time currT = { 0,100 };
+
+	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
+		kAEGPPFInterfaceSuite,
+		kAEGPPFInterfaceSuiteVersion1,
+		out_data);
+	AEFX_SuiteScoper<AEGP_LayerSuite8> layerSuite = AEFX_SuiteScoper<AEGP_LayerSuite8>(in_data,
+		kAEGPLayerSuite,
+		kAEGPLayerSuiteVersion8,
+		out_data);
+
+	AEFX_SuiteScoper<AEGP_StreamSuite4> StreamSuite = AEFX_SuiteScoper<AEGP_StreamSuite4>(in_data,
+		kAEGPStreamSuite,
+		kAEGPStreamSuiteVersion4,
+		out_data);
+
+
+	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
+	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
+	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
+	StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, &valP);
+
+	*arbH = reinterpret_cast <PF_Handle>(valP.val.arbH);
+	if (effect_streamH) {
+		StreamSuite->AEGP_DisposeStream(effect_streamH);
+	}
+	if (&valP) {
+		StreamSuite->AEGP_DisposeStreamValue(&valP);
+	}
+	
+
+	return err;
+}
+
+static PF_Err
+AEGP_SetParamStreamValue(PF_InData			*in_data,
+						PF_OutData			*out_data,
+						AEGP_PluginID		PlugId,
+						PF_ParamIndex		param_index,
+						AEGP_StreamValue2   *valP)
+{
+	PF_Err err = PF_Err_NONE;
+	AEGP_LayerH		layerH;
+	AEGP_StreamRefH effect_streamH = NULL;
+	AEGP_EffectRefH   thisEffect_refH;
+	
+	const A_Time currT = { 0,100 };
+
+	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
+		kAEGPPFInterfaceSuite,
+		kAEGPPFInterfaceSuiteVersion1,
+		out_data);
+	AEFX_SuiteScoper<AEGP_LayerSuite8> layerSuite = AEFX_SuiteScoper<AEGP_LayerSuite8>(in_data,
+		kAEGPLayerSuite,
+		kAEGPLayerSuiteVersion8,
+		out_data);
+
+	AEFX_SuiteScoper<AEGP_StreamSuite4> StreamSuite = AEFX_SuiteScoper<AEGP_StreamSuite4>(in_data,
+		kAEGPStreamSuite,
+		kAEGPStreamSuiteVersion4,
+		out_data);
+
+
+	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
+	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
+	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
+	StreamSuite->AEGP_SetStreamValue(PlugId, effect_streamH,valP);
+
+	if (effect_streamH) {
+		StreamSuite->AEGP_DisposeStream(effect_streamH);
+	}
+
+	return err;
+}
 
 
 
@@ -454,65 +541,30 @@ PopDialog (
     std::string tempBlueS ="'";
     std::string tempAlphaS ="'";
     
-    AEGP_LayerH		layerH;
-    AEGP_StreamRefH effect_streamH				= NULL;
-    AEGP_EffectRefH   thisEffect_refH;
-    AEGP_StreamValue2   valP;
     
-    const A_Time currT = {0,100};
- 
-
-        
-    AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(	in_data,
-                                                                                                             kAEGPPFInterfaceSuite,
-                                                                                                             kAEGPPFInterfaceSuiteVersion1,
-                                                                                                             out_data);
-    AEFX_SuiteScoper<AEGP_LayerSuite8> layerSuite = AEFX_SuiteScoper<AEGP_LayerSuite8>(	in_data,
-                                                                                           kAEGPLayerSuite,
-                                                                                           kAEGPLayerSuiteVersion8,
-                                                                                           out_data);
-    
-    AEFX_SuiteScoper<AEGP_StreamSuite4> StreamSuite = AEFX_SuiteScoper<AEGP_StreamSuite4>(	in_data,
-                                                                                       kAEGPStreamSuite,
-                                                                                       kAEGPStreamSuiteVersion4,
-                                                                                       out_data);
-    
-    
-    PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
-    PFInterfaceSuite->AEGP_GetNewEffectForEffect (globP->my_id, in_data->effect_ref,  &thisEffect_refH);
-    StreamSuite->AEGP_GetNewEffectStreamByIndex (globP->my_id, thisEffect_refH,  MATH_ARB_DATA,&effect_streamH);
-    StreamSuite->AEGP_GetNewStreamValue(globP->my_id, effect_streamH, AEGP_LTimeMode_LayerTime, &currT,FALSE, &valP );
-    
-     PF_Handle		arbH = reinterpret_cast <PF_Handle>(valP.val.arbH);
-    m_ArbData		*arbP			= NULL;
-    
-   
-    
-    
-    
+	PF_Handle		arbH = NULL;
+	PF_Handle		arbOutH = NULL;
+	m_ArbData		*arbInP = NULL;
+    m_ArbData		*arbOutP= NULL;
+	m_ArbData		*tempPointer = NULL;
+	ERR(AEGP_GetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbH));
     if (!err){
-        arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
-        if (arbP){
-            m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-             tempRedS.append(tempPointer->redExAcP.c_str());
+        arbInP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+        if (arbInP){
+            tempPointer = reinterpret_cast<m_ArbData*>(arbInP);
+            tempRedS.append(tempPointer->redExAcP.c_str());
             tempGreenS.append(tempPointer->greenExAcP.c_str());
             tempBlueS.append(tempPointer->blueExAcP.c_str());
             tempAlphaS.append(tempPointer->alphaExAcP.c_str());
         }
+		PF_UNLOCK_HANDLE(arbH);
     }
-    PF_UNLOCK_HANDLE(arbH);
-    
-    
-    if (effect_streamH){
-        StreamSuite->AEGP_DisposeStream(effect_streamH);
-    }
-    
+
     tempRedS.append("'");
     tempGreenS.append("'");
     tempBlueS.append("'");
     tempAlphaS.append("'");
-    
-        
+
 
     A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr,GreenExpr,BlueExpr,AlphaExpr) {\
     var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\
@@ -570,13 +622,20 @@ PopDialog (
     //AEGP SETSTREAMVALUR TO ARB
     AEFX_CLR_STRUCT(resultAC);
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
-
-
     
-    if  (atoi (resultAC) !=0){
-        seqP.redExAcP = resultAC;
+    if  (resultAC){
+			//set result per channel
+			arbOutP->redExAcP =std::string(resultAC);
+			arbOutP->greenExAcP = tempPointer->greenExAcP;
+			arbOutP->blueExAcP = tempPointer->blueExAcP;
+			arbOutP->alphaExAcP = tempPointer->alphaExAcP;
 
+			*arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
+			AEGP_StreamValue2   *valOutP;
+			valOutP->val.arbH = arbOutH;
+			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, valOutP));
     }
+	
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
     out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
                             PF_OutFlag_FORCE_RERENDER;
@@ -626,7 +685,7 @@ Render (
 	miP.xLF = 0;
 	miP.yLF = 0;
 
-    // TO ADD TO GET THE COMP FPS ERR(suites.CompSuite10()->AEGP_GetCompFramerate(compPH, &fpsPF));
+    // TO DO: ADD TO GET THE COMP FPS ERR(suites.CompSuite10()->AEGP_GetCompFramerate(compPH, &fpsPF));
 
     std::string expression_string_Safe = "1";
     std::string expression_string_red= "1";
