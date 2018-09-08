@@ -89,6 +89,7 @@
     </ClCompile>
     <ClCompile Include="..\tl_math_Strings.cpp" />
     <ClCompile Include="..\tl_math.cpp" />
+    <ClCompile Include="..\tl_mathArb_Handler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\tl_mathPiPL.r">
