@@ -437,13 +437,16 @@ AEGP_GetParamStreamValue(PF_InData		*in_data,
 					PF_Handle		*arbH
 )
 {
-	PF_Err err = PF_Err_NONE;
+	PF_Err err = PF_Err_NONE,
+		err2 = PF_Err_NONE;
 	AEGP_LayerH		layerH;
 	AEGP_StreamRefH effect_streamH = NULL;
-	AEGP_EffectRefH   thisEffect_refH;
-	AEGP_StreamValue2   valP;
+	AEGP_EffectRefH   thisEffect_refH = NULL;
+	AEGP_StreamValue2	val;
+	AEGP_StreamValue2	*sample_valP = &val;
+	
 	const A_Time currT = { 0,100 };
-
+	
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
 		kAEGPPFInterfaceSuiteVersion1,
@@ -457,22 +460,28 @@ AEGP_GetParamStreamValue(PF_InData		*in_data,
 		kAEGPStreamSuite,
 		kAEGPStreamSuiteVersion4,
 		out_data);
+	AEFX_SuiteScoper<AEGP_EffectSuite4> EffectSuite = AEFX_SuiteScoper<AEGP_EffectSuite4>(in_data,
+		kAEGPEffectSuite,
+		kAEGPEffectSuiteVersion4,
+		out_data);
 
 
 	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
 	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
 	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
-	StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, &valP);
-
-	*arbH = reinterpret_cast <PF_Handle>(valP.val.arbH);
-	if (effect_streamH) {
-		StreamSuite->AEGP_DisposeStream(effect_streamH);
-	}
-	if (&valP) {
-		StreamSuite->AEGP_DisposeStreamValue(&valP);
-	}
+	StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, sample_valP);
 	
-
+	*arbH = reinterpret_cast<PF_Handle>(val.val.arbH);
+	if (thisEffect_refH) {
+		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
+	}
+	if (effect_streamH) {
+		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
+	}
+	/*
+	if (sample_valP) {
+		ERR2(StreamSuite->AEGP_DisposeStreamValue(sample_valP));
+	}*/
 	return err;
 }
 
@@ -481,12 +490,15 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 						PF_OutData			*out_data,
 						AEGP_PluginID		PlugId,
 						PF_ParamIndex		param_index,
-						AEGP_StreamValue2   *valP)
+						PF_Handle           *ArbH)
 {
-	PF_Err err = PF_Err_NONE;
+	PF_Err  err = PF_Err_NONE,
+			err2 = PF_Err_NONE;
 	AEGP_LayerH		layerH;
 	AEGP_StreamRefH effect_streamH = NULL;
 	AEGP_EffectRefH   thisEffect_refH;
+	AEGP_StreamValue2	val;
+	AEGP_StreamValue2	*sample_valP = &val;
 	
 	const A_Time currT = { 0,100 };
 
@@ -503,16 +515,28 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 		kAEGPStreamSuite,
 		kAEGPStreamSuiteVersion4,
 		out_data);
+	AEFX_SuiteScoper<AEGP_EffectSuite4> EffectSuite = AEFX_SuiteScoper<AEGP_EffectSuite4>(in_data,
+		kAEGPEffectSuite,
+		kAEGPEffectSuiteVersion4,
+		out_data);
 
 
 	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
 	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
 	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
-	StreamSuite->AEGP_SetStreamValue(PlugId, effect_streamH,valP);
+	StreamSuite->AEGP_SetStreamValue(PlugId, effect_streamH, sample_valP);
 
 	if (effect_streamH) {
-		StreamSuite->AEGP_DisposeStream(effect_streamH);
+		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
 	}
+
+	if (thisEffect_refH) {
+		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
+	}
+	/*
+	if (valP) {
+		ERR2(StreamSuite->AEGP_DisposeStreamValue(valP));
+	}*/
 
 	return err;
 }
@@ -543,7 +567,7 @@ PopDialog (
     
     
 	PF_Handle		arbH = NULL;
-	PF_Handle		arbOutH = NULL;
+	PF_Handle		*arbOutH = NULL;
 	m_ArbData		*arbInP = NULL;
     m_ArbData		*arbOutP= NULL;
 	m_ArbData		*tempPointer = NULL;
@@ -631,9 +655,9 @@ PopDialog (
 			arbOutP->alphaExAcP = tempPointer->alphaExAcP;
 
 			*arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
-			AEGP_StreamValue2   *valOutP;
-			valOutP->val.arbH = arbOutH;
-			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, valOutP));
+			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, arbOutH));
+			PF_UNLOCK_HANDLE(arbOutH);
+
     }
 	
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
@@ -1029,7 +1053,7 @@ EntryPointFunc (
                 
                 
             case PF_Cmd_DO_DIALOG:
-                err = PopDialog(in_data,out_data,params,output);
+                    err = PopDialog(in_data,out_data,params,output);
                 break;
 
 				
