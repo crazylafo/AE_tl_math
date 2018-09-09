@@ -500,6 +500,7 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	AEGP_StreamValue2	val;
 	AEGP_StreamValue2	*sample_valP = &val;
 	
+	val.val.arbH = ArbH;
 	const A_Time currT = { 0,100 };
 
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
@@ -567,7 +568,7 @@ PopDialog (
     
     
 	PF_Handle		arbH = NULL;
-	PF_Handle		*arbOutH = NULL;
+	PF_Handle		arbOutH = NULL;
 	m_ArbData		*arbInP = NULL;
     m_ArbData		*arbOutP= NULL;
 	m_ArbData		*tempPointer = NULL;
@@ -624,12 +625,12 @@ PopDialog (
     w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\
     var result = '';\
     w.grp.btnGrp.Ok.onClick = function(){\
-        var arrayExpr =w.grp.redC.redet.text;\
+        var arrayExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text ;\
         w.close();\
         result = arrayExpr;\
     }\
     w.grp.btnGrp.Cancel.onClick = function(){\
-        var ret = parseInt(0);\
+        var ret ='rfromJS'+redExpr+'gfromJS'+GreenExpr+'bfromJS'+BlueExpr+'afromJS'+AlphaExpr ;\
         w.close();\
         result = ret;\
     }\
@@ -648,14 +649,21 @@ PopDialog (
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
     
     if  (resultAC){
+			arbOutP = reinterpret_cast<m_ArbData*>(arbInP);
 			//set result per channel
-			arbOutP->redExAcP =std::string(resultAC);
-			arbOutP->greenExAcP = tempPointer->greenExAcP;
-			arbOutP->blueExAcP = tempPointer->blueExAcP;
-			arbOutP->alphaExAcP = tempPointer->alphaExAcP;
+			std::string resultStr = resultAC;
+			std::size_t redPos = resultStr.find("rfromJS");
+			std::size_t greenPos = resultStr.find("gfromJS");
+			std::size_t bluePos = resultStr.find("bfromJS");
+			std::size_t alphaPos = resultStr.find("afromJS");
+ 			arbOutP->redExAcP = resultStr.substr(redPos+7, greenPos -redPos-7);
+			arbOutP->greenExAcP = resultStr.substr(greenPos+7, bluePos-greenPos-7);
+			arbOutP->blueExAcP = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
+			arbOutP->alphaExAcP = resultStr.substr(alphaPos+7);
 
-			*arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
-			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, arbOutH));
+
+			arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
+			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
 			PF_UNLOCK_HANDLE(arbOutH);
 
     }
