@@ -625,9 +625,9 @@ PopDialog (
     w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\
     var result = '';\
     w.grp.btnGrp.Ok.onClick = function(){\
-        var arrayExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text ;\
+        var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text ;\
         w.close();\
-        result = arrayExpr;\
+        result = strExpr;\
     }\
     w.grp.btnGrp.Cancel.onClick = function(){\
         var ret ='rfromJS'+redExpr+'gfromJS'+GreenExpr+'bfromJS'+BlueExpr+'afromJS'+AlphaExpr ;\
