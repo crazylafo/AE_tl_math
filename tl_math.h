@@ -63,32 +63,17 @@ typedef exprtk::parser<PF_FpLong>             parser_t;
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
-    std::string redExAcP;
-    std::string greenExAcP;
-    std::string blueExAcP;
-    std::string alphaExAcP;
+    A_char *redExAcP;
+	A_char *greenExAcP;
+	A_char *blueExAcP;
+	A_char *alphaExAcP;
 } m_ArbData;
 
 typedef struct {
     AEGP_PluginID	my_id;
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
-typedef struct {
-	A_Boolean	flatB;
-    A_char redExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-    A_char   greenExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-    A_char  blueExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-    A_char  alphaExAc[PF_MAX_EFFECT_MSG_LEN + 1];
-} Flat_Seq_Data;
 
-typedef struct {
-    A_Boolean	flatB;
-    std::string redExAcP;
-    std::string greenExAcP;
-    std::string blueExAcP;
-    std::string alphaExAcP;
-    A_Boolean initB ;
-} Unflat_Seq_Data;
 
 /* Parameter defaults */
 

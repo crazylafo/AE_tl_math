@@ -187,224 +187,6 @@ ParamsSetup (
 
 
 static PF_Err
-SequenceSetup (
-               PF_InData		*in_data,
-               PF_OutData		*out_data)
-{
-    PF_Err err = PF_Err_NONE;
-    AEGP_SuiteHandler suites(in_data->pica_basicP);
-    
-
-    if (!err){
-        PF_Handle	seq_dataH =	suites.HandleSuite1()->host_new_handle(sizeof(Unflat_Seq_Data));
-        
-        if (seq_dataH){
-           Unflat_Seq_Data	*seqP = reinterpret_cast<Unflat_Seq_Data*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-            if (seqP){
-				AEFX_CLR_STRUCT(*seqP);
-				seqP->flatB = FALSE;
-                seqP->redExAcP = STR(StrID_Default_expr);
-                seqP->greenExAcP =STR(StrID_Default_expr);
-                seqP->blueExAcP =STR(StrID_Default_expr);
-                seqP->alphaExAcP =STR(StrID_Default_expr);
-                seqP->initB = TRUE;
-                
-
-                out_data->sequence_data = seq_dataH;
-                suites.HandleSuite1()->host_unlock_handle(seq_dataH);
-            }
-            
-        } else {	// whoa, we couldn't allocate sequence data; bail!
-            err = PF_Err_OUT_OF_MEMORY;
-        }
-    }
-    
-    return err;
-}
-
-static PF_Err
-SequenceSetdown (
-                 PF_InData		*in_data,
-                 PF_OutData		*out_data)
-{
-    PF_Err err = PF_Err_NONE;
-     AEGP_SuiteHandler suites(in_data->pica_basicP);
-    
-    if (in_data->sequence_data){
-        Unflat_Seq_Data	*seqP = reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
-        if (seqP->flatB){
-            seqP->redExAcP.clear();
-            seqP->greenExAcP.clear();
-            seqP->blueExAcP.clear();
-            seqP->alphaExAcP.clear();
-        }
-       
-        suites.HandleSuite1()->host_dispose_handle(in_data->sequence_data);
-    }
-    return err;
-}
-
-static PF_Err
-SequenceFlatten(
-                PF_InData		*in_data,
-                PF_OutData		*out_data)
-{
-    PF_Err err = PF_Err_NONE;
-    AEGP_SuiteHandler suites(in_data->pica_basicP);
-    
-    // Make a flat copy of whatever is in the unflat seq data handed to us.
-    
-    if (in_data->sequence_data){
-        Unflat_Seq_Data* unflat_seq_dataP = reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
-        
-        if (unflat_seq_dataP){
-            PF_Handle flat_seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(Flat_Seq_Data));
-            
-            if (flat_seq_dataH){
-                Flat_Seq_Data*	flat_seq_dataP = reinterpret_cast<Flat_Seq_Data*>(suites.HandleSuite1()->host_lock_handle(flat_seq_dataH));
-                
-                if (flat_seq_dataP){
-                    AEFX_CLR_STRUCT(*flat_seq_dataP);
-                    flat_seq_dataP->flatB		= TRUE;
-                    
-                    
-                    #ifdef AE_OS_WIN
-                    strncpy_s(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    #else
-                    strncpy(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    #endif
-                    
-                    // In SequenceSetdown we toss out the unflat data
-                    unflat_seq_dataP->redExAcP.clear();
-                    unflat_seq_dataP->greenExAcP.clear();
-                    unflat_seq_dataP->blueExAcP.clear();
-                    unflat_seq_dataP->alphaExAcP.clear();
-                    suites.HandleSuite1()->host_dispose_handle(in_data->sequence_data);
-                    
-                    out_data->sequence_data = flat_seq_dataH;
-                    suites.HandleSuite1()->host_unlock_handle(flat_seq_dataH);
-                }
-            } else {
-                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-            }
-        }
-    } else {
-        err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-    }
-    return err;
-}
-
-static PF_Err
-GetFlattenedSequenceData(
-                         PF_InData		*in_data,
-                         PF_OutData		*out_data)
-{
-    PF_Err err = PF_Err_NONE;
-    AEGP_SuiteHandler suites(in_data->pica_basicP);
-    
-    // Make a flat copy of whatever is in the unflat seq data handed to us.
-    
-    if (in_data->sequence_data){
-        Unflat_Seq_Data* unflat_seq_dataP = reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
-        
-        if (unflat_seq_dataP){
-            PF_Handle flat_seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(Flat_Seq_Data));
-            
-            if (flat_seq_dataH){
-                Flat_Seq_Data*	flat_seq_dataP = reinterpret_cast<Flat_Seq_Data*>(suites.HandleSuite1()->host_lock_handle(flat_seq_dataH));
-                
-                if (flat_seq_dataP){
-                    AEFX_CLR_STRUCT(*flat_seq_dataP);
-                    flat_seq_dataP->flatB		= TRUE;
-
-                    
-                    
-                    #ifdef AE_OS_WIN
-
-                    strncpy_s(flat_seq_dataP->alphaExAc, unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy_s(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    #else
-                    strncpy(flat_seq_dataP->alphaExAc ,unflat_seq_dataP->alphaExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->redExAc,   unflat_seq_dataP->redExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->greenExAc , unflat_seq_dataP->greenExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    strncpy(flat_seq_dataP->blueExAc , unflat_seq_dataP->blueExAcP.c_str(), PF_MAX_EFFECT_MSG_LEN);
-                    #endif
-                    
-                    // The whole point of this function is that we don't dispose of the unflat data!
-                    // delete [] unflat_seq_dataP->stringP;
-                    out_data->sequence_data = flat_seq_dataH;
-                    suites.HandleSuite1()->host_unlock_handle(flat_seq_dataH);
-                }
-            } else {
-                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-            }
-        }
-    } else {
-        err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-    }
-    return err;
-}
-
-static PF_Err
-SequenceResetup (
-                 PF_InData		*in_data,
-                 PF_OutData		*out_data)
-{
-    PF_Err err = PF_Err_NONE;
-    AEGP_SuiteHandler suites(in_data->pica_basicP);
-    
-    // We got here because we're either opening a project w/saved (flat) sequence data,
-    // or we've just been asked to flatten our sequence data (for a save) and now
-    // we're blowing it back up.
-    
-    if (in_data->sequence_data){
-        Flat_Seq_Data*	flatP = reinterpret_cast<Flat_Seq_Data*>(DH(in_data->sequence_data));
-        
-        if (flatP && flatP->flatB){
-            PF_Handle unflat_seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(Unflat_Seq_Data));
-            
-            if (unflat_seq_dataH){
-                Unflat_Seq_Data* unflatP = reinterpret_cast<Unflat_Seq_Data*>(suites.HandleSuite1()->host_lock_handle(unflat_seq_dataH));
-                
-                if (unflatP){
-                    AEFX_CLR_STRUCT(*unflatP);
-
-                    unflatP->flatB		= FALSE;
-                    unflatP->redExAcP = flatP->redExAc;
-                    unflatP->greenExAcP =flatP->greenExAc;
-                    unflatP->blueExAcP = flatP->blueExAc;
-                    unflatP->alphaExAcP = flatP->alphaExAc;
-                    
-                
-                        // if it all went well, set the sequence data to our new, inflated seq data.
-                        out_data->sequence_data = unflat_seq_dataH;
-                    } else {
-                        err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-                    }
-                    suites.HandleSuite1()->host_unlock_handle(unflat_seq_dataH);
-                }
-            }
-		    else {
-				out_data->sequence_data = in_data->sequence_data;
-		    }
-
-    }
-	else {
-		err = SequenceSetup(in_data, out_data);
-	}
-    return err;
-}
-
-
-static PF_Err
 MySimpleGainFunc16 (
 	void		*refcon, 
 	A_long		xL, 
@@ -472,16 +254,17 @@ AEGP_GetParamStreamValue(PF_InData		*in_data,
 	StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, sample_valP);
 	
 	*arbH = reinterpret_cast<PF_Handle>(val.val.arbH);
+	
+	if (sample_valP) {
+	ERR2(StreamSuite->AEGP_DisposeStreamValue(sample_valP));
+	}
 	if (thisEffect_refH) {
 		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
 	}
 	if (effect_streamH) {
 		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
 	}
-	/*
-	if (sample_valP) {
-		ERR2(StreamSuite->AEGP_DisposeStreamValue(sample_valP));
-	}*/
+	
 	return err;
 }
 
@@ -501,7 +284,6 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	AEGP_StreamValue2	*sample_valP = &val;
 	
 	val.val.arbH = ArbH;
-	const A_Time currT = { 0,100 };
 
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
@@ -527,18 +309,16 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
 	StreamSuite->AEGP_SetStreamValue(PlugId, effect_streamH, sample_valP);
 
-	if (effect_streamH) {
-		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
+	
+	if (sample_valP) {
+	ERR2(StreamSuite->AEGP_DisposeStreamValue(sample_valP));
 	}
-
 	if (thisEffect_refH) {
 		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
 	}
-	/*
-	if (valP) {
-		ERR2(StreamSuite->AEGP_DisposeStreamValue(valP));
-	}*/
-
+	if (effect_streamH) {
+		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
+	}
 	return err;
 }
 
@@ -554,7 +334,6 @@ PopDialog (
     PF_Err err = PF_Err_NONE;
     AEGP_SuiteHandler	suites(in_data->pica_basicP);
     my_global_dataP		globP				= reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-	Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(out_data->sequence_data));
 
     AEGP_MemHandle     resultMemH          =     NULL;
     A_char *resultAC =     NULL;
@@ -572,18 +351,32 @@ PopDialog (
 	m_ArbData		*arbInP = NULL;
     m_ArbData		*arbOutP= NULL;
 	m_ArbData		*tempPointer = NULL;
+    
 	ERR(AEGP_GetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbH));
     if (!err){
         arbInP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
         if (arbInP){
             tempPointer = reinterpret_cast<m_ArbData*>(arbInP);
-            tempRedS.append(tempPointer->redExAcP.c_str());
-            tempGreenS.append(tempPointer->greenExAcP.c_str());
-            tempBlueS.append(tempPointer->blueExAcP.c_str());
-            tempAlphaS.append(tempPointer->alphaExAcP.c_str());
+			if (!err) {
+				tempRedS.append(tempPointer->redExAcP);
+				tempGreenS.append(tempPointer->greenExAcP);
+				tempBlueS.append(tempPointer->blueExAcP);
+				tempAlphaS.append(tempPointer->alphaExAcP);
+			}
+			else {
+				tempRedS.append("1");
+				tempGreenS.append("1");
+				tempBlueS.append("1");
+				tempAlphaS.append("1");
+			}
         }
 		PF_UNLOCK_HANDLE(arbH);
-    }
+    } else{
+        tempRedS.append("1");
+        tempGreenS.append("1");
+        tempBlueS.append("1");
+        tempAlphaS.append("1");
+		}
 
     tempRedS.append("'");
     tempGreenS.append("'");
@@ -641,7 +434,6 @@ PopDialog (
     expr(%s,%s,%s,%s);";
 
     sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str() , tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str() );
-    seqP.initB = TRUE;
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 
     //AEGP SETSTREAMVALUR TO ARB
@@ -656,15 +448,24 @@ PopDialog (
 			std::size_t greenPos = resultStr.find("gfromJS");
 			std::size_t bluePos = resultStr.find("bfromJS");
 			std::size_t alphaPos = resultStr.find("afromJS");
- 			arbOutP->redExAcP = resultStr.substr(redPos+7, greenPos -redPos-7);
-			arbOutP->greenExAcP = resultStr.substr(greenPos+7, bluePos-greenPos-7);
-			arbOutP->blueExAcP = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
-			arbOutP->alphaExAcP = resultStr.substr(alphaPos+7);
+			std::string outredstr = resultStr.substr(redPos + 7, greenPos - redPos - 7);
+			std::string outgreenstr = resultStr.substr(greenPos + 7, bluePos - greenPos - 7);
+			std::string outbluestr = resultStr.substr(bluePos + 7, alphaPos - bluePos - 7);
+			std::string outalphastr = resultStr.substr(alphaPos + 7);
+        
+        arbOutP->redExAcP = new char[outredstr.length()+1];
+        arbOutP->greenExAcP = new char[outgreenstr.length()+1];
+        arbOutP->blueExAcP = new char[outbluestr.length()+1];
+        arbOutP->alphaExAcP = new char[outalphastr.length()+1];
 
+		suites.ANSICallbacksSuite1()->strcpy(arbOutP->redExAcP, outredstr.c_str());
+		suites.ANSICallbacksSuite1()->strcpy(arbOutP->greenExAcP, outgreenstr.c_str());
+		suites.ANSICallbacksSuite1()->strcpy(arbOutP->blueExAcP, outbluestr.c_str());
+		suites.ANSICallbacksSuite1()->strcpy(arbOutP->alphaExAcP, outalphastr.c_str());
 
-			arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
-			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
-			PF_UNLOCK_HANDLE(arbOutH);
+        arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
+        ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
+        PF_UNLOCK_HANDLE(arbOutH);
 
     }
 	
@@ -686,8 +487,6 @@ Render (
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
 	
-    //Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
-	/*	Put interesting code here. */
 	MathInfo			miP;
 	AEFX_CLR_STRUCT(miP);
 	A_long				linesL	= 0;
@@ -730,10 +529,10 @@ Render (
         arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
         if (arbP){
             m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-            expression_string_red = (tempPointer->redExAcP);
-            expression_string_green = tempPointer->greenExAcP;
-            expression_string_blue = tempPointer->blueExAcP;
-            expression_string_alpha  = tempPointer->alphaExAcP;
+            expression_string_red = std::string(tempPointer->redExAcP);
+            expression_string_green = std::string(tempPointer->greenExAcP);
+            expression_string_blue = std::string(tempPointer->blueExAcP);
+            expression_string_alpha  = std::string(tempPointer->alphaExAcP);
             }
         }
     
@@ -1030,23 +829,6 @@ EntryPointFunc (
             case PF_Cmd_GLOBAL_SETDOWN:
                 err = GlobalSetdown(in_data);
                 break;
-				
-            case PF_Cmd_SEQUENCE_SETUP:
-                err = SequenceSetup(in_data,out_data);
-                break;
-            case PF_Cmd_SEQUENCE_SETDOWN:
-                err = SequenceSetdown(in_data,out_data);
-                break;
-            case PF_Cmd_GET_FLATTENED_SEQUENCE_DATA:
-                err = GetFlattenedSequenceData(in_data,out_data);
-                break;
-            case PF_Cmd_SEQUENCE_FLATTEN:
-                err = SequenceFlatten(in_data,out_data);
-                break;
-            case PF_Cmd_SEQUENCE_RESETUP:
-                err = SequenceResetup(in_data,out_data);
-                break;
-
                 
             case PF_Cmd_PARAMS_SETUP:
                 
