@@ -10,44 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "558015487.299692"
+            timestampString = "558382173.8971111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "212"
-            endingLineNumber = "212"
-            landmarkName = "SequenceSetup ( PF_InData *in_data, PF_OutData *out_data)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "558015487.299692"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "356"
-            endingLineNumber = "356"
-            landmarkName = "SequenceResetup ( PF_InData *in_data, PF_OutData *out_data)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "558032298.8938791"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "624"
-            endingLineNumber = "624"
-            landmarkName = "Render ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP )"
+            startingLineNumber = "638"
+            endingLineNumber = "638"
+            landmarkName = "PopDialog ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output )"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -90,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "558033042.943606"
+            timestampString = "558382173.8971111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "695"
-            endingLineNumber = "695"
+            startingLineNumber = "709"
+            endingLineNumber = "709"
             landmarkName = "Render ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP )"
             landmarkType = "7">
          </BreakpointContent>
@@ -106,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "558033042.943606"
+            timestampString = "558382173.8971111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "710"
-            endingLineNumber = "710"
+            startingLineNumber = "724"
+            endingLineNumber = "724"
             landmarkName = "Render ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP )"
             landmarkType = "7">
          </BreakpointContent>
@@ -122,43 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "558033042.943606"
+            timestampString = "558382173.8971111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "711"
-            endingLineNumber = "711"
-            landmarkName = "Render ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP )"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "558031548.717723"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "483"
-            endingLineNumber = "483"
-            landmarkName = "PopDialog ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output )"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "558033042.943606"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "654"
-            endingLineNumber = "654"
+            startingLineNumber = "725"
+            endingLineNumber = "725"
             landmarkName = "Render ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP )"
             landmarkType = "7">
          </BreakpointContent>
@@ -170,45 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "558032889.6555721"
+            timestampString = "558382173.8971111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "651"
-            endingLineNumber = "651"
-            landmarkName = "Render ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP )"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "558032935.411235"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "650"
-            endingLineNumber = "650"
-            landmarkName = "Render ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP )"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "558035007.8558429"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "480"
-            endingLineNumber = "480"
-            landmarkName = "PopDialog ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output )"
-            landmarkType = "7">
+            startingLineNumber = "668"
+            endingLineNumber = "668">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

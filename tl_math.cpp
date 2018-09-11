@@ -186,6 +186,7 @@ ParamsSetup (
 
 
 
+
 static PF_Err
 MySimpleGainFunc16 (
 	void		*refcon, 
@@ -212,63 +213,6 @@ MySimpleGainFunc16 (
 
 
 static PF_Err
-AEGP_GetParamStreamValue(PF_InData		*in_data,
-					PF_OutData		*out_data,
-					AEGP_PluginID   PlugId,
-					PF_ParamIndex	param_index,
-					PF_Handle		*arbH
-)
-{
-	PF_Err err = PF_Err_NONE,
-		err2 = PF_Err_NONE;
-	AEGP_LayerH		layerH;
-	AEGP_StreamRefH effect_streamH = NULL;
-	AEGP_EffectRefH   thisEffect_refH = NULL;
-	AEGP_StreamValue2	val;
-	AEGP_StreamValue2	*sample_valP = &val;
-	
-	const A_Time currT = { 0,100 };
-	
-	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
-		kAEGPPFInterfaceSuite,
-		kAEGPPFInterfaceSuiteVersion1,
-		out_data);
-	AEFX_SuiteScoper<AEGP_LayerSuite8> layerSuite = AEFX_SuiteScoper<AEGP_LayerSuite8>(in_data,
-		kAEGPLayerSuite,
-		kAEGPLayerSuiteVersion8,
-		out_data);
-
-	AEFX_SuiteScoper<AEGP_StreamSuite4> StreamSuite = AEFX_SuiteScoper<AEGP_StreamSuite4>(in_data,
-		kAEGPStreamSuite,
-		kAEGPStreamSuiteVersion4,
-		out_data);
-	AEFX_SuiteScoper<AEGP_EffectSuite4> EffectSuite = AEFX_SuiteScoper<AEGP_EffectSuite4>(in_data,
-		kAEGPEffectSuite,
-		kAEGPEffectSuiteVersion4,
-		out_data);
-
-
-	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
-	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
-	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
-	StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, sample_valP);
-	
-	*arbH = reinterpret_cast<PF_Handle>(val.val.arbH);
-	
-	if (sample_valP) {
-	ERR2(StreamSuite->AEGP_DisposeStreamValue(sample_valP));
-	}
-	if (thisEffect_refH) {
-		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
-	}
-	if (effect_streamH) {
-		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
-	}
-	
-	return err;
-}
-
-static PF_Err
 AEGP_SetParamStreamValue(PF_InData			*in_data,
 						PF_OutData			*out_data,
 						AEGP_PluginID		PlugId,
@@ -284,6 +228,7 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	AEGP_StreamValue2	*sample_valP = &val;
 	
 	val.val.arbH = ArbH;
+
 
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
@@ -308,17 +253,20 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
 	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
 	StreamSuite->AEGP_SetStreamValue(PlugId, effect_streamH, sample_valP);
+    
 
-	
-	if (sample_valP) {
-	ERR2(StreamSuite->AEGP_DisposeStreamValue(sample_valP));
-	}
-	if (thisEffect_refH) {
-		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
-	}
 	if (effect_streamH) {
 		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
 	}
+
+	if (thisEffect_refH) {
+		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
+	}
+	/*
+	if (valP) {
+		ERR2(StreamSuite->AEGP_DisposeStreamValue(valP));
+	}*/
+
 	return err;
 }
 
@@ -339,44 +287,40 @@ PopDialog (
     A_char *resultAC =     NULL;
     A_char          scriptAC[4096] = {'\0'};
     
+    //ARB
+    PF_ParamDef arb_param;
+    
     //strings to send expr to script
     std::string tempRedS ="'";
     std::string tempGreenS ="'";
     std::string tempBlueS ="'";
     std::string tempAlphaS ="'";
     
-    
-	PF_Handle		arbH = NULL;
+
 	PF_Handle		arbOutH = NULL;
 	m_ArbData		*arbInP = NULL;
     m_ArbData		*arbOutP= NULL;
-	m_ArbData		*tempPointer = NULL;
+
     
-	ERR(AEGP_GetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbH));
+    AEFX_CLR_STRUCT(arb_param);
+    
+    ERR(PF_CHECKOUT_PARAM(	in_data,
+                          MATH_ARB_DATA,
+                          in_data->current_time,
+                          in_data->time_step,
+                          in_data->time_scale, 
+                          &arb_param));
+
     if (!err){
-        arbInP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+        arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
-            tempPointer = reinterpret_cast<m_ArbData*>(arbInP);
-			if (!err) {
-				tempRedS.append(tempPointer->redExAcP);
-				tempGreenS.append(tempPointer->greenExAcP);
-				tempBlueS.append(tempPointer->blueExAcP);
-				tempAlphaS.append(tempPointer->alphaExAcP);
-			}
-			else {
-				tempRedS.append("1");
-				tempGreenS.append("1");
-				tempBlueS.append("1");
-				tempAlphaS.append("1");
-			}
+            tempRedS.append(arbInP->redExAcP.c_str());
+            tempGreenS.append(arbInP->greenExAcP.c_str());
+            tempBlueS.append(arbInP->blueExAcP.c_str());
+            tempAlphaS.append(arbInP->alphaExAcP.c_str());
         }
-		PF_UNLOCK_HANDLE(arbH);
-    } else{
-        tempRedS.append("1");
-        tempGreenS.append("1");
-        tempBlueS.append("1");
-        tempAlphaS.append("1");
-		}
+       
+    }
 
     tempRedS.append("'");
     tempGreenS.append("'");
@@ -441,34 +385,23 @@ PopDialog (
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
     
     if  (resultAC){
-			arbOutP = reinterpret_cast<m_ArbData*>(arbInP);
+			arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
 			//set result per channel
 			std::string resultStr = resultAC;
 			std::size_t redPos = resultStr.find("rfromJS");
 			std::size_t greenPos = resultStr.find("gfromJS");
 			std::size_t bluePos = resultStr.find("bfromJS");
 			std::size_t alphaPos = resultStr.find("afromJS");
-			std::string outredstr = resultStr.substr(redPos + 7, greenPos - redPos - 7);
-			std::string outgreenstr = resultStr.substr(greenPos + 7, bluePos - greenPos - 7);
-			std::string outbluestr = resultStr.substr(bluePos + 7, alphaPos - bluePos - 7);
-			std::string outalphastr = resultStr.substr(alphaPos + 7);
-        
-        arbOutP->redExAcP = new char[outredstr.length()+1];
-        arbOutP->greenExAcP = new char[outgreenstr.length()+1];
-        arbOutP->blueExAcP = new char[outbluestr.length()+1];
-        arbOutP->alphaExAcP = new char[outalphastr.length()+1];
-
-		suites.ANSICallbacksSuite1()->strcpy(arbOutP->redExAcP, outredstr.c_str());
-		suites.ANSICallbacksSuite1()->strcpy(arbOutP->greenExAcP, outgreenstr.c_str());
-		suites.ANSICallbacksSuite1()->strcpy(arbOutP->blueExAcP, outbluestr.c_str());
-		suites.ANSICallbacksSuite1()->strcpy(arbOutP->alphaExAcP, outalphastr.c_str());
-
-        arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
-        ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
-        PF_UNLOCK_HANDLE(arbOutH);
+ 			arbOutP->redExAcP = resultStr.substr(redPos+7, greenPos -redPos-7);
+			arbOutP->greenExAcP = resultStr.substr(greenPos+7, bluePos-greenPos-7);
+			arbOutP->blueExAcP = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
+			arbOutP->alphaExAcP = resultStr.substr(alphaPos+7);
+			arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
+			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
+			PF_UNLOCK_HANDLE(arbOutH);
 
     }
-	
+    ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
     out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
                             PF_OutFlag_FORCE_RERENDER;
@@ -487,6 +420,8 @@ Render (
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
 	
+    //Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
+	/*	Put interesting code here. */
 	MathInfo			miP;
 	AEFX_CLR_STRUCT(miP);
 	A_long				linesL	= 0;
@@ -529,10 +464,10 @@ Render (
         arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
         if (arbP){
             m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-            expression_string_red = std::string(tempPointer->redExAcP);
-            expression_string_green = std::string(tempPointer->greenExAcP);
-            expression_string_blue = std::string(tempPointer->blueExAcP);
-            expression_string_alpha  = std::string(tempPointer->alphaExAcP);
+            expression_string_red = (tempPointer->redExAcP);
+            expression_string_green = tempPointer->greenExAcP;
+            expression_string_blue = tempPointer->blueExAcP;
+            expression_string_alpha  = tempPointer->alphaExAcP;
             }
         }
     

@@ -20,15 +20,12 @@ CreateDefaultArb(
 			err = PF_Err_OUT_OF_MEMORY;
 		} else {
 			AEFX_CLR_STRUCT(*arbP);
-			arbP->redExAcP = new A_char[strlen(STR(StrID_Default_expr)) + 1];
-            arbP->greenExAcP= new A_char[strlen(STR(StrID_Default_expr)) + 1];
-            arbP->blueExAcP = new A_char[strlen(STR(StrID_Default_expr)) + 1];
-            arbP->alphaExAcP = new A_char[strlen(STR(StrID_Default_expr)) + 1];
 
-			suites.ANSICallbacksSuite1()->strcpy(arbP->redExAcP, STR(StrID_Default_expr));
-			suites.ANSICallbacksSuite1()->strcpy(arbP->greenExAcP, STR(StrID_Default_expr));
-			suites.ANSICallbacksSuite1()->strcpy(arbP->blueExAcP, STR(StrID_Default_expr));
-			suites.ANSICallbacksSuite1()->strcpy(arbP->alphaExAcP, STR(StrID_Default_expr));
+			arbP->redExAcP = STR(StrID_Default_expr);
+            arbP->greenExAcP= STR(StrID_Default_expr);
+            arbP->blueExAcP = STR(StrID_Default_expr);
+            arbP->alphaExAcP = STR(StrID_Default_expr);
+
 			*dephault = arbH;
 		}
 		suites.HandleSuite1()->host_unlock_handle(arbH);
@@ -86,7 +83,7 @@ Arb_Interpolate(
 					*l_arbP		= NULL,
 					*r_arbP		= NULL;
 
-    char			*headP		= NULL,
+    std::string 	*headP		= NULL,
 					*lpixP		= NULL,
 					*rpixP		= NULL;
 
@@ -97,9 +94,9 @@ Arb_Interpolate(
 	l_arbP		= reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(*l_arbPH));
 	r_arbP		= reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(*r_arbPH));
 
-	headP	= reinterpret_cast<char*>(int_arbP);
-	lpixP	= reinterpret_cast<char*>(l_arbP);
-	rpixP	= reinterpret_cast<char*>(r_arbP);
+	headP	= reinterpret_cast<std::string*>(int_arbP);
+	lpixP	= reinterpret_cast<std::string*>(l_arbP);
+	rpixP	= reinterpret_cast<std::string*>(r_arbP);
 
 
 	suites.HandleSuite1()->host_unlock_handle(*intrp_arbP);
@@ -121,6 +118,17 @@ Arb_Compare(
 	PF_Handle	a_handle = *a_arbP,
 				b_handle = *b_arbP;
 
+	PF_FpShort		total_a_rL	= 0,
+					total_a_gL	= 0,
+					total_a_bL	= 0,
+                    total_a_aL	= 0,
+					total_aL	= 0,
+				
+					total_b_rL	= 0,
+					total_b_gL	= 0,
+					total_b_bL	= 0,
+                    total_b_aL	= 0,
+					total_bL	= 0;
 
 	*resultP = PF_ArbCompare_EQUAL;
 
@@ -136,9 +144,31 @@ Arb_Compare(
 		} else {
             *resultP = PF_ArbCompare_EQUAL;
 
+
+            total_a_rL	= first_arbP->redExAcP.length(),
+            total_a_gL	= first_arbP->greenExAcP.length(),
+            total_a_bL	= first_arbP->blueExAcP.length(),
+            total_a_aL	= first_arbP->alphaExAcP.length(),
+            
+            total_b_rL	= second_arbP->redExAcP.length(),
+            total_b_gL	= second_arbP->greenExAcP.length(),
+            total_b_bL	= second_arbP->blueExAcP.length(),
+            total_b_aL	= second_arbP->alphaExAcP.length(),
+
+            
+			total_aL = total_a_rL + total_a_gL + total_a_bL;
+			total_bL = total_b_rL + total_b_gL + total_b_bL; 
+
+			if(total_aL > total_bL)	{
+				*resultP = PF_ArbCompare_MORE;
+			} else if(total_aL < total_bL){
+				*resultP = PF_ArbCompare_LESS;
+			} else {
+				*resultP = PF_ArbCompare_EQUAL;
 			}
 			PF_UNLOCK_HANDLE(a_handle);
 			PF_UNLOCK_HANDLE(b_handle);
+		}
 	}
 	return err;
 }
