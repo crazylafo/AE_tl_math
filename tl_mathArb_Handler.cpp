@@ -21,7 +21,10 @@ CreateDefaultArb(
 		} else {
 			AEFX_CLR_STRUCT(*arbP);
             #ifdef AE_OS_WIN
-                strncpy_s(flat_seq_dataP->string, unflat_seq_dataP->stringP, PF_MAX_EFFECT_MSG_LEN);
+			strncpy_s(arbP->redExAc, STR(StrID_Default_expr), 4096);
+			strncpy_s(arbP->greenExAc, STR(StrID_Default_expr), 4096);
+			strncpy_s(arbP->blueExAc, STR(StrID_Default_expr), 4096);
+			strncpy_s(arbP->alphaExAc, STR(StrID_Default_expr), 4096);
             #else
                 strncpy(arbP->redExAc ,STR(StrID_Default_expr), 4096);
                 strncpy(arbP->greenExAc ,STR(StrID_Default_expr), 4096);
@@ -59,7 +62,11 @@ Arb_Copy(
 				if (!dst_arbP) {
 					err = PF_Err_OUT_OF_MEMORY;
 				} else 	{
+					#ifdef AE_OS_WIN
+					memcpy_s(dst_arbP,  sizeof(m_ArbData), src_arbP, sizeof(m_ArbData));
+					#else
 					memcpy(dst_arbP,src_arbP,sizeof(m_ArbData));
+					#endif
 					suites.HandleSuite1()->host_unlock_handle(destH);
 				}
 			}
@@ -85,7 +92,7 @@ Arb_Interpolate(
 					*l_arbP		= NULL,
 					*r_arbP		= NULL;
 
-    std::string 	*headP		= NULL,
+    A_char			*headP		= NULL,
 					*lpixP		= NULL,
 					*rpixP		= NULL;
 
@@ -96,9 +103,9 @@ Arb_Interpolate(
 	l_arbP		= reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(*l_arbPH));
 	r_arbP		= reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(*r_arbPH));
 
-	headP	= reinterpret_cast<std::string*>(int_arbP);
-	lpixP	= reinterpret_cast<std::string*>(l_arbP);
-	rpixP	= reinterpret_cast<std::string*>(r_arbP);
+	headP	= reinterpret_cast<A_char*>(int_arbP);
+	lpixP	= reinterpret_cast<A_char*>(l_arbP);
+	rpixP	= reinterpret_cast<A_char*>(r_arbP);
 
 
 	suites.HandleSuite1()->host_unlock_handle(*intrp_arbP);
@@ -120,7 +127,7 @@ Arb_Compare(
 	PF_Handle	a_handle = *a_arbP,
 				b_handle = *b_arbP;
 
-	PF_FpShort		total_a_rL	= 0,
+	size_t	total_a_rL	= 0,
 					total_a_gL	= 0,
 					total_a_bL	= 0,
                     total_a_aL	= 0,
@@ -228,4 +235,33 @@ Arb_Print(
 	return err;
 }
 
+
+PF_Err
+AEFX_AppendText(
+	A_char					*srcAC,				/* >> */
+	const A_u_long			dest_sizeLu,		/* >> */
+	A_char					*destAC,			/* <> */
+	A_u_long				*current_indexPLu)	/* <> */
+{
+	PF_Err			err = PF_Err_NONE;
+
+	A_u_long		new_strlenLu = strlen(srcAC) + *current_indexPLu;
+
+
+	if (new_strlenLu <= dest_sizeLu) {
+		destAC[*current_indexPLu] = 0x00;
+
+		#ifdef AE_OS_WIN
+		strncat_s(destAC, dest_sizeLu, srcAC, strlen(srcAC));
+		#else
+		strncat(destAC, srcAC, strlen(srcAC));
+		#endif
+		*current_indexPLu = new_strlenLu;
+	}
+	else {
+		err = AEFX_ParseError_APPEND_ERROR;
+	}
+
+	return err;
+}
 
