@@ -314,10 +314,10 @@ PopDialog (
     if (!err){
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
-            tempRedS.append(arbInP->redExAcP.c_str());
-            tempGreenS.append(arbInP->greenExAcP.c_str());
-            tempBlueS.append(arbInP->blueExAcP.c_str());
-            tempAlphaS.append(arbInP->alphaExAcP.c_str());
+            tempRedS.append(arbInP->redExAc);
+            tempGreenS.append(arbInP->greenExAc);
+            tempBlueS.append(arbInP->blueExAc);
+            tempAlphaS.append(arbInP->alphaExAc);
         }
        
     }
@@ -367,7 +367,7 @@ PopDialog (
         result = strExpr;\
     }\
     w.grp.btnGrp.Cancel.onClick = function(){\
-        var ret ='rfromJS'+redExpr+'gfromJS'+GreenExpr+'bfromJS'+BlueExpr+'afromJS'+AlphaExpr ;\
+        var ret ='rfromJS'+redExpr+'gfromJS'+GreenExpr+'bfromJS'+BlueExpr+'afromJS'+AlphaExpr;\
         w.close();\
         result = ret;\
     }\
@@ -392,10 +392,23 @@ PopDialog (
 			std::size_t greenPos = resultStr.find("gfromJS");
 			std::size_t bluePos = resultStr.find("bfromJS");
 			std::size_t alphaPos = resultStr.find("afromJS");
- 			arbOutP->redExAcP = resultStr.substr(redPos+7, greenPos -redPos-7);
-			arbOutP->greenExAcP = resultStr.substr(greenPos+7, bluePos-greenPos-7);
-			arbOutP->blueExAcP = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
-			arbOutP->alphaExAcP = resultStr.substr(alphaPos+7);
+        
+            std::string redResultStr =resultStr.substr(redPos+7, greenPos -redPos-7);
+            std::string greenResultStr = resultStr.substr(greenPos+7, bluePos-greenPos-7);
+            std::string blueResultStr = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
+            std::string alphaResultStr; resultStr.substr(alphaPos+7);
+        
+            #ifdef AE_OS_WIN
+            strncpy_s( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
+            strncpy_s(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
+            strncpy_s( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
+            strncpy_s( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
+            #else
+ 			strncpy( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
+            strncpy(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
+            strncpy( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
+            strncpy( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
+            #endif
 			arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
 			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
 			PF_UNLOCK_HANDLE(arbOutH);
@@ -464,10 +477,10 @@ Render (
         arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
         if (arbP){
             m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-            expression_string_red = (tempPointer->redExAcP);
-            expression_string_green = tempPointer->greenExAcP;
-            expression_string_blue = tempPointer->blueExAcP;
-            expression_string_alpha  = tempPointer->alphaExAcP;
+            expression_string_red = tempPointer->redExAc;
+            expression_string_green = tempPointer->greenExAc;
+            expression_string_blue = tempPointer->blueExAc;
+            expression_string_alpha  = tempPointer->alphaExAc;
             }
         }
     

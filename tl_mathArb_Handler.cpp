@@ -20,12 +20,14 @@ CreateDefaultArb(
 			err = PF_Err_OUT_OF_MEMORY;
 		} else {
 			AEFX_CLR_STRUCT(*arbP);
-
-			arbP->redExAcP = STR(StrID_Default_expr);
-            arbP->greenExAcP= STR(StrID_Default_expr);
-            arbP->blueExAcP = STR(StrID_Default_expr);
-            arbP->alphaExAcP = STR(StrID_Default_expr);
-
+            #ifdef AE_OS_WIN
+                strncpy_s(flat_seq_dataP->string, unflat_seq_dataP->stringP, PF_MAX_EFFECT_MSG_LEN);
+            #else
+                strncpy(arbP->redExAc ,STR(StrID_Default_expr), 4096);
+                strncpy(arbP->greenExAc ,STR(StrID_Default_expr), 4096);
+                strncpy(arbP->blueExAc ,STR(StrID_Default_expr), 4096);
+                strncpy(arbP->alphaExAc ,STR(StrID_Default_expr), 4096);
+            #endif
 			*dephault = arbH;
 		}
 		suites.HandleSuite1()->host_unlock_handle(arbH);
@@ -145,15 +147,15 @@ Arb_Compare(
             *resultP = PF_ArbCompare_EQUAL;
 
 
-            total_a_rL	= first_arbP->redExAcP.length(),
-            total_a_gL	= first_arbP->greenExAcP.length(),
-            total_a_bL	= first_arbP->blueExAcP.length(),
-            total_a_aL	= first_arbP->alphaExAcP.length(),
+            total_a_rL	= strlen(first_arbP->redExAc);
+            total_a_gL	= strlen(first_arbP->greenExAc);
+            total_a_bL	= strlen(first_arbP->blueExAc);
+            total_a_aL	= strlen(first_arbP->alphaExAc);
             
-            total_b_rL	= second_arbP->redExAcP.length(),
-            total_b_gL	= second_arbP->greenExAcP.length(),
-            total_b_bL	= second_arbP->blueExAcP.length(),
-            total_b_aL	= second_arbP->alphaExAcP.length(),
+            total_b_rL	= strlen(second_arbP->redExAc);
+            total_b_gL	= strlen(second_arbP->greenExAc);
+            total_b_bL	= strlen(second_arbP->blueExAc);
+            total_b_aL	= strlen(second_arbP->alphaExAc);
 
             
 			total_aL = total_a_rL + total_a_gL + total_a_bL;

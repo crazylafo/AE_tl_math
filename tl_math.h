@@ -63,10 +63,10 @@ typedef exprtk::parser<PF_FpLong>             parser_t;
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
-    std::string redExAcP;
-    std::string greenExAcP;
-    std::string blueExAcP;
-    std::string alphaExAcP;
+    A_char        redExAc[4096];
+    A_char  greenExAc[4094];
+    A_char  blueExAc[4096];
+    A_char  alphaExAc[4096];
 } m_ArbData;
 
 typedef struct {
