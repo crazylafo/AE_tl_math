@@ -20,11 +20,14 @@ CreateDefaultArb(
 			err = PF_Err_OUT_OF_MEMORY;
 		} else {
 			AEFX_CLR_STRUCT(*arbP);
+
             #ifdef AE_OS_WIN
+			#pragma warning (disable : 4305)
 			strncpy_s(arbP->redExAc, STR(StrID_Default_expr), 4096);
 			strncpy_s(arbP->greenExAc, STR(StrID_Default_expr), 4096);
 			strncpy_s(arbP->blueExAc, STR(StrID_Default_expr), 4096);
 			strncpy_s(arbP->alphaExAc, STR(StrID_Default_expr), 4096);
+			#pragma warning (pop)
             #else
                 strncpy(arbP->redExAc ,STR(StrID_Default_expr), 4096);
                 strncpy(arbP->greenExAc ,STR(StrID_Default_expr), 4096);
