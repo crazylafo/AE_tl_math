@@ -41,7 +41,9 @@ GlobalSetup (
 										STAGE_VERSION, 
 										BUILD_VERSION);
 
+    
 	out_data->out_flags =  PF_OutFlag_CUSTOM_UI			|
+                           PF_OutFlag_SEND_UPDATE_PARAMS_UI|
                            PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
                            PF_OutFlag_I_DO_DIALOG|
                            PF_OutFlag_PIX_INDEPENDENT|
@@ -84,7 +86,7 @@ ParamsSetup (
 
 	AEFX_CLR_STRUCT(def);
 
-	PF_ADD_FLOAT_SLIDERX(	STR(StrID_MRed_Param_Name),
+	PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTONE_Param_Name),
 							MATH_VAR_MIN,
 							MATH_VAR_MAX,
 							MATH_VAR_MIN,
@@ -93,11 +95,11 @@ ParamsSetup (
 							PF_Precision_THOUSANDTHS,
 							0,
 							0,
-							MATH_RED_VAR_DISK_ID);
+							MATH_INPONE_VAR_DISK_ID);
 
 	AEFX_CLR_STRUCT(def);
     
-    PF_ADD_FLOAT_SLIDERX(	STR(StrID_MGreen_Param_Name),
+    PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTTWO_Param_Name),
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
                          MATH_VAR_MIN,
@@ -106,11 +108,11 @@ ParamsSetup (
                          PF_Precision_THOUSANDTHS,
                          0,
                          0,
-                         MATH_GREEN_VAR_DISK_ID);
+                         MATH_INPTWO_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
-    PF_ADD_FLOAT_SLIDERX(	STR(StrID_MBlue_Param_Name),
+    PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTTHREE_Param_Name),
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
                          MATH_VAR_MIN,
@@ -119,11 +121,11 @@ ParamsSetup (
                          PF_Precision_THOUSANDTHS,
                          0,
                          0,
-                         MATH_BLUE_VAR_DISK_ID);
+                         MATH_INPTHREE_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
-    PF_ADD_FLOAT_SLIDERX(	STR( StrID_MAlpha_Param_Name),
+    PF_ADD_FLOAT_SLIDERX(	STR( StrID_INPUTFOUR_Param_Name),
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
                          MATH_VAR_MIN,
@@ -132,7 +134,7 @@ ParamsSetup (
                          PF_Precision_THOUSANDTHS,
                          0,
                          0,
-                         MATH_ALPHA_VAR_DISK_ID);
+                         MATH_INPFOUR_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
@@ -141,11 +143,11 @@ ParamsSetup (
                          out_data,
                          &def.u.arb_d.dephault));
     
-    PF_ADD_ARBITRARY2(	"data transfert",
+    PF_ADD_ARBITRARY2(	"data transfert", 
                       10,
                       10,
-                      0,
-                      PF_PUI_CONTROL | PF_PUI_DONT_ERASE_CONTROL,
+                      PF_ParamFlag_CANNOT_TIME_VARY| PF_ParamFlag_SUPERVISE,
+                      PF_PUI_NO_ECW_UI,
                       def.u.arb_d.dephault,
                       MATH_ARB_DATA,
                       ARB_REFCON);
@@ -184,9 +186,62 @@ ParamsSetup (
 	return err;
 }
 
+static PF_Err
+MakeParamCopy(
+              PF_ParamDef *actual[],	/* >> */
+              PF_ParamDef copy[])		/* << */
+{
+    for (A_short iS = 0; iS < MATH_NUM_PARAMS; ++iS)	{
+        AEFX_CLR_STRUCT(copy[iS]);	// clean params are important!
+    }
+    copy[MATH_INPUT]			=*actual[MATH_INPUT];
+    copy[MATH_INPONE_VAR]       =*actual[MATH_INPONE_VAR];
+    copy[MATH_INPTWO_VAR]       =*actual[MATH_INPTWO_VAR];
+    copy[MATH_INPTHREE_VAR]     =*actual[MATH_INPTHREE_VAR];
+    copy[MATH_INPFOUR_VAR]      =*actual[MATH_INPFOUR_VAR];
+    copy[MATH_ARB_DATA]         =*actual[MATH_ARB_DATA];
+    
+    return PF_Err_NONE;
+    
+}
 
+static PF_Err
+UpdateParameterUI(
+                  PF_InData			*in_data,
+                  PF_OutData			*out_data,
+                  PF_ParamDef			*params[],
+                  PF_LayerDef			*outputP)
+{
+    PF_Err				err					= PF_Err_NONE,
+    err2				= PF_Err_NONE;
+    my_global_dataP		globP				= reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 
+    AEGP_EffectRefH			meH				= NULL;
+    AEGP_SuiteHandler		suites(in_data->pica_basicP);
+    PF_ParamDef		param_copy[MATH_NUM_PARAMS];
+    ERR(MakeParamCopy(params, param_copy));
+    
+    AEGP_StreamRefH		ARB_DATA_streamH		= NULL;
+    
 
+    
+    ERR(suites.PFInterfaceSuite1()->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &meH));
+    ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ARB_DATA, 	&ARB_DATA_streamH));
+    ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(ARB_DATA_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, TRUE));
+    
+    if (meH){
+        ERR2(suites.EffectSuite2()->AEGP_DisposeEffect(meH));
+    }
+    if (ARB_DATA_streamH){
+        ERR2(suites.StreamSuite2()->AEGP_DisposeStream(ARB_DATA_streamH));
+    }
+    
+    if (!err){
+        out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
+    }
+
+    return err;
+}
 static PF_Err
 MySimpleGainFunc16 (
 	void		*refcon, 
@@ -226,8 +281,8 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	AEGP_EffectRefH   thisEffect_refH;
 	AEGP_StreamValue2	val;
 	AEGP_StreamValue2	*sample_valP = &val;
+	const A_Time currT = { 0,100 };
 	
-	val.val.arbH = ArbH;
 
 
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
@@ -252,8 +307,14 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
 	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
 	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
+    StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, sample_valP);
+    val.val.arbH = ArbH;
 	StreamSuite->AEGP_SetStreamValue(PlugId, effect_streamH, sample_valP);
+    StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, sample_valP);
     
+    if (sample_valP) {
+        ERR2(StreamSuite->AEGP_DisposeStreamValue(sample_valP));
+    }
 
 	if (effect_streamH) {
 		ERR2(StreamSuite->AEGP_DisposeStream(effect_streamH));
@@ -262,10 +323,6 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	if (thisEffect_refH) {
 		ERR2(EffectSuite->AEGP_DisposeEffect(thisEffect_refH));
 	}
-	/*
-	if (valP) {
-		ERR2(StreamSuite->AEGP_DisposeStreamValue(valP));
-	}*/
 
 	return err;
 }
@@ -303,7 +360,6 @@ PopDialog (
 
     
     AEFX_CLR_STRUCT(arb_param);
-    
     ERR(PF_CHECKOUT_PARAM(	in_data,
                           MATH_ARB_DATA,
                           in_data->current_time,
@@ -312,6 +368,7 @@ PopDialog (
                           &arb_param));
 
     if (!err){
+        AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
             tempRedS.append(arbInP->redExAc);
@@ -383,8 +440,9 @@ PopDialog (
     //AEGP SETSTREAMVALUR TO ARB
     AEFX_CLR_STRUCT(resultAC);
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
-    
+
     if  (resultAC){
+            AEFX_CLR_STRUCT(arbOutP);
 			arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
 			//set result per channel
 			std::string resultStr = resultAC;
@@ -412,8 +470,8 @@ PopDialog (
 			arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
 			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
 			PF_UNLOCK_HANDLE(arbOutH);
+     }
 
-    }
     ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
     out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
@@ -445,10 +503,10 @@ Render (
     m_ArbData		*arbP			= NULL;
 
     
-	miP.RedIF	= params[MATH_RED_VAR]->u.fs_d.value;
-    miP.GreenIF	= params[MATH_RED_VAR]->u.fs_d.value;
-    miP.BlueIF	= params[MATH_RED_VAR]->u.fs_d.value;
-    miP.AlphaIF	= params[MATH_RED_VAR]->u.fs_d.value;
+	miP.RedIF	= params[MATH_INPONE_VAR]->u.fs_d.value;
+    miP.GreenIF	= params[MATH_INPTWO_VAR]->u.fs_d.value;
+    miP.BlueIF	= params[MATH_INPTHREE_VAR]->u.fs_d.value;
+    miP.AlphaIF	= params[MATH_INPFOUR_VAR]->u.fs_d.value;
    
     //layer size
     miP.scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den,
@@ -636,7 +694,7 @@ HandleArbitrary(
                                        extra->u.new_func_params.arbPH);
             }
             break;
-            
+          
         case PF_Arbitrary_DISPOSE_FUNC:
             if (extra->u.dispose_func_params.refconPV != ARB_REFCON) {
                 err = PF_Err_INTERNAL_STRUCT_DAMAGED;
@@ -651,18 +709,19 @@ HandleArbitrary(
                                      out_data,
                                      extra->u.copy_func_params.dst_arbPH));
                 
-                ERR(Arb_Copy(	in_data,
+                ERR(Arb_Copy(in_data,
                              out_data,
                              &extra->u.copy_func_params.src_arbH,
                              extra->u.copy_func_params.dst_arbPH));
             }
             break;
+           
         case PF_Arbitrary_FLAT_SIZE_FUNC:
             *(extra->u.flat_size_func_params.flat_data_sizePLu) = sizeof(m_ArbData);
             break;
             
         case PF_Arbitrary_FLATTEN_FUNC:
-            
+
             if(extra->u.flatten_func_params.buf_sizeLu == sizeof(m_ArbData)){
                 srcP = (m_ArbData*)PF_LOCK_HANDLE(extra->u.flatten_func_params.arbH);
                 dstP = extra->u.flatten_func_params.flat_dataPV;
@@ -709,11 +768,11 @@ HandleArbitrary(
                             extra->u.compare_func_params.compareP));
             break;
             
+             
         case PF_Arbitrary_PRINT_SIZE_FUNC:
             err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
             break;
-            
-        case PF_Arbitrary_PRINT_FUNC:
+                case PF_Arbitrary_PRINT_FUNC:
             
             if (extra->u.print_func_params.refconPV == ARB_REFCON) {
                 ERR(Arb_Print(in_data,
@@ -742,6 +801,26 @@ HandleArbitrary(
     }
     return err;
 }
+
+static PF_Err
+RespondtoAEGP (
+               PF_InData		*in_data,
+               PF_OutData		*out_data,
+               PF_ParamDef		*params[],
+               PF_LayerDef		*output,
+               void*			extraP)
+{
+    PF_Err			err = PF_Err_NONE;
+    
+    AEGP_SuiteHandler suites(in_data->pica_basicP);
+    
+    suites.ANSICallbacksSuite1()->sprintf(	out_data->return_msg,
+                                          "%s",
+                                          reinterpret_cast<A_char*>(extraP));
+    
+    return err;
+}
+
 
 
 DllExport	
@@ -785,8 +864,17 @@ EntryPointFunc (
                                   params,
                                   output);
                 break;
+                
             case PF_Cmd_ARBITRARY_CALLBACK:
                 err = HandleArbitrary(	in_data, out_data, params, output, reinterpret_cast<PF_ArbParamsExtra*>(extra));
+                break;
+            
+            case PF_Cmd_COMPLETELY_GENERAL:
+                err = RespondtoAEGP(in_data,
+                                    out_data,
+                                    params,
+                                    output,
+                                    extra);
                 break;
                 
                 
@@ -802,7 +890,12 @@ EntryPointFunc (
 								params,
 								output);
 				break;
-            
+            case PF_Cmd_UPDATE_PARAMS_UI:
+                err = UpdateParameterUI(	in_data,
+                                        out_data,
+                                        params,
+                                        output);
+                break;
             
 		}
 	}

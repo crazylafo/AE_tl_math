@@ -64,7 +64,7 @@ typedef exprtk::parser<PF_FpLong>             parser_t;
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
     A_char        redExAc[4096];
-    A_char  greenExAc[4094];
+    A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
 } m_ArbData;
@@ -82,19 +82,19 @@ typedef struct {
 
 enum {
 	MATH_INPUT = 0,
-	MATH_RED_VAR,
-    MATH_GREEN_VAR,
-    MATH_BLUE_VAR,
-    MATH_ALPHA_VAR,
+	MATH_INPONE_VAR,
+    MATH_INPTWO_VAR,
+    MATH_INPTHREE_VAR,
+    MATH_INPFOUR_VAR,
     MATH_ARB_DATA,
 	MATH_NUM_PARAMS
 };
 
 enum {
-	MATH_RED_VAR_DISK_ID = 1,
-    MATH_GREEN_VAR_DISK_ID,
-    MATH_BLUE_VAR_DISK_ID,
-    MATH_ALPHA_VAR_DISK_ID,
+	MATH_INPONE_VAR_DISK_ID = 1,
+    MATH_INPTWO_VAR_DISK_ID,
+    MATH_INPTHREE_VAR_DISK_ID,
+    MATH_INPFOUR_VAR_DISK_ID,
     MATH_ARB_DATA_DISK_ID,
 
 };
