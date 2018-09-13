@@ -503,10 +503,10 @@ Render (
     m_ArbData		*arbP			= NULL;
 
     
-	miP.RedIF	= params[MATH_INPONE_VAR]->u.fs_d.value;
-    miP.GreenIF	= params[MATH_INPTWO_VAR]->u.fs_d.value;
-    miP.BlueIF	= params[MATH_INPTHREE_VAR]->u.fs_d.value;
-    miP.AlphaIF	= params[MATH_INPFOUR_VAR]->u.fs_d.value;
+	miP.inOneF	= params[MATH_INPONE_VAR]->u.fs_d.value;
+    miP.inTwoF	= params[MATH_INPTWO_VAR]->u.fs_d.value;
+    miP.inThreeF	= params[MATH_INPTHREE_VAR]->u.fs_d.value;
+    miP.inFourF	= params[MATH_INPFOUR_VAR]->u.fs_d.value;
    
     //layer size
     miP.scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den,
@@ -552,6 +552,11 @@ Render (
 	symbol_table.add_variable("inP_Blue", miP.inBlueF);
 	symbol_table.add_variable("inP_Alpha", miP.inAlphaF);
     symbol_table.add_constants();
+    symbol_table.add_constant("var1",miP.inOneF);
+    symbol_table.add_constant("var2",miP.inTwoF);
+    symbol_table.add_constant("var3",miP.inThreeF);
+    symbol_table.add_constant("var4",miP.inFourF);
+    
     symbol_table.add_constant("layerWidth",miP.layerWidthF);
     symbol_table.add_constant("layerHeight",miP.layerHeightF);
     symbol_table.add_constant("layerTime_sec",miP.layerTime_sec);

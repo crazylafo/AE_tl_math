@@ -100,10 +100,10 @@ enum {
 };
 
 typedef struct MathInfo{
-	PF_FpLong	RedIF;
-    PF_FpLong	GreenIF;
-    PF_FpLong	BlueIF;
-    PF_FpLong	AlphaIF;
+	PF_FpLong	inOneF;
+    PF_FpLong	inTwoF;
+    PF_FpLong	inThreeF;
+    PF_FpLong	inFourF;
     
     PF_FpLong  scale_x;
     PF_FpLong  scale_y;
