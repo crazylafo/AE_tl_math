@@ -447,10 +447,14 @@ PopDialog (
 			std::size_t bluePos = resultStr.find("bfromJS");
 			std::size_t alphaPos = resultStr.find("afromJS");
         
-            std::string redResultStr =resultStr.substr(redPos+7, greenPos -redPos-7);
+            std::string redResultStr =resultStr.substr(redPos+7, greenPos -redPos-7); // extract red channel from script return
+            redResultStr.erase(std::remove(redResultStr.begin(), redResultStr.end(), '\n'), redResultStr.end()); //delete \n
             std::string greenResultStr = resultStr.substr(greenPos+7, bluePos-greenPos-7);
+            greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
             std::string blueResultStr = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
+            blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
             std::string alphaResultStr; resultStr.substr(alphaPos+7);
+            alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
         
             #ifdef AE_OS_WIN
             strncpy_s( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
