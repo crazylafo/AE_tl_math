@@ -47,13 +47,9 @@ GlobalSetup (
                            PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
                            PF_OutFlag_I_DO_DIALOG|
                            PF_OutFlag_PIX_INDEPENDENT|
-                           PF_OutFlag_NON_PARAM_VARY|
-                           PF_OutFlag_SEQUENCE_DATA_NEEDS_FLATTENING;
+                           PF_OutFlag_NON_PARAM_VARY;
     
-    out_data->out_flags2 =  PF_OutFlag2_AE13_5_THREADSAFE	|
-                            PF_OutFlag2_SUPPORTS_GET_FLATTENED_SEQUENCE_DATA;
-    
-    
+
     
     globH	=	suites.HandleSuite1()->host_new_handle(sizeof(my_global_data));
     

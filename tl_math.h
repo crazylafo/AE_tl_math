@@ -63,7 +63,7 @@ typedef exprtk::parser<PF_FpLong>             parser_t;
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
-    A_char        redExAc[4096];
+    A_char  redExAc[4096];
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
