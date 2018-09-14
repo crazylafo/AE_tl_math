@@ -117,10 +117,30 @@ typedef struct MathInfo{
 	PF_FpLong		inAlphaF;
     PF_FpLong		xLF;
     PF_FpLong		yLF;
-    PF_FpLong		layerTime_sec;
-    PF_FpLong		layerTime_frame;
+    PF_FpLong		layerTime_Sec;
+    PF_FpLong		layerTime_Frame;
     PF_FpLong		layerDuration;
-    
+
+	PF_FpLong		layerPos_X;
+	PF_FpLong		layerPos_Y;
+	PF_FpLong		layerPos_Z;
+
+	PF_FpLong		layerScale_X;
+	PF_FpLong		layerScale_Y;
+	PF_FpLong		layerScale_Z;
+
+	PF_FpLong       compWidthF;
+	PF_FpLong       compHeightF;
+	PF_FpLong       compFpsF;
+
+	/*
+	PF_FpLong		luma;
+	PF_FpLong       saturation_Red;
+	PF_FpLong		saturation_Green;
+	PF_FpLong		saturation_blue;*/
+
+
+
 } MathInfoP, *MathinfoP, **MathinfoH;
 
 #ifdef __cplusplus

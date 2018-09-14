@@ -277,7 +277,7 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	AEGP_EffectRefH   thisEffect_refH;
 	AEGP_StreamValue2	val;
 	AEGP_StreamValue2	*sample_valP = &val;
-	const A_Time currT = { 0,100 };
+	A_Time currT;
 	
 
 
@@ -301,6 +301,7 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 
 
 	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
+	layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currT);
 	PFInterfaceSuite->AEGP_GetNewEffectForEffect(PlugId, in_data->effect_ref, &thisEffect_refH);
 	StreamSuite->AEGP_GetNewEffectStreamByIndex(PlugId, thisEffect_refH, param_index, &effect_streamH);
     StreamSuite->AEGP_GetNewStreamValue(PlugId, effect_streamH, AEGP_LTimeMode_LayerTime, &currT, FALSE, sample_valP);
@@ -492,8 +493,7 @@ Render (
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
 	
-    //Unflat_Seq_Data seqP = *reinterpret_cast<Unflat_Seq_Data*>(DH(in_data->sequence_data));
-	/*	Put interesting code here. */
+
 	MathInfo			miP;
 	AEFX_CLR_STRUCT(miP);
 	A_long				linesL	= 0;
@@ -503,10 +503,63 @@ Render (
     PF_Handle		arbH			= params[MATH_ARB_DATA]->u.arb_d.value;
     m_ArbData		*arbP			= NULL;
 
+	AEGP_LayerH		layerH;
+	AEGP_CompH		compH;
+	AEGP_ItemH      itemH;
+	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
+		kAEGPPFInterfaceSuite,
+		kAEGPPFInterfaceSuiteVersion1,
+		out_data);
+	AEFX_SuiteScoper<AEGP_LayerSuite8> layerSuite = AEFX_SuiteScoper<AEGP_LayerSuite8>(in_data,
+		kAEGPLayerSuite,
+		kAEGPLayerSuiteVersion8,
+		out_data);
+	AEFX_SuiteScoper<AEGP_CompSuite10> compSuite = AEFX_SuiteScoper<AEGP_CompSuite10>(in_data,
+		kAEGPCompSuite,
+		kAEGPCompSuiteVersion10,
+		out_data);
+
+	AEFX_SuiteScoper<AEGP_ItemSuite8> itemSuite = AEFX_SuiteScoper<AEGP_ItemSuite8>(in_data,
+		kAEGPItemSuite,
+		kAEGPItemSuiteVersion8,
+		out_data);
+
+	AEFX_SuiteScoper<AEGP_StreamSuite4> StreamSuite = AEFX_SuiteScoper<AEGP_StreamSuite4>(in_data,
+		kAEGPStreamSuite,
+		kAEGPStreamSuiteVersion4,
+		out_data);
+
+	PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH);
+	layerSuite->AEGP_GetLayerParentComp(layerH, &compH);
+	compSuite->AEGP_GetItemFromComp(compH, &itemH);
+	A_long width, height;
+	A_Time currTime;
+	AEGP_StreamVal2 strValP, strValSP;
+	AEGP_StreamType  strTypeP;
+	AEFX_CLR_STRUCT(width);
+	AEFX_CLR_STRUCT(height);
+	itemSuite->AEGP_GetItemDimensions(itemH, &width, &height);
+	miP.compWidthF = PF_FpLong(width);
+	miP.compHeightF = PF_FpLong(height);
+	AEGP_DownsampleFactor dsp;
+	compSuite->AEGP_GetCompDownsampleFactor(compH, &dsp);
+	miP.compWidthF *= dsp.xS;
+	miP.compHeightF *= dsp.yS;
+	compSuite->AEGP_GetCompFramerate(compH, &miP.compFpsF);
+
+	layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currTime);
+	StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_POSITION, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValP, &strTypeP);
+	miP.layerPos_X = strValP.three_d.x;
+	miP.layerPos_Y = strValP.three_d.y;
+	miP.layerPos_Z = strValP.three_d.z;
+	StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
+	miP.layerScale_X= strValSP.three_d.x;
+	miP.layerScale_Y = strValSP.three_d.z;
+	miP.layerScale_Z = strValSP.three_d.z;
     
 	miP.inOneF	= params[MATH_INPONE_VAR]->u.fs_d.value;
     miP.inTwoF	= params[MATH_INPTWO_VAR]->u.fs_d.value;
-    miP.inThreeF	= params[MATH_INPTHREE_VAR]->u.fs_d.value;
+    miP.inThreeF= params[MATH_INPTHREE_VAR]->u.fs_d.value;
     miP.inFourF	= params[MATH_INPFOUR_VAR]->u.fs_d.value;
    
     //layer size
@@ -516,14 +569,15 @@ Render (
     miP.layerHeightF =PF_FpLong (in_data->height* miP.scale_y);
     
     //time params
-    miP.layerTime_sec = PF_FpLong(in_data->current_time/in_data->time_scale);
-    miP.layerTime_frame = PF_FpLong(in_data->current_time/in_data->time_step);
+    miP.layerTime_Sec = PF_FpLong(in_data->current_time/in_data->time_scale);
+    miP.layerTime_Frame = PF_FpLong(in_data->current_time/in_data->time_step);
     miP.layerDuration =PF_FpLong( in_data->total_time / in_data->time_scale);
     
 	miP.xLF = 0;
 	miP.yLF = 0;
 
-    // TO DO: ADD TO GET THE COMP FPS ERR(suites.CompSuite10()->AEGP_GetCompFramerate(compPH, &fpsPF));
+
+  
 
     std::string expression_string_Safe = "1";
     std::string expression_string_red= "1";
@@ -560,9 +614,25 @@ Render (
     
     symbol_table.add_constant("layerWidth",miP.layerWidthF);
     symbol_table.add_constant("layerHeight",miP.layerHeightF);
-    symbol_table.add_constant("layerTime_sec",miP.layerTime_sec);
-    symbol_table.add_constant("layerTime_frame",miP.layerTime_frame);
+    symbol_table.add_constant("layerTime_sec",miP.layerTime_Sec);
+    symbol_table.add_constant("layerTime_frame",miP.layerTime_Frame);
     symbol_table.add_constant("layerDuration",miP.layerDuration);
+
+	symbol_table.add_constant("layerPosition_X", miP.layerPos_X);
+	symbol_table.add_constant("layerPosition_Y", miP.layerPos_Y);
+	symbol_table.add_constant("layerPosition_Z", miP.layerPos_Z);
+
+	symbol_table.add_constant("layerScale_X", miP.layerScale_X);
+	symbol_table.add_constant("layerScale_Y", miP.layerScale_Y);
+	symbol_table.add_constant("layerScale_Z", miP.layerScale_Z);
+
+	symbol_table.add_constant("compWidthF", miP.compWidthF);
+	symbol_table.add_constant("compHeightF", miP.compHeightF);
+	symbol_table.add_constant("compFpsF", miP.compFpsF);
+
+	      
+
+
     
     parser_t parser;
 	expression_t    expression_t_red;
