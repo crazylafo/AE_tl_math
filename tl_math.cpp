@@ -415,7 +415,7 @@ PopDialog (
     w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\
     var result = '';\
     w.grp.btnGrp.Ok.onClick = function(){\
-        var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text ;\
+        var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text;\
         w.close();\
         result = strExpr;\
     }\
@@ -446,6 +446,7 @@ PopDialog (
 			std::size_t greenPos = resultStr.find("gfromJS");
 			std::size_t bluePos = resultStr.find("bfromJS");
 			std::size_t alphaPos = resultStr.find("afromJS");
+	
         
             std::string redResultStr =resultStr.substr(redPos+7, greenPos -redPos-7); // extract red channel from script return
             redResultStr.erase(std::remove(redResultStr.begin(), redResultStr.end(), '\n'), redResultStr.end()); //delete \n
@@ -453,7 +454,7 @@ PopDialog (
             greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
             std::string blueResultStr = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
             blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
-            std::string alphaResultStr; resultStr.substr(alphaPos+7);
+            std::string alphaResultStr = resultStr.substr(alphaPos+7);
             alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
         
             #ifdef AE_OS_WIN
