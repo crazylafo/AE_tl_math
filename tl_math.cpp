@@ -384,11 +384,16 @@ PopDialog (
 
     A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr,GreenExpr,BlueExpr,AlphaExpr) {\
     var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\
-    w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on C++ Mathematical Expression Toolkit Library');\
+    w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\
     w.grp = w.add('group');\
     w.grp.orientation='column';\
     w.grp.alignment = ['fill', 'fill'];\
     w.grp.alignChildren = ['fill', 'fill'];\
+	w.grp.extButtGrp = w.grp.add('group');\
+    w.grp.extButtGrp.alignment = ['fill', 'fill'];\
+    w.grp.extButtGrp.alignChildren = ['fill', 'fill'];\
+    w.grp.extButtGrp.loadBtn = w.grp.extButtGrp.add ('button', undefined, 'Load');\
+    w.grp.extButtGrp.saveBtn =w.grp.extButtGrp.add('button', undefined, 'Save');\
     w.grp.redC = w.grp.add('group');\
     w.grp.redC.orientation = 'row';\
     w.grp.redC.alignment = ['fill', 'fill'];\
@@ -639,6 +644,7 @@ Render (
 	expression_t    expression_t_green;
 	expression_t    expression_t_blue;
 	expression_t    expression_t_alpha;
+
 
 	expression_t_red.register_symbol_table(symbol_table);
 	expression_t_green.register_symbol_table(symbol_table);
