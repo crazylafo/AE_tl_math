@@ -574,15 +574,12 @@ Render (
     miP.layerHeightF =PF_FpLong (in_data->height* miP.scale_y);
     
     //time params
-    miP.layerTime_Sec = PF_FpLong(in_data->current_time/in_data->time_scale);
+    miP.layerTime_Sec = PF_FpLong(in_data->current_time)/PF_FpLong(in_data->time_scale);
     miP.layerTime_Frame = PF_FpLong(in_data->current_time/in_data->time_step);
     miP.layerDuration =PF_FpLong( in_data->total_time / in_data->time_scale);
     
 	miP.xLF = 0;
 	miP.yLF = 0;
-
-
-  
 
     std::string expression_string_Safe = "1";
     std::string expression_string_red= "1";
@@ -602,7 +599,10 @@ Render (
             }
         }
     
-
+	PF_FpLong m3P_red[9];
+	PF_FpLong m3P_green[9];
+	PF_FpLong m3P_blue[9];
+	PF_FpLong m3P_alpha[9];
     symbol_table_t symbol_table;
   
     symbol_table.add_variable("xLF",  miP.xLF);
@@ -611,6 +611,12 @@ Render (
 	symbol_table.add_variable("inP_Green", miP.inGreenF);
 	symbol_table.add_variable("inP_Blue", miP.inBlueF);
 	symbol_table.add_variable("inP_Alpha", miP.inAlphaF);
+
+	symbol_table.add_vector("vec3_red", m3P_red);
+	symbol_table.add_vector("vec3_green", m3P_green);
+	symbol_table.add_vector("vec3_blue", m3P_blue);
+	symbol_table.add_vector("vec3_alpha", m3P_alpha);
+
     symbol_table.add_constants();
     symbol_table.add_constant("var1",miP.inOneF);
     symbol_table.add_constant("var2",miP.inTwoF);
@@ -635,10 +641,8 @@ Render (
 	symbol_table.add_constant("compHeightF", miP.compHeightF);
 	symbol_table.add_constant("compFpsF", miP.compFpsF);
 
-	      
 
-
-    
+  
     parser_t parser;
 	expression_t    expression_t_red;
 	expression_t    expression_t_green;
@@ -687,14 +691,30 @@ Render (
 	}
 	else {
 		// rewrite the itiration to safe access to math iteration with xL and yL values.
-		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data),
-							*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
+		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data), //main
+							*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data), 
+							*bop_inP_offP = reinterpret_cast<PF_Pixel8*>(inputP->data); //main //for offset and convolve
 		A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
 				out_gutterL = (outputP->rowbytes / sizeof(PF_Pixel8)) - outputP->width;
-		PF_FpLong  red_result, green_result, blue_result, alpha_result;
 
+		PF_FpLong  red_result, green_result, blue_result, alpha_result;
+		
 		for (register A_long yL = 0; yL < outputP->height; yL++) {
-			for (register A_long xL = 0; xL < inputP->width; xL++) {
+			for (register A_long xL =0; xL < inputP->width; xL++) {
+				/*
+				for (register A_long yOffL = yL - 1; yOffL <= yL + 1; yOffL++) {
+					for (register A_long xOffL = xL-1; xOffL<=yL+1; xOffL++) {
+						int ArrayIt = ((yOffL - yL) + 2)*((xOffL - xL) + 2)-1;
+						m3P_red[ArrayIt] = bop_inP_offP->red / PF_MAX_CHAN8;
+						m3P_green[ArrayIt] = bop_inP_offP->green / PF_MAX_CHAN8;
+						m3P_blue[ArrayIt] = bop_inP_offP->blue / PF_MAX_CHAN8;
+						m3P_alpha[ArrayIt] = bop_inP_offP->alpha / PF_MAX_CHAN8;
+						bop_inP_offP++;
+					}
+					if (yOffL >= 0 && yOffL < inputP->height) {
+						bop_inP_offP += in_gutterL;
+					}
+				}*/
 				AEFX_CLR_STRUCT(miP.xLF);
 				miP.xLF = xL;
 				AEFX_CLR_STRUCT(miP.yLF);
