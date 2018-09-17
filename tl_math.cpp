@@ -238,9 +238,75 @@ UpdateParameterUI(
 
     return err;
 }
+
+PF_Pixel
+*sampleIntegral32(PF_EffectWorld &def,
+                  int x,
+                  int y)
+{
+    return (PF_Pixel*)((char*)def.data +
+                       (y * def.rowbytes) +
+                       (x * sizeof(PF_Pixel)));
+}
+PF_Pixel16
+*sampleIntegral64(PF_EffectWorld &def,
+                  int x,
+                  int y)
+{
+    assert(PF_WORLD_IS_DEEP(&def));
+    return (PF_Pixel16*)((char*)def.data +
+                         (y * def.rowbytes) +
+                         (x * sizeof(PF_Pixel16)));
+}
+//same in 32 bits
+PF_PixelFloat
+*sampleIntegral128(PF_EffectWorld &def,
+                   int x,
+                   int y)
+{
+    return (PF_PixelFloat*)((char*)def.data +
+                            (y * def.rowbytes) +
+                            (x * sizeof(PF_PixelFloat)));
+}
+
+
+void
+GetPixelValue(
+              PF_EffectWorld  *WorldP,
+              PF_PixelFormat  pxFormat,
+              int x,
+              int y,
+              PF_PixelFloat		*pixvalueF)
+{
+    switch (pxFormat)
+    {
+        case PF_PixelFormat_ARGB128:
+            pixvalueF = sampleIntegral128(*WorldP, x, y);
+            break;
+            
+        case PF_PixelFormat_ARGB64:
+            PF_Pixel16 temp16;
+            temp16 = *sampleIntegral64(*WorldP, x, y);
+            pixvalueF->red = PF_FpShort(temp16.red) / PF_MAX_CHAN16;
+            pixvalueF->green = PF_FpShort(temp16.green) / PF_MAX_CHAN16;
+            pixvalueF->blue = PF_FpShort(temp16.blue) / PF_MAX_CHAN16;
+            break;
+            
+        case PF_PixelFormat_ARGB32:
+            PF_Pixel temp8;
+            temp8 = *sampleIntegral32(*WorldP, x, y);
+            pixvalueF->red = PF_FpShort(temp8.red) / PF_MAX_CHAN8;
+            pixvalueF->green = PF_FpShort(temp8.green) / PF_MAX_CHAN8;
+            pixvalueF->blue = PF_FpShort(temp8.blue) / PF_MAX_CHAN8;
+            break;
+            
+    }
+}
+
+
 static PF_Err
 MySimpleGainFunc16 (
-	void		*refcon, 
+                    void		*refcon,
 	A_long		xL, 
 	A_long		yL, 
 	PF_Pixel16	*inP, 
@@ -324,7 +390,17 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 	return err;
 }
 
-
+//fast find/replace all method
+void strReplace(std::string& str,
+	const std::string& oldStr,
+	const std::string& newStr)
+{
+	std::string::size_type pos = 0u;
+	while ((pos = str.find(oldStr, pos)) != std::string::npos) {
+		str.replace(pos, oldStr.length(), newStr);
+		pos += newStr.length();
+	}
+}
 
 static PF_Err
 PopDialog (
@@ -368,7 +444,7 @@ PopDialog (
         AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
-            tempRedS.append(arbInP->redExAc);
+            tempRedS.append(arbInP->redExAcFlat);
             tempGreenS.append(arbInP->greenExAc);
             tempBlueS.append(arbInP->blueExAc);
             tempAlphaS.append(arbInP->alphaExAc);
@@ -381,6 +457,11 @@ PopDialog (
     tempBlueS.append("'");
     tempAlphaS.append("'");
 
+	//to force the parser to keep \n before to send it to js
+	strReplace(tempRedS, "\n", "\\n");
+	strReplace(tempGreenS, "\n", "\\n");
+	strReplace(tempBlueS, "\n", "\\n");
+	strReplace(tempAlphaS, "\n", "\\n");
 
     A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr,GreenExpr,BlueExpr,AlphaExpr) {\
     var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\
@@ -436,7 +517,7 @@ PopDialog (
     }\
     expr(%s,%s,%s,%s);";
 
-    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str() , tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str() );
+    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str(), tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str() );
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 
     //AEGP SETSTREAMVALUR TO ARB
@@ -444,39 +525,55 @@ PopDialog (
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
 
     if  (resultAC){
-            AEFX_CLR_STRUCT(arbOutP);
-			arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-			//set result per channel
-			std::string resultStr = resultAC;
-			std::size_t redPos = resultStr.find("rfromJS");
-			std::size_t greenPos = resultStr.find("gfromJS");
-			std::size_t bluePos = resultStr.find("bfromJS");
-			std::size_t alphaPos = resultStr.find("afromJS");
+        AEFX_CLR_STRUCT(arbOutP);
+        arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+        //set result per channel
+        std::string resultStr = resultAC;
+        std::size_t redPos = resultStr.find("rfromJS");
+        std::size_t greenPos = resultStr.find("gfromJS");
+        std::size_t bluePos = resultStr.find("bfromJS");
+        std::size_t alphaPos = resultStr.find("afromJS");
 	
         
-            std::string redResultStr =resultStr.substr(redPos+7, greenPos -redPos-7); // extract red channel from script return
-            redResultStr.erase(std::remove(redResultStr.begin(), redResultStr.end(), '\n'), redResultStr.end()); //delete \n
-            std::string greenResultStr = resultStr.substr(greenPos+7, bluePos-greenPos-7);
-            greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
-            std::string blueResultStr = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
-            blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
-            std::string alphaResultStr = resultStr.substr(alphaPos+7);
-            alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
+        std::string redResultStr =resultStr.substr(redPos+7, greenPos -redPos-7); // extract red channel from script return
+        std::string greenResultStr = resultStr.substr(greenPos+7, bluePos-greenPos-7);
+        std::string blueResultStr = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
+        std::string alphaResultStr = resultStr.substr(alphaPos+7);
+        //copy to flat ARB (keeping /n and other speical char from js
         
-            #ifdef AE_OS_WIN
+
+        #ifdef AE_OS_WIN
+            strncpy_s( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
+            strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
+            strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
+            strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+        #else
+            strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
+            strncpy(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
+            strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
+            strncpy( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+        #endif
+        
+        //delete \nfor execution expr
+        redResultStr.erase(std::remove(redResultStr.begin(), redResultStr.end(), '\n'), redResultStr.end());
+        greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
+        blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
+        alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
+        
+        #ifdef AE_OS_WIN
             strncpy_s( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
             strncpy_s(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy_s( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy_s( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
-            #else
+        #else
  			strncpy( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
             strncpy(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
-            #endif
-			arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
-			ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
-			PF_UNLOCK_HANDLE(arbOutH);
+        #endif
+        arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
+        ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
+        PF_UNLOCK_HANDLE(arbOutH);
      }
 
     ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
@@ -488,7 +585,7 @@ PopDialog (
 
 
 
-static PF_Err 
+static PF_Err
 Render (
 	PF_InData		*in_data,
 	PF_OutData		*out_data,
@@ -598,7 +695,11 @@ Render (
             expression_string_alpha  = tempPointer->alphaExAc;
             }
         }
-    
+    if ( expression_string_red.find("m3P")!=std::string::npos){
+        miP.has3MatrixB = true;
+    }else{
+        miP.has3MatrixB = false;
+    }
 	PF_FpLong m3P_red[9];
 	PF_FpLong m3P_green[9];
 	PF_FpLong m3P_blue[9];
@@ -628,8 +729,7 @@ Render (
     symbol_table.add_constant("layerTime_sec",miP.layerTime_Sec);
     symbol_table.add_constant("layerTime_frame",miP.layerTime_Frame);
     symbol_table.add_constant("layerDuration",miP.layerDuration);
-
-	symbol_table.add_constant("layerPosition_X", miP.layerPos_X);
+        symbol_table.add_constant("layerPosition_X", miP.layerPos_X);
 	symbol_table.add_constant("layerPosition_Y", miP.layerPos_Y);
 	symbol_table.add_constant("layerPosition_Z", miP.layerPos_Z);
 
@@ -692,30 +792,32 @@ Render (
 	else {
 		// rewrite the itiration to safe access to math iteration with xL and yL values.
 		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data), //main
-							*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data), 
-							*bop_inP_offP = reinterpret_cast<PF_Pixel8*>(inputP->data); //main //for offset and convolve
+        *bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
 		A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
 				out_gutterL = (outputP->rowbytes / sizeof(PF_Pixel8)) - outputP->width;
 
 		PF_FpLong  red_result, green_result, blue_result, alpha_result;
-		
+       
 		for (register A_long yL = 0; yL < outputP->height; yL++) {
 			for (register A_long xL =0; xL < inputP->width; xL++) {
-				/*
-				for (register A_long yOffL = yL - 1; yOffL <= yL + 1; yOffL++) {
-					for (register A_long xOffL = xL-1; xOffL<=yL+1; xOffL++) {
-						int ArrayIt = ((yOffL - yL) + 2)*((xOffL - xL) + 2)-1;
-						m3P_red[ArrayIt] = bop_inP_offP->red / PF_MAX_CHAN8;
-						m3P_green[ArrayIt] = bop_inP_offP->green / PF_MAX_CHAN8;
-						m3P_blue[ArrayIt] = bop_inP_offP->blue / PF_MAX_CHAN8;
-						m3P_alpha[ArrayIt] = bop_inP_offP->alpha / PF_MAX_CHAN8;
-						bop_inP_offP++;
-					}
-					if (yOffL >= 0 && yOffL < inputP->height) {
-						bop_inP_offP += in_gutterL;
-					}
-				}*/
-				AEFX_CLR_STRUCT(miP.xLF);
+                
+                if ( miP.has3MatrixB){ // the expr call the 3*3 matrix so it's Inception : loop to store neightboors pixel (3x3 matrix)
+                    int incrMat =0; //int for increment matrix acess
+                    for (register A_long yoffL = 0; yoffL  < 3; yoffL ++) {
+                        for (register A_long xoffL = 0; xoffL  < 3; xoffL ++) {
+                            PF_PixelFloat pixelValF;
+                            AEFX_CLR_STRUCT(pixelValF);
+                            GetPixelValue(inputP,PF_PixelFormat_ARGB32 , (xL+xoffL-1) , (yL+yoffL-1), &pixelValF);
+                            m3P_red [incrMat] = PF_FpLong (pixelValF.red);
+                            m3P_green [incrMat] = PF_FpLong (pixelValF.green);
+                            m3P_blue [incrMat] = PF_FpLong (pixelValF.blue);
+                            m3P_blue [incrMat] = PF_FpLong (pixelValF.alpha);
+                            incrMat ++;
+                        }
+                    }
+                }
+
+                AEFX_CLR_STRUCT(miP.xLF);
 				miP.xLF = xL;
 				AEFX_CLR_STRUCT(miP.yLF);
 				miP.yLF = yL;

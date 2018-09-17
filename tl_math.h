@@ -24,6 +24,7 @@ typedef short int			int16;
 
 #ifdef AE_OS_WIN
 	typedef unsigned short PixelType;
+	#include <assert.h>
 	#include <Windows.h>
 #endif
 
@@ -67,6 +68,12 @@ typedef struct {
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
+    
+    //duplicate in order to keep the "/n" in javascript
+    A_char  redExAcFlat[4096];
+    A_char  greenExAcFlat[4096];
+    A_char  blueExAcFlat[4096];
+    A_char  alphaExAcFlat [4096];
 } m_ArbData;
 
 typedef struct {
@@ -132,6 +139,9 @@ typedef struct MathInfo{
 	PF_FpLong       compWidthF;
 	PF_FpLong       compHeightF;
 	PF_FpLong       compFpsF;
+    
+    
+    PF_Boolean      has3MatrixB;
 
 	/*
 	PF_FpLong		luma;
@@ -210,6 +220,35 @@ Arb_Scan(
          const char			*bufPC,
          unsigned long		bytes_to_scanLu,
          PF_ArbitraryH		*arbPH);
+
+PF_Pixel
+*sampleIntegral32(PF_EffectWorld &def,
+                  int x,
+                  int y);
+
+//same in 16bits
+PF_Pixel16
+*sampleIntegral64(PF_EffectWorld &def,
+                  int x,
+                  int y);
+
+//same in 32 bits
+PF_PixelFloat
+*sampleIntegral128(PF_EffectWorld &def,
+                   int x,
+                   int y);
+
+
+
+void
+GetPixelValue(
+              PF_EffectWorld  *WorldP,
+              PF_PixelFormat  pxFormat,
+              int x,
+              int y,
+              PF_PixelFloat		*pixvalueF);
+
+
 
 #endif
 

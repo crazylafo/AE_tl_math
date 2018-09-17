@@ -23,17 +23,27 @@ CreateDefaultArb(
 
             #ifdef AE_OS_WIN
 			#pragma warning (disable : 4305)
-			strncpy_s(arbP->redExAc, STR(StrID_Default_expr), 4096);
-			strncpy_s(arbP->greenExAc, STR(StrID_Default_expr), 4096);
-			strncpy_s(arbP->blueExAc, STR(StrID_Default_expr), 4096);
-			strncpy_s(arbP->alphaExAc, STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->redExAc, STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->greenExAc, STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->blueExAc, STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->alphaExAc, STR(StrID_Default_expr), 4096);
+            
+                strncpy_s(arbP->redExAcFlat ,STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->greenExAcFlat ,STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->blueExAcFlat ,STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->alphaExAcFlat ,STR(StrID_Default_expr), 4096);
 			#pragma warning (pop)
             #else
                 strncpy(arbP->redExAc ,STR(StrID_Default_expr), 4096);
                 strncpy(arbP->greenExAc ,STR(StrID_Default_expr), 4096);
                 strncpy(arbP->blueExAc ,STR(StrID_Default_expr), 4096);
                 strncpy(arbP->alphaExAc ,STR(StrID_Default_expr), 4096);
-            #endif
+
+                strncpy(arbP->redExAcFlat ,STR(StrID_Default_expr), 4096);
+                strncpy(arbP->greenExAcFlat ,STR(StrID_Default_expr), 4096);
+                strncpy(arbP->blueExAcFlat ,STR(StrID_Default_expr), 4096);
+                strncpy(arbP->alphaExAcFlat ,STR(StrID_Default_expr), 4096);
+#endif
 			*dephault = arbH;
 		}
 		suites.HandleSuite1()->host_unlock_handle(arbH);
@@ -130,17 +140,25 @@ Arb_Compare(
 	PF_Handle	a_handle = *a_arbP,
 				b_handle = *b_arbP;
 
-	size_t	total_a_rL	= 0,
+	size_t          total_a_rL	= 0,
 					total_a_gL	= 0,
 					total_a_bL	= 0,
                     total_a_aL	= 0,
-					total_aL	= 0,
+                    total_a_rfL	= 0,
+                    total_a_gfL	= 0,
+                    total_a_bfL	= 0,
+                    total_a_afL	= 0,
+                    total_aL	= 0,
 				
 					total_b_rL	= 0,
 					total_b_gL	= 0,
 					total_b_bL	= 0,
                     total_b_aL	= 0,
-					total_bL	= 0;
+                    total_b_rfL	= 0,
+                    total_b_gfL	= 0,
+                    total_b_bfL	= 0,
+                    total_b_afL	= 0,
+                    total_bL	= 0;
 
 	*resultP = PF_ArbCompare_EQUAL;
 
@@ -162,14 +180,25 @@ Arb_Compare(
             total_a_bL	= strlen(first_arbP->blueExAc);
             total_a_aL	= strlen(first_arbP->alphaExAc);
             
+            
+            total_a_rfL	= strlen(first_arbP->redExAcFlat);
+            total_a_gfL	= strlen(first_arbP->greenExAcFlat);
+            total_a_bfL	= strlen(first_arbP->blueExAcFlat);
+            total_a_afL	= strlen(first_arbP->alphaExAcFlat);
+            
             total_b_rL	= strlen(second_arbP->redExAc);
             total_b_gL	= strlen(second_arbP->greenExAc);
             total_b_bL	= strlen(second_arbP->blueExAc);
             total_b_aL	= strlen(second_arbP->alphaExAc);
-
             
-			total_aL = total_a_rL + total_a_gL + total_a_bL;
-			total_bL = total_b_rL + total_b_gL + total_b_bL; 
+            total_b_rfL	= strlen(second_arbP->redExAcFlat);
+            total_b_gfL	= strlen(second_arbP->greenExAcFlat);
+            total_b_bfL	= strlen(second_arbP->blueExAcFlat);
+            total_b_afL	= strlen(second_arbP->alphaExAcFlat);
+            
+
+			total_aL = total_a_rL + total_a_gL + total_a_bL + total_a_aL +total_a_rfL + total_a_gfL + total_a_bfL+ total_a_afL  ;
+			total_bL = total_b_rL + total_b_gL + total_b_bL + total_b_aL +total_b_rfL + total_b_gfL + total_b_bfL+ total_b_afL ;
 
 			if(total_aL > total_bL)	{
 				*resultP = PF_ArbCompare_MORE;
