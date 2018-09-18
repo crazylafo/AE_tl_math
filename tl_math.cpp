@@ -699,7 +699,10 @@ Render (
             expression_string_alpha  = tempPointer->alphaExAc;
             }
         }
-    if ( expression_string_red.find("vec3")!=std::string::npos){
+    if ( expression_string_red.find("vec3")!=std::string::npos ||
+		expression_string_green.find("vec3") != std::string::npos||
+		expression_string_blue.find("vec3") != std::string::npos||
+		expression_string_alpha.find("vec3") != std::string::npos){
         miP.has3MatrixB = true;
     }else{
         miP.has3MatrixB = false;
@@ -818,6 +821,12 @@ Render (
                         for (register A_long xoffL = 0; xoffL  < 3; xoffL ++) {
                             PF_PixelFloat pixelValF;
                             AEFX_CLR_STRUCT(pixelValF);
+							if ( (xL + xoffL - 1)<0 ||
+								(yL + yoffL - 1)<0  ||
+								(xL + xoffL - 1)>outputP->width-1|
+								(yL + yoffL - 1)>outputP->height-1){ 
+								m3P_red[incrMat3] = m3P_green[incrMat3] = m3P_blue[incrMat3] = m3P_alpha[incrMat3] = 0;
+							}
                             GetPixelValue(inputP,PF_PixelFormat_ARGB32 , (xL+xoffL-1) , (yL+yoffL-1), &pixelValF);
                             m3P_red [incrMat3] = PF_FpLong (pixelValF.red);
                             m3P_green [incrMat3] = PF_FpLong (pixelValF.green);
