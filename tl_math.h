@@ -143,11 +143,9 @@ typedef struct MathInfo{
     
     PF_Boolean      has3MatrixB;
 
-	/*
+
 	PF_FpLong		luma;
-	PF_FpLong       saturation_Red;
-	PF_FpLong		saturation_Green;
-	PF_FpLong		saturation_blue;*/
+
 
 
 
@@ -247,6 +245,14 @@ GetPixelValue(
               int x,
               int y,
               PF_PixelFloat		*pixvalueF);
+
+void
+strReplace(std::string& str,
+                const std::string& oldStr,
+                const std::string& newStr);
+
+
+
 
 
 

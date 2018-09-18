@@ -286,6 +286,7 @@ GetPixelValue(
             
         case PF_PixelFormat_ARGB64:
             PF_Pixel16 temp16;
+             AEFX_CLR_STRUCT(temp16);
             temp16 = *sampleIntegral64(*WorldP, x, y);
             pixvalueF->red = PF_FpShort(temp16.red) / PF_MAX_CHAN16;
             pixvalueF->green = PF_FpShort(temp16.green) / PF_MAX_CHAN16;
@@ -294,6 +295,7 @@ GetPixelValue(
             
         case PF_PixelFormat_ARGB32:
             PF_Pixel temp8;
+            AEFX_CLR_STRUCT(temp8);
             temp8 = *sampleIntegral32(*WorldP, x, y);
             pixvalueF->red = PF_FpShort(temp8.red) / PF_MAX_CHAN8;
             pixvalueF->green = PF_FpShort(temp8.green) / PF_MAX_CHAN8;
@@ -417,52 +419,7 @@ PopDialog (
     A_char *resultAC =     NULL;
     A_char          scriptAC[4096] = {'\0'};
     
-    //ARB
-    PF_ParamDef arb_param;
     
-    //strings to send expr to script
-    std::string tempRedS ="'";
-    std::string tempGreenS ="'";
-    std::string tempBlueS ="'";
-    std::string tempAlphaS ="'";
-    
-
-	PF_Handle		arbOutH = NULL;
-	m_ArbData		*arbInP = NULL;
-    m_ArbData		*arbOutP= NULL;
-
-    
-    AEFX_CLR_STRUCT(arb_param);
-    ERR(PF_CHECKOUT_PARAM(	in_data,
-                          MATH_ARB_DATA,
-                          in_data->current_time,
-                          in_data->time_step,
-                          in_data->time_scale, 
-                          &arb_param));
-
-    if (!err){
-        AEFX_CLR_STRUCT(arbInP);
-        arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-        if (arbInP){
-            tempRedS.append(arbInP->redExAcFlat);
-            tempGreenS.append(arbInP->greenExAc);
-            tempBlueS.append(arbInP->blueExAc);
-            tempAlphaS.append(arbInP->alphaExAc);
-        }
-       
-    }
-
-    tempRedS.append("'");
-    tempGreenS.append("'");
-    tempBlueS.append("'");
-    tempAlphaS.append("'");
-
-	//to force the parser to keep \n before to send it to js
-	strReplace(tempRedS, "\n", "\\n");
-	strReplace(tempGreenS, "\n", "\\n");
-	strReplace(tempBlueS, "\n", "\\n");
-	strReplace(tempAlphaS, "\n", "\\n");
-
     A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr,GreenExpr,BlueExpr,AlphaExpr) {\
     var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\
     w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\
@@ -470,7 +427,7 @@ PopDialog (
     w.grp.orientation='column';\
     w.grp.alignment = ['fill', 'fill'];\
     w.grp.alignChildren = ['fill', 'fill'];\
-	w.grp.extButtGrp = w.grp.add('group');\
+    w.grp.extButtGrp = w.grp.add('group');\
     w.grp.extButtGrp.alignment = ['fill', 'fill'];\
     w.grp.extButtGrp.alignChildren = ['fill', 'fill'];\
     w.grp.extButtGrp.loadBtn = w.grp.extButtGrp.add ('button', undefined, 'Load');\
@@ -502,20 +459,67 @@ PopDialog (
     w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\
     var result = '';\
     w.grp.btnGrp.Ok.onClick = function(){\
-        var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text;\
-        w.close();\
-        result = strExpr;\
+    var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text;\
+    w.close();\
+    result = strExpr;\
     }\
     w.grp.btnGrp.Cancel.onClick = function(){\
-        var ret ='rfromJS'+redExpr+'gfromJS'+GreenExpr+'bfromJS'+BlueExpr+'afromJS'+AlphaExpr;\
-        w.close();\
-        result = ret;\
+    var ret ='rfromJS'+redExpr+'gfromJS'+GreenExpr+'bfromJS'+BlueExpr+'afromJS'+AlphaExpr;\
+    w.close();\
+    result = ret;\
     }\
     w.onResizing = w.onResize = function(){this.layout.resize();}\
     w.show();\
     return result\
     }\
     expr(%s,%s,%s,%s);";
+    
+    //ARB
+    PF_ParamDef arb_param;
+    
+    //strings to send expr to script
+    std::string tempRedS ="'";
+    std::string tempGreenS ="'";
+    std::string tempBlueS ="'";
+    std::string tempAlphaS ="'";
+    
+
+	PF_Handle		arbOutH = NULL;
+	m_ArbData		*arbInP = NULL;
+    m_ArbData		*arbOutP= NULL;
+
+    
+    AEFX_CLR_STRUCT(arb_param);
+    ERR(PF_CHECKOUT_PARAM(	in_data,
+                          MATH_ARB_DATA,
+                          in_data->current_time,
+                          in_data->time_step,
+                          in_data->time_scale, 
+                          &arb_param));
+
+    if (!err){
+        AEFX_CLR_STRUCT(arbInP);
+        arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+        if (arbInP){
+            tempRedS.append(arbInP->redExAcFlat);
+            tempGreenS.append(arbInP->greenExAcFlat);
+            tempBlueS.append(arbInP->blueExAcFlat);
+            tempAlphaS.append(arbInP->alphaExAcFlat);
+        }
+       
+    }
+
+    tempRedS.append("'");
+    tempGreenS.append("'");
+    tempBlueS.append("'");
+    tempAlphaS.append("'");
+
+	//to force the parser to keep \n before to send it to js
+	strReplace(tempRedS, "\n", "\\n");
+	strReplace(tempGreenS, "\n", "\\n");
+	strReplace(tempBlueS, "\n", "\\n");
+	strReplace(tempAlphaS, "\n", "\\n");
+
 
     sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str(), tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str() );
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
@@ -695,15 +699,17 @@ Render (
             expression_string_alpha  = tempPointer->alphaExAc;
             }
         }
-    if ( expression_string_red.find("m3P")!=std::string::npos){
+    if ( expression_string_red.find("vec3")!=std::string::npos){
         miP.has3MatrixB = true;
     }else{
         miP.has3MatrixB = false;
     }
-	PF_FpLong m3P_red[9];
+
+    PF_FpLong m3P_red[9];
 	PF_FpLong m3P_green[9];
 	PF_FpLong m3P_blue[9];
 	PF_FpLong m3P_alpha[9];
+
     symbol_table_t symbol_table;
   
     symbol_table.add_variable("xLF",  miP.xLF);
@@ -712,11 +718,14 @@ Render (
 	symbol_table.add_variable("inP_Green", miP.inGreenF);
 	symbol_table.add_variable("inP_Blue", miP.inBlueF);
 	symbol_table.add_variable("inP_Alpha", miP.inAlphaF);
+    symbol_table.add_variable("luma", miP.luma);
 
 	symbol_table.add_vector("vec3_red", m3P_red);
 	symbol_table.add_vector("vec3_green", m3P_green);
 	symbol_table.add_vector("vec3_blue", m3P_blue);
 	symbol_table.add_vector("vec3_alpha", m3P_alpha);
+    
+
 
     symbol_table.add_constants();
     symbol_table.add_constant("var1",miP.inOneF);
@@ -729,7 +738,7 @@ Render (
     symbol_table.add_constant("layerTime_sec",miP.layerTime_Sec);
     symbol_table.add_constant("layerTime_frame",miP.layerTime_Frame);
     symbol_table.add_constant("layerDuration",miP.layerDuration);
-        symbol_table.add_constant("layerPosition_X", miP.layerPos_X);
+    symbol_table.add_constant("layerPosition_X", miP.layerPos_X);
 	symbol_table.add_constant("layerPosition_Y", miP.layerPos_Y);
 	symbol_table.add_constant("layerPosition_Z", miP.layerPos_Z);
 
@@ -740,6 +749,8 @@ Render (
 	symbol_table.add_constant("compWidthF", miP.compWidthF);
 	symbol_table.add_constant("compHeightF", miP.compHeightF);
 	symbol_table.add_constant("compFpsF", miP.compFpsF);
+    
+    
 
 
   
@@ -802,25 +813,28 @@ Render (
 			for (register A_long xL =0; xL < inputP->width; xL++) {
                 
                 if ( miP.has3MatrixB){ // the expr call the 3*3 matrix so it's Inception : loop to store neightboors pixel (3x3 matrix)
-                    int incrMat =0; //int for increment matrix acess
+                    int incrMat3 =0; //int for increment matrix acess
                     for (register A_long yoffL = 0; yoffL  < 3; yoffL ++) {
                         for (register A_long xoffL = 0; xoffL  < 3; xoffL ++) {
                             PF_PixelFloat pixelValF;
                             AEFX_CLR_STRUCT(pixelValF);
                             GetPixelValue(inputP,PF_PixelFormat_ARGB32 , (xL+xoffL-1) , (yL+yoffL-1), &pixelValF);
-                            m3P_red [incrMat] = PF_FpLong (pixelValF.red);
-                            m3P_green [incrMat] = PF_FpLong (pixelValF.green);
-                            m3P_blue [incrMat] = PF_FpLong (pixelValF.blue);
-                            m3P_blue [incrMat] = PF_FpLong (pixelValF.alpha);
-                            incrMat ++;
+                            m3P_red [incrMat3] = PF_FpLong (pixelValF.red);
+                            m3P_green [incrMat3] = PF_FpLong (pixelValF.green);
+                            m3P_blue [incrMat3] = PF_FpLong (pixelValF.blue);
+                            m3P_alpha [incrMat3] = PF_FpLong (pixelValF.alpha);
+                            incrMat3 ++;
                         }
                     }
                 }
+                
 
                 AEFX_CLR_STRUCT(miP.xLF);
 				miP.xLF = xL;
 				AEFX_CLR_STRUCT(miP.yLF);
 				miP.yLF = yL;
+                AEFX_CLR_STRUCT(miP.luma);
+                miP.luma = (0.2126*bop_inP->red+0.7152*bop_inP->green+0.0722*bop_inP->blue)/(PF_FpLong)PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inAlphaF);
 				miP.inAlphaF = (PF_FpLong)bop_inP->alpha / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inRedF);
