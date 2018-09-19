@@ -404,6 +404,23 @@ void strReplace(std::string& str,
 	}
 }
 
+//math parser's functions
+static PF_FpLong
+inline parseDrawRect(PF_FpLong xL, PF_FpLong yL, PF_FpLong center_x, PF_FpLong center_y, PF_FpLong lx, PF_FpLong ly)
+{
+	if (xL > (center_x - lx) &&
+		xL <(center_x + lx) &&
+		yL >(center_y - ly) &&
+		yL < (center_y + ly))
+	{
+		return 1;
+	}
+
+	else{
+		return 0;
+	}
+}
+
 static PF_Err
 PopDialog (
            PF_InData		*in_data,
@@ -752,6 +769,8 @@ Render (
 	symbol_table.add_constant("compWidthF", miP.compWidthF);
 	symbol_table.add_constant("compHeightF", miP.compHeightF);
 	symbol_table.add_constant("compFpsF", miP.compFpsF);
+
+	symbol_table.add_function("drawRect", parseDrawRect);
     
     
 
