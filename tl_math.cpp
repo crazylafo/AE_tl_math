@@ -133,11 +133,12 @@ ParamsSetup (
                          MATH_INPFOUR_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
-    
-    
+
     ERR(CreateDefaultArb(	in_data,
                          out_data,
                          &def.u.arb_d.dephault));
+
+    
     
     PF_ADD_ARBITRARY2(	"data transfert", 
                       10,
@@ -166,8 +167,22 @@ ParamsSetup (
         
         err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
     }
-
+    
 	AEFX_CLR_STRUCT(def);
+    PF_ADD_POINT(STR (strID_INPUTPOINTONE_Param_Name), 50, 50, FALSE, MATH_INP_POINT_ONE_DISK_ID);
+    
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_POINT(STR(strID_INPUTPOINTTWO_Param_Name), 50, 50, FALSE, MATH_INP_POINT_TWO_DISK_ID);
+    
+    
+    
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_COLOR(STR(strID_INPUTCOLORONE_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8, MATH_INP_COLOR_ONE_DISK_ID);
+    
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_COLOR(STR(strID_INPUTCOLORTWO_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8,MATH_INP_COLOR_TWO_DISK_ID);
+    
+    AEFX_CLR_STRUCT(def);
 	out_data->num_params = MATH_NUM_PARAMS;
     
     AEFX_SuiteScoper<PF_EffectUISuite1> effect_ui_suiteP = AEFX_SuiteScoper<PF_EffectUISuite1>(
@@ -196,6 +211,10 @@ MakeParamCopy(
     copy[MATH_INPTHREE_VAR]     =*actual[MATH_INPTHREE_VAR];
     copy[MATH_INPFOUR_VAR]      =*actual[MATH_INPFOUR_VAR];
     copy[MATH_ARB_DATA]         =*actual[MATH_ARB_DATA];
+    copy[MATH_INP_POINT_ONE]    =*actual [MATH_INP_POINT_ONE];
+    copy[MATH_INP_POINT_TWO]    =*actual [MATH_INP_POINT_TWO];
+    copy[MATH_INP_COLOR_ONE]    =*actual [MATH_INP_COLOR_ONE];
+    copy[MATH_INP_COLOR_TWO]    =*actual [MATH_INP_COLOR_TWO];
     
     return PF_Err_NONE;
     
@@ -404,10 +423,14 @@ void strReplace(std::string& str,
 	}
 }
 
+
+
+
 //math parser's functions
 static PF_FpLong
 inline parseDrawRect(PF_FpLong xL, PF_FpLong yL, PF_FpLong center_x, PF_FpLong center_y, PF_FpLong lx, PF_FpLong ly)
 {
+
 	if (xL > (center_x - lx) &&
 		xL <(center_x + lx) &&
 		yL >(center_y - ly) &&
@@ -696,6 +719,21 @@ Render (
     miP.layerTime_Frame = PF_FpLong(in_data->current_time/in_data->time_step);
     miP.layerDuration =PF_FpLong( in_data->total_time / in_data->time_scale);
     
+    
+    //user param points
+    miP.pointOneX = static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_ONE]->u.td.x_value)));
+    miP.pointOneY =static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_ONE]->u.td.y_value)));
+    miP.pointTwoX = static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_TWO]->u.td.x_value)));
+    miP.pointTwoY =static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_TWO]->u.td.y_value)));
+    
+    //user param color
+    miP.colorOne_red =  PF_FpLong (params[MATH_INP_COLOR_ONE]->u.cd.value.red)/ PF_FpLong (PF_MAX_CHAN8);
+    miP.colorOne_green =PF_FpLong (params[MATH_INP_COLOR_ONE]->u.cd.value.green)/ PF_FpLong (PF_MAX_CHAN8);
+    miP.colorOne_blue = PF_FpLong (params[MATH_INP_COLOR_ONE]->u.cd.value.blue)/ PF_FpLong (PF_MAX_CHAN8);
+    
+    miP.colorTwo_red = PF_FpLong (params[MATH_INP_COLOR_TWO]->u.cd.value.red)/ PF_FpLong (PF_MAX_CHAN8);
+    miP.colorTwo_green = PF_FpLong (params[MATH_INP_COLOR_TWO]->u.cd.value.green)/ PF_FpLong (PF_MAX_CHAN8);
+    miP.colorTwo_blue = PF_FpLong (params[MATH_INP_COLOR_TWO]->u.cd.value.blue)/ PF_FpLong (PF_MAX_CHAN8);
 	miP.xLF = 0;
 	miP.yLF = 0;
 
@@ -732,13 +770,13 @@ Render (
 
     symbol_table_t symbol_table;
   
-    symbol_table.add_variable("xLF",  miP.xLF);
-    symbol_table.add_variable("yLF",  miP.yLF);
-	symbol_table.add_variable("inP_Red", miP.inRedF);
-	symbol_table.add_variable("inP_Green", miP.inGreenF);
-	symbol_table.add_variable("inP_Blue", miP.inBlueF);
-	symbol_table.add_variable("inP_Alpha", miP.inAlphaF);
-    symbol_table.add_variable("luma", miP.luma);
+    symbol_table.add_variable("xL",  miP.xLF);
+    symbol_table.add_variable("yL",  miP.yLF);
+	symbol_table.add_variable("inP_red", miP.inRedF);
+	symbol_table.add_variable("inP_green", miP.inGreenF);
+	symbol_table.add_variable("inP_blue", miP.inBlueF);
+	symbol_table.add_variable("inP_alpha", miP.inAlphaF);
+    symbol_table.add_variable("inP_luma", miP.luma);
 
 	symbol_table.add_vector("vec3_red", m3P_red);
 	symbol_table.add_vector("vec3_green", m3P_green);
@@ -746,29 +784,42 @@ Render (
 	symbol_table.add_vector("vec3_alpha", m3P_alpha);
     
 
-
     symbol_table.add_constants();
     symbol_table.add_constant("var1",miP.inOneF);
     symbol_table.add_constant("var2",miP.inTwoF);
     symbol_table.add_constant("var3",miP.inThreeF);
     symbol_table.add_constant("var4",miP.inFourF);
     
+    
+    symbol_table.add_constant ("pt1_x",miP.pointOneX);
+    symbol_table.add_constant ("pt1_y",miP.pointOneY);
+    symbol_table.add_constant ("pt2_x",miP.pointTwoX);
+    symbol_table.add_constant ("pt2_x",miP.pointTwoY);
+    
+    //user param color
+    symbol_table.add_constant ("cl1_red",miP.colorOne_red);
+   symbol_table.add_constant ("cl1_green", miP.colorOne_green);
+    symbol_table.add_constant ("cl1_blue",miP.colorOne_blue);
+    symbol_table.add_constant ("cl2_red",miP.colorTwo_red);
+    symbol_table.add_constant ("cl2_green",miP.colorTwo_green);
+    symbol_table.add_constant ("cl2_blue",miP.colorTwo_blue);
+    
     symbol_table.add_constant("layerWidth",miP.layerWidthF);
     symbol_table.add_constant("layerHeight",miP.layerHeightF);
     symbol_table.add_constant("layerTime_sec",miP.layerTime_Sec);
     symbol_table.add_constant("layerTime_frame",miP.layerTime_Frame);
     symbol_table.add_constant("layerDuration",miP.layerDuration);
-    symbol_table.add_constant("layerPosition_X", miP.layerPos_X);
-	symbol_table.add_constant("layerPosition_Y", miP.layerPos_Y);
-	symbol_table.add_constant("layerPosition_Z", miP.layerPos_Z);
+    symbol_table.add_constant("layerPosition_x", miP.layerPos_X);
+	symbol_table.add_constant("layerPosition_y", miP.layerPos_Y);
+	symbol_table.add_constant("layerPosition_z", miP.layerPos_Z);
 
-	symbol_table.add_constant("layerScale_X", miP.layerScale_X);
-	symbol_table.add_constant("layerScale_Y", miP.layerScale_Y);
-	symbol_table.add_constant("layerScale_Z", miP.layerScale_Z);
+	symbol_table.add_constant("layerScale_z", miP.layerScale_X);
+	symbol_table.add_constant("layerScale_y", miP.layerScale_Y);
+	symbol_table.add_constant("layerScale_z", miP.layerScale_Z);
 
-	symbol_table.add_constant("compWidthF", miP.compWidthF);
-	symbol_table.add_constant("compHeightF", miP.compHeightF);
-	symbol_table.add_constant("compFpsF", miP.compFpsF);
+	symbol_table.add_constant("compWidth", miP.compWidthF);
+	symbol_table.add_constant("compHeight", miP.compHeightF);
+	symbol_table.add_constant("compFps", miP.compFpsF);
 
 	symbol_table.add_function("drawRect", parseDrawRect);
     
@@ -795,18 +846,22 @@ Render (
     //if error in expression
     if (!parser.compile(expression_string_red, expression_t_red))
     {
+        printf("Error: %s\n", parser.error().c_str());
         parser.compile(expression_string_Safe, expression_t_red);
     }
 	if (!parser.compile(expression_string_green, expression_t_green))
 	{
+        printf("Error: %s\n", parser.error().c_str());
 		parser.compile(expression_string_Safe, expression_t_green);
 	}
 	if (!parser.compile(expression_string_blue, expression_t_blue))
 	{
+        printf("Error: %s\n", parser.error().c_str());
 		parser.compile(expression_string_Safe, expression_t_blue);
 	}
 	if (!parser.compile(expression_string_alpha, expression_t_alpha))
 	{
+        printf("Error: %s\n", parser.error().c_str());
 		parser.compile(expression_string_Safe, expression_t_alpha);
 	}
    

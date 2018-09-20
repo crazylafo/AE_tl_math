@@ -16,6 +16,10 @@ TableString		g_strs[StrID_NUMTYPES] = {
     StrID_INPUTTWO_Param_Name,          "variable 2",
     StrID_INPUTTHREE_Param_Name,        "variable 3",
     StrID_INPUTFOUR_Param_Name,         "variable 4",
+    strID_INPUTPOINTONE_Param_Name,     "Point One",
+    strID_INPUTPOINTTWO_Param_Name,     "Point Two",
+    strID_INPUTCOLORONE_Param_Name,     "Color One",
+    strID_INPUTCOLORTWO_Param_Name,     "Color Two",
     StrID_Default_expr,              "layerTime_frame/(layerDuration*25)"
 };
 

@@ -94,6 +94,10 @@ enum {
     MATH_INPTHREE_VAR,
     MATH_INPFOUR_VAR,
     MATH_ARB_DATA,
+    MATH_INP_POINT_ONE,
+    MATH_INP_POINT_TWO,
+    MATH_INP_COLOR_ONE,
+    MATH_INP_COLOR_TWO,
 	MATH_NUM_PARAMS
 };
 
@@ -103,6 +107,10 @@ enum {
     MATH_INPTHREE_VAR_DISK_ID,
     MATH_INPFOUR_VAR_DISK_ID,
     MATH_ARB_DATA_DISK_ID,
+    MATH_INP_POINT_ONE_DISK_ID,
+    MATH_INP_POINT_TWO_DISK_ID,
+    MATH_INP_COLOR_ONE_DISK_ID,
+    MATH_INP_COLOR_TWO_DISK_ID,
 
 };
 
@@ -140,14 +148,20 @@ typedef struct MathInfo{
 	PF_FpLong       compHeightF;
 	PF_FpLong       compFpsF;
     
+    PF_FpLong       pointOneX;
+    PF_FpLong       pointOneY;
+    PF_FpLong       pointTwoX;
+    PF_FpLong       pointTwoY;
     
+    PF_FpLong       colorOne_red;
+    PF_FpLong       colorOne_green;
+    PF_FpLong       colorOne_blue;
+    PF_FpLong       colorTwo_red;
+    PF_FpLong       colorTwo_green;
+    PF_FpLong       colorTwo_blue;
     PF_Boolean      has3MatrixB;
 
-
 	PF_FpLong		luma;
-
-
-
 
 } MathInfoP, *MathinfoP, **MathinfoH;
 
