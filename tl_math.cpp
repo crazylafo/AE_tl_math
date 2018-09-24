@@ -427,8 +427,8 @@ void strReplace(std::string& str,
 
 
 //math parser's functions
-static PF_FpLong
-inline parseDrawRect(PF_FpLong xL, PF_FpLong yL, PF_FpLong center_x, PF_FpLong center_y, PF_FpLong lx, PF_FpLong ly)
+static PF_FpShort
+inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpShort center_y, PF_FpShort lx,PF_FpShort ly)
 {
 
 	if (xL > (center_x - lx) &&
@@ -691,7 +691,9 @@ Render (
 	compSuite->AEGP_GetCompDownsampleFactor(compH, &dsp);
 	miP.compWidthF *= dsp.xS;
 	miP.compHeightF *= dsp.yS;
-	compSuite->AEGP_GetCompFramerate(compH, &miP.compFpsF);
+    PF_FpLong fpsF;
+	compSuite->AEGP_GetCompFramerate(compH,&fpsF);
+    miP.compFpsF = static_cast<float>( fpsF);
 
 	layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currTime);
 	StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_POSITION, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValP, &strTypeP);
@@ -763,10 +765,10 @@ Render (
         miP.has3MatrixB = false;
     }
 
-    PF_FpLong m3P_red[9];
-	PF_FpLong m3P_green[9];
-	PF_FpLong m3P_blue[9];
-	PF_FpLong m3P_alpha[9];
+    PF_FpShort m3P_red[9];
+	PF_FpShort m3P_green[9];
+	PF_FpShort m3P_blue[9];
+	PF_FpShort m3P_alpha[9];
 
     symbol_table_t symbol_table;
   

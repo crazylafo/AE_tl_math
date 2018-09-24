@@ -8,11 +8,7 @@
 #ifndef TLMATH_H
 #define TLMATH_H
 
-typedef unsigned char		u_char;
-typedef unsigned short		u_short;
-typedef unsigned short		u_int16;
-typedef unsigned long		u_long;
-typedef short int			int16;
+
 
 #define PF_TABLE_BITS	12
 #define PF_TABLE_SZ_16	4096
@@ -58,9 +54,9 @@ typedef short int			int16;
 #define	STAGE_VERSION	PF_Stage_DEVELOP
 #define	BUILD_VERSION	1
 
-typedef exprtk::symbol_table<PF_FpLong> symbol_table_t;
-typedef exprtk::expression<PF_FpLong>     expression_t;
-typedef exprtk::parser<PF_FpLong>             parser_t;
+typedef exprtk::symbol_table<PF_FpShort> symbol_table_t;
+typedef exprtk::expression<PF_FpShort>     expression_t;
+typedef exprtk::parser<PF_FpShort>             parser_t;
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
@@ -115,53 +111,53 @@ enum {
 };
 
 typedef struct MathInfo{
-	PF_FpLong	inOneF;
-    PF_FpLong	inTwoF;
-    PF_FpLong	inThreeF;
-    PF_FpLong	inFourF;
+	PF_FpShort	inOneF;
+    PF_FpShort	inTwoF;
+    PF_FpShort	inThreeF;
+    PF_FpShort	inFourF;
     
-    PF_FpLong  scale_x;
-    PF_FpLong  scale_y;
-    PF_FpLong layerWidthF;
-    PF_FpLong layerHeightF;
+    PF_FpShort  scale_x;
+    PF_FpShort  scale_y;
+    PF_FpShort layerWidthF;
+    PF_FpShort layerHeightF;
 
 
-	PF_FpLong		inRedF;
-	PF_FpLong		inGreenF;
-	PF_FpLong		inBlueF;
-	PF_FpLong		inAlphaF;
-    PF_FpLong		xLF;
-    PF_FpLong		yLF;
-    PF_FpLong		layerTime_Sec;
-    PF_FpLong		layerTime_Frame;
-    PF_FpLong		layerDuration;
+	PF_FpShort		inRedF;
+	PF_FpShort		inGreenF;
+	PF_FpShort		inBlueF;
+	PF_FpShort		inAlphaF;
+    PF_FpShort		xLF;
+    PF_FpShort		yLF;
+    PF_FpShort		layerTime_Sec;
+    PF_FpShort		layerTime_Frame;
+    PF_FpShort		layerDuration;
 
-	PF_FpLong		layerPos_X;
-	PF_FpLong		layerPos_Y;
-	PF_FpLong		layerPos_Z;
+	PF_FpShort		layerPos_X;
+	PF_FpShort		layerPos_Y;
+	PF_FpShort		layerPos_Z;
 
-	PF_FpLong		layerScale_X;
-	PF_FpLong		layerScale_Y;
-	PF_FpLong		layerScale_Z;
+	PF_FpShort		layerScale_X;
+	PF_FpShort		layerScale_Y;
+	PF_FpShort		layerScale_Z;
 
-	PF_FpLong       compWidthF;
-	PF_FpLong       compHeightF;
-	PF_FpLong       compFpsF;
+	PF_FpShort      compWidthF;
+	PF_FpShort       compHeightF;
+	PF_FpShort      compFpsF;
     
-    PF_FpLong       pointOneX;
-    PF_FpLong       pointOneY;
-    PF_FpLong       pointTwoX;
-    PF_FpLong       pointTwoY;
+    PF_FpShort       pointOneX;
+    PF_FpShort       pointOneY;
+    PF_FpShort       pointTwoX;
+    PF_FpShort       pointTwoY;
     
-    PF_FpLong       colorOne_red;
-    PF_FpLong       colorOne_green;
-    PF_FpLong       colorOne_blue;
-    PF_FpLong       colorTwo_red;
-    PF_FpLong       colorTwo_green;
-    PF_FpLong       colorTwo_blue;
+    PF_FpShort       colorOne_red;
+    PF_FpShort       colorOne_green;
+    PF_FpShort       colorOne_blue;
+    PF_FpShort      colorTwo_red;
+    PF_FpShort       colorTwo_green;
+    PF_FpShort       colorTwo_blue;
     PF_Boolean      has3MatrixB;
 
-	PF_FpLong		luma;
+	PF_FpShort		luma;
 
 } MathInfoP, *MathinfoP, **MathinfoH;
 
