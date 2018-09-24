@@ -258,71 +258,7 @@ UpdateParameterUI(
     return err;
 }
 
-PF_Pixel
-*sampleIntegral32(PF_EffectWorld &def,
-                  int x,
-                  int y)
-{
-    return (PF_Pixel*)((char*)def.data +
-                       (y * def.rowbytes) +
-                       (x * sizeof(PF_Pixel)));
-}
-PF_Pixel16
-*sampleIntegral64(PF_EffectWorld &def,
-                  int x,
-                  int y)
-{
-    assert(PF_WORLD_IS_DEEP(&def));
-    return (PF_Pixel16*)((char*)def.data +
-                         (y * def.rowbytes) +
-                         (x * sizeof(PF_Pixel16)));
-}
-//same in 32 bits
-PF_PixelFloat
-*sampleIntegral128(PF_EffectWorld &def,
-                   int x,
-                   int y)
-{
-    return (PF_PixelFloat*)((char*)def.data +
-                            (y * def.rowbytes) +
-                            (x * sizeof(PF_PixelFloat)));
-}
 
-
-void
-GetPixelValue(
-              PF_EffectWorld  *WorldP,
-              PF_PixelFormat  pxFormat,
-              int x,
-              int y,
-              PF_PixelFloat		*pixvalueF)
-{
-    switch (pxFormat)
-    {
-        case PF_PixelFormat_ARGB128:
-            pixvalueF = sampleIntegral128(*WorldP, x, y);
-            break;
-            
-        case PF_PixelFormat_ARGB64:
-            PF_Pixel16 temp16;
-             AEFX_CLR_STRUCT(temp16);
-            temp16 = *sampleIntegral64(*WorldP, x, y);
-            pixvalueF->red = PF_FpShort(temp16.red) / PF_MAX_CHAN16;
-            pixvalueF->green = PF_FpShort(temp16.green) / PF_MAX_CHAN16;
-            pixvalueF->blue = PF_FpShort(temp16.blue) / PF_MAX_CHAN16;
-            break;
-            
-        case PF_PixelFormat_ARGB32:
-            PF_Pixel temp8;
-            AEFX_CLR_STRUCT(temp8);
-            temp8 = *sampleIntegral32(*WorldP, x, y);
-            pixvalueF->red = PF_FpShort(temp8.red) / PF_MAX_CHAN8;
-            pixvalueF->green = PF_FpShort(temp8.green) / PF_MAX_CHAN8;
-            pixvalueF->blue = PF_FpShort(temp8.blue) / PF_MAX_CHAN8;
-            break;
-            
-    }
-}
 
 
 static PF_Err
@@ -713,29 +649,29 @@ Render (
     //layer size
     miP.scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den,
     miP.scale_y = in_data->downsample_y.num*in_data->pixel_aspect_ratio.den/ (float)in_data->downsample_y.den;
-    miP.layerWidthF = PF_FpLong (in_data->width*miP.scale_x) ;
-    miP.layerHeightF =PF_FpLong (in_data->height* miP.scale_y);
+    miP.layerWidthF = PF_FpShort (in_data->width*miP.scale_x) ;
+    miP.layerHeightF = PF_FpShort(in_data->height* miP.scale_y);
     
     //time params
-    miP.layerTime_Sec = PF_FpLong(in_data->current_time)/PF_FpLong(in_data->time_scale);
-    miP.layerTime_Frame = PF_FpLong(in_data->current_time/in_data->time_step);
-    miP.layerDuration =PF_FpLong( in_data->total_time / in_data->time_scale);
+    miP.layerTime_Sec = PF_FpShort(in_data->current_time)/PF_FpShort(in_data->time_scale);
+    miP.layerTime_Frame = PF_FpShort(in_data->current_time/in_data->time_step);
+    miP.layerDuration =PF_FpShort( in_data->total_time / in_data->time_scale);
     
     
     //user param points
-    miP.pointOneX = static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_ONE]->u.td.x_value)));
-    miP.pointOneY =static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_ONE]->u.td.y_value)));
-    miP.pointTwoX = static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_TWO]->u.td.x_value)));
-    miP.pointTwoY =static_cast<PF_FpLong>(round(FIX_2_FLOAT(params[MATH_INP_POINT_TWO]->u.td.y_value)));
+    miP.pointOneX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(params[MATH_INP_POINT_ONE]->u.td.x_value)));
+    miP.pointOneY =static_cast<PF_FpShort>(round(FIX_2_FLOAT(params[MATH_INP_POINT_ONE]->u.td.y_value)));
+    miP.pointTwoX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(params[MATH_INP_POINT_TWO]->u.td.x_value)));
+    miP.pointTwoY =static_cast<PF_FpShort>(round(FIX_2_FLOAT(params[MATH_INP_POINT_TWO]->u.td.y_value)));
     
     //user param color
-    miP.colorOne_red =  PF_FpLong (params[MATH_INP_COLOR_ONE]->u.cd.value.red)/ PF_FpLong (PF_MAX_CHAN8);
-    miP.colorOne_green =PF_FpLong (params[MATH_INP_COLOR_ONE]->u.cd.value.green)/ PF_FpLong (PF_MAX_CHAN8);
-    miP.colorOne_blue = PF_FpLong (params[MATH_INP_COLOR_ONE]->u.cd.value.blue)/ PF_FpLong (PF_MAX_CHAN8);
+    miP.colorOne_red =  PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.red)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorOne_green =PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.green)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorOne_blue = PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.blue)/ PF_FpShort (PF_MAX_CHAN8);
     
-    miP.colorTwo_red = PF_FpLong (params[MATH_INP_COLOR_TWO]->u.cd.value.red)/ PF_FpLong (PF_MAX_CHAN8);
-    miP.colorTwo_green = PF_FpLong (params[MATH_INP_COLOR_TWO]->u.cd.value.green)/ PF_FpLong (PF_MAX_CHAN8);
-    miP.colorTwo_blue = PF_FpLong (params[MATH_INP_COLOR_TWO]->u.cd.value.blue)/ PF_FpLong (PF_MAX_CHAN8);
+    miP.colorTwo_red = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.red)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorTwo_green = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.green)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorTwo_blue = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.blue)/ PF_FpShort (PF_MAX_CHAN8);
 	miP.xLF = 0;
 	miP.yLF = 0;
 
@@ -882,7 +818,7 @@ Render (
 	else {
 		// rewrite the itiration to safe access to math iteration with xL and yL values.
 		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data), //main
-        *bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
+							*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
 		A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
 				out_gutterL = (outputP->rowbytes / sizeof(PF_Pixel8)) - outputP->width;
 
@@ -892,23 +828,26 @@ Render (
 			for (register A_long xL =0; xL < inputP->width; xL++) {
                 
                 if ( miP.has3MatrixB){ // the expr call the 3*3 matrix so it's Inception : loop to store neightboors pixel (3x3 matrix)
+					PF_Pixel8 *around_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
                     int incrMat3 =0; //int for increment matrix acess
                     for (register A_long yoffL = 0; yoffL  < 3; yoffL ++) {
+						
                         for (register A_long xoffL = 0; xoffL  < 3; xoffL ++) {
-                            PF_PixelFloat pixelValF;
-                            AEFX_CLR_STRUCT(pixelValF);
 							if ( (xL + xoffL - 1)<0 ||
 								(yL + yoffL - 1)<0  ||
 								(xL + xoffL - 1)>outputP->width-1|
 								(yL + yoffL - 1)>outputP->height-1){ 
 								m3P_red[incrMat3] = m3P_green[incrMat3] = m3P_blue[incrMat3] = m3P_alpha[incrMat3] = 0;
 							}
-                            GetPixelValue(inputP,PF_PixelFormat_ARGB32 , (xL+xoffL-1) , (yL+yoffL-1), &pixelValF);
-                            m3P_red [incrMat3] = PF_FpLong (pixelValF.red);
-                            m3P_green [incrMat3] = PF_FpLong (pixelValF.green);
-                            m3P_blue [incrMat3] = PF_FpLong (pixelValF.blue);
-                            m3P_alpha [incrMat3] = PF_FpLong (pixelValF.alpha);
-                            incrMat3 ++;
+							else {
+								AEFX_CLR_STRUCT(around_inP);
+								around_inP = bop_inP + (xoffL - 1) + (inputP->width *(yoffL - 1));
+								m3P_red[incrMat3] = PF_FpShort(around_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
+								m3P_green[incrMat3] = PF_FpShort(around_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
+								m3P_blue[incrMat3] = PF_FpShort(around_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+								m3P_alpha[incrMat3] = PF_FpShort(around_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+							}
+							incrMat3++;
                         }
                     }
                 }

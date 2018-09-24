@@ -20,7 +20,7 @@ TableString		g_strs[StrID_NUMTYPES] = {
     strID_INPUTPOINTTWO_Param_Name,     "Point Two",
     strID_INPUTCOLORONE_Param_Name,     "Color One",
     strID_INPUTCOLORTWO_Param_Name,     "Color Two",
-    StrID_Default_expr,              "layerTime_frame/(layerDuration*25)"
+    StrID_Default_expr,              "inP_luma"
 };
 
 

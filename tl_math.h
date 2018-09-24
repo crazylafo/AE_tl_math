@@ -152,10 +152,10 @@ typedef struct MathInfo{
     PF_FpShort       colorOne_red;
     PF_FpShort       colorOne_green;
     PF_FpShort       colorOne_blue;
-    PF_FpShort      colorTwo_red;
+    PF_FpShort       colorTwo_red;
     PF_FpShort       colorTwo_green;
     PF_FpShort       colorTwo_blue;
-    PF_Boolean      has3MatrixB;
+    PF_Boolean       has3MatrixB;
 
 	PF_FpShort		luma;
 
@@ -229,32 +229,9 @@ Arb_Scan(
          unsigned long		bytes_to_scanLu,
          PF_ArbitraryH		*arbPH);
 
-PF_Pixel
-*sampleIntegral32(PF_EffectWorld &def,
-                  int x,
-                  int y);
-
-//same in 16bits
-PF_Pixel16
-*sampleIntegral64(PF_EffectWorld &def,
-                  int x,
-                  int y);
-
-//same in 32 bits
-PF_PixelFloat
-*sampleIntegral128(PF_EffectWorld &def,
-                   int x,
-                   int y);
 
 
 
-void
-GetPixelValue(
-              PF_EffectWorld  *WorldP,
-              PF_PixelFormat  pxFormat,
-              int x,
-              int y,
-              PF_PixelFloat		*pixvalueF);
 
 void
 strReplace(std::string& str,
