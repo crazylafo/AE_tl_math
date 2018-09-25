@@ -156,8 +156,19 @@ typedef struct MathInfo{
     PF_FpShort       colorTwo_green;
     PF_FpShort       colorTwo_blue;
     PF_Boolean       has3MatrixB;
+	PF_FpShort		 m3P_red[9];
+	PF_FpShort		 m3P_green[9];
+	PF_FpShort		 m3P_blue[9];
+	PF_FpShort       m3P_alpha[9];
 
 	PF_FpShort		luma;
+
+	PF_EffectWorld   *inputWorld;
+	A_long           cxL;
+	A_long           cyL;
+
+
+	
 
 } MathInfoP, *MathinfoP, **MathinfoH;
 

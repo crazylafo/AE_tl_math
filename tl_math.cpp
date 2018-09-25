@@ -563,7 +563,39 @@ PopDialog (
     return err;
 }
 
+PF_Err
+iterateGen3M8(
+	void *refcon,
+	A_long thread_idxL,
+	A_long i,
+	A_long itrtL)
+{
+	PF_Err err = PF_Err_NONE;
+	MathInfo	*miP = reinterpret_cast<MathInfo*>(refcon);
+	PF_Pixel8 *around_inP = reinterpret_cast<PF_Pixel8*>(miP->inputWorld->data);
+	PF_Pixel *inP = reinterpret_cast<PF_Pixel8*>(miP->inputWorld->data);
+	for (register A_long xoffL = 0; xoffL < 3; xoffL++) {
+		A_long incrMat3 = xoffL * (i + 1);
+		if ((miP->cxL + xoffL - 1)<0 ||
+			(miP->cyL + i - 1)<0 ||
+			(miP->cxL + xoffL - 1)>miP->inputWorld->width - 1 |
+			(miP->cyL + i - 1)>miP->inputWorld->height - 1) {
+			miP->m3P_red[incrMat3] = miP->m3P_green[incrMat3] = miP->m3P_blue[incrMat3] = miP->m3P_alpha[incrMat3] = 0;
+		}
+		else {
+			AEFX_CLR_STRUCT(around_inP);
+			around_inP = inP + (miP->cxL - 1) + (miP->inputWorld->width *(miP->cyL+i - 1));
+			miP->m3P_red[incrMat3] = PF_FpShort(around_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
+			miP->m3P_green[incrMat3] = PF_FpShort(around_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
+			miP->m3P_blue[incrMat3] = PF_FpShort(around_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+			miP->m3P_alpha[incrMat3] = PF_FpShort(around_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 
+		}
+		
+	}
+	return err;
+
+};
 
 static PF_Err
 Render (
@@ -701,10 +733,7 @@ Render (
         miP.has3MatrixB = false;
     }
 
-    PF_FpShort m3P_red[9];
-	PF_FpShort m3P_green[9];
-	PF_FpShort m3P_blue[9];
-	PF_FpShort m3P_alpha[9];
+
 
     symbol_table_t symbol_table;
   
@@ -716,10 +745,10 @@ Render (
 	symbol_table.add_variable("inP_alpha", miP.inAlphaF);
     symbol_table.add_variable("inP_luma", miP.luma);
 
-	symbol_table.add_vector("vec3_red", m3P_red);
-	symbol_table.add_vector("vec3_green", m3P_green);
-	symbol_table.add_vector("vec3_blue", m3P_blue);
-	symbol_table.add_vector("vec3_alpha", m3P_alpha);
+	symbol_table.add_vector("vec3_red", miP.m3P_red);
+	symbol_table.add_vector("vec3_green", miP.m3P_green);
+	symbol_table.add_vector("vec3_blue", miP.m3P_blue);
+	symbol_table.add_vector("vec3_alpha", miP.m3P_alpha);
     
 
     symbol_table.add_constants();
@@ -761,47 +790,7 @@ Render (
 
 	symbol_table.add_function("drawRect", parseDrawRect);
     
-    
 
-
-  
-    parser_t parser;
-	expression_t    expression_t_red;
-	expression_t    expression_t_green;
-	expression_t    expression_t_blue;
-	expression_t    expression_t_alpha;
-
-
-	expression_t_red.register_symbol_table(symbol_table);
-	expression_t_green.register_symbol_table(symbol_table);
-	expression_t_blue.register_symbol_table(symbol_table);
-	expression_t_alpha.register_symbol_table(symbol_table);
-
-    parser.compile(expression_string_red, expression_t_red);
-	parser.compile(expression_string_green, expression_t_green);
-	parser.compile(expression_string_blue, expression_t_blue);
-	parser.compile(expression_string_alpha, expression_t_alpha);
-    //if error in expression
-    if (!parser.compile(expression_string_red, expression_t_red))
-    {
-        printf("Error: %s\n", parser.error().c_str());
-        parser.compile(expression_string_Safe, expression_t_red);
-    }
-	if (!parser.compile(expression_string_green, expression_t_green))
-	{
-        printf("Error: %s\n", parser.error().c_str());
-		parser.compile(expression_string_Safe, expression_t_green);
-	}
-	if (!parser.compile(expression_string_blue, expression_t_blue))
-	{
-        printf("Error: %s\n", parser.error().c_str());
-		parser.compile(expression_string_Safe, expression_t_blue);
-	}
-	if (!parser.compile(expression_string_alpha, expression_t_alpha))
-	{
-        printf("Error: %s\n", parser.error().c_str());
-		parser.compile(expression_string_Safe, expression_t_alpha);
-	}
    
 
 	
@@ -816,57 +805,101 @@ Render (
 												outputP));
 	}
 	else {
+		parser_t parser;
+		expression_t    expression_t_red;
+		expression_t    expression_t_green;
+		expression_t    expression_t_blue;
+		expression_t    expression_t_alpha;
+
+
+		expression_t_red.register_symbol_table(symbol_table);
+		expression_t_green.register_symbol_table(symbol_table);
+		expression_t_blue.register_symbol_table(symbol_table);
+		expression_t_alpha.register_symbol_table(symbol_table);
+
+		parser.compile(expression_string_red, expression_t_red);
+		parser.compile(expression_string_green, expression_t_green);
+		parser.compile(expression_string_blue, expression_t_blue);
+		parser.compile(expression_string_alpha, expression_t_alpha);
+		//if error in expression
+		if (!parser.compile(expression_string_red, expression_t_red))
+		{
+			printf("Error: %s\n", parser.error().c_str());
+			parser.compile(expression_string_Safe, expression_t_red);
+		}
+		if (!parser.compile(expression_string_green, expression_t_green))
+		{
+			printf("Error: %s\n", parser.error().c_str());
+			parser.compile(expression_string_Safe, expression_t_green);
+		}
+		if (!parser.compile(expression_string_blue, expression_t_blue))
+		{
+			printf("Error: %s\n", parser.error().c_str());
+			parser.compile(expression_string_Safe, expression_t_blue);
+		}
+		if (!parser.compile(expression_string_alpha, expression_t_alpha))
+		{
+			printf("Error: %s\n", parser.error().c_str());
+			parser.compile(expression_string_Safe, expression_t_alpha);
+		}
 		// rewrite the itiration to safe access to math iteration with xL and yL values.
 		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data), //main
 							*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
 		A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
 				out_gutterL = (outputP->rowbytes / sizeof(PF_Pixel8)) - outputP->width;
 
-		PF_FpLong  red_result, green_result, blue_result, alpha_result;
+		PF_FpShort  red_result, green_result, blue_result, alpha_result;
        
 		for (register A_long yL = 0; yL < outputP->height; yL++) {
 			for (register A_long xL =0; xL < inputP->width; xL++) {
                 
                 if ( miP.has3MatrixB){ // the expr call the 3*3 matrix so it's Inception : loop to store neightboors pixel (3x3 matrix)
+					
+                    
+					miP.inputWorld = inputP;
+					miP.cxL =xL;
+					miP.cyL =yL;
+
+					ERR(suites.Iterate8Suite1()->iterate_generic(3, (void*)&miP, iterateGen3M8));
+					/*
 					PF_Pixel8 *around_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
-                    int incrMat3 =0; //int for increment matrix acess
-                    for (register A_long yoffL = 0; yoffL  < 3; yoffL ++) {
-						
+					int incrMat3 =0; //int for increment matrix acess
+					for (register A_long yoffL = 0; yoffL < 3; yoffL++) {
                         for (register A_long xoffL = 0; xoffL  < 3; xoffL ++) {
 							if ( (xL + xoffL - 1)<0 ||
 								(yL + yoffL - 1)<0  ||
 								(xL + xoffL - 1)>outputP->width-1|
 								(yL + yoffL - 1)>outputP->height-1){ 
-								m3P_red[incrMat3] = m3P_green[incrMat3] = m3P_blue[incrMat3] = m3P_alpha[incrMat3] = 0;
+								miP.m3P_red[incrMat3] = miP.m3P_green[incrMat3] = miP.m3P_blue[incrMat3] = miP.m3P_alpha[incrMat3] = 0;
 							}
 							else {
 								AEFX_CLR_STRUCT(around_inP);
 								around_inP = bop_inP + (xoffL - 1) + (inputP->width *(yoffL - 1));
-								m3P_red[incrMat3] = PF_FpShort(around_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
-								m3P_green[incrMat3] = PF_FpShort(around_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
-								m3P_blue[incrMat3] = PF_FpShort(around_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
-								m3P_alpha[incrMat3] = PF_FpShort(around_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+								miP.m3P_red[incrMat3] = PF_FpShort(around_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
+								miP.m3P_green[incrMat3] = PF_FpShort(around_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
+								miP.m3P_blue[incrMat3] = PF_FpShort(around_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+								miP.m3P_alpha[incrMat3] = PF_FpShort(around_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 							}
 							incrMat3++;
                         }
-                    }
+                    }*/
                 }
                 
 
                 AEFX_CLR_STRUCT(miP.xLF);
-				miP.xLF = xL;
+				miP.xLF = PF_FpShort( xL);
 				AEFX_CLR_STRUCT(miP.yLF);
-				miP.yLF = yL;
+				miP.yLF = PF_FpShort(yL);
                 AEFX_CLR_STRUCT(miP.luma);
-                miP.luma = (0.2126*bop_inP->red+0.7152*bop_inP->green+0.0722*bop_inP->blue)/(PF_FpLong)PF_MAX_CHAN8;
+                miP.luma = (0.2126*bop_inP->red+0.7152*bop_inP->green+0.0722*bop_inP->blue)/(PF_FpShort)PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inAlphaF);
-				miP.inAlphaF = (PF_FpLong)bop_inP->alpha / PF_MAX_CHAN8;
+				miP.inAlphaF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inRedF);
-				miP.inRedF = (PF_FpLong)bop_inP->red / PF_MAX_CHAN8;
+				miP.inRedF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inGreenF);
-				miP.inGreenF = (PF_FpLong)bop_inP->green / PF_MAX_CHAN8;
+				miP.inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(miP.inBlueF);
-				miP.inBlueF = (PF_FpLong)bop_inP->blue / PF_MAX_CHAN8;
+				miP.inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(red_result);
 				red_result = MIN(expression_t_red.value(), 1);
 				AEFX_CLR_STRUCT(green_result);
@@ -893,10 +926,14 @@ Render (
 				return err;
 			}
 		}
+	
 	}
     PF_UNLOCK_HANDLE(arbH);
 	return err;
 }
+
+
+
 
 
 static PF_Err
