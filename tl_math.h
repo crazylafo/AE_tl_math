@@ -80,7 +80,7 @@ typedef struct {
 /* Parameter defaults */
 
 #define	MATH_VAR_MIN		0
-#define	MATH_VAR_MAX		1
+#define	MATH_VAR_MAX		100
 #define	MATH_VAR_DFLT       1
 
 enum {
@@ -162,13 +162,6 @@ typedef struct MathInfo{
 	PF_FpShort       m3P_alpha[9];
 
 	PF_FpShort		luma;
-
-	PF_EffectWorld   *inputWorld;
-	A_long           cxL;
-	A_long           cyL;
-
-
-	
 
 } MathInfoP, *MathinfoP, **MathinfoH;
 

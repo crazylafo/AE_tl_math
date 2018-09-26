@@ -563,6 +563,7 @@ PopDialog (
     return err;
 }
 
+/*			
 PF_Err
 iterateGen3M8(
 	void *refcon,
@@ -595,7 +596,7 @@ iterateGen3M8(
 	}
 	return err;
 
-};
+};*/
 
 static PF_Err
 Render (
@@ -824,22 +825,31 @@ Render (
 		//if error in expression
 		if (!parser.compile(expression_string_red, expression_t_red))
 		{
-			printf("Error: %s\n", parser.error().c_str());
+			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+				"Error in Red Channel expression : %s",
+				parser.error().c_str());
+
 			parser.compile(expression_string_Safe, expression_t_red);
 		}
 		if (!parser.compile(expression_string_green, expression_t_green))
 		{
-			printf("Error: %s\n", parser.error().c_str());
+			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+				"Error in Green Channel expression : %s",
+				parser.error().c_str());
 			parser.compile(expression_string_Safe, expression_t_green);
 		}
 		if (!parser.compile(expression_string_blue, expression_t_blue))
 		{
-			printf("Error: %s\n", parser.error().c_str());
+			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+				"Error in Blue Channel expression : %s",
+				parser.error().c_str());
 			parser.compile(expression_string_Safe, expression_t_blue);
 		}
 		if (!parser.compile(expression_string_alpha, expression_t_alpha))
 		{
-			printf("Error: %s\n", parser.error().c_str());
+			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+				"Error in Alpha Channel expression : %s",
+				parser.error().c_str());
 			parser.compile(expression_string_Safe, expression_t_alpha);
 		}
 		// rewrite the itiration to safe access to math iteration with xL and yL values.
@@ -854,14 +864,7 @@ Render (
 			for (register A_long xL =0; xL < inputP->width; xL++) {
                 
                 if ( miP.has3MatrixB){ // the expr call the 3*3 matrix so it's Inception : loop to store neightboors pixel (3x3 matrix)
-					
-                    
-					miP.inputWorld = inputP;
-					miP.cxL =xL;
-					miP.cyL =yL;
 
-					ERR(suites.Iterate8Suite1()->iterate_generic(3, (void*)&miP, iterateGen3M8));
-					/*
 					PF_Pixel8 *around_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
 					int incrMat3 =0; //int for increment matrix acess
 					for (register A_long yoffL = 0; yoffL < 3; yoffL++) {
@@ -882,7 +885,7 @@ Render (
 							}
 							incrMat3++;
                         }
-                    }*/
+                    }
                 }
                 
 
