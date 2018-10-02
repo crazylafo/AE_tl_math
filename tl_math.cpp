@@ -563,40 +563,7 @@ PopDialog (
     return err;
 }
 
-/*			
-PF_Err
-iterateGen3M8(
-	void *refcon,
-	A_long thread_idxL,
-	A_long i,
-	A_long itrtL)
-{
-	PF_Err err = PF_Err_NONE;
-	MathInfo	*miP = reinterpret_cast<MathInfo*>(refcon);
-	PF_Pixel8 *around_inP = reinterpret_cast<PF_Pixel8*>(miP->inputWorld->data);
-	PF_Pixel *inP = reinterpret_cast<PF_Pixel8*>(miP->inputWorld->data);
-	for (register A_long xoffL = 0; xoffL < 3; xoffL++) {
-		A_long incrMat3 = xoffL * (i + 1);
-		if ((miP->cxL + xoffL - 1)<0 ||
-			(miP->cyL + i - 1)<0 ||
-			(miP->cxL + xoffL - 1)>miP->inputWorld->width - 1 |
-			(miP->cyL + i - 1)>miP->inputWorld->height - 1) {
-			miP->m3P_red[incrMat3] = miP->m3P_green[incrMat3] = miP->m3P_blue[incrMat3] = miP->m3P_alpha[incrMat3] = 0;
-		}
-		else {
-			AEFX_CLR_STRUCT(around_inP);
-			around_inP = inP + (miP->cxL - 1) + (miP->inputWorld->width *(miP->cyL+i - 1));
-			miP->m3P_red[incrMat3] = PF_FpShort(around_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
-			miP->m3P_green[incrMat3] = PF_FpShort(around_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
-			miP->m3P_blue[incrMat3] = PF_FpShort(around_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
-			miP->m3P_alpha[incrMat3] = PF_FpShort(around_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 
-		}
-		
-	}
-	return err;
-
-};*/
 
 static PF_Err
 Render (
@@ -725,16 +692,6 @@ Render (
             expression_string_alpha  = tempPointer->alphaExAc;
             }
         }
-    if ( expression_string_red.find("vec3")!=std::string::npos ||
-		expression_string_green.find("vec3") != std::string::npos||
-		expression_string_blue.find("vec3") != std::string::npos||
-		expression_string_alpha.find("vec3") != std::string::npos){
-        miP.has3MatrixB = true;
-    }else{
-        miP.has3MatrixB = false;
-    }
-
-
 
     symbol_table_t symbol_table;
   

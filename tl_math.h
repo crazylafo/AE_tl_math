@@ -155,7 +155,8 @@ typedef struct MathInfo{
     PF_FpShort       colorTwo_red;
     PF_FpShort       colorTwo_green;
     PF_FpShort       colorTwo_blue;
-    PF_Boolean       has3MatrixB;
+
+
 	PF_FpShort		 m3P_red[9];
 	PF_FpShort		 m3P_green[9];
 	PF_FpShort		 m3P_blue[9];
