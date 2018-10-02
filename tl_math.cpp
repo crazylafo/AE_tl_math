@@ -863,31 +863,68 @@ Render (
 		for (register A_long yL = 0; yL < outputP->height; yL++) {
 			for (register A_long xL =0; xL < inputP->width; xL++) {
                 
-                if ( miP.has3MatrixB){ // the expr call the 3*3 matrix so it's Inception : loop to store neightboors pixel (3x3 matrix)
+				//3*3 matrix grp
+				PF_Pixel *in00 = bop_inP - (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
+				PF_Pixel *in10 = in00 + 1;//top middle pixel in 3X3.
+				PF_Pixel *in20 = in10 + 1;//top right pixel in 3X3.
+				PF_Pixel *in01 = bop_inP - 1;//mid left pixel in 3X3.
+				PF_Pixel *in21 = bop_inP + 1;//top right pixel in 3X3.
+				PF_Pixel *in02 = bop_inP + (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//bottom left pixel in 3X3.
+				PF_Pixel *in12 = in02 + 1;//bottom middle pixel in 3X3.
+				PF_Pixel *in22 = in12 + 1;//bottom right pixel in 3X3.
 
-					PF_Pixel8 *around_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
-					int incrMat3 =0; //int for increment matrix acess
-					for (register A_long yoffL = 0; yoffL < 3; yoffL++) {
-                        for (register A_long xoffL = 0; xoffL  < 3; xoffL ++) {
-							if ( (xL + xoffL - 1)<0 ||
-								(yL + yoffL - 1)<0  ||
-								(xL + xoffL - 1)>outputP->width-1|
-								(yL + yoffL - 1)>outputP->height-1){ 
-								miP.m3P_red[incrMat3] = miP.m3P_green[incrMat3] = miP.m3P_blue[incrMat3] = miP.m3P_alpha[incrMat3] = 0;
-							}
-							else {
-								AEFX_CLR_STRUCT(around_inP);
-								around_inP = bop_inP + (xoffL - 1) + (inputP->width *(yoffL - 1));
-								miP.m3P_red[incrMat3] = PF_FpShort(around_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
-								miP.m3P_green[incrMat3] = PF_FpShort(around_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
-								miP.m3P_blue[incrMat3] = PF_FpShort(around_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
-								miP.m3P_alpha[incrMat3] = PF_FpShort(around_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-							}
-							incrMat3++;
-                        }
-                    }
-                }
-                
+
+					if (yL - 1 >= 0) {
+						miP.m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_blue[0] = PF_FpShort(in00->blue) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_alpha[0] = PF_FpShort(in00->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+
+						miP.m3P_red[1] = PF_FpShort(in10->red) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_green[1] = PF_FpShort(in10->green) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_blue[1] = PF_FpShort(in10->blue) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_alpha[1] = PF_FpShort(in10->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+						if (xL + 1 <= inputP->width) {
+							miP.m3P_red[2] = PF_FpShort(in20->red) / (PF_FpShort)PF_MAX_CHAN8;
+							miP.m3P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN8;
+							miP.m3P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN8;
+							miP.m3P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+						}
+					}
+					miP.m3P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN8;
+					miP.m3P_green[3] = PF_FpShort(in01->green) / (PF_FpShort)PF_MAX_CHAN8;
+					miP.m3P_blue[3] = PF_FpShort(in01->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					miP.m3P_alpha[3] = PF_FpShort(in01->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+
+					miP.m3P_red[4] = PF_FpShort(bop_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
+					miP.m3P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
+					miP.m3P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					miP.m3P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+					if (xL + 1 <= inputP->height) {
+						miP.m3P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+					}
+
+					if (yL + 1 <= inputP->height) {
+						miP.m3P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_blue[6] = PF_FpShort(in02->blue) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_alpha[6] = PF_FpShort(in02->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+
+						miP.m3P_red[7] = PF_FpShort(in12->red) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_green[7] = PF_FpShort(in12->green) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_blue[7] = PF_FpShort(in12->blue) / (PF_FpShort)PF_MAX_CHAN8;
+						miP.m3P_alpha[7] = PF_FpShort(in12->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+
+						if (xL + 1 <= inputP->width) {
+							miP.m3P_red[8] = PF_FpShort(in22->red) / (PF_FpShort)PF_MAX_CHAN8;
+							miP.m3P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN8;
+							miP.m3P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN8;
+							miP.m3P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+						}
+					}
 
                 AEFX_CLR_STRUCT(miP.xLF);
 				miP.xLF = PF_FpShort( xL);
@@ -917,6 +954,15 @@ Render (
 				bop_outP->blue = A_u_char(blue_result *PF_MAX_CHAN8);
 				bop_outP++;
 				bop_inP++;
+
+				in00++;
+				in10++;
+				in20++;
+				in01++;
+				in21++;
+				in02++;
+				in12++;
+				in22++;
                 }
 			if (yL >= 0 && yL < inputP->height) {
 				bop_inP += in_gutterL;
