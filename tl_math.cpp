@@ -564,13 +564,153 @@ PopDialog (
 }
 
 
+static PF_Err
+Render_8 (void            *refcon,
+          PF_InData		*in_data,
+          PF_EffectWorld  *inputP,
+          PF_EffectWorld  *outputP)
+{
+    PF_Err err = PF_Err_NONE;
+    MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
+    // rewrite the itiration to safe access to math iteration with xL and yL values.
+    PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data), //main
+    *bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
+    A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
+				out_gutterL = (outputP->rowbytes / sizeof(PF_Pixel8)) - outputP->width;
+    
+    PF_FpShort  red_result, green_result, blue_result, alpha_result;
+    
+    expression_t   expression_t_red = miP->refExpr_red;
+    expression_t   expression_t_green = miP->refExpr_green;
+    expression_t   expression_t_blue = miP->refExpr_blue;
+    expression_t   expression_t_alpha= miP->refExpr_alpha;
+    
+    for (register A_long yL = 0; yL < outputP->height; yL++) {
+        for (register A_long xL =0; xL < inputP->width; xL++) {
+            
+            //3*3 matrix grp
+            PF_Pixel *in00 = bop_inP - (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
+            PF_Pixel *in10 = in00 + 1;//top middle pixel in 3X3.
+            PF_Pixel *in20 = in10 + 1;//top right pixel in 3X3.
+            PF_Pixel *in01 = bop_inP - 1;//mid left pixel in 3X3.
+            PF_Pixel *in21 = bop_inP + 1;//top right pixel in 3X3.
+            PF_Pixel *in02 = bop_inP + (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//bottom left pixel in 3X3.
+            PF_Pixel *in12 = in02 + 1;//bottom middle pixel in 3X3.
+            PF_Pixel *in22 = in12 + 1;//bottom right pixel in 3X3.
+            
+            
+            if (yL - 1 >= 0) {
+                miP->m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_blue[0] = PF_FpShort(in00->blue) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_alpha[0] = PF_FpShort(in00->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                
+                miP->m3P_red[1] = PF_FpShort(in10->red) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_green[1] = PF_FpShort(in10->green) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_blue[1] = PF_FpShort(in10->blue) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_alpha[1] = PF_FpShort(in10->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                if (xL + 1 <= inputP->width) {
+                    miP->m3P_red[2] = PF_FpShort(in20->red) / (PF_FpShort)PF_MAX_CHAN8;
+                    miP->m3P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN8;
+                    miP->m3P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN8;
+                    miP->m3P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                }
+            }
+            miP->m3P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN8;
+            miP->m3P_green[3] = PF_FpShort(in01->green) / (PF_FpShort)PF_MAX_CHAN8;
+            miP->m3P_blue[3] = PF_FpShort(in01->blue) / (PF_FpShort)PF_MAX_CHAN8;
+            miP->m3P_alpha[3] = PF_FpShort(in01->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+            
+            miP->m3P_red[4] = PF_FpShort(bop_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
+            miP->m3P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
+            miP->m3P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+            miP->m3P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+            if (xL + 1 <= inputP->height) {
+                miP->m3P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+            }
+            
+            if (yL + 1 <= inputP->height) {
+                miP->m3P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_blue[6] = PF_FpShort(in02->blue) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_alpha[6] = PF_FpShort(in02->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                
+                miP->m3P_red[7] = PF_FpShort(in12->red) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_green[7] = PF_FpShort(in12->green) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_blue[7] = PF_FpShort(in12->blue) / (PF_FpShort)PF_MAX_CHAN8;
+                miP->m3P_alpha[7] = PF_FpShort(in12->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                
+                if (xL + 1 <= inputP->width) {
+                    miP->m3P_red[8] = PF_FpShort(in22->red) / (PF_FpShort)PF_MAX_CHAN8;
+                    miP->m3P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN8;
+                    miP->m3P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN8;
+                    miP->m3P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                }
+            }
+            
+            AEFX_CLR_STRUCT(miP->xLF);
+            miP->xLF = PF_FpShort( xL);
+            AEFX_CLR_STRUCT(miP->yLF);
+            miP->yLF = PF_FpShort(yL);
+            AEFX_CLR_STRUCT(miP->luma);
+            miP->luma = (0.2126*bop_inP->red+0.7152*bop_inP->green+0.0722*bop_inP->blue)/(PF_FpShort)PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(miP->inAlphaF);
+            miP->inAlphaF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(miP->inRedF);
+            miP->inRedF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(miP->inGreenF);
+            miP->inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(miP->inBlueF);
+            miP->inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(red_result);
+            red_result = MIN(expression_t_red.value(), 1);
+            AEFX_CLR_STRUCT(green_result);
+            green_result = MIN(expression_t_green.value(), 1);
+            AEFX_CLR_STRUCT(blue_result);
+            blue_result = MIN(expression_t_blue.value(), 1);
+            AEFX_CLR_STRUCT(alpha_result);
+            alpha_result = MIN(expression_t_alpha.value(), 1);
+                              
+            bop_outP->alpha = A_u_char(alpha_result *PF_MAX_CHAN8);;
+            bop_outP->red = A_u_char(red_result *PF_MAX_CHAN8);
+            bop_outP->green = A_u_char(green_result *PF_MAX_CHAN8);
+            bop_outP->blue = A_u_char(blue_result *PF_MAX_CHAN8);
+            bop_outP++;
+            bop_inP++;
+            
+            in00++;
+            in10++;
+            in20++;
+            in01++;
+            in21++;
+            in02++;
+            in12++;
+            in22++;
+            }
+        if (yL >= 0 && yL < inputP->height) {
+            bop_inP += in_gutterL;
+            }
+        
+        bop_outP += out_gutterL;
+        
+        // Check for interrupt!
+        if ((yL) && (err = PF_PROGRESS(in_data, yL + 1, outputP->height))) {
+            return err;
+        }
+    }
+    return err;
+}
+
 
 static PF_Err
 Render (
-	PF_InData		*in_data,
-	PF_OutData		*out_data,
-	PF_ParamDef		*params[],
-	PF_LayerDef		*outputP )
+        PF_InData		*in_data,
+        PF_OutData		*out_data,
+        PF_ParamDef		*params[],
+        PF_LayerDef		*outputP )
 {
 	PF_Err				err		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
@@ -809,130 +949,11 @@ Render (
 				parser.error().c_str());
 			parser.compile(expression_string_Safe, expression_t_alpha);
 		}
-		// rewrite the itiration to safe access to math iteration with xL and yL values.
-		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data), //main
-							*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
-		A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
-				out_gutterL = (outputP->rowbytes / sizeof(PF_Pixel8)) - outputP->width;
-
-		PF_FpShort  red_result, green_result, blue_result, alpha_result;
-       
-		for (register A_long yL = 0; yL < outputP->height; yL++) {
-			for (register A_long xL =0; xL < inputP->width; xL++) {
-                
-				//3*3 matrix grp
-				PF_Pixel *in00 = bop_inP - (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
-				PF_Pixel *in10 = in00 + 1;//top middle pixel in 3X3.
-				PF_Pixel *in20 = in10 + 1;//top right pixel in 3X3.
-				PF_Pixel *in01 = bop_inP - 1;//mid left pixel in 3X3.
-				PF_Pixel *in21 = bop_inP + 1;//top right pixel in 3X3.
-				PF_Pixel *in02 = bop_inP + (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//bottom left pixel in 3X3.
-				PF_Pixel *in12 = in02 + 1;//bottom middle pixel in 3X3.
-				PF_Pixel *in22 = in12 + 1;//bottom right pixel in 3X3.
-
-
-					if (yL - 1 >= 0) {
-						miP.m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_blue[0] = PF_FpShort(in00->blue) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_alpha[0] = PF_FpShort(in00->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-
-						miP.m3P_red[1] = PF_FpShort(in10->red) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_green[1] = PF_FpShort(in10->green) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_blue[1] = PF_FpShort(in10->blue) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_alpha[1] = PF_FpShort(in10->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-						if (xL + 1 <= inputP->width) {
-							miP.m3P_red[2] = PF_FpShort(in20->red) / (PF_FpShort)PF_MAX_CHAN8;
-							miP.m3P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN8;
-							miP.m3P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN8;
-							miP.m3P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-						}
-					}
-					miP.m3P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN8;
-					miP.m3P_green[3] = PF_FpShort(in01->green) / (PF_FpShort)PF_MAX_CHAN8;
-					miP.m3P_blue[3] = PF_FpShort(in01->blue) / (PF_FpShort)PF_MAX_CHAN8;
-					miP.m3P_alpha[3] = PF_FpShort(in01->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-
-					miP.m3P_red[4] = PF_FpShort(bop_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
-					miP.m3P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
-					miP.m3P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
-					miP.m3P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-					if (xL + 1 <= inputP->height) {
-						miP.m3P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-					}
-
-					if (yL + 1 <= inputP->height) {
-						miP.m3P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_blue[6] = PF_FpShort(in02->blue) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_alpha[6] = PF_FpShort(in02->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-
-						miP.m3P_red[7] = PF_FpShort(in12->red) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_green[7] = PF_FpShort(in12->green) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_blue[7] = PF_FpShort(in12->blue) / (PF_FpShort)PF_MAX_CHAN8;
-						miP.m3P_alpha[7] = PF_FpShort(in12->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-
-						if (xL + 1 <= inputP->width) {
-							miP.m3P_red[8] = PF_FpShort(in22->red) / (PF_FpShort)PF_MAX_CHAN8;
-							miP.m3P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN8;
-							miP.m3P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN8;
-							miP.m3P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-						}
-					}
-
-                AEFX_CLR_STRUCT(miP.xLF);
-				miP.xLF = PF_FpShort( xL);
-				AEFX_CLR_STRUCT(miP.yLF);
-				miP.yLF = PF_FpShort(yL);
-                AEFX_CLR_STRUCT(miP.luma);
-                miP.luma = (0.2126*bop_inP->red+0.7152*bop_inP->green+0.0722*bop_inP->blue)/(PF_FpShort)PF_MAX_CHAN8;
-				AEFX_CLR_STRUCT(miP.inAlphaF);
-				miP.inAlphaF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN8;
-				AEFX_CLR_STRUCT(miP.inRedF);
-				miP.inRedF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
-				AEFX_CLR_STRUCT(miP.inGreenF);
-				miP.inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
-				AEFX_CLR_STRUCT(miP.inBlueF);
-				miP.inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
-				AEFX_CLR_STRUCT(red_result);
-				red_result = MIN(expression_t_red.value(), 1);
-				AEFX_CLR_STRUCT(green_result);
-				green_result = MIN(expression_t_green.value(), 1);
-				AEFX_CLR_STRUCT(blue_result);
-				blue_result = MIN(expression_t_blue.value(), 1);
-				AEFX_CLR_STRUCT(alpha_result);
-				alpha_result = MIN(expression_t_alpha.value(), 1);
-				bop_outP->alpha = A_u_char(alpha_result *PF_MAX_CHAN8);;
-				bop_outP->red = A_u_char(red_result *PF_MAX_CHAN8);
-				bop_outP->green = A_u_char(green_result *PF_MAX_CHAN8);
-				bop_outP->blue = A_u_char(blue_result *PF_MAX_CHAN8);
-				bop_outP++;
-				bop_inP++;
-
-				in00++;
-				in10++;
-				in20++;
-				in01++;
-				in21++;
-				in02++;
-				in12++;
-				in22++;
-                }
-			if (yL >= 0 && yL < inputP->height) {
-				bop_inP += in_gutterL;
-                }
-
-			bop_outP += out_gutterL;
-
-			// Check for interrupt!
-			if ((yL) && (err = PF_PROGRESS(in_data, yL + 1, outputP->height))) {
-				return err;
-			}
-		}
-	
+        miP.refExpr_red     =std::ref (expression_t_red);
+        miP.refExpr_green   =std::ref (expression_t_green);
+        miP.refExpr_blue    =std::ref (expression_t_blue);
+        miP.refExpr_alpha   =std::ref (expression_t_alpha);
+        Render_8 ( (void*)&miP,in_data,inputP,outputP);
 	}
     PF_UNLOCK_HANDLE(arbH);
 	return err;
