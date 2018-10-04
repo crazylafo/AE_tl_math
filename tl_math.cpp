@@ -586,18 +586,20 @@ Render_8 (void            *refcon,
     expression_t   expression_t_alpha= miP->refExpr_alpha;
     
     for (register A_long yL = 0; yL < outputP->height; yL++) {
+        //3*3 matrix grp
+        
+        PF_Pixel *in00 = bop_inP - (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
+        PF_Pixel *in10 = in00 + 1;//top middle pixel in 3X3.
+        PF_Pixel *in20 = in10 + 1;//top right pixel in 3X3.
+        PF_Pixel *in01 = bop_inP - 1;//mid left pixel in 3X3.
+        PF_Pixel *in21 = bop_inP + 1;//top right pixel in 3X3.
+        PF_Pixel *in02 = bop_inP + (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//bottom left pixel in 3X3.
+        PF_Pixel *in12 = in02 + 1;//bottom middle pixel in 3X3.
+        PF_Pixel *in22 = in12 + 1;//bottom right pixel in 3X3.
+        
+        
         for (register A_long xL =0; xL < inputP->width; xL++) {
-            
-            //3*3 matrix grp
-            PF_Pixel *in00 = bop_inP - (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
-            PF_Pixel *in10 = in00 + 1;//top middle pixel in 3X3.
-            PF_Pixel *in20 = in10 + 1;//top right pixel in 3X3.
-            PF_Pixel *in01 = bop_inP - 1;//mid left pixel in 3X3.
-            PF_Pixel *in21 = bop_inP + 1;//top right pixel in 3X3.
-            PF_Pixel *in02 = bop_inP + (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//bottom left pixel in 3X3.
-            PF_Pixel *in12 = in02 + 1;//bottom middle pixel in 3X3.
-            PF_Pixel *in22 = in12 + 1;//bottom right pixel in 3X3.
-            
+
             
             if (yL - 1 >= 0) {
                 miP->m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN8;
@@ -614,6 +616,11 @@ Render_8 (void            *refcon,
                     miP->m3P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN8;
                     miP->m3P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN8;
                     miP->m3P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                }else {
+                    miP->m3P_red[2] =   0;
+                    miP->m3P_green[2] = 0;
+                    miP->m3P_blue[2] =  0;
+                    miP->m3P_alpha[2] = 0;
                 }
             }
             miP->m3P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN8;
@@ -630,8 +637,12 @@ Render_8 (void            *refcon,
                 miP->m3P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN8;
                 miP->m3P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN8;
                 miP->m3P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+            }else{
+                miP->m3P_red[5] = 0;
+                miP->m3P_green[5] =0;
+                miP->m3P_blue[5] = 0;
+                miP->m3P_alpha[5] = 0;
             }
-            
             if (yL + 1 <= inputP->height) {
                 miP->m3P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN8;
                 miP->m3P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN8;
@@ -648,6 +659,11 @@ Render_8 (void            *refcon,
                     miP->m3P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN8;
                     miP->m3P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN8;
                     miP->m3P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+                }else{
+                    miP->m3P_red[8] = 0;
+                    miP->m3P_green[8] =0;
+                    miP->m3P_blue[8] = 0;
+                    miP->m3P_alpha[8] =0;
                 }
             }
             
@@ -681,6 +697,7 @@ Render_8 (void            *refcon,
             bop_outP++;
             bop_inP++;
             
+
             in00++;
             in10++;
             in20++;
@@ -703,6 +720,8 @@ Render_8 (void            *refcon,
     }
     return err;
 }
+
+
 
 
 static PF_Err
@@ -949,12 +968,13 @@ Render (
 				parser.error().c_str());
 			parser.compile(expression_string_Safe, expression_t_alpha);
 		}
-        miP.refExpr_red     =std::ref (expression_t_red);
-        miP.refExpr_green   =std::ref (expression_t_green);
-        miP.refExpr_blue    =std::ref (expression_t_blue);
-        miP.refExpr_alpha   =std::ref (expression_t_alpha);
-        Render_8 ( (void*)&miP,in_data,inputP,outputP);
-	}
+        miP.refExpr_red     =expression_t_red;
+        miP.refExpr_green   =expression_t_green;
+        miP.refExpr_blue    =expression_t_blue;
+        miP.refExpr_alpha   =expression_t_alpha;
+        ERR(Render_8 ( (void*)&miP,in_data,inputP,outputP));
+
+    }
     PF_UNLOCK_HANDLE(arbH);
 	return err;
 }
