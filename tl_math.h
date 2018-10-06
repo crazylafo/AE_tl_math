@@ -162,11 +162,6 @@ typedef struct MathInfo{
 	PF_FpShort		 m3P_blue[9];
 	PF_FpShort       m3P_alpha[9];
     
-    expression_t          refExpr_red;
-    expression_t          refExpr_green;
-    expression_t          refExpr_blue;
-    expression_t          refExpr_alpha;
-
 	PF_FpShort		luma;
 
 } MathInfoP, *MathinfoP, **MathinfoH;
