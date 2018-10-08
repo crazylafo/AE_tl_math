@@ -381,74 +381,137 @@ inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpSho
 }
 
 static PF_Err
-PopDialog (
-           PF_InData		*in_data,
-           PF_OutData		*out_data,
-           PF_ParamDef		*params[],
-           PF_LayerDef		*output )
+PopDialog(
+	PF_InData		*in_data,
+	PF_OutData		*out_data,
+	PF_ParamDef		*params[],
+	PF_LayerDef		*output)
 {
-    PF_Err err = PF_Err_NONE;
-    AEGP_SuiteHandler	suites(in_data->pica_basicP);
-    my_global_dataP		globP				= reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+	PF_Err err = PF_Err_NONE;
+	AEGP_SuiteHandler	suites(in_data->pica_basicP);
+	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 
-    AEGP_MemHandle     resultMemH          =     NULL;
-    A_char *resultAC =     NULL;
-    A_char          scriptAC[4096] = {'\0'};
-    
-    
-    A_char   SET_EXPR_SCRIPT [4096] = "function expr(redExpr,GreenExpr,BlueExpr,AlphaExpr) {\
-    var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\
-    w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\
-    w.grp = w.add('group');\
-    w.grp.orientation='column';\
-    w.grp.alignment = ['fill', 'fill'];\
-    w.grp.alignChildren = ['fill', 'fill'];\
-    w.grp.extButtGrp = w.grp.add('group');\
-    w.grp.extButtGrp.alignment = ['fill', 'fill'];\
-    w.grp.extButtGrp.alignChildren = ['fill', 'fill'];\
-    w.grp.extButtGrp.loadBtn = w.grp.extButtGrp.add ('button', undefined, 'Load');\
-    w.grp.extButtGrp.saveBtn =w.grp.extButtGrp.add('button', undefined, 'Save');\
-    w.grp.redC = w.grp.add('group');\
-    w.grp.redC.orientation = 'row';\
-    w.grp.redC.alignment = ['fill', 'fill'];\
-    w.grp.redC.alignChildren = ['fill', 'fill'];\
-    w.grp.redC.redst = w.grp.redC.add ('statictext', undefined,'Red Expr    :');\
-    w.grp.redC.redet = w.grp.redC.add ('edittext', undefined, redExpr,{multiline:true});\
-    w.grp.greenC = w. grp.add('group');\
-    w.grp.greenC.orientation = 'row';\
-    w.grp.greenC.alignChildren = ['fill', 'fill'];\
-    w.grp.greenC.greenst = w.grp.greenC.add ('statictext', undefined,'Green Expr :');\
-    w.grp.greenC.greenet = w.grp.greenC.add ('edittext', undefined, GreenExpr,{multiline:true});\
-    w.grp.blueC = w.grp.add('group');\
-    w.grp.blueC.orientation = 'row';\
-    w.grp.blueC.alignChildren = ['fill', 'fill'];\
-    w.grp.blueC.bluest = w.grp.blueC.add ('statictext', undefined, 'Blue Expr   :');\
-    w.grp.blueC.blueet = w.grp.blueC.add ('edittext', undefined, BlueExpr,{multiline:true});\
-    w.grp.alphaC = w.grp.add('group');\
-    w.grp.alphaC.orientation = 'row';\
-    w.grp.alphaC.alignChildren = ['fill', 'fill'];\
-    w.grp.alphaC.alphast = w.grp.alphaC.add ('statictext', undefined, 'Alpha Expr :');\
-    w.grp.alphaC.alphaet = w.grp.alphaC.add ('edittext', undefined, AlphaExpr,{multiline:true});\
-    w.grp.btnGrp = w.grp.add('Group');\
-    w.grp.btnGrp.orientation = 'row';\
-    w.grp.btnGrp.Ok =w.grp.btnGrp.add ('button', undefined, 'ok');\
-    w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\
-    var result = '';\
-    w.grp.btnGrp.Ok.onClick = function(){\
-    var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text;\
-    w.close();\
-    result = strExpr;\
-    }\
-    w.grp.btnGrp.Cancel.onClick = function(){\
-    var ret ='rfromJS'+redExpr+'gfromJS'+GreenExpr+'bfromJS'+BlueExpr+'afromJS'+AlphaExpr;\
-    w.close();\
-    result = ret;\
-    }\
-    w.onResizing = w.onResize = function(){this.layout.resize();}\
-    w.show();\
-    return result\
-    }\
-    expr(%s,%s,%s,%s);";
+	AEGP_MemHandle     resultMemH = NULL;
+	A_char *resultAC = NULL;
+	A_char          scriptAC[6000] = { '\0' };
+	std::string Majvers = std::to_string(MAJOR_VERSION);
+	std::string MinVers = std::to_string(MINOR_VERSION);
+	A_char   SET_EXPR_SCRIPT[6000] = "function expr(redExpr,greenExpr,blueExpr,alphaExpr, pluginMAJORV, pluginMINORV){ \n\
+    var pluginVersion = pluginMAJORV+'.'+pluginMINORV;\n\
+    var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\n\
+    w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\n\
+    w.grp = w.add('group');\n\
+    w.grp.orientation='column';\n\
+    w.grp.alignment = ['fill', 'fill'];\n\
+    w.grp.alignChildren = ['fill', 'fill'];\n\
+    w.grp.extButtGrp = w.grp.add('group');\n\
+    w.grp.extButtGrp.alignment = ['fill', 'fill'];\n\
+    w.grp.extButtGrp.alignChildren = ['fill', 'fill'];\n\
+    w.grp.extButtGrp.loadBtn = w.grp.extButtGrp.add ('button', undefined, 'Load');\n\
+    w.grp.extButtGrp.saveBtn =w.grp.extButtGrp.add('button', undefined, 'Save');\n\
+    w.grp.redC = w.grp.add('group');\n\
+    w.grp.redC.orientation = 'row';\n\
+    w.grp.redC.alignment = ['fill', 'fill'];\n\
+    w.grp.redC.alignChildren = ['fill', 'fill'];\n\
+    w.grp.redC.redst = w.grp.redC.add ('statictext', undefined,'Red Expr    :');\n\
+    w.grp.redC.redet = w.grp.redC.add ('edittext', undefined, redExpr,{multiline:true});\n\
+    w.grp.greenC = w. grp.add('group');\n\
+    w.grp.greenC.orientation = 'row';\n\
+    w.grp.greenC.alignChildren = ['fill', 'fill'];\n\
+    w.grp.greenC.greenst = w.grp.greenC.add ('statictext', undefined,'Green Expr :');\n\
+    w.grp.greenC.greenet = w.grp.greenC.add ('edittext', undefined, greenExpr,{multiline:true});\n\
+    w.grp.blueC = w.grp.add('group');\n\
+    w.grp.blueC.orientation = 'row';\n\
+    w.grp.blueC.alignChildren = ['fill', 'fill'];\n\
+    w.grp.blueC.bluest = w.grp.blueC.add ('statictext', undefined, 'Blue Expr   :');\n\
+    w.grp.blueC.blueet = w.grp.blueC.add ('edittext', undefined, blueExpr,{multiline:true});\n\
+    w.grp.alphaC = w.grp.add('group');\n\
+    w.grp.alphaC.orientation = 'row';\n\
+    w.grp.alphaC.alignChildren = ['fill', 'fill'];\n\
+    w.grp.alphaC.alphast = w.grp.alphaC.add ('statictext', undefined, 'Alpha Expr :');\n\
+    w.grp.alphaC.alphaet = w.grp.alphaC.add ('edittext', undefined, alphaExpr,{multiline:true});\n\
+    w.grp.btnGrp = w.grp.add('Group');\n\
+    w.grp.btnGrp.orientation = 'row';\n\
+    w.grp.btnGrp.Ok =w.grp.btnGrp.add ('button', undefined, 'ok');\n\
+    w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\n\
+    var result = '';\n\
+	w.grp.extButtGrp.loadBtn.onClick = function (){\n\
+		var exprObj = readJson();\n\
+		if (exprObj.error === \"none\"){\n\
+			w.grp.redC.redet.text =		exprObj.redExpr;\n\
+			w.grp.greenC.greenet.text=	exprObj.greenExpr;\n\
+			w.grp.blueC.blueet.text =	exprObj.blueExpr;\n\
+			w.grp.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
+			alert (exprObj.error);\n\
+			}\n\
+    }\n\
+    w.grp.extButtGrp.saveBtn.onClick = function (){\n\
+    saveAsJson (w.grp.redC.redet.text, w.grp.greenC.greenet.text, w.grp.blueC.blueet.text, w.grp.alphaC.alphaet.text, pluginVersion);\n\
+    }\n\
+    w.grp.btnGrp.Ok.onClick = function(){\n\
+    var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text;\n\
+    w.close();\n\
+    result = strExpr;\n\
+    }\n\
+    w.grp.btnGrp.Cancel.onClick = function(){\n\
+    var ret ='rfromJS'+redExpr+'gfromJS'+greenExpr+'bfromJS'+blueExpr+'afromJS'+alphaExpr;\n\
+    w.close();\n\
+    result = ret;\n\
+    }\n\
+    w.onResizing = w.onResize = function(){this.layout.resize();}\n\
+    w.show();\n\
+    return result\n\
+    }\n\
+	function createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion){\n\
+    ExprObj = {\n\
+	effectName   : \"tlMath\",\n\
+    exprLang :  \"Exprtk\",\n\
+    category :  \"Custom\",\n\
+    pluginVesion :  pluginVersion,\n\
+    notCompatibleVersion : 0,\n\
+    redExpr   : redExpr,\n\
+    greenExpr : greenExpr,\n\
+    blueExpr  : blueExpr,\n\
+    alphaExpr : alphaExpr,\n\
+    };\n\
+    return ExprObj;\n\
+    }\n\
+    function saveAsJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion){\n\
+	 ExprObj = createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion);\n\
+		var presetFile =File.saveDialog('save your preset as a json');\n\
+		if (presetFile && presetFile.open('w')){\n\
+			presetFile.encoding ='UTF-8';\n\
+			presetFile.write(JSON.stringify(ExprObj, undefined, '\\r\\n'));\n\
+			presetFile.close();\n\
+			}\n\
+		};\n\
+	function readJson(){\n\
+		var ExprObj ={};\n\
+		var loadFile =File.openDialog('load your preset json');\n\
+		if (loadFile && loadFile.open('r')){\n\
+			loadFile.encoding ='UTF-8';\n\
+			var jsonFile = loadFile.read();\n\
+			var testObj = JSON.parse(jsonFile);\n\
+			if (testObj.effectName === \"tlMath\")\n\
+				try{\n\
+					ExprObj.exprLang = testObj.exprLang;\n\
+					ExprObj.category = testObj.category;\n\
+					ExprObj.pluginVesion = testObj.pluginVesion;\n\
+					ExprObj.notCompatibleVersion = testObj.notCompatibleVersion;\n\
+					ExprObj.redExpr = testObj.redExpr;\n\
+					ExprObj.greenExpr = testObj.greenExpr;\n\
+					ExprObj.blueExpr = testObj.blueExpr;\n\
+					ExprObj.alphaExpr = testObj.alphaExpr;\n\
+					ExprObj.error = \"none\";\n\
+				}catch (e) {\n\
+					alert(e)\n\
+					ExprObj.error = \"err\";\n\
+					}\n\
+				loadFile.close();\n\
+				}\n\
+		return ExprObj;\n\
+		};\n\
+    expr(%s,%s,%s,%s,%s,%s);";
     
     //ARB
     PF_ParamDef arb_param;
@@ -497,7 +560,7 @@ PopDialog (
 	strReplace(tempAlphaS, "\n", "\\n");
 
 
-    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str(), tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str() );
+    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str(), tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str(),Majvers.c_str() , MinVers .c_str() );
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 
     //AEGP SETSTREAMVALUR TO ARB

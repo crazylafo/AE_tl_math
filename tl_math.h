@@ -22,6 +22,9 @@
 	typedef unsigned short PixelType;
 	#include <assert.h>
 	#include <Windows.h>
+    #include "json\json.hpp"
+#else
+	#include "json/json.hpp"
 #endif
 
 //#include "AE_EffectUI.h"
@@ -43,7 +46,6 @@
 #include <cstdio>
 #include <string>
 #include "exprtk.hpp"
-
 #include "tl_math_Strings.h"
 
 /* Versioning information */
@@ -51,7 +53,7 @@
 #define	MAJOR_VERSION	1
 #define	MINOR_VERSION	0
 #define	BUG_VERSION		0
-#define	STAGE_VERSION	PF_Stage_DEVELOP
+#define	STAGE_VERSION	PF_Stage_ALPHA
 #define	BUILD_VERSION	1
 
 typedef exprtk::symbol_table<PF_FpShort> symbol_table_t;
