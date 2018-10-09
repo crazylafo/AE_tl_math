@@ -249,9 +249,6 @@ strReplace(std::string& str,
 
 
 
-
-
-
 #endif
 
 #endif // TLMATH

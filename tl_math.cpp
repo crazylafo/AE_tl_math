@@ -396,7 +396,9 @@ PopDialog(
 	A_char          scriptAC[6000] = { '\0' };
 	std::string Majvers = std::to_string(MAJOR_VERSION);
 	std::string MinVers = std::to_string(MINOR_VERSION);
-	A_char   SET_EXPR_SCRIPT[6000] = "function expr(redExpr,greenExpr,blueExpr,alphaExpr, pluginMAJORV, pluginMINORV){ \n\
+    
+    
+    A_char   SET_EXPR_SCRIPT[6000] = "function expr(redExpr,greenExpr,blueExpr,alphaExpr, pluginMAJORV, pluginMINORV){ \n\
     var pluginVersion = pluginMAJORV+'.'+pluginMINORV;\n\
     var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\n\
     w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\n\
@@ -435,15 +437,15 @@ PopDialog(
     w.grp.btnGrp.Ok =w.grp.btnGrp.add ('button', undefined, 'ok');\n\
     w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\n\
     var result = '';\n\
-	w.grp.extButtGrp.loadBtn.onClick = function (){\n\
-		var exprObj = readJson();\n\
-		if (exprObj.error === \"none\"){\n\
-			w.grp.redC.redet.text =		exprObj.redExpr;\n\
-			w.grp.greenC.greenet.text=	exprObj.greenExpr;\n\
-			w.grp.blueC.blueet.text =	exprObj.blueExpr;\n\
-			w.grp.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
-			alert (exprObj.error);\n\
-			}\n\
+    w.grp.extButtGrp.loadBtn.onClick = function (){\n\
+    var exprObj = readJson();\n\
+    if (exprObj.error === \"none\"){\n\
+    w.grp.redC.redet.text =		exprObj.redExpr;\n\
+    w.grp.greenC.greenet.text=	exprObj.greenExpr;\n\
+    w.grp.blueC.blueet.text =	exprObj.blueExpr;\n\
+    w.grp.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
+    alert (exprObj.error);\n\
+    }\n\
     }\n\
     w.grp.extButtGrp.saveBtn.onClick = function (){\n\
     saveAsJson (w.grp.redC.redet.text, w.grp.greenC.greenet.text, w.grp.blueC.blueet.text, w.grp.alphaC.alphaet.text, pluginVersion);\n\
@@ -462,9 +464,9 @@ PopDialog(
     w.show();\n\
     return result\n\
     }\n\
-	function createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion){\n\
+    function createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion){\n\
     ExprObj = {\n\
-	effectName   : \"tlMath\",\n\
+    effectName   : \"tlMath\",\n\
     exprLang :  \"Exprtk\",\n\
     category :  \"Custom\",\n\
     pluginVesion :  pluginVersion,\n\
@@ -477,41 +479,44 @@ PopDialog(
     return ExprObj;\n\
     }\n\
     function saveAsJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion){\n\
-	 ExprObj = createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion);\n\
-		var presetFile =File.saveDialog('save your preset as a json');\n\
-		if (presetFile && presetFile.open('w')){\n\
-			presetFile.encoding ='UTF-8';\n\
-			presetFile.write(JSON.stringify(ExprObj, undefined, '\\r\\n'));\n\
-			presetFile.close();\n\
-			}\n\
-		};\n\
-	function readJson(){\n\
-		var ExprObj ={};\n\
-		var loadFile =File.openDialog('load your preset json');\n\
-		if (loadFile && loadFile.open('r')){\n\
-			loadFile.encoding ='UTF-8';\n\
-			var jsonFile = loadFile.read();\n\
-			var testObj = JSON.parse(jsonFile);\n\
-			if (testObj.effectName === \"tlMath\")\n\
-				try{\n\
-					ExprObj.exprLang = testObj.exprLang;\n\
-					ExprObj.category = testObj.category;\n\
-					ExprObj.pluginVesion = testObj.pluginVesion;\n\
-					ExprObj.notCompatibleVersion = testObj.notCompatibleVersion;\n\
-					ExprObj.redExpr = testObj.redExpr;\n\
-					ExprObj.greenExpr = testObj.greenExpr;\n\
-					ExprObj.blueExpr = testObj.blueExpr;\n\
-					ExprObj.alphaExpr = testObj.alphaExpr;\n\
-					ExprObj.error = \"none\";\n\
-				}catch (e) {\n\
-					alert(e)\n\
-					ExprObj.error = \"err\";\n\
-					}\n\
-				loadFile.close();\n\
-				}\n\
-		return ExprObj;\n\
-		};\n\
+    ExprObj = createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion);\n\
+    var presetFile =File.saveDialog('save your preset as a json');\n\
+    if (presetFile && presetFile.open('w')){\n\
+    presetFile.encoding ='UTF-8';\n\
+    presetFile.write(JSON.stringify(ExprObj, undefined, '\\r\\n'));\n\
+    presetFile.close();\n\
+    }\n\
+    };\n\
+    function readJson(){\n\
+    var ExprObj ={};\n\
+    var loadFile =File.openDialog('load your preset json');\n\
+    if (loadFile && loadFile.open('r')){\n\
+    loadFile.encoding ='UTF-8';\n\
+    var jsonFile = loadFile.read();\n\
+    var testObj = JSON.parse(jsonFile);\n\
+    if (testObj.effectName === \"tlMath\")\n\
+    try{\n\
+    ExprObj.exprLang = testObj.exprLang;\n\
+    ExprObj.category = testObj.category;\n\
+    ExprObj.pluginVesion = testObj.pluginVesion;\n\
+    ExprObj.notCompatibleVersion = testObj.notCompatibleVersion;\n\
+    ExprObj.redExpr = testObj.redExpr;\n\
+    ExprObj.greenExpr = testObj.greenExpr;\n\
+    ExprObj.blueExpr = testObj.blueExpr;\n\
+    ExprObj.alphaExpr = testObj.alphaExpr;\n\
+    ExprObj.error = \"none\";\n\
+    }catch (e) {\n\
+    alert(e)\n\
+    ExprObj.error = \"err\";\n\
+    }\n\
+    loadFile.close();\n\
+    }\n\
+    return ExprObj;\n\
+    };\n\
     expr(%s,%s,%s,%s,%s,%s);";
+    
+    
+
     
     //ARB
     PF_ParamDef arb_param;
@@ -882,7 +887,7 @@ Render (
 
 		PF_FpShort  red_result, green_result, blue_result, alpha_result;
 
-		for (register A_long yL = 0; yL < outputP->height; yL++) {
+		for ( A_long yL = 0; yL < outputP->height; yL++) {
 			//3*3 matrix grp
 
 			PF_Pixel *in00 = bop_inP - (inputP->rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
@@ -895,7 +900,7 @@ Render (
 			PF_Pixel *in22 = in12 + 1;//bottom right pixel in 3X3.
 
 
-			for (register A_long xL = 0; xL < inputP->width; xL++) {
+			for (A_long xL = 0; xL < inputP->width; xL++) {
 
 
 				if (yL - 1 >= 0) {
