@@ -119,6 +119,9 @@ typedef struct MathInfo{
     std::function<PF_FpShort()> blueExpr;
     std::function<PF_FpShort()> alphaExpr;
     
+    PF_EffectWorld inW;
+    PF_EffectWorld outW;
+    
 	PF_FpShort	inOneF;
     PF_FpShort	inTwoF;
     PF_FpShort	inThreeF;
@@ -258,7 +261,11 @@ strReplace(std::string& str,
                 const std::string& oldStr,
                 const std::string& newStr);
 
-
+PF_Err
+LineIteration8Func ( void *refconPV,
+                    A_long thread_idxL,
+                    A_long iterIndex,
+                    A_long numIter);
 
 #endif
 
