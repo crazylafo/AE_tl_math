@@ -113,6 +113,12 @@ enum {
 };
 
 typedef struct MathInfo{
+
+    std::function<PF_FpShort()> redExpr;
+    std::function<PF_FpShort()> greenExpr;
+    std::function<PF_FpShort()> blueExpr;
+    std::function<PF_FpShort()> alphaExpr;
+    
 	PF_FpShort	inOneF;
     PF_FpShort	inTwoF;
     PF_FpShort	inThreeF;
@@ -165,6 +171,11 @@ typedef struct MathInfo{
 	PF_FpShort       m3P_alpha[9];
     
 	PF_FpShort		luma;
+    
+    
+    PF_Boolean      hasErrorB;
+    std::string     channelErrorstr;
+    std::string     errorstr;
 
 } MathInfoP, *MathinfoP, **MathinfoH;
 

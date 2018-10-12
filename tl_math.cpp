@@ -633,7 +633,72 @@ PopDialog(
 
 
 
-
+template <typename T=PF_FpShort> class parseExpr {
+        private:
+            std::shared_ptr<exprtk::parser<T>> parser;
+            exprtk::expression<T> expression;
+            exprtk::symbol_table<T> symbol_table;
+        public:
+            parseExpr(void *refcon, const std::string &exprstr) {
+                MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
+                std::string expression_string_Safe = "1";
+                if (!parser){
+                    parser = std::make_shared<exprtk::parser<T>>();
+                }
+                miP->hasErrorB = FALSE;
+                symbol_table.clear();
+                symbol_table.add_variable("xL",  miP->xLF);
+                symbol_table.add_variable("yL",  miP->yLF);
+                symbol_table.add_variable("inP_red", miP->inRedF);
+                symbol_table.add_variable("inP_green", miP->inGreenF);
+                symbol_table.add_variable("inP_blue", miP->inBlueF);
+                symbol_table.add_variable("inP_alpha", miP->inAlphaF);
+                symbol_table.add_variable("inP_luma", miP->luma);
+                symbol_table.add_vector("vec3_red", miP->m3P_red);
+                symbol_table.add_vector("vec3_green",miP->m3P_green);
+                symbol_table.add_vector("vec3_blue", miP->m3P_blue);
+                symbol_table.add_vector("vec3_alpha", miP->m3P_alpha);
+                symbol_table.add_constants();
+                symbol_table.add_constant("var1",miP->inOneF);
+                symbol_table.add_constant("var2",miP->inTwoF);
+                symbol_table.add_constant("var3",miP->inThreeF);
+                symbol_table.add_constant("var4",miP->inFourF);
+                symbol_table.add_constant ("pt1_x",miP->pointOneX);
+                symbol_table.add_constant ("pt1_y",miP->pointOneY);
+                symbol_table.add_constant ("pt2_x",miP->pointTwoX);
+                symbol_table.add_constant ("pt2_x",miP->pointTwoY);
+                symbol_table.add_constant ("cl1_red",miP->colorOne_red);
+                symbol_table.add_constant ("cl1_green", miP->colorOne_green);
+                symbol_table.add_constant ("cl1_blue",miP->colorOne_blue);
+                symbol_table.add_constant ("cl2_red",miP->colorTwo_red);
+                symbol_table.add_constant ("cl2_green",miP->colorTwo_green);
+                symbol_table.add_constant ("cl2_blue",miP->colorTwo_blue);
+                symbol_table.add_constant("layerWidth",miP->layerWidthF);
+                symbol_table.add_constant("layerHeight",miP->layerHeightF);
+                symbol_table.add_constant("layerTime_sec",miP->layerTime_Sec);
+                symbol_table.add_constant("layerTime_frame",miP->layerTime_Frame);
+                symbol_table.add_constant("layerDuration",miP->layerDuration);
+                symbol_table.add_constant("layerPosition_x", miP->layerPos_X);
+                symbol_table.add_constant("layerPosition_y", miP->layerPos_Y);
+                symbol_table.add_constant("layerPosition_z", miP->layerPos_Z);
+                symbol_table.add_constant("layerScale_z", miP->layerScale_X);
+                symbol_table.add_constant("layerScale_y", miP->layerScale_Y);
+                symbol_table.add_constant("layerScale_z", miP->layerScale_Z);
+                symbol_table.add_constant("compWidth", miP->compWidthF);
+                symbol_table.add_constant("compHeight", miP->compHeightF);
+                symbol_table.add_constant("compFps", miP->compFpsF);
+                symbol_table.add_function("drawRect", parseDrawRect);
+                expression.register_symbol_table(symbol_table);
+                parser->compile(exprstr,expression);
+                if (!parser->compile(exprstr,expression))
+                {
+                    miP->hasErrorB = TRUE;
+                    miP->errorstr =parser->error();
+                    parser->compile(expression_string_Safe, expression);
+                }
+            }
+            T operator()() { return expression.value(); }
+        };
 
 
 static PF_Err
@@ -746,7 +811,7 @@ Render (
 	miP.xLF = 0;
 	miP.yLF = 0;
 
-    std::string expression_string_Safe = "1";
+
     std::string expression_string_red= "1";
     std::string expression_string_green= "1";
     std::string expression_string_blue= "1";
@@ -763,65 +828,39 @@ Render (
             expression_string_alpha  = tempPointer->alphaExAc;
             }
         }
-
-    symbol_table_t symbol_table;
-  
-    symbol_table.add_variable("xL",  miP.xLF);
-    symbol_table.add_variable("yL",  miP.yLF);
-	symbol_table.add_variable("inP_red", miP.inRedF);
-	symbol_table.add_variable("inP_green", miP.inGreenF);
-	symbol_table.add_variable("inP_blue", miP.inBlueF);
-	symbol_table.add_variable("inP_alpha", miP.inAlphaF);
-    symbol_table.add_variable("inP_luma", miP.luma);
-
-	symbol_table.add_vector("vec3_red", miP.m3P_red);
-	symbol_table.add_vector("vec3_green", miP.m3P_green);
-	symbol_table.add_vector("vec3_blue", miP.m3P_blue);
-	symbol_table.add_vector("vec3_alpha", miP.m3P_alpha);
+    miP.redExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_red);
+    if (miP.hasErrorB)
+    {   miP.channelErrorstr = "red channel expression";
+        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+                                              "Error in %s : %s",
+                                              miP.channelErrorstr.c_str(),
+                                              miP.errorstr.c_str());
+    }
+     miP.greenExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_green);
+    if (miP.hasErrorB)
+    {   miP.channelErrorstr = "green channel expression";
+        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+                                              "Error in %s : %s",
+                                              miP.channelErrorstr.c_str(),
+                                              miP.errorstr.c_str());
+    }
+    miP.blueExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_blue);
+    if (miP.hasErrorB)
+    {   miP.channelErrorstr = "blue channel expression";
+        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+                                              "Error in %s : %s",
+                                              miP.channelErrorstr.c_str(),
+                                              miP.errorstr.c_str());
+    }
+    miP.alphaExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_alpha);
+    if (miP.hasErrorB)
+    {   miP.channelErrorstr = "alpha channel expression";
+        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+                                              "Error in %s : %s",
+                                              miP.channelErrorstr.c_str(),
+                                              miP.errorstr.c_str());
+    }
     
-
-    symbol_table.add_constants();
-    symbol_table.add_constant("var1",miP.inOneF);
-    symbol_table.add_constant("var2",miP.inTwoF);
-    symbol_table.add_constant("var3",miP.inThreeF);
-    symbol_table.add_constant("var4",miP.inFourF);
-    
-    
-    symbol_table.add_constant ("pt1_x",miP.pointOneX);
-    symbol_table.add_constant ("pt1_y",miP.pointOneY);
-    symbol_table.add_constant ("pt2_x",miP.pointTwoX);
-    symbol_table.add_constant ("pt2_x",miP.pointTwoY);
-    
-    //user param color
-    symbol_table.add_constant ("cl1_red",miP.colorOne_red);
-   symbol_table.add_constant ("cl1_green", miP.colorOne_green);
-    symbol_table.add_constant ("cl1_blue",miP.colorOne_blue);
-    symbol_table.add_constant ("cl2_red",miP.colorTwo_red);
-    symbol_table.add_constant ("cl2_green",miP.colorTwo_green);
-    symbol_table.add_constant ("cl2_blue",miP.colorTwo_blue);
-    
-    symbol_table.add_constant("layerWidth",miP.layerWidthF);
-    symbol_table.add_constant("layerHeight",miP.layerHeightF);
-    symbol_table.add_constant("layerTime_sec",miP.layerTime_Sec);
-    symbol_table.add_constant("layerTime_frame",miP.layerTime_Frame);
-    symbol_table.add_constant("layerDuration",miP.layerDuration);
-    symbol_table.add_constant("layerPosition_x", miP.layerPos_X);
-	symbol_table.add_constant("layerPosition_y", miP.layerPos_Y);
-	symbol_table.add_constant("layerPosition_z", miP.layerPos_Z);
-
-	symbol_table.add_constant("layerScale_z", miP.layerScale_X);
-	symbol_table.add_constant("layerScale_y", miP.layerScale_Y);
-	symbol_table.add_constant("layerScale_z", miP.layerScale_Z);
-
-	symbol_table.add_constant("compWidth", miP.compWidthF);
-	symbol_table.add_constant("compHeight", miP.compHeightF);
-	symbol_table.add_constant("compFps", miP.compFpsF);
-
-	symbol_table.add_function("drawRect", parseDrawRect);
-    
-
-   
-
 	
 	if (PF_WORLD_IS_DEEP(outputP)){
 		ERR(suites.Iterate16Suite1()->iterate(	in_data,
@@ -834,52 +873,8 @@ Render (
 												outputP));
 	}
 	else {
-		parser_t parser;
-		expression_t    expression_t_red;
-		expression_t    expression_t_green;
-		expression_t    expression_t_blue;
-		expression_t    expression_t_alpha;
-
-
-		expression_t_red.register_symbol_table(symbol_table);
-		expression_t_green.register_symbol_table(symbol_table);
-		expression_t_blue.register_symbol_table(symbol_table);
-		expression_t_alpha.register_symbol_table(symbol_table);
-
-		parser.compile(expression_string_red, expression_t_red);
-		parser.compile(expression_string_green, expression_t_green);
-		parser.compile(expression_string_blue, expression_t_blue);
-		parser.compile(expression_string_alpha, expression_t_alpha);
-		//if error in expression
-		if (!parser.compile(expression_string_red, expression_t_red))
-		{
-			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-				"Error in Red Channel expression : %s",
-				parser.error().c_str());
-
-			parser.compile(expression_string_Safe, expression_t_red);
-		}
-		if (!parser.compile(expression_string_green, expression_t_green))
-		{
-			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-				"Error in Green Channel expression : %s",
-				parser.error().c_str());
-			parser.compile(expression_string_Safe, expression_t_green);
-		}
-		if (!parser.compile(expression_string_blue, expression_t_blue))
-		{
-			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-				"Error in Blue Channel expression : %s",
-				parser.error().c_str());
-			parser.compile(expression_string_Safe, expression_t_blue);
-		}
-		if (!parser.compile(expression_string_alpha, expression_t_alpha))
-		{
-			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-				"Error in Alpha Channel expression : %s",
-				parser.error().c_str());
-			parser.compile(expression_string_Safe, expression_t_alpha);
-		}
+        
+        
 		PF_Pixel8			*bop_outP = reinterpret_cast<PF_Pixel8*>(outputP->data), //main
 			*bop_inP = reinterpret_cast<PF_Pixel8*>(inputP->data);
 		A_long  in_gutterL = (inputP->rowbytes / sizeof(PF_Pixel8)) - inputP->width,
@@ -987,13 +982,13 @@ Render (
 				AEFX_CLR_STRUCT(miP.inBlueF);
 				miP.inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
 				AEFX_CLR_STRUCT(red_result);
-				red_result = MIN(expression_t_red.value(), 1);
+				red_result = MIN(miP.redExpr(), 1);
 				AEFX_CLR_STRUCT(green_result);
-				green_result = MIN(expression_t_green.value(), 1);
+                green_result = MIN(miP.greenExpr(), 1);
 				AEFX_CLR_STRUCT(blue_result);
-				blue_result = MIN(expression_t_blue.value(), 1);
+                blue_result = MIN(miP.blueExpr(), 1);
 				AEFX_CLR_STRUCT(alpha_result);
-				alpha_result = MIN(expression_t_alpha.value(), 1);
+                alpha_result = MIN(miP.alphaExpr(), 1);
 
 				bop_outP->alpha = A_u_char(alpha_result *PF_MAX_CHAN8);;
 				bop_outP->red = A_u_char(red_result *PF_MAX_CHAN8);
