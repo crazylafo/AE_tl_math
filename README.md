@@ -10,7 +10,7 @@ whatever your Color Space, the expected values are bewteen 0 and 1.
 Verion note: 
  Alpha 01 (v 1.0)
  
- -the plugin works with After Effect CC and above.
+ -the plugin works with After Effect CC and above.\r
  -the plugin works in 8 and 16 bits (32bits coming soon)
  -Possibilities an expression for each channels
  -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
