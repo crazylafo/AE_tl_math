@@ -261,30 +261,6 @@ UpdateParameterUI(
 
 
 
-static PF_Err
-MySimpleGainFunc16 (
-                    void		*refcon,
-	A_long		xL, 
-	A_long		yL, 
-	PF_Pixel16	*inP, 
-	PF_Pixel16	*outP)
-{
-	PF_Err		err = PF_Err_NONE;
-
-	MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
-
-					
-	if (miP){
-
-		outP->alpha		=	inP->alpha;
-		outP->red		=	MIN((inP->red), PF_MAX_CHAN16);
-		outP->green		=	MIN((inP->green), PF_MAX_CHAN16);
-		outP->blue		=	MIN((inP->blue), PF_MAX_CHAN16);
-	}
-
-	return err;
-}
-
 
 static PF_Err
 AEGP_SetParamStreamValue(PF_InData			*in_data,

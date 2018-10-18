@@ -22,9 +22,6 @@
 	typedef unsigned short PixelType;
 	#include <assert.h>
 	#include <Windows.h>
-    #include "json\json.hpp"
-#else
-	#include "json/json.hpp"
 #endif
 
 //#include "AE_EffectUI.h"
