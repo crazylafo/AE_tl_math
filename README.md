@@ -13,11 +13,16 @@ Verion note:
  -the plugin works with After Effect CC and above.
  
  -the plugin works in 8 and 16 bits (32bits coming soon)
+ 
  -Possibilities an expression for each channels
+ 
  -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
    details in section 5
+   
  -the plugin expressions can access to 4 sliders, two points and two colors pipets to comunicate with other AE elements.
+ 
   -presets can be saved as json files.
+  
  -tl_Math is not thread safe yet.
 
 
