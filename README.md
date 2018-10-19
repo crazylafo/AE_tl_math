@@ -1,5 +1,11 @@
 # AE_tl_math
 Copyright © Thomas Laforge. 2018
+Free  use  of  tl_math  is
+permitted under the guidelines and in accordance with the most current
+version of the https://opensource.org/licenses/gpl-3.0.html.
+
+The plugin use Exprtk by Arash Partow
+https://github.com/ArashPartow/exprtk
 
 
 An After Effect plugin project.
@@ -25,29 +31,3 @@ Verion note:
   
  -tl_Math is not thread safe yet.
 
-
-
-1- COPYRIGHT
-
-Free  use  of  tl_math  is
-permitted under the guidelines and in accordance with the most current
-version of the https://opensource.org/licenses/gpl-3.0.html.
-
-The plugin use Exprtk by Arash Partow
-https://github.com/ArashPartow/exprtk
-
-
-
-2- QUICK EXEMPLE
-
-
-3-THE UI
-
-
-4-THE VARIABLES
-
-
-5-THE GRAMMAR
-
-
-6- MORE EXEMPLES
