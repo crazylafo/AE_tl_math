@@ -642,7 +642,7 @@ template <typename T=PF_FpShort> class parseExpr {
                 symbol_table.add_constant ("pt1_x",miP->pointOneX);
                 symbol_table.add_constant ("pt1_y",miP->pointOneY);
                 symbol_table.add_constant ("pt2_x",miP->pointTwoX);
-                symbol_table.add_constant ("pt2_x",miP->pointTwoY);
+                symbol_table.add_constant ("pt2_y",miP->pointTwoY);
                 symbol_table.add_constant ("cl1_red",miP->colorOne_red);
                 symbol_table.add_constant ("cl1_green", miP->colorOne_green);
                 symbol_table.add_constant ("cl1_blue",miP->colorOne_blue);
