@@ -43,6 +43,8 @@
 #include <cstdio>
 #include <string>
 #include "exprtk.hpp"
+#include <thread>
+#include <mutex>
 #include "tl_math_Strings.h"
 
 /* Versioning information */
@@ -82,6 +84,8 @@ typedef struct {
 #define	MATH_VAR_MAX		100
 #define	MATH_VAR_DFLT       1
 
+
+
 enum {
 	MATH_INPUT = 0,
 	MATH_INPONE_VAR,
@@ -115,6 +119,8 @@ typedef struct MathInfo{
     std::function<PF_FpShort()> greenExpr;
     std::function<PF_FpShort()> blueExpr;
     std::function<PF_FpShort()> alphaExpr;
+    
+
     
     PF_EffectWorld inW;
     PF_EffectWorld outW;
