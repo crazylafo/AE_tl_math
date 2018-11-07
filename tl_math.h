@@ -113,15 +113,23 @@ enum {
 
 };
 
+typedef struct OffParams{
+	A_long timeOff;
+	A_long xoff;
+	A_long yoff;
+	PF_Pixel8 pixoff8;
+	PF_Pixel16 pixoff16;
+	PF_FpShort pixOffResult;
+}parserOffset;
+
+
 typedef struct MathInfo{
 
     std::function<PF_FpShort()> redExpr;
     std::function<PF_FpShort()> greenExpr;
     std::function<PF_FpShort()> blueExpr;
     std::function<PF_FpShort()> alphaExpr;
-    
 
-    
     PF_EffectWorld inW;
     PF_EffectWorld outW;
     
@@ -135,6 +143,7 @@ typedef struct MathInfo{
     PF_FpShort layerWidthF;
     PF_FpShort layerHeightF;
 
+	OffParams  offparams;
 
 	PF_FpShort		inRedF;
 	PF_FpShort		inGreenF;
