@@ -50,7 +50,7 @@
 /* Versioning information */
 
 #define	MAJOR_VERSION	1
-#define	MINOR_VERSION	0
+#define	MINOR_VERSION	1
 #define	BUG_VERSION		0
 #define	STAGE_VERSION	PF_Stage_ALPHA
 #define	BUILD_VERSION	1
@@ -88,39 +88,51 @@ typedef struct {
 
 enum {
 	MATH_INPUT = 0,
+    MATH_ARB_DATA,
+    MATH_TOPIC_SLIDER,
 	MATH_INPONE_VAR,
     MATH_INPTWO_VAR,
     MATH_INPTHREE_VAR,
     MATH_INPFOUR_VAR,
-    MATH_ARB_DATA,
+    MATH_END_TOPIC_SLIDER,
+    MATH_TOPIC_POINTS,
     MATH_INP_POINT_ONE,
     MATH_INP_POINT_TWO,
+    MATH_END_TOPIC_POINTS,
+    MATH_TOPIC_COLORS,
     MATH_INP_COLOR_ONE,
     MATH_INP_COLOR_TWO,
+    MATH_END_TOPIC_COLORS,
+    MATH_TOPIC_INPUTS,
+    MATH_INP_LAYER_ONE,
+    MATH_INP_TOFF_ONE,
+    MATH_INP_POFF_ONE,
+    MATH_END_TOPIC_INPUTS,
 	MATH_NUM_PARAMS
 };
 
-enum {
-	MATH_INPONE_VAR_DISK_ID = 1,
+enum {   MATH_ARB_DATA_DISK_ID =1,
+    MATH_TOPIC_SLIDER_DISK_ID,
+    MATH_INPONE_VAR_DISK_ID,
     MATH_INPTWO_VAR_DISK_ID,
     MATH_INPTHREE_VAR_DISK_ID,
     MATH_INPFOUR_VAR_DISK_ID,
-    MATH_ARB_DATA_DISK_ID,
+    MATH_END_TOPIC_SLIDER_DISK_ID,
+    MATH_TOPIC_POINTS_DISK_ID,
     MATH_INP_POINT_ONE_DISK_ID,
     MATH_INP_POINT_TWO_DISK_ID,
+    MATH_END_TOPIC_POINTS_DISK_ID,
+    MATH_TOPIC_COLORS_DISK_ID,
     MATH_INP_COLOR_ONE_DISK_ID,
     MATH_INP_COLOR_TWO_DISK_ID,
-
+    MATH_END_TOPIC_COLORS_DISK_ID,
+    MATH_TOPIC_INPUTS_DISK_ID,
+    MATH_INP_LAYER_ONE_DISK_ID,
+    MATH_INP_TOFF_ONE_DISK_ID,
+    MATH_INP_POFF_ONE_DISK_ID,
+    MATH_END_TOPIC_INPUTS_DISK_ID,
 };
 
-typedef struct OffParams{
-	A_long timeOff;
-	A_long xoff;
-	A_long yoff;
-	PF_Pixel8 pixoff8;
-	PF_Pixel16 pixoff16;
-	PF_FpShort pixOffResult;
-}parserOffset;
 
 
 typedef struct MathInfo{
@@ -133,6 +145,12 @@ typedef struct MathInfo{
     PF_EffectWorld inW;
     PF_EffectWorld outW;
     
+    PF_EffectWorld extLW;
+    PF_FpShort  extL_red;
+    PF_FpShort  extL_green;
+    PF_FpShort  extL_blue;
+    PF_FpShort  extL_alpha;
+    
 	PF_FpShort	inOneF;
     PF_FpShort	inTwoF;
     PF_FpShort	inThreeF;
@@ -143,7 +161,6 @@ typedef struct MathInfo{
     PF_FpShort layerWidthF;
     PF_FpShort layerHeightF;
 
-	OffParams  offparams;
 
 	PF_FpShort		inRedF;
 	PF_FpShort		inGreenF;
@@ -275,10 +292,105 @@ strReplace(std::string& str,
 
 PF_Err
 LineIteration8Func ( void *refconPV,
-                    A_long thread_idxL,
-                    A_long iterIndex,
-                    A_long numIter);
+                    A_long yL);
+PF_Err
+LineIteration16Func ( void *refconPV,
+                    A_long yL);
+//math parser's functions
+static PF_FpShort
+inline parseDrawRect(PF_FpShort xL,
+                     PF_FpShort yL,
+                     PF_FpShort center_x,
+                     PF_FpShort center_y,
+                     PF_FpShort lx,
+                     PF_FpShort ly);
 
+template <typename T=PF_FpShort> class parseExpr {
+private:
+    std::shared_ptr<exprtk::parser<T>> parser;
+    exprtk::expression<T> expression;
+    exprtk::symbol_table<T> symbol_table;
+public:
+    parseExpr(void *refcon, const std::string &exprstr) {
+        MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
+        std::string expression_string_Safe = "1";
+        if (!parser){
+            parser = std::make_shared<exprtk::parser<T>>();
+        }
+        miP->hasErrorB = FALSE;
+        symbol_table.clear();
+        symbol_table.add_variable("xL",  miP->xLF);
+        symbol_table.add_variable("yL",  miP->yLF);
+        symbol_table.add_variable("in_red", miP->inRedF);
+        symbol_table.add_variable("in_green", miP->inGreenF);
+        symbol_table.add_variable("in_blue", miP->inBlueF);
+        symbol_table.add_variable("in_alpha", miP->inAlphaF);
+        symbol_table.add_variable("in_luma", miP->luma);
+        symbol_table.add_vector("vec3_red", miP->m3P_red);
+        symbol_table.add_vector("vec3_green",miP->m3P_green);
+        symbol_table.add_vector("vec3_blue", miP->m3P_blue);
+        symbol_table.add_vector("vec3_alpha", miP->m3P_alpha);
+        
+        symbol_table.add_variable("extL_red", miP->extL_red);
+        symbol_table.add_variable("extL_green", miP->extL_green);
+        symbol_table.add_variable("extL_blue", miP->extL_blue);
+        symbol_table.add_variable("extL_alpha", miP->extL_alpha);
+        
+        symbol_table.add_constants();
+        symbol_table.add_constant("var1",miP->inOneF);
+        symbol_table.add_constant("var2",miP->inTwoF);
+        symbol_table.add_constant("var3",miP->inThreeF);
+        symbol_table.add_constant("var4",miP->inFourF);
+        symbol_table.add_constant ("pt1_x",miP->pointOneX);
+        symbol_table.add_constant ("pt1_y",miP->pointOneY);
+        symbol_table.add_constant ("pt2_x",miP->pointTwoX);
+        symbol_table.add_constant ("pt2_y",miP->pointTwoY);
+        symbol_table.add_constant ("cl1_red",miP->colorOne_red);
+        symbol_table.add_constant ("cl1_green", miP->colorOne_green);
+        symbol_table.add_constant ("cl1_blue",miP->colorOne_blue);
+        symbol_table.add_constant ("cl2_red",miP->colorTwo_red);
+        symbol_table.add_constant ("cl2_green",miP->colorTwo_green);
+        symbol_table.add_constant ("cl2_blue",miP->colorTwo_blue);
+        symbol_table.add_constant("layerWidth",miP->layerWidthF);
+        symbol_table.add_constant("layerHeight",miP->layerHeightF);
+        symbol_table.add_constant("layerTime_sec",miP->layerTime_Sec);
+        symbol_table.add_constant("layerTime_frame",miP->layerTime_Frame);
+        symbol_table.add_constant("layerDuration",miP->layerDuration);
+        symbol_table.add_constant("layerPosition_x", miP->layerPos_X);
+        symbol_table.add_constant("layerPosition_y", miP->layerPos_Y);
+        symbol_table.add_constant("layerPosition_z", miP->layerPos_Z);
+        symbol_table.add_constant("layerScale_z", miP->layerScale_X);
+        symbol_table.add_constant("layerScale_y", miP->layerScale_Y);
+        symbol_table.add_constant("layerScale_z", miP->layerScale_Z);
+        symbol_table.add_constant("compWidth", miP->compWidthF);
+        symbol_table.add_constant("compHeight", miP->compHeightF);
+        symbol_table.add_constant("compFps", miP->compFpsF);
+        symbol_table.add_function("drawRect", parseDrawRect);
+        expression.register_symbol_table(symbol_table);
+        parser->compile(exprstr,expression);
+        if (!parser->compile(exprstr,expression))
+        {
+            miP->hasErrorB = TRUE;
+            miP->errorstr =parser->error();
+            parser->compile(expression_string_Safe, expression);
+        }
+    }
+    T operator()() { return expression.value(); }
+};
+
+class threaded_render
+{
+private:
+    std::mutex mut;
+    A_long curNumIter;
+public:
+    
+    void render_8(void *refconPV, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+
+    void render_16(void *refconPV,  A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+
+    
+};
 #endif
 
 #endif // TLMATH

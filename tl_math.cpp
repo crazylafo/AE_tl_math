@@ -40,10 +40,9 @@ GlobalSetup (
 
     
 	out_data->out_flags =  PF_OutFlag_CUSTOM_UI			|
-                           PF_OutFlag_SEND_UPDATE_PARAMS_UI|
                            PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
                            PF_OutFlag_I_DO_DIALOG|
-                           PF_OutFlag_PIX_INDEPENDENT|
+                           PF_OutFlag_WIDE_TIME_INPUT|
                            PF_OutFlag_NON_PARAM_VARY;
     
 
@@ -75,11 +74,47 @@ ParamsSetup (
 	PF_LayerDef		*output )
 {
 	PF_Err		err		= PF_Err_NONE;
-	PF_ParamDef	def;	
+	PF_ParamDef	def;
+    
+    AEFX_CLR_STRUCT(def);
+    ERR(CreateDefaultArb(in_data,
+                         out_data,
+                         &def.u.arb_d.dephault));
+    
+    
+    PF_ADD_ARBITRARY2(	"data transfert",
+                      10,
+                      10,
+                      PF_ParamFlag_CANNOT_TIME_VARY,
+                      PF_PUI_NO_ECW_UI|PF_PUI_INVISIBLE,
+                      def.u.arb_d.dephault,
+                      MATH_ARB_DATA,
+                      ARB_REFCON);
+    
+    if (!err) {
+        PF_CustomUIInfo			ci;
+        
+        ci.events				= PF_CustomEFlag_EFFECT;
+        
+        ci.comp_ui_width		= ci.comp_ui_height = 0;
+        ci.comp_ui_alignment	= PF_UIAlignment_NONE;
+        
+        ci.layer_ui_width		=
+        ci.layer_ui_height		= 0;
+        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
+        
+        ci.preview_ui_width		=
+        ci.preview_ui_height	= 0;
+        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
+        
+        err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
+    }
+    AEFX_CLR_STRUCT(def);
 
-	AEFX_CLR_STRUCT(def);
-
-	PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTONE_Param_Name),
+    PF_ADD_TOPIC(STR( StrID_TOPIC_SLIDER_Param_Name),  MATH_TOPIC_SLIDER_DISK_ID);
+    
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTONE_Param_Name),
 							MATH_VAR_MIN,
 							MATH_VAR_MAX,
 							MATH_VAR_MIN,
@@ -118,7 +153,7 @@ ParamsSetup (
     
     AEFX_CLR_STRUCT(def);
     
-    PF_ADD_FLOAT_SLIDERX(	STR( StrID_INPUTFOUR_Param_Name),
+    PF_ADD_FLOAT_SLIDERX(STR( StrID_INPUTFOUR_Param_Name),
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
                          MATH_VAR_MIN,
@@ -130,57 +165,53 @@ ParamsSetup (
                          MATH_INPFOUR_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
+    PF_END_TOPIC( MATH_TOPIC_SLIDER_DISK_ID);
 
-    ERR(CreateDefaultArb(	in_data,
-                         out_data,
-                         &def.u.arb_d.dephault));
+    AEFX_CLR_STRUCT(def);
+    
 
-    
-    
-    PF_ADD_ARBITRARY2(	"data transfert", 
-                      10,
-                      10,
-                      PF_ParamFlag_CANNOT_TIME_VARY| PF_ParamFlag_SUPERVISE,
-                      PF_PUI_NO_ECW_UI,
-                      def.u.arb_d.dephault,
-                      MATH_ARB_DATA,
-                      ARB_REFCON);
-    
-    if (!err) {
-        PF_CustomUIInfo			ci;
-        
-        ci.events				= PF_CustomEFlag_EFFECT;
-        
-        ci.comp_ui_width		= ci.comp_ui_height = 0;
-        ci.comp_ui_alignment	= PF_UIAlignment_NONE;
-        
-        ci.layer_ui_width		=
-        ci.layer_ui_height		= 0;
-        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
-        
-        ci.preview_ui_width		=
-        ci.preview_ui_height	= 0;
-        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
-        
-        err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
-    }
-    
+    PF_ADD_TOPIC(STR( StrID_TOPIC_POINTS_Param_Name), MATH_TOPIC_POINTS_DISK_ID);
 	AEFX_CLR_STRUCT(def);
     PF_ADD_POINT(STR (strID_INPUTPOINTONE_Param_Name), 50, 50, FALSE, MATH_INP_POINT_ONE_DISK_ID);
-    
     AEFX_CLR_STRUCT(def);
     PF_ADD_POINT(STR(strID_INPUTPOINTTWO_Param_Name), 50, 50, FALSE, MATH_INP_POINT_TWO_DISK_ID);
+    AEFX_CLR_STRUCT(def);
+    PF_END_TOPIC(MATH_TOPIC_POINTS_DISK_ID);
+    AEFX_CLR_STRUCT(def);
     
-    
-    
+    PF_ADD_TOPIC(STR( StrID_TOPIC_COLORS_Param_Name), MATH_TOPIC_COLORS_DISK_ID);
     AEFX_CLR_STRUCT(def);
     PF_ADD_COLOR(STR(strID_INPUTCOLORONE_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8, MATH_INP_COLOR_ONE_DISK_ID);
-    
     AEFX_CLR_STRUCT(def);
     PF_ADD_COLOR(STR(strID_INPUTCOLORTWO_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8,MATH_INP_COLOR_TWO_DISK_ID);
-    
     AEFX_CLR_STRUCT(def);
-	out_data->num_params = MATH_NUM_PARAMS;
+    PF_END_TOPIC (MATH_TOPIC_COLORS_DISK_ID);
+    AEFX_CLR_STRUCT(def);
+    
+    PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name), MATH_TOPIC_INPUTS_DISK_ID);
+    AEFX_CLR_STRUCT(def);
+
+    PF_ADD_LAYER(STR(StrID_LAYER_ONE_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_ONE_DISK_ID);
+    AEFX_CLR_STRUCT(def);
+    PF_ADD_FLOAT_SLIDERX(STR( StrID_TOFF_ONE_Param_Name),
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_MIN,
+                         MATH_VAR_MAX,
+                         MATH_VAR_DFLT,
+                         PF_Precision_INTEGER,
+                         0,
+                         0,
+                         MATH_INP_TOFF_ONE_DISK_ID);
+    
+    PF_ADD_POINT(STR(StrID_POFF_ONE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_ONE_DISK_ID);
+    AEFX_CLR_STRUCT(def);
+
+    PF_END_TOPIC(MATH_TOPIC_INPUTS_DISK_ID);
+    AEFX_CLR_STRUCT(def);
+
+    
+    out_data->num_params = MATH_NUM_PARAMS;
     
     AEFX_SuiteScoper<PF_EffectUISuite1> effect_ui_suiteP = AEFX_SuiteScoper<PF_EffectUISuite1>(
                                                                                                in_data,
@@ -193,70 +224,6 @@ ParamsSetup (
 
 	return err;
 }
-
-static PF_Err
-MakeParamCopy(
-              PF_ParamDef *actual[],	/* >> */
-              PF_ParamDef copy[])		/* << */
-{
-    for (A_short iS = 0; iS < MATH_NUM_PARAMS; ++iS)	{
-        AEFX_CLR_STRUCT(copy[iS]);	// clean params are important!
-    }
-    copy[MATH_INPUT]			=*actual[MATH_INPUT];
-    copy[MATH_INPONE_VAR]       =*actual[MATH_INPONE_VAR];
-    copy[MATH_INPTWO_VAR]       =*actual[MATH_INPTWO_VAR];
-    copy[MATH_INPTHREE_VAR]     =*actual[MATH_INPTHREE_VAR];
-    copy[MATH_INPFOUR_VAR]      =*actual[MATH_INPFOUR_VAR];
-    copy[MATH_ARB_DATA]         =*actual[MATH_ARB_DATA];
-    copy[MATH_INP_POINT_ONE]    =*actual [MATH_INP_POINT_ONE];
-    copy[MATH_INP_POINT_TWO]    =*actual [MATH_INP_POINT_TWO];
-    copy[MATH_INP_COLOR_ONE]    =*actual [MATH_INP_COLOR_ONE];
-    copy[MATH_INP_COLOR_TWO]    =*actual [MATH_INP_COLOR_TWO];
-    
-    return PF_Err_NONE;
-    
-}
-
-static PF_Err
-UpdateParameterUI(
-                  PF_InData			*in_data,
-                  PF_OutData			*out_data,
-                  PF_ParamDef			*params[],
-                  PF_LayerDef			*outputP)
-{
-    PF_Err				err					= PF_Err_NONE,
-    err2				= PF_Err_NONE;
-    my_global_dataP		globP				= reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-
-    AEGP_EffectRefH			meH				= NULL;
-    AEGP_SuiteHandler		suites(in_data->pica_basicP);
-    PF_ParamDef		param_copy[MATH_NUM_PARAMS];
-    ERR(MakeParamCopy(params, param_copy));
-    
-    AEGP_StreamRefH		ARB_DATA_streamH		= NULL;
-    
-
-    
-    ERR(suites.PFInterfaceSuite1()->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &meH));
-    ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ARB_DATA, 	&ARB_DATA_streamH));
-    ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(ARB_DATA_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, TRUE));
-    
-    if (meH){
-        ERR2(suites.EffectSuite2()->AEGP_DisposeEffect(meH));
-    }
-    if (ARB_DATA_streamH){
-        ERR2(suites.StreamSuite2()->AEGP_DisposeStream(ARB_DATA_streamH));
-    }
-    
-    if (!err){
-        out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
-    }
-
-    return err;
-}
-
-
-
 
 
 static PF_Err
@@ -331,8 +298,6 @@ void strReplace(std::string& str,
 		pos += newStr.length();
 	}
 }
-
-
 
 
 //math parser's functions
@@ -604,94 +569,23 @@ PopDialog(
     return err;
 }
 
-
-
-template <typename T=PF_FpShort> class parseExpr {
-        private:
-            std::shared_ptr<exprtk::parser<T>> parser;
-            exprtk::expression<T> expression;
-            exprtk::symbol_table<T> symbol_table;
-        public:
-            parseExpr(void *refcon, const std::string &exprstr) {
-                MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
-                std::string expression_string_Safe = "1";
-                if (!parser){
-                    parser = std::make_shared<exprtk::parser<T>>();
-                }
-                miP->hasErrorB = FALSE;
-                symbol_table.clear();
-                symbol_table.add_variable("xL",  miP->xLF);
-                symbol_table.add_variable("yL",  miP->yLF);
-                symbol_table.add_variable("inP_red", miP->inRedF);
-                symbol_table.add_variable("inP_green", miP->inGreenF);
-                symbol_table.add_variable("inP_blue", miP->inBlueF);
-                symbol_table.add_variable("inP_alpha", miP->inAlphaF);
-                symbol_table.add_variable("inP_luma", miP->luma);
-                symbol_table.add_vector("vec3_red", miP->m3P_red);
-                symbol_table.add_vector("vec3_green",miP->m3P_green);
-                symbol_table.add_vector("vec3_blue", miP->m3P_blue);
-                symbol_table.add_vector("vec3_alpha", miP->m3P_alpha);
-                symbol_table.add_constants();
-                symbol_table.add_constant("var1",miP->inOneF);
-                symbol_table.add_constant("var2",miP->inTwoF);
-                symbol_table.add_constant("var3",miP->inThreeF);
-                symbol_table.add_constant("var4",miP->inFourF);
-                symbol_table.add_constant ("pt1_x",miP->pointOneX);
-                symbol_table.add_constant ("pt1_y",miP->pointOneY);
-                symbol_table.add_constant ("pt2_x",miP->pointTwoX);
-                symbol_table.add_constant ("pt2_y",miP->pointTwoY);
-                symbol_table.add_constant ("cl1_red",miP->colorOne_red);
-                symbol_table.add_constant ("cl1_green", miP->colorOne_green);
-                symbol_table.add_constant ("cl1_blue",miP->colorOne_blue);
-                symbol_table.add_constant ("cl2_red",miP->colorTwo_red);
-                symbol_table.add_constant ("cl2_green",miP->colorTwo_green);
-                symbol_table.add_constant ("cl2_blue",miP->colorTwo_blue);
-                symbol_table.add_constant("layerWidth",miP->layerWidthF);
-                symbol_table.add_constant("layerHeight",miP->layerHeightF);
-                symbol_table.add_constant("layerTime_sec",miP->layerTime_Sec);
-                symbol_table.add_constant("layerTime_frame",miP->layerTime_Frame);
-                symbol_table.add_constant("layerDuration",miP->layerDuration);
-                symbol_table.add_constant("layerPosition_x", miP->layerPos_X);
-                symbol_table.add_constant("layerPosition_y", miP->layerPos_Y);
-                symbol_table.add_constant("layerPosition_z", miP->layerPos_Z);
-                symbol_table.add_constant("layerScale_z", miP->layerScale_X);
-                symbol_table.add_constant("layerScale_y", miP->layerScale_Y);
-                symbol_table.add_constant("layerScale_z", miP->layerScale_Z);
-                symbol_table.add_constant("compWidth", miP->compWidthF);
-                symbol_table.add_constant("compHeight", miP->compHeightF);
-                symbol_table.add_constant("compFps", miP->compFpsF);
-                symbol_table.add_function("drawRect", parseDrawRect);
-                expression.register_symbol_table(symbol_table);
-                parser->compile(exprstr,expression);
-                if (!parser->compile(exprstr,expression))
-                {
-                    miP->hasErrorB = TRUE;
-                    miP->errorstr =parser->error();
-                    parser->compile(expression_string_Safe, expression);
-                }
-            }
-            T operator()() { return expression.value(); }
-        };
-        
-        
-        
 PF_Err
 LineIteration8Func ( void *refconPV,
-                    A_long thread_idxL,
-                    A_long iterIndex,
-                    A_long numIter)
+                    A_long yL)
     {
         PF_Err err = PF_Err_NONE;
         MathInfo	*miP	= reinterpret_cast<MathInfo*>(refconPV);
         PF_EffectWorld inW = miP->inW;//cast input buffer here.
         PF_EffectWorld outW = miP->outW;//cast output buffer here.
-        
-        int yL =  thread_idxL*numIter+iterIndex;
+        PF_EffectWorld extW = miP->extLW;
+
         PF_FpShort  red_result, green_result, blue_result, alpha_result;
 
         
         PF_Pixel8 *bop_outP = reinterpret_cast<PF_Pixel8*>(outW.data)+ (outW.rowbytes* yL / sizeof(PF_Pixel)),
         *bop_inP = reinterpret_cast<PF_Pixel8*>(inW.data)+ (inW.rowbytes* yL / sizeof(PF_Pixel));
+        //external layer world
+         PF_Pixel8 *bop_extP = reinterpret_cast<PF_Pixel8*>(extW.data)+ (extW.rowbytes* yL / sizeof(PF_Pixel));
         //3*3 matrix grp
         PF_Pixel *in00 = bop_inP - (inW.rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
         PF_Pixel *in10 = in00 + 1;//top middle pixel in 3X3.
@@ -787,6 +681,14 @@ LineIteration8Func ( void *refconPV,
                 miP->inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
                 AEFX_CLR_STRUCT(miP->inBlueF);
                 miP->inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extL_red);
+                miP->extL_red = (PF_FpShort)bop_extP->red / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extL_green);
+                miP->extL_green = (PF_FpShort)bop_extP->green / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extL_blue);
+                miP->extL_blue = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extL_alpha);
+                miP->extL_alpha = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN8;
                 AEFX_CLR_STRUCT(red_result);
                 red_result = MIN(miP->redExpr(), 1);
                 AEFX_CLR_STRUCT(green_result);
@@ -817,21 +719,23 @@ LineIteration8Func ( void *refconPV,
         }
 PF_Err
 	LineIteration16Func(void *refconPV,
-		A_long thread_idxL,
-		A_long iterIndex,
-		A_long numIter)
+                            A_long yL)
 {
 	PF_Err err = PF_Err_NONE;
 	MathInfo	*miP = reinterpret_cast<MathInfo*>(refconPV);
 	PF_EffectWorld inW = miP->inW;//cast input buffer here.
 	PF_EffectWorld outW = miP->outW;//cast output buffer here.
+    PF_EffectWorld extW = miP->extLW; //cast external layer buffer here
 
-	int yL = thread_idxL * numIter + iterIndex;
+
 	PF_FpShort  red_result, green_result, blue_result, alpha_result;
 
 
 	PF_Pixel16 *bop_outP = reinterpret_cast<PF_Pixel16*>(outW.data) + (outW.rowbytes* yL / sizeof(PF_Pixel16)),
 				*bop_inP = reinterpret_cast<PF_Pixel16*>(inW.data) +  (inW.rowbytes* yL / sizeof(PF_Pixel16));
+    
+    //external layer world
+    PF_Pixel16 *bop_extP = reinterpret_cast<PF_Pixel16*>(extW.data)+ (extW.rowbytes* yL / sizeof(PF_Pixel16));
 	//3*3 matrix grp
 	PF_Pixel16 *in00 = bop_inP - (inW.rowbytes / sizeof(PF_Pixel16))-1;//top left pixel in 3X3.
 	PF_Pixel16 *in10 = in00 + 1;//top middle pixel in 3X3.
@@ -927,7 +831,15 @@ PF_Err
 		miP->inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN16;
 		AEFX_CLR_STRUCT(miP->inBlueF);
 		miP->inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN16;
-		AEFX_CLR_STRUCT(red_result);
+        AEFX_CLR_STRUCT(miP->extL_red);
+        miP->extL_red = (PF_FpShort)bop_extP->red / PF_MAX_CHAN16;
+        AEFX_CLR_STRUCT(miP->extL_green);
+        miP->extL_green = (PF_FpShort)bop_extP->green / PF_MAX_CHAN16;
+        AEFX_CLR_STRUCT(miP->extL_blue);
+        miP->extL_blue = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN16;
+        AEFX_CLR_STRUCT(miP->extL_alpha);
+        miP->extL_alpha = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN16;
+        AEFX_CLR_STRUCT(red_result);
 		red_result = MIN(miP->redExpr(), 1);
 		AEFX_CLR_STRUCT(green_result);
 		green_result = MIN(miP->greenExpr(), 1);
@@ -955,31 +867,36 @@ PF_Err
 	}
 	return err;
 }
-class threaded_render
-		{
-		private:
-			std::mutex mut;
-		public:
 
-			void render_8(void *refconPV, A_long thread_idxL, A_long numIter)
-			{
-				std::lock_guard<std::mutex> guard(mut);
-				for (A_long iterIndex = 0; iterIndex < numIter; ++iterIndex)
-				{
-					LineIteration8Func(refconPV, thread_idxL, iterIndex, numIter);
-				}
-			}
+void threaded_render::render_8(void *refconPV, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+{
+        curNumIter =numIter;
+        if ( thread_idxL == (numThreads-1)){
+            curNumIter =lastNumIter;
+        }
+	
+        std::lock_guard<std::mutex> guard(mut);
+        for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
+        {
+            A_long yL =  thread_idxL*numIter+iterIndex;
+            LineIteration8Func(refconPV,  yL);
+        }
+}
 
-			void render_16(void *refconPV, A_long thread_idxL, A_long numIter)
-			{
-				std::lock_guard<std::mutex> guard(mut);
-				for (A_long iterIndex = 0; iterIndex < numIter; ++iterIndex)
-				{
-					LineIteration16Func(refconPV, thread_idxL, iterIndex, numIter);
-				}
-			}
+void threaded_render::render_16(void *refconPV,  A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+{
+    curNumIter =numIter;
+    if ( thread_idxL == (numThreads-1)){
+        curNumIter =lastNumIter;
+        }
+    std::lock_guard<std::mutex> guard(mut);
+    for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
+    {
+        A_long yL =  thread_idxL*numIter+iterIndex;
+        LineIteration16Func(refconPV, yL);
+    }
+}
 
-		};
 
 
 static PF_Err
@@ -987,24 +904,65 @@ Render (
                 PF_InData		*in_data,
                 PF_OutData		*out_data,
                 PF_ParamDef		*params[],
-        PF_LayerDef		*outputP )
+                PF_LayerDef		*outputP )
 {
-	PF_Err				err		= PF_Err_NONE;
+	PF_Err				err, err2		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
-	
-
-	MathInfo			miP;
-	AEFX_CLR_STRUCT(miP);
-	A_long				linesL	= 0;
-	linesL 		= outputP->extent_hint.bottom - outputP->extent_hint.top;
-	PF_EffectWorld		*inputP = &params[0]->u.ld;
+    PF_EffectWorld		*inputP = &params[0]->u.ld;
     
     PF_Handle		arbH			= params[MATH_ARB_DATA]->u.arb_d.value;
     m_ArbData		*arbP			= NULL;
+    AEGP_LayerH		layerH;
+    AEGP_CompH		compH;
+    AEGP_ItemH      itemH;
+    MathInfo			miP;
+	AEFX_CLR_STRUCT(miP);
+    
+    PF_ParamDef checkoutLayerOne;
+    AEFX_CLR_STRUCT(checkoutLayerOne);
+    PF_Pixel16 empty16 = {0,0,0,0};
+    PF_Pixel empty8 = {0,0,0,0};
+    //external world
+    ERR(PF_CHECKOUT_PARAM(	in_data,
+                          MATH_INP_LAYER_ONE,
+                          (in_data->current_time + params[MATH_INP_TOFF_ONE]->u.fs_d.value * in_data->time_step),
+                          in_data->time_step,
+                          in_data->time_scale, 
+                          &checkoutLayerOne));
+    
+    miP.extLW = *outputP;
+    if (PF_WORLD_IS_DEEP(outputP)){
+        ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
+                                             &empty16,
+                                             NULL,
+                                             &miP.extLW));
+    }else{
+        ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
+                                             &empty8,
+                                             NULL,
+                                             &miP.extLW));
+        
+    }
+    if (checkoutLayerOne.u.ld.data){
+        if (PF_Quality_HI == in_data->quality) {
+            ERR(suites.WorldTransformSuite1()->copy_hq(	in_data->effect_ref,
+                                                       &checkoutLayerOne.u.ld,
+                                                       &miP.extLW,
+                                                       &checkoutLayerOne.u.ld.extent_hint,
+                                                       &miP.extLW.extent_hint));
+        } else {
+            ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+                                                    &checkoutLayerOne.u.ld,
+                                                    &miP.extLW,
+                                                    &checkoutLayerOne.u.ld.extent_hint,
+                                                    &miP.extLW.extent_hint));
+        }
+        
+    }
+    
+    
+    
 
-	AEGP_LayerH		layerH;
-	AEGP_CompH		compH;
-	AEGP_ItemH      itemH;
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
 		kAEGPPFInterfaceSuiteVersion1,
@@ -1146,27 +1104,29 @@ Render (
 	
 
 	std::vector<std::thread> workers_thrds;
-    A_long part_length, num_thrd;
+    A_long part_length, lastPart_length, num_thrd;
 	AEFX_CLR_STRUCT(part_length);
 	AEFX_CLR_STRUCT(num_thrd);
+    AEFX_CLR_STRUCT(lastPart_length);
     miP.inW = *inputP;
     miP.outW = *outputP;
         
 
     ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
-    part_length = A_long (ceil(outputP->height/(float)num_thrd));
-        
+    part_length = A_long ((outputP->height/(float)num_thrd));
+    lastPart_length =  part_length + (outputP->height -  (part_length*num_thrd));
+   
     threaded_render* thRenderPtr = new threaded_render();
 	if (PF_WORLD_IS_DEEP(outputP)) {
 		AEFX_CLR_STRUCT(workers_thrds);
 		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&threaded_render::render_16, thRenderPtr, (void*)&miP, thrd_id, part_length));
+			workers_thrds.emplace_back(std::thread(&threaded_render::render_16, thRenderPtr, (void*)&miP, thrd_id,num_thrd, part_length,lastPart_length));
 		}
 	}
 	else {
 		AEFX_CLR_STRUCT(workers_thrds);
 		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&threaded_render::render_8, thRenderPtr, (void*)&miP, thrd_id, part_length));
+			workers_thrds.emplace_back(std::thread(&threaded_render::render_8, thRenderPtr, (void*)&miP, thrd_id,num_thrd, part_length,lastPart_length));
 		}
 
 	}
@@ -1175,12 +1135,9 @@ Render (
         t.join();
     }
     delete thRenderPtr;
-
 	outputP = &miP.outW;
-        
-
-
     PF_UNLOCK_HANDLE(arbH);
+    ERR2( PF_CHECKIN_PARAM(in_data, &checkoutLayerOne));
 	return err;
 }
 
@@ -1395,9 +1352,13 @@ EntryPointFunc (
                                   params,
                                   output);
                 break;
-                
+
             case PF_Cmd_ARBITRARY_CALLBACK:
-                err = HandleArbitrary(	in_data, out_data, params, output, reinterpret_cast<PF_ArbParamsExtra*>(extra));
+                err = HandleArbitrary(	in_data,
+                                      out_data,
+                                      params,
+                                      output,
+                                      reinterpret_cast<PF_ArbParamsExtra*>(extra));
                 break;
             
             case PF_Cmd_COMPLETELY_GENERAL:
@@ -1407,12 +1368,11 @@ EntryPointFunc (
                                     output,
                                     extra);
                 break;
-                
+            
                 
             case PF_Cmd_DO_DIALOG:
                     err = PopDialog(in_data,out_data,params,output);
                 break;
-
 				
 			case PF_Cmd_RENDER:
 
@@ -1421,12 +1381,8 @@ EntryPointFunc (
 								params,
 								output);
 				break;
-            case PF_Cmd_UPDATE_PARAMS_UI:
-                err = UpdateParameterUI(	in_data,
-                                        out_data,
-                                        params,
-                                        output);
-                break;
+
+
             
 		}
 	}
