@@ -84,6 +84,9 @@ typedef struct {
 #define	MATH_VAR_MAX		100
 #define	MATH_VAR_DFLT       1
 
+#define TIMEOFFSET_MIN      -1000
+#define TIMEOFFSET_MAX       1000
+#define TIMEOFFSET_DFLT      0
 
 
 enum {

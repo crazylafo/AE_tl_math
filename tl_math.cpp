@@ -194,11 +194,11 @@ ParamsSetup (
     PF_ADD_LAYER(STR(StrID_LAYER_ONE_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_ONE_DISK_ID);
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(STR( StrID_TOFF_ONE_Param_Name),
+                         TIMEOFFSET_MIN,
+                         TIMEOFFSET_MAX,
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
-                         MATH_VAR_MIN,
-                         MATH_VAR_MAX,
-                         MATH_VAR_DFLT,
+                         TIMEOFFSET_DFLT,
                          PF_Precision_INTEGER,
                          0,
                          0,
@@ -704,8 +704,8 @@ LineIteration8Func ( void *refconPV,
                 bop_outP->blue = A_u_char(blue_result *PF_MAX_CHAN8);
                 bop_outP++;
                 bop_inP++;
-                
-                
+                bop_extP++;
+            
                 in00++;
                 in10++;
                 in20++;
@@ -854,6 +854,7 @@ PF_Err
 		bop_outP->blue =  A_u_short(blue_result *PF_MAX_CHAN16);
 		bop_outP++;
 		bop_inP++;
+        bop_extP++;
 
 
 		in00++;
