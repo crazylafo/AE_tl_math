@@ -139,82 +139,67 @@ enum {   MATH_ARB_DATA_DISK_ID =1,
 
 
 typedef struct MathInfo{
-
     std::function<PF_FpShort()> redExpr;
     std::function<PF_FpShort()> greenExpr;
     std::function<PF_FpShort()> blueExpr;
     std::function<PF_FpShort()> alphaExpr;
-
-    PF_EffectWorld inW;
-    PF_EffectWorld outW;
-    
-    PF_EffectWorld extLW;
-    PF_FpShort  extL_red;
-    PF_FpShort  extL_green;
-    PF_FpShort  extL_blue;
-    PF_FpShort  extL_alpha;
-    
-	PF_FpShort	inOneF;
-    PF_FpShort	inTwoF;
-    PF_FpShort	inThreeF;
-    PF_FpShort	inFourF;
-    
-    PF_FpShort  scale_x;
-    PF_FpShort  scale_y;
-    PF_FpShort layerWidthF;
-    PF_FpShort layerHeightF;
-
-
-	PF_FpShort		inRedF;
-	PF_FpShort		inGreenF;
-	PF_FpShort		inBlueF;
-	PF_FpShort		inAlphaF;
+    PF_EffectWorld  inW;
+    PF_EffectWorld  outW;
+    PF_FpShort		inRedF;
+    PF_FpShort		inGreenF;
+    PF_FpShort		inBlueF;
+    PF_FpShort		inAlphaF;
     PF_FpShort		xLF;
     PF_FpShort		yLF;
+    PF_EffectWorld  extLW;
+    PF_FpShort      extL_red;
+    PF_FpShort      extL_green;
+    PF_FpShort      extL_blue;
+    PF_FpShort      extL_alpha;
+	PF_FpShort      inOneF;
+    PF_FpShort      inTwoF;
+    PF_FpShort      inThreeF;
+    PF_FpShort      inFourF;
+    PF_FpShort      scale_x;
+    PF_FpShort      scale_y;
+    PF_FpShort      layerWidthF;
+    PF_FpShort      layerHeightF;
     PF_FpShort		layerTime_Sec;
     PF_FpShort		layerTime_Frame;
     PF_FpShort		layerDuration;
-
 	PF_FpShort		layerPos_X;
 	PF_FpShort		layerPos_Y;
 	PF_FpShort		layerPos_Z;
-
 	PF_FpShort		layerScale_X;
 	PF_FpShort		layerScale_Y;
 	PF_FpShort		layerScale_Z;
-
 	PF_FpShort      compWidthF;
-	PF_FpShort       compHeightF;
+	PF_FpShort      compHeightF;
 	PF_FpShort      compFpsF;
-    
-    PF_FpShort       pointOneX;
-    PF_FpShort       pointOneY;
-    PF_FpShort       pointTwoX;
-    PF_FpShort       pointTwoY;
-    
-    PF_FpShort       colorOne_red;
-    PF_FpShort       colorOne_green;
-    PF_FpShort       colorOne_blue;
-    PF_FpShort       colorTwo_red;
-    PF_FpShort       colorTwo_green;
-    PF_FpShort       colorTwo_blue;
-
-
-	PF_FpShort		 m3P_red[9];
-	PF_FpShort		 m3P_green[9];
-	PF_FpShort		 m3P_blue[9];
-	PF_FpShort       m3P_alpha[9];
-    
+    PF_FpShort      pointOneX;
+    PF_FpShort      pointOneY;
+    PF_FpShort      pointTwoX;
+    PF_FpShort      pointTwoY;
+    PF_FpShort      colorOne[3];
+    PF_FpShort      colorTwo[3];
+	PF_FpShort		m3P_red[9];
+	PF_FpShort		m3P_green[9];
+	PF_FpShort		m3P_blue[9];
+	PF_FpShort      m3P_alpha[9];
 	PF_FpShort		luma;
-    
-    
     PF_Boolean      hasErrorB;
     std::string     channelErrorstr;
     std::string     errorstr;
-
 } MathInfoP, *MathinfoP, **MathinfoH;
 
 
+typedef struct {
+    PF_Fixed	x_offFi;
+    PF_Fixed	y_offFi;
+    PF_SampPB	samp_pb;
+    PF_InData	in_data;
+    PF_Boolean	no_opB;
+} OffInfo;
 
 #ifdef __cplusplus
 	extern "C" {
@@ -348,12 +333,12 @@ public:
         symbol_table.add_constant ("pt1_y",miP->pointOneY);
         symbol_table.add_constant ("pt2_x",miP->pointTwoX);
         symbol_table.add_constant ("pt2_y",miP->pointTwoY);
-        symbol_table.add_constant ("cl1_red",miP->colorOne_red);
-        symbol_table.add_constant ("cl1_green", miP->colorOne_green);
-        symbol_table.add_constant ("cl1_blue",miP->colorOne_blue);
-        symbol_table.add_constant ("cl2_red",miP->colorTwo_red);
-        symbol_table.add_constant ("cl2_green",miP->colorTwo_green);
-        symbol_table.add_constant ("cl2_blue",miP->colorTwo_blue);
+        symbol_table.add_constant ("cl1_red",miP->colorOne[0]);
+        symbol_table.add_constant ("cl1_green", miP->colorOne[1]);
+        symbol_table.add_constant ("cl1_blue",miP->colorOne[2]);
+        symbol_table.add_constant ("cl2_red",miP->colorTwo[0]);
+        symbol_table.add_constant ("cl2_green",miP->colorTwo[1]);
+        symbol_table.add_constant ("cl2_blue",miP->colorTwo[2]);
         symbol_table.add_constant("layerWidth",miP->layerWidthF);
         symbol_table.add_constant("layerHeight",miP->layerHeightF);
         symbol_table.add_constant("layerTime_sec",miP->layerTime_Sec);

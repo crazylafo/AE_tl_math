@@ -569,6 +569,62 @@ PopDialog(
     return err;
 }
 
+        static PF_Err
+ShiftImage8 (
+                     void 		*refcon,
+                     A_long 		xL,
+                     A_long 		yL,
+                     PF_Pixel 	*inP,
+                     PF_Pixel 	*outP)
+    {
+        OffInfo	*oiP		= (OffInfo*)refcon;
+        PF_Err				err			= PF_Err_NONE;
+        PF_Fixed			new_xFi		= 0,
+                        new_yFi		= 0;
+            
+        // Resample original image at offset point.
+            
+        new_xFi = PF_Fixed (((A_long) xL<<16) + oiP->x_offFi);
+        new_yFi = PF_Fixed (((A_long) yL<<16) + oiP->y_offFi);
+            
+        ERR(oiP->in_data.utils->subpixel_sample(oiP->in_data.effect_ref,
+                                                    new_xFi,
+                                                    new_yFi,
+                                                    &oiP->samp_pb,
+                                                    outP));
+
+        return err;
+    }
+        
+static PF_Err
+ShiftImage16 (
+                      void 		*refcon,
+                      A_long 		xL,
+                      A_long 		yL,
+                      PF_Pixel16 	*inP,
+                      PF_Pixel16 	*outP)
+    {
+        OffInfo	*oiP		= (OffInfo*)refcon;
+        PF_InData			*in_data	= &(oiP->in_data);
+        PF_Err				err			= PF_Err_NONE;
+        PF_Fixed			new_xFi 		= 0, 
+        new_yFi 		= 0;
+        
+        AEGP_SuiteHandler suites(in_data->pica_basicP);
+        
+        // Resample original image at offset point.
+        
+        new_xFi = PF_Fixed (((A_long) xL<<16) + oiP->x_offFi);
+        new_yFi = PF_Fixed (((A_long) yL<<16) + oiP->y_offFi);
+        
+        ERR(suites.Sampling16Suite1()->subpixel_sample16(in_data->effect_ref,
+                                                         new_xFi, 
+                                                         new_yFi, 
+                                                         &oiP->samp_pb,
+                                                         outP));
+        return err;
+    }
+
 PF_Err
 LineIteration8Func ( void *refconPV,
                     A_long yL)
@@ -910,60 +966,116 @@ Render (
 	PF_Err				err, err2		= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
     PF_EffectWorld		*inputP = &params[0]->u.ld;
+    PF_Point			origin;
     
     PF_Handle		arbH			= params[MATH_ARB_DATA]->u.arb_d.value;
     m_ArbData		*arbP			= NULL;
     AEGP_LayerH		layerH;
     AEGP_CompH		compH;
     AEGP_ItemH      itemH;
-    MathInfo			miP;
+    OffInfo         oiP;
+    AEFX_CLR_STRUCT(oiP);
+    MathInfo		miP;
 	AEFX_CLR_STRUCT(miP);
+    
+    std::string expression_string_red= "1";
+    std::string expression_string_green= "1";
+    std::string expression_string_blue= "1";
+    std::string expression_string_alpha= "1";
     
     PF_ParamDef checkoutLayerOne;
     AEFX_CLR_STRUCT(checkoutLayerOne);
+    PF_EffectWorld Externalworld;
     PF_Pixel16 empty16 = {0,0,0,0};
     PF_Pixel empty8 = {0,0,0,0};
-    //external world
+    
+    if (!err){
+        arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+        if (arbP){
+            m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
+            expression_string_red = tempPointer->redExAc;
+            expression_string_green = tempPointer->greenExAc;
+            expression_string_blue = tempPointer->blueExAc;
+            expression_string_alpha  = tempPointer->alphaExAc;
+        }
+    }
     ERR(PF_CHECKOUT_PARAM(	in_data,
                           MATH_INP_LAYER_ONE,
                           (in_data->current_time + params[MATH_INP_TOFF_ONE]->u.fs_d.value * in_data->time_step),
                           in_data->time_step,
-                          in_data->time_scale, 
+                          in_data->time_scale,
                           &checkoutLayerOne));
-    
-    miP.extLW = *outputP;
+
+    Externalworld =*outputP;
+    miP.extLW     =*outputP;
     if (PF_WORLD_IS_DEEP(outputP)){
         ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
                                              &empty16,
                                              NULL,
-                                             &miP.extLW));
-    }else{
+                                             &Externalworld));
+    }
+    else{
         ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
-                                             &empty8,
-                                             NULL,
-                                             &miP.extLW));
-        
+                                           &empty8,
+                                           NULL,
+                                           &Externalworld));
     }
+
     if (checkoutLayerOne.u.ld.data){
-        if (PF_Quality_HI == in_data->quality) {
-            ERR(suites.WorldTransformSuite1()->copy_hq(	in_data->effect_ref,
+            if (PF_Quality_HI == in_data->quality) {
+                ERR(suites.WorldTransformSuite1()->copy_hq(	in_data->effect_ref,
                                                        &checkoutLayerOne.u.ld,
-                                                       &miP.extLW,
+                                                       &Externalworld,
                                                        &checkoutLayerOne.u.ld.extent_hint,
-                                                       &miP.extLW.extent_hint));
-        } else {
-            ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+                                                       &Externalworld.extent_hint));
+            } else {
+                ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
                                                     &checkoutLayerOne.u.ld,
-                                                    &miP.extLW,
+                                                    &Externalworld,
                                                     &checkoutLayerOne.u.ld.extent_hint,
-                                                    &miP.extLW.extent_hint));
-        }
+                                                    &Externalworld.extent_hint));
+            }
         
-    }
+        }
+        oiP.x_offFi 		= ((long)inputP->width << 15)  - params[MATH_INP_POFF_ONE]->u.td.x_value;
+        oiP.y_offFi 		= ((long)inputP->height << 15) -params[MATH_INP_POFF_ONE]->u.td.y_value;
     
-    
+        if (oiP.x_offFi !=0 || oiP.y_offFi !=0 ){
+            oiP.in_data = *in_data;
+            oiP.samp_pb.src = inputP;
+            origin.h = (A_short)(in_data->output_origin_x);
+            origin.v = (A_short)(in_data->output_origin_y);
+            if( PF_WORLD_IS_DEEP(outputP)){
+                ERR(suites.Iterate16Suite1()->iterate_origin(	in_data,
+                                                         0,
+                                                         Externalworld.height,
+                                                         &Externalworld,
+                                                         &Externalworld.extent_hint,
+                                                         &origin,
+                                                         (void*)(&oiP),
+                                                         ShiftImage16,
+                                                         &miP.extLW));
+            }
+            else {
+                ERR(suites.Iterate8Suite1()->iterate_origin(	in_data,
+                                                        0,
+                                                        Externalworld.height,
+                                                        &Externalworld,
+                                                        &Externalworld.extent_hint,
+                                                        &origin,
+                                                        (void*)(&oiP),
+                                                        ShiftImage8,
+                                                        &miP.extLW));
+            }
+        
+        }
+        else{
+            miP.extLW = Externalworld;
+        }
     
 
+    
+    //LOADING SUITES TO ACCESS COMP PARAMS
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
 		kAEGPPFInterfaceSuiteVersion1,
@@ -1041,33 +1153,17 @@ Render (
     miP.pointTwoY =static_cast<PF_FpShort>(round(FIX_2_FLOAT(params[MATH_INP_POINT_TWO]->u.td.y_value)));
     
     //user param color
-    miP.colorOne_red =  PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.red)/ PF_FpShort (PF_MAX_CHAN8);
-    miP.colorOne_green =PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.green)/ PF_FpShort (PF_MAX_CHAN8);
-    miP.colorOne_blue = PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.blue)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorOne[0]=  PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.red)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorOne[1]=PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.green)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorOne[2] = PF_FpShort (params[MATH_INP_COLOR_ONE]->u.cd.value.blue)/ PF_FpShort (PF_MAX_CHAN8);
     
-    miP.colorTwo_red = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.red)/ PF_FpShort (PF_MAX_CHAN8);
-    miP.colorTwo_green = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.green)/ PF_FpShort (PF_MAX_CHAN8);
-    miP.colorTwo_blue = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.blue)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorTwo[0] = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.red)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorTwo[1] = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.green)/ PF_FpShort (PF_MAX_CHAN8);
+    miP.colorTwo[2] = PF_FpShort (params[MATH_INP_COLOR_TWO]->u.cd.value.blue)/ PF_FpShort (PF_MAX_CHAN8);
 	miP.xLF = 0;
 	miP.yLF = 0;
 
 
-    std::string expression_string_red= "1";
-    std::string expression_string_green= "1";
-    std::string expression_string_blue= "1";
-    std::string expression_string_alpha= "1";
-    
-
-    if (!err){
-        arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
-        if (arbP){
-            m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-            expression_string_red = tempPointer->redExAc;
-            expression_string_green = tempPointer->greenExAc;
-            expression_string_blue = tempPointer->blueExAc;
-            expression_string_alpha  = tempPointer->alphaExAc;
-            }
-        }
     miP.redExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_red);
     if (miP.hasErrorB)
     {   miP.channelErrorstr = "red channel expression";
@@ -1100,11 +1196,11 @@ Render (
                                               miP.channelErrorstr.c_str(),
                                               miP.errorstr.c_str());
     }
-    
-	
-	
 
-	std::vector<std::thread> workers_thrds;
+    
+    
+    
+    std::vector<std::thread> workers_thrds;
     A_long part_length, lastPart_length, num_thrd;
 	AEFX_CLR_STRUCT(part_length);
 	AEFX_CLR_STRUCT(num_thrd);
