@@ -198,7 +198,6 @@ typedef struct {
     PF_Fixed	y_offFi;
     PF_SampPB	samp_pb;
     PF_InData	in_data;
-    PF_Boolean	no_opB;
 } OffInfo;
 
 #ifdef __cplusplus

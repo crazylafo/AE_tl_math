@@ -1130,7 +1130,7 @@ Render (
     
     //time params
     miP.layerTime_Sec = PF_FpShort(in_data->current_time)/PF_FpShort(in_data->time_scale);
-    miP.layerTime_Frame = PF_FpShort(in_data->current_time/in_data->time_step);
+    miP.layerTime_Frame = PF_FpShort(in_data->current_time/ (float)in_data->time_step);
     miP.layerDuration =PF_FpShort( in_data->total_time / in_data->time_scale);
     
     
