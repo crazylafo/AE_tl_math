@@ -4,7 +4,7 @@ Free  use  of  tl_math  is
 permitted under the guidelines and in accordance with the most current
 version of the https://opensource.org/licenses/gpl-3.0.html.
 
-The plugin use Exprtk by Arash Partow
+The plugin uses Exprtk by Arash Partow
 https://github.com/ArashPartow/exprtk
 
 
@@ -20,14 +20,11 @@ Verion note:
  
  -the plugin works in 8 and 16 bits (32bits coming soon)
  
- -Possibilities an expression for each channels
+ -Possibilities to write an expression per channels
  
- -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
-   details in section 5
-   
  -the plugin expressions can access to 4 sliders, two points and two colors pipets to comunicate with other AE elements.
  
-  -presets can be saved as json files.
-  
- -tl_Math is not thread safe yet.
+ -presets can be saved as json files.
+ 
+ -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
 
