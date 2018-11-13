@@ -14,7 +14,7 @@ whatever your Color Space, the expected values are bewteen 0 and 1.
 
 
 Verion note: 
- Alpha 01 (v 1.0)
+ Alpha 02 (v 1.1)
  
  -the plugin works with After Effect CC and above.
  
