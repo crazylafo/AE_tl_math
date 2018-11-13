@@ -963,7 +963,7 @@ Render (
                 PF_ParamDef		*params[],
                 PF_LayerDef		*outputP )
 {
-	PF_Err				err, err2		= PF_Err_NONE;
+	PF_Err				err = PF_Err_NONE, err2= PF_Err_NONE;
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
     PF_EffectWorld		*inputP = &params[0]->u.ld;
     PF_Point			origin;
@@ -978,10 +978,7 @@ Render (
     MathInfo		miP;
 	AEFX_CLR_STRUCT(miP);
     
-    std::string expression_string_red= "1";
-    std::string expression_string_green= "1";
-    std::string expression_string_blue= "1";
-    std::string expression_string_alpha= "1";
+
     
     PF_ParamDef checkoutLayerOne;
     AEFX_CLR_STRUCT(checkoutLayerOne);
@@ -989,19 +986,10 @@ Render (
     PF_Pixel16 empty16 = {0,0,0,0};
     PF_Pixel empty8 = {0,0,0,0};
     
-    if (!err){
-        arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
-        if (arbP){
-            m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-            expression_string_red = tempPointer->redExAc;
-            expression_string_green = tempPointer->greenExAc;
-            expression_string_blue = tempPointer->blueExAc;
-            expression_string_alpha  = tempPointer->alphaExAc;
-        }
-    }
+
     ERR(PF_CHECKOUT_PARAM(	in_data,
                           MATH_INP_LAYER_ONE,
-                          (in_data->current_time + params[MATH_INP_TOFF_ONE]->u.fs_d.value * in_data->time_step),
+                          (in_data->current_time + A_long(params[MATH_INP_TOFF_ONE]->u.fs_d.value) * in_data->time_step),
                           in_data->time_step,
                           in_data->time_scale,
                           &checkoutLayerOne));
@@ -1163,6 +1151,21 @@ Render (
 	miP.xLF = 0;
 	miP.yLF = 0;
 
+	std::string expression_string_red = "1";
+	std::string expression_string_green = "1";
+	std::string expression_string_blue = "1";
+	std::string expression_string_alpha = "1";
+
+	if (!err) {
+		arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+		if (arbP) {
+			m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
+			expression_string_red = tempPointer->redExAc;
+			expression_string_green = tempPointer->greenExAc;
+			expression_string_blue = tempPointer->blueExAc;
+			expression_string_alpha = tempPointer->alphaExAc;
+		}
+	}
 
     miP.redExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_red);
     if (miP.hasErrorB)
