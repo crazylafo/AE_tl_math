@@ -7,11 +7,16 @@
 		<key>tlMath.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>0</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>042DF043219ED85600EA6103</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>C4E618CB095A3CE80012CA3F</key>
 		<dict>
 			<key>primary</key>
