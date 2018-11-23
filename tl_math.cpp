@@ -334,11 +334,14 @@ PopDialog(
 	A_char          scriptAC[6000] = { '\0' };
 	std::string Majvers = std::to_string(MAJOR_VERSION);
 	std::string MinVers = std::to_string(MINOR_VERSION);
+    std::string Bugvers = std::to_string(BUG_VERSION);
     
     
-    A_char   SET_EXPR_SCRIPT[6000] = "function expr(redExpr,greenExpr,blueExpr,alphaExpr, pluginMAJORV, pluginMINORV){ \n\
-    var pluginVersion = pluginMAJORV+'.'+pluginMINORV;\n\
-    var w = new Window('dialog', 'Maths Expressions', undefined, {resizeable:true} );\n\
+    
+    A_char   SET_EXPR_SCRIPT[6000] = "function expr(redExpr,greenExpr,blueExpr,alphaExpr, pluginMAJORV, pluginMINORV, pluginBUGV){ \n\
+    var pluginVersion = pluginMAJORV+'.'+pluginMINORV+pluginBUGV;\n\
+    pluginVersion = parseFloat (pluginVersion); \n\
+    var w = new Window('dialog', 'Maths Expressions V'+pluginVersion, undefined, {resizeable:true} );\n\
     w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\n\
     w.grp = w.add('group');\n\
     w.grp.orientation='column';\n\
@@ -408,7 +411,7 @@ PopDialog(
     exprLang :  \"Exprtk\",\n\
     category :  \"Custom\",\n\
     pluginVesion :  pluginVersion,\n\
-    notCompatibleVersion : 0,\n\
+    minimalVersion : 1.11,\n\
     redExpr   : redExpr,\n\
     greenExpr : greenExpr,\n\
     blueExpr  : blueExpr,\n\
@@ -432,12 +435,12 @@ PopDialog(
     loadFile.encoding ='UTF-8';\n\
     var jsonFile = loadFile.read();\n\
     var testObj = JSON.parse(jsonFile);\n\
-    if (testObj.effectName === \"tlMath\")\n\
+    if (testObj.effectName === \"tlMath\" && testObj.minimalVersion <=pluginVersion){\n\
     try{\n\
     ExprObj.exprLang = testObj.exprLang;\n\
     ExprObj.category = testObj.category;\n\
     ExprObj.pluginVesion = testObj.pluginVesion;\n\
-    ExprObj.notCompatibleVersion = testObj.notCompatibleVersion;\n\
+    ExprObj.minimalVersion = testObj.minimalVersion;\n\
     ExprObj.redExpr = testObj.redExpr;\n\
     ExprObj.greenExpr = testObj.greenExpr;\n\
     ExprObj.blueExpr = testObj.blueExpr;\n\
@@ -447,11 +450,16 @@ PopDialog(
     alert(e)\n\
     ExprObj.error = \"err\";\n\
     }\n\
+    }\n\
+    else {\n\
+    alert (\"You must use plugin version \"+testObj.minimalVersion+ \" or higher\");\n\
+    ExprObj.error = \"err\";\n\
+    }\n\
     loadFile.close();\n\
     }\n\
     return ExprObj;\n\
     };\n\
-    expr(%s,%s,%s,%s,%s,%s);";
+        expr(%s,%s,%s,%s,%s,%s,%s);";
     
     
 
@@ -503,7 +511,7 @@ PopDialog(
 	strReplace(tempAlphaS, "\n", "\\n");
 
 
-    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str(), tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str(),Majvers.c_str() , MinVers .c_str() );
+    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str(), tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str(),Majvers.c_str() , MinVers .c_str(), Bugvers.c_str() );
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 
     //AEGP SETSTREAMVALUR TO ARB
@@ -515,6 +523,15 @@ PopDialog(
         arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         //set result per channel
         std::string resultStr = resultAC;
+        
+        //adapt exprtk language to AE expression's language.
+        strReplace(resultStr, "&&",  "&");
+        strReplace(resultStr, "||",  "|");
+        strReplace(resultStr, "++",  "+=1");
+        strReplace(resultStr, "--",  "-=1");
+        strReplace(resultStr, " = ", " := ");
+        
+        
         std::size_t redPos = resultStr.find("rfromJS");
         std::size_t greenPos = resultStr.find("gfromJS");
         std::size_t bluePos = resultStr.find("bfromJS");
@@ -996,6 +1013,7 @@ Render (
 
     Externalworld =*outputP;
     miP.extLW     =*outputP;
+    
     if (PF_WORLD_IS_DEEP(outputP)){
         ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
                                              &empty16,
