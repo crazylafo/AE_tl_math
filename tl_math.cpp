@@ -12,10 +12,11 @@ About (
 	AEGP_SuiteHandler suites(in_data->pica_basicP);
 	
 	suites.ANSICallbacksSuite1()->sprintf(	out_data->return_msg,
-											"%s v%d.%d\r%s",
+											"%s v%d.%d.%d\r%s",
 											STR(StrID_Name), 
 											MAJOR_VERSION, 
-											MINOR_VERSION, 
+											MINOR_VERSION,
+                                            BUG_VERSION,
 											STR(StrID_Description));
 	return PF_Err_NONE;
 }
