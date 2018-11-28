@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		041EA84221AD4C9B003F8577 /* script in Resources */ = {isa = PBXBuildFile; fileRef = 041EA84121AD4C9B003F8577 /* script */; };
+		041EA84421AD4CA1003F8577 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = 041EA84321AD4CA1003F8577 /* lib */; };
 		04DFF0622142A11000DF80E6 /* tl_mathArb_Handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */; };
 		7EF36FB716F29701002A3CB3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EF36FB616F29701002A3CB3 /* Cocoa.framework */; };
 		D0FE575F0993C4E900139A60 /* tl_math_Strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FE575A0993C4E900139A60 /* tl_math_Strings.cpp */; };
@@ -17,7 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		04C93F7B21387477000AB7E8 /* exprtk.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = exprtk.hpp; path = ../exprtk.hpp; sourceTree = "<group>"; };
+		041EA84121AD4C9B003F8577 /* script */ = {isa = PBXFileReference; lastKnownFileType = folder; name = script; path = ../script; sourceTree = "<group>"; };
+		041EA84321AD4CA1003F8577 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../lib; sourceTree = "<group>"; };
 		04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_mathArb_Handler.cpp; path = ../tl_mathArb_Handler.cpp; sourceTree = "<group>"; };
 		7EF36FB616F29701002A3CB3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		7EF36FB816F29807002A3CB3 /* tl_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math.h; path = ../tl_math.h; sourceTree = "<group>"; };
@@ -49,10 +52,9 @@
 				D0FE575C0993C4E900139A60 /* tl_math.cpp */,
 				7EF36FB816F29807002A3CB3 /* tl_math.h */,
 				04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */,
-				D0FE575A0993C4E900139A60 /* tl_math_Strings.cpp */,
 				D0FE575B0993C4E900139A60 /* tl_math_Strings.h */,
+				D0FE575A0993C4E900139A60 /* tl_math_Strings.cpp */,
 				D0FE575E0993C4E900139A60 /* tl_mathPiPL.r */,
-				04C93F7B21387477000AB7E8 /* exprtk.hpp */,
 				D0FE57630993C4FD00139A60 /* Supporting Code */,
 				C4E6188C095A3C800012CA3F /* Products */,
 			);
@@ -69,6 +71,8 @@
 		D0FE57630993C4FD00139A60 /* Supporting Code */ = {
 			isa = PBXGroup;
 			children = (
+				041EA84321AD4CA1003F8577 /* lib */,
+				041EA84121AD4C9B003F8577 /* script */,
 				7EF36FB616F29701002A3CB3 /* Cocoa.framework */,
 				D0FE579A0993C5E500139A60 /* AEGP_SuiteHandler.cpp */,
 				D0FE579B0993C5E500139A60 /* AEGP_SuiteHandler.h */,
@@ -128,6 +132,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				041EA84421AD4CA1003F8577 /* lib in Resources */,
+				041EA84221AD4C9B003F8577 /* script in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,11 +170,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
 				GCC_REUSE_STRINGS = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -217,7 +222,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_TESTABILITY = YES;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_MODEL_TUNING = "";

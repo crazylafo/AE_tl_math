@@ -4,60 +4,17 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            scope = "2"
-            stopOnStyle = "0"
-            exceptionName = "std::bad_exception">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "563823239.962921"
+            timestampString = "565111777.0645109"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "939"
-            endingLineNumber = "939"
-            landmarkName = "PopDialog( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "563823239.962921"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "748"
-            endingLineNumber = "748"
-            landmarkName = "PopDialog( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "564055002.283805"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1250"
-            endingLineNumber = "1250"
+            startingLineNumber = "471"
+            endingLineNumber = "471"
             landmarkName = "PopDialog( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output)"
             landmarkType = "7">
          </BreakpointContent>
@@ -68,13 +25,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "563800796.615894"
+            filePath = "../tl_mathArb_Handler.cpp"
+            timestampString = "565111925.904006"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "ParamsSetup ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output )"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
+            landmarkName = "Arb_Compare( PF_InData *in_data, PF_OutData *out_data, const PF_ArbitraryH *a_arbP, const PF_ArbitraryH *b_arbP, PF_ArbCompareResult *resultP)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -85,92 +42,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "563816467.2477061"
+            timestampString = "565111777.0645109"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "200"
-            endingLineNumber = "200"
-            landmarkName = "ParamsSetup ( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output )"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ParamsSetup(PF_InData*, PF_OutData*, PF_ParamDef**, PF_LayerDef*)"
-                  moduleName = "tlMath"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/Exchange/thomas.laforge/_LIBRAIRIE/AE/AE_SDK/Adobe%20After%20Effects%20CC%202017%20Mac%20SDK/Examples/Thomas/tl_Math/tl_math.cpp"
-                  timestampString = "563816486.215265"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "207"
-                  endingLineNumber = "207"
-                  offsetFromSymbolStart = "6241">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "ParamsSetup(PF_InData*, PF_OutData*, PF_ParamDef**, PF_LayerDef*)"
-                  moduleName = "tlMath"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Volumes/Exchange/thomas.laforge/_LIBRAIRIE/AE/AE_SDK/Adobe%20After%20Effects%20CC%202017%20Mac%20SDK/Examples/Thomas/tl_Math/tl_math.cpp"
-                  timestampString = "563816486.215497"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "207"
-                  endingLineNumber = "207"
-                  offsetFromSymbolStart = "6258">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "563823239.962921"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "588"
-            endingLineNumber = "588"
-            landmarkName = "PopDialog( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output)"
+            startingLineNumber = "236"
+            endingLineNumber = "236"
+            landmarkName = "MakeParamCopy( PF_ParamDef *actual[], /* &gt;&gt; */ PF_ParamDef copy[])"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../tl_math.cpp"
-            timestampString = "563823239.962921"
+            timestampString = "565111777.0645109"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "590"
-            endingLineNumber = "590"
-            landmarkName = "PopDialog( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../tl_math.cpp"
-            timestampString = "564055002.283805"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1008"
-            endingLineNumber = "1008"
-            landmarkName = "PopDialog( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output)"
+            startingLineNumber = "260"
+            endingLineNumber = "260"
+            landmarkName = "UpdateParameterUI( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
