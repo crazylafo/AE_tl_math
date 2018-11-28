@@ -38,14 +38,15 @@
 #include "AEGP_SuiteHandler.h"
 #include "AEFX_SuiteHelper.h"
 #include "AE_EffectSuites.h"
-
+#include "tl_math_Strings.h"
 
 #include <cstdio>
 #include <string>
-#include "exprtk.hpp"
 #include <thread>
 #include <mutex>
-#include "tl_math_Strings.h"
+
+#include "lib/exprtk.hpp"
+#include "lib/json.hpp"
 
 /* Versioning information */
 
@@ -66,11 +67,16 @@ typedef struct {
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
     
+    A_char  presetNameAc[32];
+    A_char  descriptionAc[4096];
     //duplicate in order to keep the "/n" in javascript
     A_char  redExAcFlat[4096];
     A_char  greenExAcFlat[4096];
     A_char  blueExAcFlat[4096];
     A_char  alphaExAcFlat [4096];
+    
+    A_char  presetNameAcFlat[32];
+    A_char  descriptionAcFlat [4096];
 } m_ArbData;
 
 typedef struct {
@@ -378,6 +384,8 @@ public:
 
     
 };
+
+
 #endif
 
 #endif // TLMATH

@@ -8,6 +8,8 @@ typedef struct {
 
 
 
+
+
 TableString		g_strs[StrID_NUMTYPES] = {
 	StrID_NONE,						    "",
 	StrID_Name,						    "tl Maths",
@@ -27,8 +29,6 @@ TableString		g_strs[StrID_NUMTYPES] = {
     StrID_LAYER_ONE_Param_Name,         "Layer input",
     StrID_TOFF_ONE_Param_Name,          "Frames Offset",
     StrID_POFF_ONE_Param_Name,          "Shift Center to",
-    
-    StrID_Default_expr,                 "in_luma"
 };
 
 
@@ -36,4 +36,6 @@ char	*GetStringPtr(int strNum)
 {
 	return g_strs[strNum].str;
 }
-	
+
+
+

@@ -20,6 +20,6 @@ typedef enum {
     StrID_LAYER_ONE_Param_Name,
     StrID_TOFF_ONE_Param_Name,
     StrID_POFF_ONE_Param_Name,
-    StrID_Default_expr,
 	StrID_NUMTYPES
 } StrIDType;
+

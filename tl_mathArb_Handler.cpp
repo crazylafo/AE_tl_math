@@ -23,27 +23,35 @@ CreateDefaultArb(
 
             #ifdef AE_OS_WIN
 			#pragma warning (disable : 4305)
-                strncpy_s(arbP->redExAc, STR(StrID_Default_expr), 4096);
-                strncpy_s(arbP->greenExAc, STR(StrID_Default_expr), 4096);
-                strncpy_s(arbP->blueExAc, STR(StrID_Default_expr), 4096);
-                strncpy_s(arbP->alphaExAc, STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->redExAc, "in_red", 4096);
+                strncpy_s(arbP->greenExAc, "in_green", 4096);
+                strncpy_s(arbP->blueExAc, "in_blue", 4096);
+                strncpy_s(arbP->alphaExAc, "1", 4096);
+                strncpy_s(arbP->presetNameAc,"Preset Name", 32);
+                strncpy_s(arbP->descriptionAc,"Describe your preset here", 2048);
             
-                strncpy_s(arbP->redExAcFlat ,STR(StrID_Default_expr), 4096);
-                strncpy_s(arbP->greenExAcFlat ,STR(StrID_Default_expr), 4096);
-                strncpy_s(arbP->blueExAcFlat ,STR(StrID_Default_expr), 4096);
-                strncpy_s(arbP->alphaExAcFlat ,STR(StrID_Default_expr), 4096);
+                strncpy_s(arbP->redExAcFlat , "in_red", 4096);
+                strncpy_s(arbP->greenExAcFlat ,"in_green", 4096);
+                strncpy_s(arbP->blueExAcFlat ,"in_blue", 4096);
+                strncpy_s(arbP->alphaExAcFlat ,S "1", 4096);
+                strncpy_s(arbP->presetNameAcFlat,"Preset Name", 32);
+                strncpy_s(arbP->descriptionAcFlat,"Describe your preset here", 2048);
+            
 			#pragma warning (pop)
             #else
-                strncpy(arbP->redExAc ,STR(StrID_Default_expr), 4096);
-                strncpy(arbP->greenExAc ,STR(StrID_Default_expr), 4096);
-                strncpy(arbP->blueExAc ,STR(StrID_Default_expr), 4096);
-                strncpy(arbP->alphaExAc ,STR(StrID_Default_expr), 4096);
+                strncpy(arbP->redExAc,   "in_red", 4096);
+                strncpy(arbP->greenExAc, "in_green", 4096);
+                strncpy(arbP->blueExAc,  "in_blue", 4096);
+                strncpy(arbP->alphaExAc,  "1", 4096);
+                strncpy(arbP->presetNameAc,"Preset Name", 32);
+                strncpy(arbP->descriptionAc,"Describe your preset here", 2048);
 
-                strncpy(arbP->redExAcFlat ,STR(StrID_Default_expr), 4096);
-                strncpy(arbP->greenExAcFlat ,STR(StrID_Default_expr), 4096);
-                strncpy(arbP->blueExAcFlat ,STR(StrID_Default_expr), 4096);
-                strncpy(arbP->alphaExAcFlat ,STR(StrID_Default_expr), 4096);
-#endif
+                strncpy(arbP->redExAcFlat, "in_red", 4096);
+                strncpy(arbP->greenExAcFlat,"in_green", 4096);
+                strncpy(arbP->blueExAcFlat, "in_blue", 4096);
+                strncpy(arbP->alphaExAcFlat, "1", 4096);
+                strncpy(arbP->descriptionAcFlat,"Describe your preset here", 2048);
+            #endif
 			*dephault = arbH;
 		}
 		suites.HandleSuite1()->host_unlock_handle(arbH);
@@ -144,20 +152,32 @@ Arb_Compare(
 					total_a_gL	= 0,
 					total_a_bL	= 0,
                     total_a_aL	= 0,
+                    total_a_pnL  =0,  //preset Name
+                    total_a_dscrL  =0, //description
+    
                     total_a_rfL	= 0,
                     total_a_gfL	= 0,
                     total_a_bfL	= 0,
                     total_a_afL	= 0,
+                    total_a_pnfL  =0,
+                    total_a_dscrfL  =0,
+    
                     total_aL	= 0,
 				
 					total_b_rL	= 0,
 					total_b_gL	= 0,
 					total_b_bL	= 0,
                     total_b_aL	= 0,
+                    total_b_pnL  =0,
+                    total_b_dscrL  =0,
+    
                     total_b_rfL	= 0,
                     total_b_gfL	= 0,
                     total_b_bfL	= 0,
                     total_b_afL	= 0,
+                    total_b_pnfL  =0,
+                    total_b_dscrfL  =0,
+         
                     total_bL	= 0;
 
 	*resultP = PF_ArbCompare_EQUAL;
@@ -179,26 +199,32 @@ Arb_Compare(
             total_a_gL	= strlen(first_arbP->greenExAc);
             total_a_bL	= strlen(first_arbP->blueExAc);
             total_a_aL	= strlen(first_arbP->alphaExAc);
-            
+            total_a_pnL = strlen(first_arbP->presetNameAc);
+            total_a_dscrL = strlen(first_arbP->descriptionAc);
             
             total_a_rfL	= strlen(first_arbP->redExAcFlat);
             total_a_gfL	= strlen(first_arbP->greenExAcFlat);
             total_a_bfL	= strlen(first_arbP->blueExAcFlat);
             total_a_afL	= strlen(first_arbP->alphaExAcFlat);
+            total_a_pnfL =strlen(first_arbP->presetNameAcFlat);
+            total_a_dscrfL = strlen(first_arbP->descriptionAcFlat);
             
             total_b_rL	= strlen(second_arbP->redExAc);
             total_b_gL	= strlen(second_arbP->greenExAc);
             total_b_bL	= strlen(second_arbP->blueExAc);
             total_b_aL	= strlen(second_arbP->alphaExAc);
+            total_b_pnL = strlen(second_arbP->presetNameAc);
+            total_b_dscrL = strlen(second_arbP->descriptionAc);
             
             total_b_rfL	= strlen(second_arbP->redExAcFlat);
             total_b_gfL	= strlen(second_arbP->greenExAcFlat);
             total_b_bfL	= strlen(second_arbP->blueExAcFlat);
             total_b_afL	= strlen(second_arbP->alphaExAcFlat);
-            
+            total_b_pnfL= strlen(second_arbP->presetNameAcFlat);
+            total_b_dscrfL= strlen(second_arbP->descriptionAcFlat);
 
-			total_aL = total_a_rL + total_a_gL + total_a_bL + total_a_aL +total_a_rfL + total_a_gfL + total_a_bfL+ total_a_afL  ;
-			total_bL = total_b_rL + total_b_gL + total_b_bL + total_b_aL +total_b_rfL + total_b_gfL + total_b_bfL+ total_b_afL ;
+			total_aL = total_a_rL + total_a_gL + total_a_bL + total_a_aL+ total_a_pnL+ total_a_dscrL +total_a_rfL + total_a_gfL + total_a_bfL+ total_a_afL + total_a_pnfL+total_a_dscrfL ;
+			total_bL = total_b_rL + total_b_gL + total_b_bL + total_b_aL+ total_b_pnL+ total_b_dscrL +total_b_rfL + total_b_gfL + total_b_bfL+ total_b_afL + total_b_pnfL+total_b_dscrfL;
 
 			if(total_aL > total_bL)	{
 				*resultP = PF_ArbCompare_MORE;

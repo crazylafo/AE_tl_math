@@ -1,4 +1,5 @@
 #include "tl_math.h"
+#include "script/script.h"
 
 
 static PF_Err 
@@ -40,6 +41,7 @@ GlobalSetup (
 
     
 	out_data->out_flags =  PF_OutFlag_CUSTOM_UI			|
+                           PF_OutFlag_SEND_UPDATE_PARAMS_UI	|
                            PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
                            PF_OutFlag_I_DO_DIALOG|
                            PF_OutFlag_WIDE_TIME_INPUT|
@@ -82,11 +84,11 @@ ParamsSetup (
                          &def.u.arb_d.dephault));
     
     
-    PF_ADD_ARBITRARY2(	"data transfert",
+    PF_ADD_ARBITRARY2(	"preset Name",
                       10,
                       10,
-                      PF_ParamFlag_CANNOT_TIME_VARY,
-                      PF_PUI_NO_ECW_UI|PF_PUI_INVISIBLE,
+                      PF_ParamFlag_SUPERVISE| PF_ParamFlag_CANNOT_TIME_VARY,
+                      PF_PUI_TOPIC,
                       def.u.arb_d.dephault,
                       MATH_ARB_DATA,
                       ARB_REFCON);
@@ -225,7 +227,47 @@ ParamsSetup (
 	return err;
 }
 
-
+static PF_Err
+MakeParamCopy(
+              PF_ParamDef *actual[],	/* >> */
+              PF_ParamDef copy[])		/* << */
+{
+    for (A_short iS = 0; iS < MATH_NUM_PARAMS; ++iS){
+        AEFX_CLR_STRUCT(copy[iS]);	// clean params are important!
+    }
+    copy[MATH_INPUT]			= *actual[MATH_INPUT];
+    copy[MATH_ARB_DATA]			= *actual[MATH_ARB_DATA];
+    
+    return PF_Err_NONE;
+    
+}
+static PF_Err
+UpdateParameterUI(
+                  PF_InData			*in_data,
+                  PF_OutData			*out_data,
+                  PF_ParamDef			*params[],
+                  PF_LayerDef			*outputP)
+{
+    PF_Err				err					= PF_Err_NONE;
+    PF_Handle		arbH			= params[MATH_ARB_DATA]->u.arb_d.value;
+    AEGP_SuiteHandler		suites(in_data->pica_basicP);
+    m_ArbData		*arbP			= NULL;
+    PF_ParamDef		param_copy[MATH_NUM_PARAMS];
+    ERR(MakeParamCopy(params, param_copy));
+    arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+    if (arbP) {
+        m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
+        strcpy(param_copy[MATH_ARB_DATA].name, tempPointer->presetNameAc);
+        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+                                                        MATH_ARB_DATA,
+                                                        &param_copy[MATH_ARB_DATA]));
+        
+    }
+    
+    
+    PF_UNLOCK_HANDLE(arbH);
+    return err;
+}
 static PF_Err
 AEGP_SetParamStreamValue(PF_InData			*in_data,
 						PF_OutData			*out_data,
@@ -331,151 +373,10 @@ PopDialog(
 
 	AEGP_MemHandle     resultMemH = NULL;
 	A_char *resultAC = NULL;
-	A_char          scriptAC[6000] = { '\0' };
+	A_char          scriptAC[12288] = { '\0' };
 	std::string Majvers = std::to_string(MAJOR_VERSION);
 	std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
-    
-    
-    
-    A_char   SET_EXPR_SCRIPT[8000] = "function expr(redExpr,greenExpr,blueExpr,alphaExpr, pluginMAJORV, pluginMINORV, pluginBUGV){ \n\
-    var pluginVersion = pluginMAJORV+'.'+pluginMINORV+pluginBUGV;\n\
-    pluginVersion = parseFloat (pluginVersion); \n\
-    var w = new Window('dialog', 'Maths Expressions V'+pluginVersion, undefined, {resizeable:true} );\n\
-    w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\n\
-    w.grp = w.add('group');\n\
-    w.grp.orientation='column';\n\
-    w.grp.alignment = ['fill', 'fill'];\n\
-    w.grp.alignChildren = ['fill', 'fill'];\n\
-	w.grp.redst = w.grp.add ('statictext', undefined,'Red Channel Expression : ');\n\
-    w.grp.redC = w.grp.add('group');\n\
-    w.grp.redC.orientation = 'row';\n\
-    w.grp.redC.alignment = ['fill', 'fill'];\n\
-    w.grp.redC.alignChildren = ['fill', 'fill'];\n\
-    w.grp.redC.redet = w.grp.redC.add ('edittext', undefined, redExpr,{multiline:true});\n\
-	w.grp.greenst = w.grp.add ('statictext', undefined,'Green Channel Expression :');\n\
-    w.grp.greenC = w. grp.add('group');\n\
-    w.grp.greenC.orientation = 'row';\n\
-    w.grp.greenC.alignChildren = ['fill', 'fill'];\n\
-    w.grp.greenC.greenet = w.grp.greenC.add ('edittext', undefined, greenExpr,{multiline:true});\n\
-	w.grp.bluest = w.grp.add('statictext', undefined, 'Blue Channel Expression :'); \n\
-    w.grp.blueC = w.grp.add('group');\n\
-    w.grp.blueC.orientation = 'row';\n\
-    w.grp.blueC.alignChildren = ['fill', 'fill'];\n\
-    w.grp.blueC.blueet = w.grp.blueC.add ('edittext', undefined, blueExpr,{multiline:true});\n\
-	w.grp.alphast = w.grp.add ('statictext', undefined, 'Alpha Channel Expression :');\n\
-    w.grp.alphaC = w.grp.add('group');\n\
-    w.grp.alphaC.orientation = 'row';\n\
-    w.grp.alphaC.alignChildren = ['fill', 'fill'];\n\
-    w.grp.alphaC.alphaet = w.grp.alphaC.add ('edittext', undefined, alphaExpr,{multiline:true});\n\
-	w.grp.PresetN = w.grp.add('group');\n\
-    w.grp.PresetN.orientation = 'row';\n\
-	w.grp.PresetN.alignChildren = ['fill', 'fill'];\n\
-	w.grp.PresetN.stN =w.grp.PresetN.add ('statictext', undefined, 'Preset Name');\n\
-	w.grp.PresetN.name = w.grp.PresetN.add ('edittext', undefined, 'Write here your tlMath Preset Name');\n\
-    w.grp.descriptionGrp = w.grp.add('group');\n\
-    w.grp.descriptionGrp.orientation = 'row';\n\
-    w.grp.descriptionGrp.alignChildren = ['fill', 'fill'];\n\
-    w.grp.descriptionGrp.descrst = w.grp.descriptionGrp.add ('statictext', undefined, 'Description:');\n\
-    w.grp.descriptionGrp.description = w.grp.descriptionGrp.add ('edittext', undefined, 'description of the preset',{multiline:true});\n\
-    w.grp.btnGrp = w.grp.add('Group');\n\
-    w.grp.btnGrp.orientation = 'row';\n\
-    w.grp.btnGrp.Ok =w.grp.btnGrp.add ('button', undefined, 'Apply');\n\
-    w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\n\
-    w.grp.btnGrp.loadBtn = w.grp.btnGrp.add ('button', undefined, 'Load Preset');\n\
-    w.grp.btnGrp.saveBtn =w.grp.btnGrp.add('button', undefined, 'Save Preset');\n\
-    var result = '';\n\
-    w.grp.btnGrp.loadBtn.onClick = function (){\n\
-    var exprObj = readJson(pluginVersion);\n\
-    if (exprObj.error === \"none\"){\n\
-    w.grp.redC.redet.text =		exprObj.redExpr;\n\
-    w.grp.greenC.greenet.text=	exprObj.greenExpr;\n\
-    w.grp.blueC.blueet.text =	exprObj.blueExpr;\n\
-    w.grp.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
-    w.grp.PresetN.name.text      =   exprObj.presetName; \n\
-    w.grp.descriptionGrp.description.text =   exprObj.description \n\
-    }\n\
-    else {    alert (exprObj.error)};\n\
-    }\n\
-    w.grp.btnGrp.saveBtn.onClick = function (){\n\
-    saveAsJson (w.grp.redC.redet.text, w.grp.greenC.greenet.text, w.grp.blueC.blueet.text, w.grp.alphaC.alphaet.text, pluginVersion, w.grp.PresetN.name.text,w.grp.descriptionGrp.description.text);\n\
-    }\n\
-    w.grp.btnGrp.Ok.onClick = function(){\n\
-    var strExpr ='rfromJS'+w.grp.redC.redet.text+'gfromJS'+w.grp.greenC.greenet.text+'bfromJS'+w.grp.blueC.blueet.text+'afromJS'+w.grp.alphaC.alphaet.text;\n\
-    w.close();\n\
-    result = strExpr;\n\
-    }\n\
-    w.grp.btnGrp.Cancel.onClick = function(){\n\
-    var ret ='rfromJS'+redExpr+'gfromJS'+greenExpr+'bfromJS'+blueExpr+'afromJS'+alphaExpr;\n\
-    w.close();\n\
-    result = ret;\n\
-    }\n\
-    w.onResizing = w.onResize = function(){this.layout.resize();}\n\
-    w.show();\n\
-    return result\n\
-    }\n\
-    function createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion, presetName, description){\n\
-    ExprObj = {\n\
-    effectName   : \"tlMath\",\n\
-    exprLang :  \"Exprtk\",\n\
-    category :  \"Custom\",\n\
-    pluginVesion : \"+ pluginVersion +\",\n\
-    minimalPluginVersion : \"1.11\",\n\
-    redExpr   : redExpr,\n\
-    greenExpr : greenExpr,\n\
-    blueExpr  : blueExpr,\n\
-    alphaExpr : alphaExpr,\n\
-    presetName  : presetName,\n\
-	description : description, \n\
-    };\n\
-    return ExprObj;\n\
-    }\n\
-    function saveAsJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion,presetName, description){\n\
-    ExprObj = createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion,presetName, description);\n\
-    var presetFile =File.saveDialog('save your preset as a json');\n\
-    if (presetFile && presetFile.open('w')){\n\
-		presetFile.encoding ='UTF-8';\n\
-		presetFile.write(JSON.stringify(ExprObj, undefined, '\\r\\n'));\n\
-		presetFile.close();\n\
-		}\n\
-    };\n\
-    function readJson(pluginVersion){\n\
-    var ExprObj ={};\n\
-    var loadFile =File.openDialog('load your preset json');\n\
-    if (loadFile && loadFile.open('r')){\n\
-    loadFile.encoding ='UTF-8';\n\
-    var jsonFile = loadFile.read();\n\
-    var testObj = JSON.parse(jsonFile);\n\
-	try{\n\
-    if (testObj.effectName === \"tlMath\" && testObj.minimalPluginVersion <=pluginVersion){\n\
-		ExprObj.exprLang = testObj.exprLang;\n\
-		ExprObj.category = testObj.category;\n\
-		ExprObj.pluginVesion = testObj.pluginVesion;\n\
-		ExprObj.minimalPluginVersion = testObj.minimalPluginVersion;\n\
-		ExprObj.redExpr     = testObj.redExpr;\n\
-		ExprObj.greenExpr   = testObj.greenExpr;\n\
-		ExprObj.blueExpr    = testObj.blueExpr;\n\
-		ExprObj.alphaExpr   = testObj.alphaExpr;\n\
-		ExprObj.presetName  =   testObj.presetName; \n\
-		ExprObj.description =     testObj.description \n\
-		ExprObj.error       = \"none\";\n\
-	}\n\
-    else {\n\
-		alert (\"You must use plugin version \"+ testObj.minimalPluginVersion+ \" or higher\");\n\
-	    ExprObj.error = \"err\";\n\
-		}\n\
-    }catch (e) {\n\
-    alert(e)\n\
-    ExprObj.error = \"err\";\n\
-    }\n\
-    loadFile.close();\n\
-    }\n\
-    return ExprObj;\n\
-    };\n\
-        expr(%s,%s,%s,%s,%s,%s,%s);";
-    
-    
-
     
     //ARB
     PF_ParamDef arb_param;
@@ -485,7 +386,8 @@ PopDialog(
     std::string tempGreenS ="'";
     std::string tempBlueS ="'";
     std::string tempAlphaS ="'";
-    
+    std::string tempName ="'";
+    std::string tempDescription ="'";
 
 	PF_Handle		arbOutH = NULL;
 	m_ArbData		*arbInP = NULL;
@@ -508,6 +410,8 @@ PopDialog(
             tempGreenS.append(arbInP->greenExAcFlat);
             tempBlueS.append(arbInP->blueExAcFlat);
             tempAlphaS.append(arbInP->alphaExAcFlat);
+            tempName.append(arbInP->presetNameAcFlat);
+            tempDescription.append(arbInP->descriptionAcFlat);
         }
        
     }
@@ -516,17 +420,28 @@ PopDialog(
     tempGreenS.append("'");
     tempBlueS.append("'");
     tempAlphaS.append("'");
+    tempName.append("'");
+    tempDescription.append("'");
 
 	//to force the parser to keep \n before to send it to js
 	strReplace(tempRedS, "\n", "\\n");
 	strReplace(tempGreenS, "\n", "\\n");
 	strReplace(tempBlueS, "\n", "\\n");
 	strReplace(tempAlphaS, "\n", "\\n");
-
-
-    sprintf( scriptAC, SET_EXPR_SCRIPT,tempRedS.c_str(), tempGreenS.c_str() , tempBlueS.c_str() , tempAlphaS.c_str(),Majvers.c_str() , MinVers .c_str(), Bugvers.c_str() );
+    strReplace(tempDescription, "\n", "\\n");
+    sprintf( scriptAC,
+            script_ae.c_str(),
+            tempRedS.c_str(),
+            tempGreenS.c_str(),
+            tempBlueS.c_str() ,
+            tempAlphaS.c_str(),
+            tempName.c_str(),
+            tempDescription.c_str(),
+            Majvers.c_str(),
+            MinVers .c_str(),
+            Bugvers.c_str());
+    
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
-
     //AEGP SETSTREAMVALUR TO ARB
     AEFX_CLR_STRUCT(resultAC);
     ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
@@ -534,6 +449,7 @@ PopDialog(
     if  (resultAC){
         AEFX_CLR_STRUCT(arbOutP);
         arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+        
         //set result per channel
         std::string resultStr = resultAC;
         
@@ -544,30 +460,34 @@ PopDialog(
         strReplace(resultStr, "--",  "-=1");
         strReplace(resultStr, " = ", " := ");
         
-        
-        std::size_t redPos = resultStr.find("rfromJS");
-        std::size_t greenPos = resultStr.find("gfromJS");
-        std::size_t bluePos = resultStr.find("bfromJS");
-        std::size_t alphaPos = resultStr.find("afromJS");
-	
-        
-        std::string redResultStr =resultStr.substr(redPos+7, greenPos -redPos-7); // extract red channel from script return
-        std::string greenResultStr = resultStr.substr(greenPos+7, bluePos-greenPos-7);
-        std::string blueResultStr = resultStr.substr(bluePos+7, alphaPos-bluePos-7);
-        std::string alphaResultStr = resultStr.substr(alphaPos+7);
-        //copy to flat ARB (keeping /n and other speical char from js
-        
+        nlohmann::json  j = nlohmann::json::parse(resultStr);
 
+        std::string redResultStr =   j["/redExpr"_json_pointer];
+        std::string greenResultStr = j["/greenExpr"_json_pointer];
+        std::string blueResultStr =  j["/blueExpr"_json_pointer];
+        std::string alphaResultStr = j["/alphaExpr"_json_pointer];
+        
+        
+        std::string presetNameStr = j["/presetName"_json_pointer];
+        std::string descriptionStr = j["/description"_json_pointer];
+        
+        presetNameStr.erase(std::remove(presetNameStr.begin(), presetNameStr.end(), '\n'), presetNameStr.end());
+
+        //copy to flat ARB (keeping /n and other speical char from js
         #ifdef AE_OS_WIN
             strncpy_s( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
             strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+            strncpy_s( arbOutP->presetNameAcFlat, presetNameStr.c_str(), presetNameStr.length()+1);
+            strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
         #else
             strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
             strncpy(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+            strncpy( arbOutP->presetNameAcFlat, presetNameStr.c_str(), presetNameStr.length()+1);
+            strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
         #endif
         
         //delete \nfor execution expr
@@ -575,17 +495,23 @@ PopDialog(
         greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
         blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
         alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
+        descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
         
         #ifdef AE_OS_WIN
             strncpy_s( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
             strncpy_s(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy_s( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy_s( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
+            strncpy_s( arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length()+1);
+            strncpy_s( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
         #else
  			strncpy( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
             strncpy(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
+            strncpy( arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length()+1);
+            strncpy( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
+        
         #endif
         arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
         ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
@@ -1512,6 +1438,12 @@ EntryPointFunc (
 								params,
 								output);
 				break;
+            case PF_Cmd_UPDATE_PARAMS_UI:
+                err = UpdateParameterUI(	in_data,
+                                        out_data,
+                                        params,
+                                        output);
+                break;
 
 
             
