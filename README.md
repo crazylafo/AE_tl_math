@@ -85,10 +85,10 @@ As in javascript, don't forget to close the end of your phrase with  ";"
   Math Operators are similar to operators used in the the Internal Expression system of After Effect.
 NAME| DESCRIPTION|EXEMPLE|
 ---------|--------|--------|
-`+`       |  addition| var foo:= a+b;
-`-`       | substraction|  var foo:= a-b;
-`*`  | multiply|var foo:= a*b;
-`/`| devide|var foo:= a/b;
+`+`       |  addition| var foo:= a+b;|
+`-`       | substraction|  var foo:= a-b;|
+`*`  | multiply|var foo:= a*b;|
+`/`| devide|var foo:= a/b;|
 
  Boolean Operators
  Logical operators have differents name than in internal expression system but they do the same things
