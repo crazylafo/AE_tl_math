@@ -200,7 +200,7 @@ ParamsSetup (
                          TIMEOFFSET_MIN,
                          TIMEOFFSET_MAX,
                          MATH_VAR_MIN,
-                         MATH_VAR_MAX,
+                         MATH_SLIDER_MAX,
                          TIMEOFFSET_DFLT,
                          PF_Precision_INTEGER,
                          0,
