@@ -83,6 +83,8 @@ As in javascript, don't forget to close the end of your phrase with  ";"
 
 3.4 operators
   Math Operators are similar to operators used in the the Internal Expression system of After Effect.
+  
+  
 NAME| DESCRIPTION|EXEMPLE|
 ---------|--------|--------|
 `+`      |  addition| var foo:= a+b;|
@@ -92,6 +94,8 @@ NAME| DESCRIPTION|EXEMPLE|
 
  Boolean Operators
  Logical operators have differents name than in internal expression system but they do the same things
+ 
+ 
  NAME| DESCRIPTION|EXEMPLE|
 ---------|--------|--------|
 `and` '&'       |  logical and. Returns true if a and b are true | a and b; a&b;|
