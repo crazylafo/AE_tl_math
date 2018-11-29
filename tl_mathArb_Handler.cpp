@@ -33,7 +33,7 @@ CreateDefaultArb(
                 strncpy_s(arbP->redExAcFlat , "in_red", 4096);
                 strncpy_s(arbP->greenExAcFlat ,"in_green", 4096);
                 strncpy_s(arbP->blueExAcFlat ,"in_blue", 4096);
-                strncpy_s(arbP->alphaExAcFlat ,S "1", 4096);
+                strncpy_s(arbP->alphaExAcFlat , "1", 4096);
                 strncpy_s(arbP->presetNameAcFlat,"Preset Name", 32);
                 strncpy_s(arbP->descriptionAcFlat,"Describe your preset here", 2048);
             
