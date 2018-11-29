@@ -36,29 +36,102 @@ Alpha 04 (V1.12)
  
  
 table of contents
-00-HOW TO INSTALL
-01-THE UI
+01-HOW TO INSTALL
 02-BASIC EXEMPLE
 03-GRAMMAR RULES
 04-VARIABLES
 05-FUNCTIONS
  
  
-**HOW TO INSTALL**
+**1-HOW TO INSTALL**
 extract the zip file in the folder : 
-On mac : /Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/
+On mac : /Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/tl
 
-on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\
-
-**1-THE UI**
-
-the plugin Effect UI 
+on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\tl
 
 
+**2- BASIC EXEMPLE**
+-Apply the effect on a White Solid
+-In the Effect UI click on "Math Expression"
+-For the Alpha Channle write: xL/layerWidth
+  The result is a ramp, black on the left white on the right. 
+   for every pixel, the plugin devide the x coordonate by the total layerWidth of the layer.
+   
+**3- GRAMMAR RULES**
 
-2- BASIC EXEMPLE
+ 3.1-The result
+ Whatever the color Dpeth of your project (8/16 or 32 bits) with the plugin you have to think in float beween 0 and 1, like in 32 bits.  The plugin convert the result to the good depth of the project after the calculation.
+ 
+ 3.2-define a variable.
+ Like in the After EFfect expression you can define a variable. It's compulsory to call var before to define a new one or you will get an error.
+ 
+```
+var foo := in_red*xL/layerWidth;
+```
+3.3-Sign Equal
+The expression Math is based on Exprtk grammar. That's why equal is written like this 
+```
+:=
+```
+Note : the plugin will correct your if you write " = " (with spaces before and after). But when you will reopen the expression it will be changed in  " := "
 
-3- GRAMMAR RULES
+3.4 close your "phrase"
+```
+;
+```
+As in javascript, don't forget to close the end of your phrase with  ";"
+
+3.4 operators
+  Math Operators are similar to operators used in the the Internal Expression system of After Effect.
+NAME| DESCRIPTION|EXEMPLE|
+---------|--------|--------|
+`+`       |  addition| var foo:= a+b;
+`-`       | substraction|  var foo:= a-b;
+`*`  | multiply|var foo:= a*b;
+`/`| devide|var foo:= a/b;
+
+ Boolean Operators
+ Logical operators have differents name than in internal expression system but they do the same things
+ NAME| DESCRIPTION|EXEMPLE|
+---------|--------|--------|
+`and` '&'       |  logical and. Returns true if a and b are true | a and b; a|b;|
+`or`  '|'     | logical or. Returns true if a or b is true  |  a or b;  a|b;|
+`nand`  | logical NAND Returns true if a and b are false | a nand b;|
+`nor`| logical NOR Returns true if a or b is false | a nor b;|
+
+3.5 LOOPS AND CONDITIONS
+
+
+3.1 IF/ELSE
+
+```
+if (a < b)
+  {1}
+else if (a==b) 
+ {0.5}
+else
+  {0}  
+```
+
+3.2 LOOPS 
+
+Loops are similar to those like in js. you can use loops for, while, switch.  Be careful, if you write a big loop, the effect will calculate it for each pixels, o limit the range of the loop or take a coffee during render time.
+
+exemple with a loop, a condition and a break: 
+```
+var a :=0;
+for (far i:=0; i<10; i +=1){
+   if (layerHeight/yL >i)
+      {
+          a:=i;
+          break;
+      }
+}
+ 
+
+Note the plugin converts "&&" and "||" to the exprtk grammar.
+
+
 
 **4-THE VARIABLES**
 
@@ -147,4 +220,8 @@ NAME| TYPE | DESCRIPTION|
 
 6- FUNCTIONS
 
-
+non exaustive list of avaibles functions
+ abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos,  cosh,
+       cot, csc,  deg2grad, deg2rad,  erf, erfc,  exp, expm1, floor,
+       frac, grad2deg, log, log10, log1p, log2, rad2deg, round, sec,
+       sgn, sin, sinc, sinh, sqrt, swap, tan, tanh, trunc
