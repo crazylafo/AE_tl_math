@@ -6,31 +6,45 @@ version of the https://opensource.org/licenses/gpl-3.0.html.
 
 The plugin uses Exprtk by Arash Partow
 https://github.com/ArashPartow/exprtk
-
+The plugin uses JSON for Modern C++
+https://nlohmann.github.io/json/
 
 An After Effect plugin project.
 The user can write math expression for each pixels and by channels (RGBA). 
 whatever your Color Space, the expected values are bewteen 0 and 1.
 
 
-Verion note: 
+Verion note:
+Alpha 04 (V1.12)
+-new slider values range
+-the preset has a name defined in thr script and now visible in the AE UI
+-full json gateway from script to plugin
+
+ Alpha 03 (v 1.11)
+ -new script UI
+ -new topics 
+ -interaction with an other layer it's now possible (in topic input)
+ 
  Alpha 02 (v 1.1)
  
  -the plugin works with After Effect CC and above.
- 
- -the plugin works in 8 and 16 bits (32bits coming soon)
- 
+ -the plugin works in 8 and 16 bits (32bits coming soon 
  -Possibilities to write an expression per channels
- 
  -the plugin expressions can access to 4 sliders, two points and two colors pipets to comunicate with other AE elements.
- 
  -presets can be saved as json files.
- 
  -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
  
  
+table of contents
+00-HOW TO INSTALL
+01-THE UI
+02-BASIC EXEMPLE
+03-GRAMMAR RULES
+04-VARIABLES
+05-FUNCTIONS
  
- HOW TO INSTALL
+ 
+**HOW TO INSTALL**
 extract the zip file in the folder : 
 On mac : /Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/
 
@@ -38,11 +52,13 @@ on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\
 
 **1-THE UI**
 
+the plugin Effect UI 
+
 
 
 2- BASIC EXEMPLE
 
-3- RULES
+3- GRAMMAR RULES
 
 **4-THE VARIABLES**
 
