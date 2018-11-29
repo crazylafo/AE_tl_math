@@ -87,7 +87,8 @@ typedef struct {
 /* Parameter defaults */
 
 #define	MATH_VAR_MIN		0
-#define	MATH_VAR_MAX		100
+#define	MATH_VAR_MAX		1000
+#define	MATH_SLIDER_MAX		100
 #define	MATH_VAR_DFLT       1
 
 #define TIMEOFFSET_MIN      -1000

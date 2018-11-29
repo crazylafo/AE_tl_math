@@ -121,7 +121,7 @@ ParamsSetup (
 							MATH_VAR_MIN,
 							MATH_VAR_MAX,
 							MATH_VAR_MIN,
-							MATH_VAR_MAX,
+							MATH_SLIDER_MAX,
 							MATH_VAR_DFLT,
 							PF_Precision_THOUSANDTHS,
 							0,
@@ -134,7 +134,7 @@ ParamsSetup (
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
                          MATH_VAR_MIN,
-                         MATH_VAR_MAX,
+                         MATH_SLIDER_MAX,
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
                          0,
@@ -147,7 +147,7 @@ ParamsSetup (
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
                          MATH_VAR_MIN,
-                         MATH_VAR_MAX,
+                         MATH_SLIDER_MAX,
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
                          0,
@@ -160,7 +160,7 @@ ParamsSetup (
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
                          MATH_VAR_MIN,
-                         MATH_VAR_MAX,
+                         MATH_SLIDER_MAX,
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
                          0,
@@ -222,7 +222,7 @@ ParamsSetup (
                                                                                                kPFEffectUISuiteVersion1,
                                                                                                out_data);
     
-    ERR(effect_ui_suiteP->PF_SetOptionsButtonName(in_data->effect_ref, "Expresion Math"));
+    ERR(effect_ui_suiteP->PF_SetOptionsButtonName(in_data->effect_ref, "Math Expression"));
 
 
 	return err;
