@@ -99,7 +99,7 @@ NAME| DESCRIPTION|EXEMPLE|
  NAME| DESCRIPTION|EXEMPLE|
 ---------|--------|--------|
 `and` '&'       |  logical and. Returns true if a and b are true | a and b; a&b;|
-`or`  '|'     | logical or. Returns true if a or b is true  |  a or b; |
+`or`  | logical or. Returns true if a or b is true  |  a or b; |
 `nand`  | logical NAND Returns true if a and b are false | a nand b;|
 `nor`| logical NOR Returns true if a or b is false | a nor b;|
 
