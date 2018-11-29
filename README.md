@@ -87,15 +87,15 @@ NAME| DESCRIPTION|EXEMPLE|
 ---------|--------|--------|
 `+`      |  addition| var foo:= a+b;|
 `-`      | substraction|  var foo:= a-b;|
-`*`  | multiply|var foo:= a*b;|
-`/`  | devide|var foo:= a/b;|
+`*`  | multiply|var foo:= a*b;  |
+`/`  | devide|var foo:= a/b;    |
 
  Boolean Operators
  Logical operators have differents name than in internal expression system but they do the same things
  NAME| DESCRIPTION|EXEMPLE|
 ---------|--------|--------|
-`and` '&'       |  logical and. Returns true if a and b are true | a and b; a|b;|
-`or`  '|'     | logical or. Returns true if a or b is true  |  a or b;  a|b;|
+`and` '&'       |  logical and. Returns true if a and b are true | a and b; a&b;|
+`or`  '|'     | logical or. Returns true if a or b is true  |  a or b; |
 `nand`  | logical NAND Returns true if a and b are false | a nand b;|
 `nor`| logical NOR Returns true if a or b is false | a nor b;|
 
