@@ -52,7 +52,7 @@
 
 #define	MAJOR_VERSION	1
 #define	MINOR_VERSION	1
-#define	BUG_VERSION		2
+#define	BUG_VERSION		3
 #define	STAGE_VERSION	PF_Stage_ALPHA
 #define	BUILD_VERSION	1
 
@@ -66,7 +66,6 @@ typedef struct {
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
-    
     A_char  presetNameAc[32];
     A_char  descriptionAc[4096];
     //duplicate in order to keep the "/n" in javascript
@@ -74,7 +73,6 @@ typedef struct {
     A_char  greenExAcFlat[4096];
     A_char  blueExAcFlat[4096];
     A_char  alphaExAcFlat [4096];
-    
     A_char  presetNameAcFlat[32];
     A_char  descriptionAcFlat [4096];
 } m_ArbData;
@@ -143,7 +141,13 @@ enum {   MATH_ARB_DATA_DISK_ID =1,
     MATH_END_TOPIC_INPUTS_DISK_ID,
 };
 
-
+typedef struct FlagsInfo {
+	PF_Boolean NeedsPixelAroundB;
+	PF_Boolean PixelsCallExternalInputB;
+	PF_Boolean PresetPixelxLVaryB;
+	PF_Boolean PresetPixelyLVaryB;
+	PF_Boolean NeedsLumaB;
+}FlagsInfoP;
 
 typedef struct MathInfo{
     std::function<PF_FpShort()> redExpr;
@@ -194,6 +198,7 @@ typedef struct MathInfo{
 	PF_FpShort		m3P_blue[9];
 	PF_FpShort      m3P_alpha[9];
 	PF_FpShort		luma;
+	PF_PixelFloat   PixelOFfP; 
     PF_Boolean      hasErrorB;
     std::string     channelErrorstr;
     std::string     errorstr;
@@ -286,10 +291,12 @@ strReplace(std::string& str,
 
 PF_Err
 LineIteration8Func ( void *refconPV,
+					void *refconFlags,
                     A_long yL);
 PF_Err
 LineIteration16Func ( void *refconPV,
-                    A_long yL);
+					  void *refconFlags,
+                      A_long yL);
 //math parser's functions
 static PF_FpShort
 inline parseDrawRect(PF_FpShort xL,
@@ -379,9 +386,9 @@ private:
     A_long curNumIter;
 public:
     
-    void render_8(void *refconPV, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+    void render_8(void *refconPV, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
-    void render_16(void *refconPV,  A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+    void render_16(void *refconPV, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
     
 };
