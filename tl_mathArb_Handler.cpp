@@ -52,6 +52,10 @@ CreateDefaultArb(
                 strncpy(arbP->alphaExAcFlat, "1", 4096);
                 strncpy(arbP->descriptionAcFlat,"Describe your preset here", 2048);
             #endif
+				arbP->NeedsPixelAroundB = false;
+				arbP->PixelsCallExternalInputB = false;
+				arbP->NeedsLumaB = false;
+				arbP->PresetHasWideInputB = false;
 			*dephault = arbH;
 		}
 		suites.HandleSuite1()->host_unlock_handle(arbH);
@@ -161,6 +165,12 @@ Arb_Compare(
                     total_a_afL	= 0,
                     total_a_pnfL  =0,
                     total_a_dscrfL  =0,
+
+					//boolean part
+					total_a_NeedsPixelAroundB = 0,
+					total_a_PixelsCallExternalInputB = 0,
+					total_a_NeedsLumaB = 0,
+					total_a_PresetHasWideInputB = 0,
     
                     total_aL	= 0,
 				
@@ -177,6 +187,12 @@ Arb_Compare(
                     total_b_afL	= 0,
                     total_b_pnfL  =0,
                     total_b_dscrfL  =0,
+
+					//boolean part
+					total_b_NeedsPixelAroundB = 0,
+					total_b_PixelsCallExternalInputB = 0,
+					total_b_NeedsLumaB = 0,
+					total_b_PresetHasWideInputB = 0,
          
                     total_bL	= 0;
 
@@ -208,6 +224,11 @@ Arb_Compare(
             total_a_afL	= strlen(first_arbP->alphaExAcFlat);
             total_a_pnfL =strlen(first_arbP->presetNameAcFlat);
             total_a_dscrfL = strlen(first_arbP->descriptionAcFlat);
+
+			total_a_NeedsPixelAroundB = first_arbP->NeedsPixelAroundB;
+			total_a_PixelsCallExternalInputB = first_arbP->PixelsCallExternalInputB;
+			total_a_NeedsLumaB = first_arbP->NeedsLumaB;
+			total_a_PresetHasWideInputB = first_arbP->PresetHasWideInputB;
             
             total_b_rL	= strlen(second_arbP->redExAc);
             total_b_gL	= strlen(second_arbP->greenExAc);
@@ -223,9 +244,15 @@ Arb_Compare(
             total_b_pnfL= strlen(second_arbP->presetNameAcFlat);
             total_b_dscrfL= strlen(second_arbP->descriptionAcFlat);
 
-			total_aL = total_a_rL + total_a_gL + total_a_bL + total_a_aL+ total_a_pnL+ total_a_dscrL +total_a_rfL + total_a_gfL + total_a_bfL+ total_a_afL + total_a_pnfL+total_a_dscrfL ;
-			total_bL = total_b_rL + total_b_gL + total_b_bL + total_b_aL+ total_b_pnL+ total_b_dscrL +total_b_rfL + total_b_gfL + total_b_bfL+ total_b_afL + total_b_pnfL+total_b_dscrfL;
+			total_b_NeedsPixelAroundB = second_arbP->NeedsPixelAroundB;
+			total_b_PixelsCallExternalInputB = second_arbP->PixelsCallExternalInputB;
+			total_b_NeedsLumaB = second_arbP->NeedsLumaB;
+			total_b_PresetHasWideInputB = second_arbP->PresetHasWideInputB;
 
+			total_aL = total_a_rL + total_a_gL + total_a_bL + total_a_aL+ total_a_pnL+ total_a_dscrL +total_a_rfL + total_a_gfL + total_a_bfL+ total_a_afL + total_a_pnfL+total_a_dscrfL
+				+ total_a_NeedsPixelAroundB + total_a_PixelsCallExternalInputB + total_a_NeedsLumaB + total_a_PresetHasWideInputB;
+			total_bL = total_b_rL + total_b_gL + total_b_bL + total_b_aL + total_b_pnL + total_b_dscrL + total_b_rfL + total_b_gfL + total_b_bfL + total_b_afL + total_b_pnfL + total_b_dscrfL
+				+ total_b_NeedsPixelAroundB + total_b_PixelsCallExternalInputB + total_b_NeedsLumaB + total_b_PresetHasWideInputB;
 			if(total_aL > total_bL)	{
 				*resultP = PF_ArbCompare_MORE;
 			} else if(total_aL < total_bL){

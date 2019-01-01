@@ -47,6 +47,8 @@ GlobalSetup (
                            PF_OutFlag_I_DO_DIALOG|
                            PF_OutFlag_WIDE_TIME_INPUT|
                            PF_OutFlag_NON_PARAM_VARY;
+
+	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS;
     
 
     
@@ -1473,6 +1475,24 @@ RespondtoAEGP (
     return err;
 }
 
+static PF_Err
+QueryDynamicFlags(
+	PF_InData		*in_data,
+	PF_OutData		*out_data,
+	PF_ParamDef		*params[],
+	void			*extra)
+{
+	PF_Err 	err = PF_Err_NONE,
+		err2 = PF_Err_NONE;
+
+
+
+	if (!err && (def.u.pd.value == Channel_ALPHA)) {
+		out_data->out_flags2 &= PF_OutFlag2_DOESNT_NEED_EMPTY_PIXELS;
+	}
+
+	return err;
+}
 
 
 DllExport	
@@ -1532,6 +1552,12 @@ EntryPointFunc (
                                     output,
                                     extra);
                 break;
+			case PF_Cmd_QUERY_DYNAMIC_FLAGS:
+				err = QueryDynamicFlags(in_data,
+										out_data,
+										params,
+										extra);
+				break;
             
                 
             case PF_Cmd_DO_DIALOG:

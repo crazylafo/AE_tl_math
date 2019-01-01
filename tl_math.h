@@ -75,6 +75,13 @@ typedef struct {
     A_char  alphaExAcFlat [4096];
     A_char  presetNameAcFlat[32];
     A_char  descriptionAcFlat [4096];
+
+	//Boolean information about chars
+	PF_Boolean NeedsPixelAroundB;
+	PF_Boolean PixelsCallExternalInputB;
+	PF_Boolean NeedsLumaB;
+	PF_Boolean PresetHasWideInputB;
+
 } m_ArbData;
 
 typedef struct {
