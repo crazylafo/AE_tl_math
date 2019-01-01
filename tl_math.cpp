@@ -332,14 +332,28 @@ AEGP_SetParamStreamValue(PF_InData			*in_data,
 
 //fast find/replace all method
 void strReplace(std::string& str,
-	const std::string& oldStr,
-	const std::string& newStr)
+		const std::string& oldStr,
+		const std::string& newStr)
 {
 	std::string::size_type pos = 0u;
 	while ((pos = str.find(oldStr, pos)) != std::string::npos) {
 		str.replace(pos, oldStr.length(), newStr);
 		pos += newStr.length();
 	}
+}
+
+static PF_Boolean 
+hasString(std::string& str, std::string& expr)
+{
+	std::string::size_type pos = 0u;
+	if ((pos = str.find(expr, pos)) != std::string::npos) {
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
 
@@ -584,17 +598,19 @@ ShiftImage16 (
 
 PF_Err
 LineIteration8Func ( void *refconPV,
+					 void *refconFunc,
 					 void *refconFlags,
                      A_long yL)
     {
         PF_Err err = PF_Err_NONE;
         MathInfo	*miP	= reinterpret_cast<MathInfo*>(refconPV);
+		funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
 		FlagsInfoP *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
         PF_EffectWorld inW = miP->inW;//cast input buffer here.
         PF_EffectWorld outW = miP->outW;//cast output buffer here.
 		PF_EffectWorld extW;
 		PF_Pixel8 *bop_extP;
-		if (flagsP->PixelsCallExternalInput) {
+		if (flagsP->PixelsCallExternalInputB){
 			extW = miP->extLW;
 			//external layer world
 			bop_extP = reinterpret_cast<PF_Pixel8*>(extW.data) + (extW.rowbytes* yL / sizeof(PF_Pixel));
@@ -702,23 +718,23 @@ LineIteration8Func ( void *refconPV,
 				}
 
 			}
-                
-                
                 AEFX_CLR_STRUCT(miP->xLF);
                 miP->xLF = PF_FpShort(xL);                
                 AEFX_CLR_STRUCT(miP->inAlphaF);
                 miP->inAlphaF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN8;
 
 				if (miP->inAlphaF != 0) {
-					AEFX_CLR_STRUCT(miP->luma);
-					miP->luma = (0.2126*bop_inP->red + 0.7152*bop_inP->green + 0.0722*bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					if (flagsP->NeedsLumaB) {
+						AEFX_CLR_STRUCT(miP->luma);
+						miP->luma = (0.2126*bop_inP->red + 0.7152*bop_inP->green + 0.0722*bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					}
 					AEFX_CLR_STRUCT(miP->inRedF);
 					miP->inRedF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
 					AEFX_CLR_STRUCT(miP->inGreenF);
 					miP->inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
 					AEFX_CLR_STRUCT(miP->inBlueF);
 					miP->inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
-					if (flagsP->PixelsCallExternalInput) {
+					if (flagsP->PixelsCallExternalInputB) {
 						AEFX_CLR_STRUCT(miP->extL_red);
 						miP->extL_red = (PF_FpShort)bop_extP->red / PF_MAX_CHAN8;
 						AEFX_CLR_STRUCT(miP->extL_green);
@@ -731,13 +747,13 @@ LineIteration8Func ( void *refconPV,
 					}
 					
 					AEFX_CLR_STRUCT(red_result);
-					red_result = MIN(miP->redExpr(), 1);
+					red_result = MIN(fiP->redExpr(), 1);
 					AEFX_CLR_STRUCT(green_result);
-					green_result = MIN(miP->greenExpr(), 1);
+					green_result = MIN(fiP->greenExpr(), 1);
 					AEFX_CLR_STRUCT(blue_result);
-					blue_result = MIN(miP->blueExpr(), 1);
+					blue_result = MIN(fiP->blueExpr(), 1);
 					AEFX_CLR_STRUCT(alpha_result);
-					alpha_result = MIN(miP->alphaExpr(), 1);
+					alpha_result = MIN(fiP->alphaExpr(), 1);
 
 					bop_outP->alpha = A_u_char(alpha_result *PF_MAX_CHAN8);
 					bop_outP->red = A_u_char(red_result *PF_MAX_CHAN8);
@@ -770,17 +786,19 @@ LineIteration8Func ( void *refconPV,
         }
 PF_Err
 	LineIteration16Func(void *refconPV,
+		                void *refconFunc,
 						void *refconFlags,
                             A_long yL)
 {
 	PF_Err err = PF_Err_NONE;
 	MathInfo	*miP = reinterpret_cast<MathInfo*>(refconPV);
+	funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
 	FlagsInfoP *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
 	PF_EffectWorld inW = miP->inW;//cast input buffer here.
 	PF_EffectWorld outW = miP->outW;//cast output buffer here.
 	PF_EffectWorld extW;
 	PF_Pixel16 *bop_extP;
-	if (flagsP->PixelsCallExternalInput) {
+	if (flagsP->PixelsCallExternalInputB) {
 		extW = miP->extLW;
 		//external layer world
 		bop_extP = reinterpret_cast<PF_Pixel16*>(extW.data) + (extW.rowbytes* yL / sizeof(PF_Pixel16));
@@ -895,16 +913,18 @@ PF_Err
 
 
 		if (miP->inAlphaF != 0) {
-			AEFX_CLR_STRUCT(miP->luma);
-			miP->luma = (0.2126*bop_inP->red + 0.7152*bop_inP->green + 0.0722*bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN16;
-			
+			if (flagsP->NeedsLumaB) {
+				AEFX_CLR_STRUCT(miP->luma);
+				miP->luma = (0.2126*bop_inP->red + 0.7152*bop_inP->green + 0.0722*bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN16;
+			}
+
 			AEFX_CLR_STRUCT(miP->inRedF);
 			miP->inRedF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN16;
 			AEFX_CLR_STRUCT(miP->inGreenF);
 			miP->inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN16;
 			AEFX_CLR_STRUCT(miP->inBlueF);
 			miP->inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN16;
-			if (flagsP->PixelsCallExternalInput) {
+			if (flagsP->PixelsCallExternalInputB) {
 				AEFX_CLR_STRUCT(miP->extL_alpha);
 				miP->extL_alpha = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN16;
 				AEFX_CLR_STRUCT(miP->extL_red);
@@ -915,13 +935,13 @@ PF_Err
 				miP->extL_blue = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN16;
 			}
 			AEFX_CLR_STRUCT(red_result);
-			red_result = MIN(miP->redExpr(), 1);
+			red_result = MIN(fiP->redExpr(), 1);
 			AEFX_CLR_STRUCT(green_result);
-			green_result = MIN(miP->greenExpr(), 1);
+			green_result = MIN(fiP->greenExpr(), 1);
 			AEFX_CLR_STRUCT(blue_result);
-			blue_result = MIN(miP->blueExpr(), 1);
+			blue_result = MIN(fiP->blueExpr(), 1);
 			AEFX_CLR_STRUCT(alpha_result);
-			alpha_result = MIN(miP->alphaExpr(), 1);
+			alpha_result = MIN(fiP->alphaExpr(), 1);
 
 			bop_outP->alpha = A_u_short(alpha_result *PF_MAX_CHAN16);
 			bop_outP->red = A_u_short(red_result *PF_MAX_CHAN16);
@@ -954,7 +974,7 @@ PF_Err
 	return err;
 }
 
-void threaded_render::render_8(void *refconPV, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void threaded_render::render_8(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
         curNumIter =numIter;
         if ( thread_idxL == (numThreads-1)){
@@ -965,11 +985,11 @@ void threaded_render::render_8(void *refconPV, void *refconFlags, A_long thread_
         for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
         {
             A_long yL =  thread_idxL*numIter+iterIndex;
-            LineIteration8Func(refconPV, refconFlags, yL);
+            LineIteration8Func(refconPV, refconFunc, refconFlags, yL);
         }
 }
 
-void threaded_render::render_16(void *refconPV, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void threaded_render::render_16(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
     curNumIter =numIter;
     if ( thread_idxL == (numThreads-1)){
@@ -979,11 +999,9 @@ void threaded_render::render_16(void *refconPV, void *refconFlags, A_long thread
     for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
     {
         A_long yL =  thread_idxL*numIter+iterIndex;
-        LineIteration16Func(refconPV, refconFlags, yL);
+        LineIteration16Func(refconPV,refconFunc, refconFlags, yL);
     }
 }
-
-
 
 static PF_Err
 Render (
@@ -1004,6 +1022,8 @@ Render (
     AEGP_ItemH      itemH;
     OffInfo         oiP;
     AEFX_CLR_STRUCT(oiP);
+	funcTransfertInfo fiP;
+	AEFX_CLR_STRUCT(fiP);
     MathInfo		miP;
 	AEFX_CLR_STRUCT(miP);
 	FlagsInfo      flagsP;
@@ -1016,85 +1036,112 @@ Render (
     PF_EffectWorld Externalworld;
     PF_Pixel16 empty16 = {0,0,0,0};
     PF_Pixel empty8 = {0,0,0,0};
-    
 
-    ERR(PF_CHECKOUT_PARAM(	in_data,
-                          MATH_INP_LAYER_ONE,
-                          (in_data->current_time + A_long(params[MATH_INP_TOFF_ONE]->u.fs_d.value) * in_data->time_step),
-                          in_data->time_step,
-                          in_data->time_scale,
-                          &checkoutLayerOne));
+	std::string expression_string_red = "1";
+	std::string expression_string_green = "1";
+	std::string expression_string_blue = "1";
+	std::string expression_string_alpha = "1";
+	std::string expression_merge;
 
-    Externalworld =*outputP;
-    miP.extLW     =*outputP;
+	if (!err) {
+		arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+		if (arbP) {
+			m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
+			expression_string_red = tempPointer->redExAc;
+			expression_string_green = tempPointer->greenExAc;
+			expression_string_blue = tempPointer->blueExAc;
+			expression_string_alpha = tempPointer->alphaExAc;
+			expression_merge.append(expression_string_red);
+			expression_merge.append (expression_string_green);
+			expression_merge.append(expression_string_blue);
+			expression_merge.append(expression_string_alpha);
+		}
+	}
     
-    if (PF_WORLD_IS_DEEP(outputP)){
-        ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
-                                             &empty16,
-                                             NULL,
-                                             &Externalworld));
-    }
-    else{
-        ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
-                                           &empty8,
-                                           NULL,
-                                           &Externalworld));
-    }
+	flagsP.PixelsCallExternalInputB = hasString(expression_merge, std::string ("extL"));
+	flagsP.PresetHasWideInput = hasString(expression_merge, std::string("extL"));
+	flagsP.NeedsPixelAroundB = hasString(expression_merge, std::string("vec3_"));
+	flagsP.NeedsLumaB = hasString(expression_merge, std::string("in_luma"));
 
-    if (checkoutLayerOne.u.ld.data){
-            if (PF_Quality_HI == in_data->quality) {
-                ERR(suites.WorldTransformSuite1()->copy_hq(	in_data->effect_ref,
-                                                       &checkoutLayerOne.u.ld,
-                                                       &Externalworld,
-                                                       &checkoutLayerOne.u.ld.extent_hint,
-                                                       &Externalworld.extent_hint));
-            } else {
-                ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-                                                    &checkoutLayerOne.u.ld,
-                                                    &Externalworld,
-                                                    &checkoutLayerOne.u.ld.extent_hint,
-                                                    &Externalworld.extent_hint));
-            }
-        
-        }
-        oiP.x_offFi 		= ((long)inputP->width << 15)  - params[MATH_INP_POFF_ONE]->u.td.x_value;
-        oiP.y_offFi 		= ((long)inputP->height << 15) -params[MATH_INP_POFF_ONE]->u.td.y_value;
-    
-        if (oiP.x_offFi !=0 || oiP.y_offFi !=0 ){
-            oiP.in_data = *in_data;
-            oiP.samp_pb.src = inputP;
-            origin.h = (A_short)(in_data->output_origin_x);
-            origin.v = (A_short)(in_data->output_origin_y);
-            if( PF_WORLD_IS_DEEP(outputP)){
-                ERR(suites.Iterate16Suite1()->iterate_origin(	in_data,
-                                                         0,
-                                                         Externalworld.height,
-                                                         &Externalworld,
-                                                         &Externalworld.extent_hint,
-                                                         &origin,
-                                                         (void*)(&oiP),
-                                                         ShiftImage16,
-                                                         &miP.extLW));
-            }
-            else {
-                ERR(suites.Iterate8Suite1()->iterate_origin(	in_data,
-                                                        0,
-                                                        Externalworld.height,
-                                                        &Externalworld,
-                                                        &Externalworld.extent_hint,
-                                                        &origin,
-                                                        (void*)(&oiP),
-                                                        ShiftImage8,
-                                                        &miP.extLW));
-            }
-        
-        }
-        else{
-            miP.extLW = Externalworld;
-        }
-    
 
-    
+	if (flagsP.PixelsCallExternalInputB) {
+		ERR(PF_CHECKOUT_PARAM(in_data,
+			MATH_INP_LAYER_ONE,
+			(in_data->current_time + A_long(params[MATH_INP_TOFF_ONE]->u.fs_d.value) * in_data->time_step),
+			in_data->time_step,
+			in_data->time_scale,
+			&checkoutLayerOne));
+
+		Externalworld = *outputP;
+		miP.extLW = *outputP;
+
+		if (PF_WORLD_IS_DEEP(outputP)) {
+			ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
+				&empty16,
+				NULL,
+				&Externalworld));
+		}
+		else {
+			ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
+				&empty8,
+				NULL,
+				&Externalworld));
+		}
+
+		if (checkoutLayerOne.u.ld.data) {
+			if (PF_Quality_HI == in_data->quality) {
+				ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+					&checkoutLayerOne.u.ld,
+					&Externalworld,
+					&checkoutLayerOne.u.ld.extent_hint,
+					&Externalworld.extent_hint));
+			}
+			else {
+				ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+					&checkoutLayerOne.u.ld,
+					&Externalworld,
+					&checkoutLayerOne.u.ld.extent_hint,
+					&Externalworld.extent_hint));
+			}
+
+		}
+		oiP.x_offFi = ((long)inputP->width << 15) - params[MATH_INP_POFF_ONE]->u.td.x_value;
+		oiP.y_offFi = ((long)inputP->height << 15) - params[MATH_INP_POFF_ONE]->u.td.y_value;
+
+		if (oiP.x_offFi != 0 || oiP.y_offFi != 0) {
+			oiP.in_data = *in_data;
+			oiP.samp_pb.src = inputP;
+			origin.h = (A_short)(in_data->output_origin_x);
+			origin.v = (A_short)(in_data->output_origin_y);
+			if (PF_WORLD_IS_DEEP(outputP)) {
+				ERR(suites.Iterate16Suite1()->iterate_origin(in_data,
+					0,
+					Externalworld.height,
+					&Externalworld,
+					&Externalworld.extent_hint,
+					&origin,
+					(void*)(&oiP),
+					ShiftImage16,
+					&miP.extLW));
+			}
+			else {
+				ERR(suites.Iterate8Suite1()->iterate_origin(in_data,
+					0,
+					Externalworld.height,
+					&Externalworld,
+					&Externalworld.extent_hint,
+					&origin,
+					(void*)(&oiP),
+					ShiftImage8,
+					&miP.extLW));
+			}
+
+		}
+		else {
+			miP.extLW = Externalworld;
+		}
+
+	}
     //LOADING SUITES TO ACCESS COMP PARAMS
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
@@ -1183,52 +1230,38 @@ Render (
 	miP.xLF = 0;
 	miP.yLF = 0;
 
-	std::string expression_string_red = "1";
-	std::string expression_string_green = "1";
-	std::string expression_string_blue = "1";
-	std::string expression_string_alpha = "1";
 
-	if (!err) {
-		arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
-		if (arbP) {
-			m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-			expression_string_red = tempPointer->redExAc;
-			expression_string_green = tempPointer->greenExAc;
-			expression_string_blue = tempPointer->blueExAc;
-			expression_string_alpha = tempPointer->alphaExAc;
-		}
-	}
-    miP.redExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_red);
-    if (miP.hasErrorB)
-    {   miP.channelErrorstr = "red channel expression";
+    fiP.redExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_red);
+    if (fiP.hasErrorB)
+    {   fiP.channelErrorstr = "red channel expression";
         suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
                                               "Error in %s : %s",
-                                              miP.channelErrorstr.c_str(),
-                                              miP.errorstr.c_str());
+                                              fiP.channelErrorstr.c_str(),
+                                              fiP.errorstr.c_str());
     }
-     miP.greenExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_green);
-    if (miP.hasErrorB)
-    {   miP.channelErrorstr = "green channel expression";
+    fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_green);
+    if (fiP.hasErrorB)
+    {   fiP.channelErrorstr = "green channel expression";
         suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
                                               "Error in %s : %s",
-                                              miP.channelErrorstr.c_str(),
-                                              miP.errorstr.c_str());
+                                              fiP.channelErrorstr.c_str(),
+                                              fiP.errorstr.c_str());
     }
-    miP.blueExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_blue);
-    if (miP.hasErrorB)
-    {   miP.channelErrorstr = "blue channel expression";
+    fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_blue);
+    if (fiP.hasErrorB)
+    {   fiP.channelErrorstr = "blue channel expression";
         suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
                                               "Error in %s : %s",
-                                              miP.channelErrorstr.c_str(),
-                                              miP.errorstr.c_str());
+                                              fiP.channelErrorstr.c_str(),
+                                              fiP.errorstr.c_str());
     }
-    miP.alphaExpr = parseExpr<PF_FpShort>((void*)&miP, expression_string_alpha);
-    if (miP.hasErrorB)
-    {   miP.channelErrorstr = "alpha channel expression";
+    fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_alpha);
+    if (fiP.hasErrorB)
+    {   fiP.channelErrorstr = "alpha channel expression";
         suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
                                               "Error in %s : %s",
-                                              miP.channelErrorstr.c_str(),
-                                              miP.errorstr.c_str());
+                                              fiP.channelErrorstr.c_str(),
+                                              fiP.errorstr.c_str());
     }
 
     

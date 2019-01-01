@@ -144,16 +144,21 @@ enum {   MATH_ARB_DATA_DISK_ID =1,
 typedef struct FlagsInfo {
 	PF_Boolean NeedsPixelAroundB;
 	PF_Boolean PixelsCallExternalInputB;
-	PF_Boolean PresetPixelxLVaryB;
-	PF_Boolean PresetPixelyLVaryB;
 	PF_Boolean NeedsLumaB;
+	PF_Boolean PresetHasWideInput;
 }FlagsInfoP;
 
+typedef struct funcTransfertInfo {
+	std::function<PF_FpShort()> redExpr;
+	std::function<PF_FpShort()> greenExpr;
+	std::function<PF_FpShort()> blueExpr;
+	std::function<PF_FpShort()> alphaExpr;
+	PF_Boolean      hasErrorB;
+	std::string     channelErrorstr;
+	std::string     errorstr;
+}funcTransfertInfoP;
+
 typedef struct MathInfo{
-    std::function<PF_FpShort()> redExpr;
-    std::function<PF_FpShort()> greenExpr;
-    std::function<PF_FpShort()> blueExpr;
-    std::function<PF_FpShort()> alphaExpr;
     PF_EffectWorld  inW;
     PF_EffectWorld  outW;
     PF_FpShort		inRedF;
@@ -199,9 +204,6 @@ typedef struct MathInfo{
 	PF_FpShort      m3P_alpha[9];
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP; 
-    PF_Boolean      hasErrorB;
-    std::string     channelErrorstr;
-    std::string     errorstr;
 } MathInfoP, *MathinfoP, **MathinfoH;
 
 
@@ -312,13 +314,14 @@ private:
     exprtk::expression<T> expression;
     exprtk::symbol_table<T> symbol_table;
 public:
-    parseExpr(void *refcon, const std::string &exprstr) {
-        MathInfo	*miP	= reinterpret_cast<MathInfo*>(refcon);
+    parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr) {
+        MathInfo	*miP	= reinterpret_cast<MathInfo*>(mathRefcon);
+		funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
         std::string expression_string_Safe = "1";
         if (!parser){
             parser = std::make_shared<exprtk::parser<T>>();
         }
-        miP->hasErrorB = FALSE;
+        fiP->hasErrorB = FALSE;
         symbol_table.clear();
         symbol_table.add_variable("xL",  miP->xLF);
         symbol_table.add_variable("yL",  miP->yLF);
@@ -371,8 +374,8 @@ public:
         parser->compile(exprstr,expression);
         if (!parser->compile(exprstr,expression))
         {
-            miP->hasErrorB = TRUE;
-            miP->errorstr =parser->error();
+            fiP->hasErrorB = TRUE;
+            fiP->errorstr =parser->error();
             parser->compile(expression_string_Safe, expression);
         }
     }
@@ -386,9 +389,9 @@ private:
     A_long curNumIter;
 public:
     
-    void render_8(void *refconPV, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+    void render_8(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
-    void render_16(void *refconPV, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+    void render_16(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
     
 };
