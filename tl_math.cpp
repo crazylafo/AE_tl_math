@@ -1284,13 +1284,13 @@ Render (
 	if (PF_WORLD_IS_DEEP(outputP)) {
 		AEFX_CLR_STRUCT(workers_thrds);
 		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&threaded_render::render_16, thRenderPtr, (void*)&miP, (void*)&flagsP, thrd_id,num_thrd, part_length,lastPart_length));
+			workers_thrds.emplace_back(std::thread(&threaded_render::render_16, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id,num_thrd, part_length,lastPart_length));
 		}
 	}
 	else {
 		AEFX_CLR_STRUCT(workers_thrds);
 		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&threaded_render::render_8, thRenderPtr, (void*)&miP, (void*)&flagsP, thrd_id,num_thrd, part_length,lastPart_length));
+			workers_thrds.emplace_back(std::thread(&threaded_render::render_8, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id,num_thrd, part_length,lastPart_length));
 		}
 
 	}
