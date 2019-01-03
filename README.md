@@ -15,15 +15,23 @@ whatever your Color Space, the expected values are bewteen 0 and 1.
 
 
 Verion note:
+
 Alpha 04 (V1.12)
+
 -new slider values range
+
 -the preset has a name defined in thr script and now visible in the AE UI
+
 -full json gateway from script to plugin
 
  Alpha 03 (v 1.11)
+ 
  -new script UI
+ 
  -new topics 
+ 
  -interaction with an other layer it's now possible (in topic input)
+ 
  
  Alpha 02 (v 1.1)
  
