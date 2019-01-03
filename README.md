@@ -57,18 +57,25 @@ table of contents
  
  
 **1-HOW TO INSTALL**
+
 extract the zip file in the folder : 
+
 On mac : /Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/tl
 
 on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\tl
 
 
 **2- BASIC EXEMPLE**
+
 -Apply the effect on a White Solid
+
 -In the Effect UI click on "Math Expression"
+
 -For the Alpha Channle write: xL/layerWidth
+
   The result is a ramp, black on the left white on the right. 
    for every pixel, the plugin devide the x coordonate by the total layerWidth of the layer.
+   
    
 **3- GRAMMAR RULES**
 
