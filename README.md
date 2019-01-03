@@ -28,10 +28,15 @@ Alpha 04 (V1.12)
  Alpha 02 (v 1.1)
  
  -the plugin works with After Effect CC and above.
- -the plugin works in 8 and 16 bits (32bits coming soon 
+ 
+ -the plugin works in 8 and 16 bits (32bits coming soon) 
+ 
  -Possibilities to write an expression per channels
+ 
  -the plugin expressions can access to 4 sliders, two points and two colors pipets to comunicate with other AE elements.
+ 
  -presets can be saved as json files.
+ 
  -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
  
  
