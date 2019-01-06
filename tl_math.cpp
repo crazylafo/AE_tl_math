@@ -46,7 +46,8 @@ GlobalSetup (
                            PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
                            PF_OutFlag_I_DO_DIALOG|
                            PF_OutFlag_WIDE_TIME_INPUT|
-                           PF_OutFlag_NON_PARAM_VARY;
+                           PF_OutFlag_NON_PARAM_VARY PF_OutFlag_PIX_INDEPENDENT;
+
 
 	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS;
     
@@ -476,6 +477,11 @@ PopDialog(
         strReplace(resultStr, "++",  "+=1");
         strReplace(resultStr, "--",  "-=1");
         strReplace(resultStr, " = ", " := ");
+
+		arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
+		arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("extL"));
+		arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec3_"));
+		arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
         
         nlohmann::json  j = nlohmann::json::parse(resultStr);
 
@@ -1043,7 +1049,7 @@ Render (
 	std::string expression_string_green = "1";
 	std::string expression_string_blue = "1";
 	std::string expression_string_alpha = "1";
-	std::string expression_merge;
+
 
 	if (!err) {
 		arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
@@ -1053,19 +1059,13 @@ Render (
 			expression_string_green = tempPointer->greenExAc;
 			expression_string_blue = tempPointer->blueExAc;
 			expression_string_alpha = tempPointer->alphaExAc;
-			expression_merge.append(expression_string_red);
-			expression_merge.append (expression_string_green);
-			expression_merge.append(expression_string_blue);
-			expression_merge.append(expression_string_alpha);
+			flagsP.PixelsCallExternalInputB = tempPointer->PixelsCallExternalInputB;
+			flagsP.PresetHasWideInput = tempPointer->PresetHasWideInputB;
+			flagsP.NeedsPixelAroundB = tempPointer->NeedsPixelAroundB;
+			flagsP.NeedsLumaB = tempPointer->NeedsLumaB;
 		}
 	}
     
-	flagsP.PixelsCallExternalInputB = hasString(expression_merge, std::string ("extL"));
-	flagsP.PresetHasWideInput = hasString(expression_merge, std::string("extL"));
-	flagsP.NeedsPixelAroundB = hasString(expression_merge, std::string("vec3_"));
-	flagsP.NeedsLumaB = hasString(expression_merge, std::string("in_luma"));
-
-
 	if (flagsP.PixelsCallExternalInputB) {
 		ERR(PF_CHECKOUT_PARAM(in_data,
 			MATH_INP_LAYER_ONE,
@@ -1482,14 +1482,21 @@ QueryDynamicFlags(
 	PF_ParamDef		*params[],
 	void			*extra)
 {
-	PF_Err 	err = PF_Err_NONE,
-		err2 = PF_Err_NONE;
+	AEGP_SuiteHandler	suites(in_data->pica_basicP);
+	PF_Err 	err = PF_Err_NONE;
+	
+	PF_Handle		arbH = params[MATH_ARB_DATA]->u.arb_d.value;
+	m_ArbData		*arbP = NULL;
+	arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+	if (arbP && !err) {
+		if (arbP->PresetHasWideInputB) {
+			out_data->out_flags &= PF_OutFlag_
 
+		}
+		
 
-
-	if (!err && (def.u.pd.value == Channel_ALPHA)) {
-		out_data->out_flags2 &= PF_OutFlag2_DOESNT_NEED_EMPTY_PIXELS;
 	}
+	PF_UNLOCK_HANDLE(arbH);
 
 	return err;
 }

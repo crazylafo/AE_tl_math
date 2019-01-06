@@ -152,49 +152,10 @@ Arb_Compare(
 	PF_Handle	a_handle = *a_arbP,
 				b_handle = *b_arbP;
 
-	size_t          total_a_rL	= 0,
-					total_a_gL	= 0,
-					total_a_bL	= 0,
-                    total_a_aL	= 0,
-                    total_a_pnL  =0,  //preset Name
-                    total_a_dscrL  =0, //description
-    
-                    total_a_rfL	= 0,
-                    total_a_gfL	= 0,
-                    total_a_bfL	= 0,
-                    total_a_afL	= 0,
-                    total_a_pnfL  =0,
-                    total_a_dscrfL  =0,
-
-					//boolean part
-					total_a_NeedsPixelAroundB = 0,
-					total_a_PixelsCallExternalInputB = 0,
-					total_a_NeedsLumaB = 0,
-					total_a_PresetHasWideInputB = 0,
-    
-                    total_aL	= 0,
-				
-					total_b_rL	= 0,
-					total_b_gL	= 0,
-					total_b_bL	= 0,
-                    total_b_aL	= 0,
-                    total_b_pnL  =0,
-                    total_b_dscrL  =0,
-    
-                    total_b_rfL	= 0,
-                    total_b_gfL	= 0,
-                    total_b_bfL	= 0,
-                    total_b_afL	= 0,
-                    total_b_pnfL  =0,
-                    total_b_dscrfL  =0,
-
-					//boolean part
-					total_b_NeedsPixelAroundB = 0,
-					total_b_PixelsCallExternalInputB = 0,
-					total_b_NeedsLumaB = 0,
-					total_b_PresetHasWideInputB = 0,
-         
+	size_t          total_aL	= 0,
                     total_bL	= 0;
+	std::vector <size_t> total_aV, total_bV;
+
 
 	*resultP = PF_ArbCompare_EQUAL;
 
@@ -207,52 +168,51 @@ Arb_Compare(
 
 		if (!first_arbP || !second_arbP) {
 			err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
-		} else {
-            *resultP = PF_ArbCompare_EQUAL;
+		}
+		else {
+			*resultP = PF_ArbCompare_EQUAL;
 
 
-            total_a_rL	= strlen(first_arbP->redExAc);
-            total_a_gL	= strlen(first_arbP->greenExAc);
-            total_a_bL	= strlen(first_arbP->blueExAc);
-            total_a_aL	= strlen(first_arbP->alphaExAc);
-            total_a_pnL = strlen(first_arbP->presetNameAc);
-            total_a_dscrL = strlen(first_arbP->descriptionAc);
+			total_aV [0] = strlen(first_arbP->redExAc);
+			total_aV [1] = strlen(first_arbP->greenExAc);
+			total_aV[2] = strlen(first_arbP->blueExAc);
+			total_aV[3] = strlen(first_arbP->alphaExAc);
+			total_aV[4] = strlen(first_arbP->presetNameAc);
+			total_aV[5] = strlen(first_arbP->descriptionAc);
             
-            total_a_rfL	= strlen(first_arbP->redExAcFlat);
-            total_a_gfL	= strlen(first_arbP->greenExAcFlat);
-            total_a_bfL	= strlen(first_arbP->blueExAcFlat);
-            total_a_afL	= strlen(first_arbP->alphaExAcFlat);
-            total_a_pnfL =strlen(first_arbP->presetNameAcFlat);
-            total_a_dscrfL = strlen(first_arbP->descriptionAcFlat);
+			total_aV[6] = strlen(first_arbP->redExAcFlat);
+			total_aV[7] = strlen(first_arbP->greenExAcFlat);
+			total_aV[8] = strlen(first_arbP->blueExAcFlat);
+			total_aV[9] = strlen(first_arbP->alphaExAcFlat);
+			total_aV[10] =strlen(first_arbP->presetNameAcFlat);
+			total_aV[11] = strlen(first_arbP->descriptionAcFlat);
 
-			total_a_NeedsPixelAroundB = first_arbP->NeedsPixelAroundB;
-			total_a_PixelsCallExternalInputB = first_arbP->PixelsCallExternalInputB;
-			total_a_NeedsLumaB = first_arbP->NeedsLumaB;
-			total_a_PresetHasWideInputB = first_arbP->PresetHasWideInputB;
+			total_aV[12] = first_arbP->NeedsPixelAroundB;
+			total_aV[13] = first_arbP->PixelsCallExternalInputB;
+			total_aV[14] = first_arbP->NeedsLumaB;
+			total_aV[15] = first_arbP->PresetHasWideInputB;
             
-            total_b_rL	= strlen(second_arbP->redExAc);
-            total_b_gL	= strlen(second_arbP->greenExAc);
-            total_b_bL	= strlen(second_arbP->blueExAc);
-            total_b_aL	= strlen(second_arbP->alphaExAc);
-            total_b_pnL = strlen(second_arbP->presetNameAc);
-            total_b_dscrL = strlen(second_arbP->descriptionAc);
+			total_bV[0] = strlen(second_arbP->redExAc);
+			total_bV[1] = strlen(second_arbP->greenExAc);
+			total_bV[2] = strlen(second_arbP->blueExAc);
+			total_bV[3] = strlen(second_arbP->alphaExAc);
+			total_bV[4] = strlen(second_arbP->presetNameAc);
+			total_bV[5] = strlen(second_arbP->descriptionAc);
             
-            total_b_rfL	= strlen(second_arbP->redExAcFlat);
-            total_b_gfL	= strlen(second_arbP->greenExAcFlat);
-            total_b_bfL	= strlen(second_arbP->blueExAcFlat);
-            total_b_afL	= strlen(second_arbP->alphaExAcFlat);
-            total_b_pnfL= strlen(second_arbP->presetNameAcFlat);
-            total_b_dscrfL= strlen(second_arbP->descriptionAcFlat);
+			total_bV[6] = strlen(second_arbP->redExAcFlat);
+			total_bV[7] = strlen(second_arbP->greenExAcFlat);
+			total_bV[8] = strlen(second_arbP->blueExAcFlat);
+			total_bV[9] = strlen(second_arbP->alphaExAcFlat);
+			total_bV[10] = strlen(second_arbP->presetNameAcFlat);
+			total_bV[11] = strlen(second_arbP->descriptionAcFlat);
 
-			total_b_NeedsPixelAroundB = second_arbP->NeedsPixelAroundB;
-			total_b_PixelsCallExternalInputB = second_arbP->PixelsCallExternalInputB;
-			total_b_NeedsLumaB = second_arbP->NeedsLumaB;
-			total_b_PresetHasWideInputB = second_arbP->PresetHasWideInputB;
+			total_bV[12] = second_arbP->NeedsPixelAroundB;
+			total_bV[13] = second_arbP->PixelsCallExternalInputB;
+			total_bV[14] = second_arbP->NeedsLumaB;
+			total_bV[15] = second_arbP->PresetHasWideInputB;
 
-			total_aL = total_a_rL + total_a_gL + total_a_bL + total_a_aL+ total_a_pnL+ total_a_dscrL +total_a_rfL + total_a_gfL + total_a_bfL+ total_a_afL + total_a_pnfL+total_a_dscrfL
-				+ total_a_NeedsPixelAroundB + total_a_PixelsCallExternalInputB + total_a_NeedsLumaB + total_a_PresetHasWideInputB;
-			total_bL = total_b_rL + total_b_gL + total_b_bL + total_b_aL + total_b_pnL + total_b_dscrL + total_b_rfL + total_b_gfL + total_b_bfL + total_b_afL + total_b_pnfL + total_b_dscrfL
-				+ total_b_NeedsPixelAroundB + total_b_PixelsCallExternalInputB + total_b_NeedsLumaB + total_b_PresetHasWideInputB;
+			total_aL = std::accumulate(total_aV.begin(), total_aV.end(), 0);
+			total_bL = std::accumulate(total_bV.begin(), total_bV.end(), 0);
 			if(total_aL > total_bL)	{
 				*resultP = PF_ArbCompare_MORE;
 			} else if(total_aL < total_bL){
