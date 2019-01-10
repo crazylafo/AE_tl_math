@@ -45,8 +45,7 @@ GlobalSetup (
                            PF_OutFlag_SEND_UPDATE_PARAMS_UI	|
                            PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
                            PF_OutFlag_I_DO_DIALOG|
-                           PF_OutFlag_WIDE_TIME_INPUT|
-                           PF_OutFlag_NON_PARAM_VARY PF_OutFlag_PIX_INDEPENDENT;
+                           PF_OutFlag_NON_PARAM_VARY;
 
 
 	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS;
@@ -1490,9 +1489,15 @@ QueryDynamicFlags(
 	arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
 	if (arbP && !err) {
 		if (arbP->PresetHasWideInputB) {
-			out_data->out_flags &= PF_OutFlag_
-
-		}
+            
+            out_data->out_flags      PF_OutFlag_WIDE_TIME_INPUT;
+            //PF_OutFlag2_AUTOMATIC_WIDE_- TIME_INPUT
+        }else{
+            
+        }
+        if (NeedsPixelAroundB)
+            out_data->out_flags &= PF_OutFlag_PIX_INDEPENDENT;
+        }
 		
 
 	}
