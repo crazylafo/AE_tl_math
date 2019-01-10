@@ -344,8 +344,9 @@ void strReplace(std::string& str,
 	}
 }
 
+//detect if a string has a specified string
 static PF_Boolean 
-hasString(std::string& str, std::string& expr)
+hasString(std::string str, std::string expr)
 {
 	std::string::size_type pos = 0u;
 	if ((pos = str.find(expr, pos)) != std::string::npos) {
@@ -1490,12 +1491,10 @@ QueryDynamicFlags(
 	if (arbP && !err) {
 		if (arbP->PresetHasWideInputB) {
             
-            out_data->out_flags      PF_OutFlag_WIDE_TIME_INPUT;
+            out_data->out_flags  &=    PF_OutFlag_WIDE_TIME_INPUT;
             //PF_OutFlag2_AUTOMATIC_WIDE_- TIME_INPUT
-        }else{
-            
         }
-        if (NeedsPixelAroundB)
+        if (arbP->NeedsPixelAroundB){
             out_data->out_flags &= PF_OutFlag_PIX_INDEPENDENT;
         }
 		

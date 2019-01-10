@@ -298,6 +298,7 @@ strReplace(std::string& str,
                 const std::string& oldStr,
                 const std::string& newStr);
 
+
 PF_Err
 LineIteration8Func ( void *refconPV,
 					void *refconFlags,
