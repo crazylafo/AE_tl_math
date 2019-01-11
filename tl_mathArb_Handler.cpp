@@ -154,7 +154,7 @@ Arb_Compare(
 
 	size_t          total_aL	= 0,
                     total_bL	= 0;
-	std::vector <size_t> total_aV, total_bV;
+	std::vector<size_t> total_aV, total_bV;
 
 
 	*resultP = PF_ArbCompare_EQUAL;
@@ -173,43 +173,43 @@ Arb_Compare(
 			*resultP = PF_ArbCompare_EQUAL;
 
 
-			total_aV [0] = strlen(first_arbP->redExAc);
-			total_aV [1] = strlen(first_arbP->greenExAc);
-			total_aV[2] = strlen(first_arbP->blueExAc);
-			total_aV[3] = strlen(first_arbP->alphaExAc);
-			total_aV[4] = strlen(first_arbP->presetNameAc);
-			total_aV[5] = strlen(first_arbP->descriptionAc);
+			total_aV.emplace_back (strlen(first_arbP->redExAc));
+			total_aV.emplace_back (strlen(first_arbP->greenExAc));
+			total_aV.emplace_back (strlen(first_arbP->blueExAc));
+			total_aV.emplace_back (strlen(first_arbP->alphaExAc));
+			total_aV.emplace_back (strlen(first_arbP->presetNameAc));
+			total_aV.emplace_back (strlen(first_arbP->descriptionAc));
             
-			total_aV[6] = strlen(first_arbP->redExAcFlat);
-			total_aV[7] = strlen(first_arbP->greenExAcFlat);
-			total_aV[8] = strlen(first_arbP->blueExAcFlat);
-			total_aV[9] = strlen(first_arbP->alphaExAcFlat);
-			total_aV[10] =strlen(first_arbP->presetNameAcFlat);
-			total_aV[11] = strlen(first_arbP->descriptionAcFlat);
+			total_aV.emplace_back (strlen(first_arbP->redExAcFlat));
+			total_aV.emplace_back (strlen(first_arbP->greenExAcFlat));
+			total_aV.emplace_back (strlen(first_arbP->blueExAcFlat));
+			total_aV.emplace_back (strlen(first_arbP->alphaExAcFlat));
+			total_aV.emplace_back (strlen(first_arbP->presetNameAcFlat));
+			total_aV.emplace_back (strlen(first_arbP->descriptionAcFlat));
 
-			total_aV[12] = first_arbP->NeedsPixelAroundB;
-			total_aV[13] = first_arbP->PixelsCallExternalInputB;
-			total_aV[14] = first_arbP->NeedsLumaB;
-			total_aV[15] = first_arbP->PresetHasWideInputB;
+			total_aV.emplace_back (first_arbP->NeedsPixelAroundB);
+			total_aV.emplace_back (first_arbP->PixelsCallExternalInputB);
+			total_aV.emplace_back (first_arbP->NeedsLumaB);
+			total_aV.emplace_back (first_arbP->PresetHasWideInputB);
             
-			total_bV[0] = strlen(second_arbP->redExAc);
-			total_bV[1] = strlen(second_arbP->greenExAc);
-			total_bV[2] = strlen(second_arbP->blueExAc);
-			total_bV[3] = strlen(second_arbP->alphaExAc);
-			total_bV[4] = strlen(second_arbP->presetNameAc);
-			total_bV[5] = strlen(second_arbP->descriptionAc);
+			total_bV.emplace_back ( strlen(second_arbP->redExAc));
+			total_bV.emplace_back ( strlen(second_arbP->greenExAc));
+			total_bV.emplace_back ( strlen(second_arbP->blueExAc));
+			total_bV.emplace_back ( strlen(second_arbP->alphaExAc));
+			total_bV.emplace_back ( strlen(second_arbP->presetNameAc));
+			total_bV.emplace_back ( strlen(second_arbP->descriptionAc));
             
-			total_bV[6] = strlen(second_arbP->redExAcFlat);
-			total_bV[7] = strlen(second_arbP->greenExAcFlat);
-			total_bV[8] = strlen(second_arbP->blueExAcFlat);
-			total_bV[9] = strlen(second_arbP->alphaExAcFlat);
-			total_bV[10] = strlen(second_arbP->presetNameAcFlat);
-			total_bV[11] = strlen(second_arbP->descriptionAcFlat);
+			total_bV.emplace_back (strlen(second_arbP->redExAcFlat));
+			total_bV.emplace_back (strlen(second_arbP->greenExAcFlat));
+			total_bV.emplace_back (strlen(second_arbP->blueExAcFlat));
+			total_bV.emplace_back ( strlen(second_arbP->alphaExAcFlat));
+			total_bV.emplace_back (strlen(second_arbP->presetNameAcFlat));
+			total_bV.emplace_back (strlen(second_arbP->descriptionAcFlat));
 
-			total_bV[12] = second_arbP->NeedsPixelAroundB;
-			total_bV[13] = second_arbP->PixelsCallExternalInputB;
-			total_bV[14] = second_arbP->NeedsLumaB;
-			total_bV[15] = second_arbP->PresetHasWideInputB;
+			total_bV.emplace_back (  second_arbP->NeedsPixelAroundB);
+            total_bV.emplace_back (second_arbP->PixelsCallExternalInputB);
+			total_bV.emplace_back ( second_arbP->NeedsLumaB);
+			total_bV.emplace_back ( second_arbP->PresetHasWideInputB);
 
 			total_aL = std::accumulate(total_aV.begin(), total_aV.end(), 0);
 			total_bL = std::accumulate(total_bV.begin(), total_bV.end(), 0);

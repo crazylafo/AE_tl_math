@@ -301,10 +301,12 @@ strReplace(std::string& str,
 
 PF_Err
 LineIteration8Func ( void *refconPV,
+                    void *refconFunc,
 					void *refconFlags,
                     A_long yL);
 PF_Err
 LineIteration16Func ( void *refconPV,
+                      void *refconFunc,
 					  void *refconFlags,
                       A_long yL);
 //math parser's functions

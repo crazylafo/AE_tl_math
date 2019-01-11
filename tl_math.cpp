@@ -625,37 +625,30 @@ LineIteration8Func ( void *refconPV,
 		}
 
         PF_FpShort  red_result, green_result, blue_result, alpha_result;
-		PF_Pixel *in00;
-		PF_Pixel *in10; 
-		PF_Pixel *in20;
-		PF_Pixel *in01;
-		PF_Pixel *in21; 
-		PF_Pixel *in02; 
-		PF_Pixel *in12;
-		PF_Pixel *in22;
-
-        
         PF_Pixel8 *bop_outP = reinterpret_cast<PF_Pixel8*>(outW.data)+ (outW.rowbytes* yL / sizeof(PF_Pixel)),
-        *bop_inP = reinterpret_cast<PF_Pixel8*>(inW.data)+ (inW.rowbytes* yL / sizeof(PF_Pixel));
-        
-
-        //3*3 matrix grp
-		if (flagsP->NeedsPixelAroundB) {
-			in00 = bop_inP - (inW.rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
-			in10 = in00 + 1;//top middle pixel in 3X3.
-			in20 = in10 + 1;//top right pixel in 3X3.
-			in01 = bop_inP - 1;//mid left pixel in 3X3.
-			in21 = bop_inP + 1;//top right pixel in 3X3.
-			in02 = bop_inP + (inW.rowbytes / sizeof(PF_Pixel)) - 1;//bottom left pixel in 3X3.
-			in12 = in02 + 1;//bottom middle pixel in 3X3.
-			in22 = in12 + 1;//bottom right pixel in 3X3.
-		}
-
+                  *bop_inP = reinterpret_cast<PF_Pixel8*>(inW.data)+ (inW.rowbytes* yL / sizeof(PF_Pixel));
 		AEFX_CLR_STRUCT(miP->yLF);
 		miP->yLF = PF_FpShort(yL);
 
         for ( A_long xL =0; xL < inW.width; xL++) {
 			if (flagsP->NeedsPixelAroundB) {
+                PF_Pixel *in00;
+                PF_Pixel *in10;
+                PF_Pixel *in20;
+                PF_Pixel *in01;
+                PF_Pixel *in21;
+                PF_Pixel *in02;
+                PF_Pixel *in12;
+                PF_Pixel *in22;
+                
+                in00 = bop_inP - (inW.rowbytes / sizeof(PF_Pixel)) - 1;//top left pixel in 3X3.
+                in10 = in00 + 1;//top middle pixel in 3X3.
+                in20 = in10 + 1;//top right pixel in 3X3.
+                in01 = bop_inP - 1;//mid left pixel in 3X3.
+                in21 = bop_inP + 1;//top right pixel in 3X3.
+                in02 = bop_inP + (inW.rowbytes / sizeof(PF_Pixel)) - 1;//bottom left pixel in 3X3.
+                in12 = in02 + 1;//bottom middle pixel in 3X3.
+                in22 = in12 + 1;//bottom right pixel in 3X3.
 				if (yL - 1 >= 0) {
 					miP->m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN8;
 					miP->m3P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN8;
@@ -775,20 +768,9 @@ LineIteration8Func ( void *refconPV,
 					bop_outP->green = 0;
 					bop_outP->blue  = 0;
 				}
-
                 bop_outP++;
                 bop_inP++;
                 bop_extP++;
-				if (flagsP->NeedsPixelAroundB) {
-					in00++;
-					in10++;
-					in20++;
-					in01++;
-					in21++;
-					in02++;
-					in12++;
-					in22++;
-				}
             }
             return err;
         }
@@ -1107,8 +1089,8 @@ Render (
 			}
 
 		}
-		oiP.x_offFi = ((long)inputP->width << 15) - params[MATH_INP_POFF_ONE]->u.td.x_value;
-		oiP.y_offFi = ((long)inputP->height << 15) - params[MATH_INP_POFF_ONE]->u.td.y_value;
+		oiP.x_offFi = PF_Fixed (((long)inputP->width << 15) - params[MATH_INP_POFF_ONE]->u.td.x_value);
+		oiP.y_offFi = PF_Fixed (((long)inputP->height << 15) - params[MATH_INP_POFF_ONE]->u.td.y_value);
 
 		if (oiP.x_offFi != 0 || oiP.y_offFi != 0) {
 			oiP.in_data = *in_data;
@@ -1204,7 +1186,7 @@ Render (
     miP.inFourF	= params[MATH_INPFOUR_VAR]->u.fs_d.value;
    
     //layer size
-    miP.scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den,
+    miP.scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den;
     miP.scale_y = in_data->downsample_y.num*in_data->pixel_aspect_ratio.den/ (float)in_data->downsample_y.den;
     miP.layerWidthF = PF_FpShort (in_data->width*miP.scale_x) ;
     miP.layerHeightF = PF_FpShort(in_data->height* miP.scale_y);
@@ -1306,9 +1288,6 @@ Render (
     ERR2( PF_CHECKIN_PARAM(in_data, &checkoutLayerOne));
 	return err;
 }
-
-
-
 
 
 static PF_Err
@@ -1483,14 +1462,24 @@ QueryDynamicFlags(
 	void			*extra)
 {
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
-	PF_Err 	err = PF_Err_NONE;
+	PF_Err 	err  = PF_Err_NONE,
+            err2  = PF_Err_NONE;
+    
+    PF_ParamDef arb_param;
+    AEFX_CLR_STRUCT(arb_param);
+    ERR(PF_CHECKOUT_PARAM(    in_data,
+                          MATH_ARB_DATA,
+                          in_data->current_time,
+                          in_data->time_step,
+                          in_data->time_scale,
+                          &arb_param));
+    
 	
-	PF_Handle		arbH = params[MATH_ARB_DATA]->u.arb_d.value;
+	PF_Handle		arbH = arb_param.u.arb_d.value;
 	m_ArbData		*arbP = NULL;
 	arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
 	if (arbP && !err) {
 		if (arbP->PresetHasWideInputB) {
-            
             out_data->out_flags  &=    PF_OutFlag_WIDE_TIME_INPUT;
             //PF_OutFlag2_AUTOMATIC_WIDE_- TIME_INPUT
         }
@@ -1501,6 +1490,7 @@ QueryDynamicFlags(
 
 	}
 	PF_UNLOCK_HANDLE(arbH);
+    ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
 
 	return err;
 }
