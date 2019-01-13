@@ -14,6 +14,9 @@
     <Filter Include="Supporting code">
       <UniqueIdentifier>{f2f05dcb-eed5-4aa5-b2d0-504449ce3cf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Script">
+      <UniqueIdentifier>{cc262249-7e9d-44cc-b7c1-c24a3d80a426}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Headers\A.h">
@@ -78,6 +81,9 @@
     </ClInclude>
     <ClInclude Include="..\exprtk.hpp">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\script.h">
+      <Filter>Script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

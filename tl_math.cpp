@@ -775,7 +775,7 @@ LineIteration8Func ( void *refconPV,
             return err;
         }
 PF_Err
-	LineIteration16Func(void *refconPV,
+LineIteration16Func(void *refconPV,
 		                void *refconFunc,
 						void *refconFlags,
                             A_long yL)
@@ -793,38 +793,31 @@ PF_Err
 		//external layer world
 		bop_extP = reinterpret_cast<PF_Pixel16*>(extW.data) + (extW.rowbytes* yL / sizeof(PF_Pixel16));
 	}
-
 	PF_FpShort  red_result, green_result, blue_result, alpha_result;
-	PF_Pixel16 *in00;
-	PF_Pixel16 *in10;
-	PF_Pixel16 *in20;
-	PF_Pixel16 *in01;
-	PF_Pixel16 *in21;
-	PF_Pixel16 *in02;
-	PF_Pixel16 *in12;
-	PF_Pixel16 *in22;
-
-
 	PF_Pixel16 *bop_outP = reinterpret_cast<PF_Pixel16*>(outW.data) + (outW.rowbytes* yL / sizeof(PF_Pixel16)),
 				*bop_inP = reinterpret_cast<PF_Pixel16*>(inW.data) +  (inW.rowbytes* yL / sizeof(PF_Pixel16));
-    
-    
-	//3*3 matrix grp
-	if (flagsP->NeedsPixelAroundB) {
-		in00 = bop_inP - (inW.rowbytes / sizeof(PF_Pixel16)) - 1;//top left pixel in 3X3.
-		in10 = in00 + 1;//top middle pixel in 3X3.
-		in20 = in10 + 1;//top right pixel in 3X3.
-		in01 = bop_inP - 1;//mid left pixel in 3X3.
-		in21 = bop_inP + 1;//top right pixel in 3X3.
-		in02 = bop_inP + (inW.rowbytes / sizeof(PF_Pixel16)) - 1;//bottom left pixel in 3X3.
-		in12 = in02 + 1;//bottom middle pixel in 3X3.
-		in22 = in12 + 1;//bottom right pixel in 3X3.
-	}
 	AEFX_CLR_STRUCT(miP->yLF);
 	miP->yLF = PF_FpShort(yL);
-
 	for (A_long xL = 0; xL < inW.width; xL++) {
 		if (flagsP->NeedsPixelAroundB) {
+			PF_Pixel16 *in00;
+			PF_Pixel16 *in10;
+			PF_Pixel16 *in20;
+			PF_Pixel16 *in01;
+			PF_Pixel16 *in21;
+			PF_Pixel16 *in02;
+			PF_Pixel16 *in12;
+			PF_Pixel16 *in22;
+
+			in00 = bop_inP - (inW.rowbytes / sizeof(PF_Pixel16)) - 1;//top left pixel in 3X3.
+			in10 = in00 + 1;//top middle pixel in 3X3.
+			in20 = in10 + 1;//top right pixel in 3X3.
+			in01 = bop_inP - 1;//mid left pixel in 3X3.
+			in21 = bop_inP + 1;//top right pixel in 3X3.
+			in02 = bop_inP + (inW.rowbytes / sizeof(PF_Pixel16)) - 1;//bottom left pixel in 3X3.
+			in12 = in02 + 1;//bottom middle pixel in 3X3.
+			in22 = in12 + 1;//bottom right pixel in 3X3.
+
 			if (yL - 1 >= 0) {
 				miP->m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN16;
 				miP->m3P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN16;
@@ -949,17 +942,6 @@ PF_Err
 		bop_outP++;
 		bop_inP++;
         bop_extP++;
-
-		if (flagsP->NeedsPixelAroundB) {
-			in00++;
-			in10++;
-			in20++;
-			in01++;
-			in21++;
-			in02++;
-			in12++;
-			in22++;
-		}
 	}
 	return err;
 }

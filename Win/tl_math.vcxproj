@@ -348,6 +348,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\exprtk.hpp" />
+    <ClInclude Include="..\script\script.h" />
     <ClInclude Include="..\tl_math.h" />
     <ClInclude Include="..\tl_math_Strings.h" />
     <ClInclude Include="..\..\..\Headers\A.h" />
