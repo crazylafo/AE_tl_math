@@ -717,7 +717,6 @@ LineIteration8Func ( void *refconPV,
 						miP->m3P_alpha[8] = 0;
 					}
 				}
-
 			}
                 AEFX_CLR_STRUCT(miP->xLF);
                 miP->xLF = PF_FpShort(xL);                
