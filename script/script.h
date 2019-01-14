@@ -8,25 +8,25 @@
 #ifndef scipt_h
 #define scipt_h
 
-std::string json_createJson = "function createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion, presetName, description){\n\
+std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
     ExprObj = {\n\
         effectName   : \"tlMath\",\n\
         exprLang :  \"Exprtk\",\n\
         category :  \"Custom\",\n\
         pluginVesion : \"+ pluginVersion +\",\n\
         minimalPluginVersion : \"1.11\",\n\
-        redExpr   : redExpr,\n\
-        greenExpr : greenExpr,\n\
-        blueExpr  : blueExpr,\n\
-        alphaExpr : alphaExpr,\n\
-        presetName  : presetName,\n\
-        description : description, \n\
+        redExpr   : exprCl.redExpr,\n\
+        greenExpr : exprCl.greenExpr,\n\
+        blueExpr  : exprCl.blueExpr,\n\
+        alphaExpr : exprCl.alphaExpr,\n\
+        presetName  : exprCl.presetName,\n\
+        description : exprCl.description, \n\
         };\n\
         return ExprObj;\n\
 }";
 
-std::string json_saveAsJson = "function saveAsJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion,presetName, description){\n\
-    ExprObj = createJson(redExpr,greenExpr,blueExpr,alphaExpr, pluginVersion,presetName, description);\n\
+std::string json_saveAsJson = "function saveAsJson(exprCl, pluginVersion){\n\
+    ExprObj = createJson(exprCl, pluginVersion);\n\
     var presetFile =File.saveDialog('save your preset as a json');\n\
     if (presetFile && presetFile.open('w')){\n\
         presetFile.encoding ='UTF-8';\n\
@@ -72,18 +72,28 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
 std::string script_ui = "function exprScript(redExpr,greenExpr,blueExpr,alphaExpr,presetName, presetDescription, pluginMAJORV, pluginMINORV, pluginBUGV){ \n\
 var pluginVersion = pluginMAJORV+'.'+pluginMINORV+pluginBUGV;\n\
 pluginVersion = parseFloat (pluginVersion); \n\
+var exprCl ={} //expression class\n\
 var w = new Window('dialog', 'Maths Expressions V'+pluginVersion, undefined, {resizeable:true} );\n\
 w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\n\
 w.grp = w.add('group');\n\
-w.grp.orientation='row';\n\
+w.grp.orientation='column';\n\
 w.grp.alignment = ['fill', 'fill'];\n\
 w.grp.alignChildren = ['fill', 'fill'];\n\
 w.grp.tab = w.grp.add('tabbedpanel');\n\
+//Mode expr \n\
+\n\
+//PRESET NAME\n\
+	w.grp.PresetN = w.grp.add('group');\n\
+	w.grp.PresetN.orientation = 'row';\n\
+	w.grp.PresetN.alignChildren = ['fill', 'fill'];\n\
+	w.grp.PresetN.stN =w.grp.PresetN.add ('statictext', undefined, 'Preset Name');\n\
+	w.grp.PresetN.name = w.grp.PresetN.add ('edittext', undefined, presetName);\n\
+// \n\
 w.grp.tab.expr = w.grp.tab.add('tab', undefined, 'Math Expressions');\n\
 w.grp.tab.func = w.grp.tab.add('tab', undefined, 'Math Functions');\n\
 w.grp.tab.glsl= w.grp.tab.add('tab', undefined, 'Glsl');\n\
 w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
-    //EXPR TAB \n\
+ //EXPR TAB \n\
     w.grp.tab.expr.orientation='column';\n\
     w.grp.tab.expr.alignment = ['fill', 'fill'];\n\
     w.grp.tab.expr.redst = w.grp.tab.expr.add ('statictext', undefined,'Red Channel Expression : ');\n\
@@ -93,39 +103,47 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
     w.grp.tab.expr.redC.alignChildren = ['fill', 'fill'];\n\
     w.grp.tab.expr.redC.redet = w.grp.tab.expr.redC.add ('edittext', undefined, redExpr,{multiline:true});\n\
     w.grp.tab.expr.greenst = w.grp.tab.expr.add ('statictext', undefined,'Green Channel Expression :');\n\
-    w.grp.tab.expr.greenC = w. grp.add('group');\n\
+    w.grp.tab.expr.greenC = w.grp.tab.expr.add('group');\n\
     w.grp.tab.expr.greenC.orientation = 'row';\n\
+	w.grp.tab.expr.greenC.alignment = ['fill', 'fill'];\n\
     w.grp.tab.expr.greenC.alignChildren = ['fill', 'fill'];\n\
     w.grp.tab.expr.greenC.greenet = w.grp.tab.expr.greenC.add ('edittext', undefined, greenExpr,{multiline:true});\n\
     w.grp.tab.expr.bluest = w.grp.tab.expr.add('statictext', undefined, 'Blue Channel Expression :'); \n\
     w.grp.tab.expr.blueC = w.grp.tab.expr.add('group');\n\
     w.grp.tab.expr.blueC.orientation = 'row';\n\
+	w.grp.tab.expr.blueC.alignment = ['fill', 'fill'];\n\
     w.grp.tab.expr.blueC.alignChildren = ['fill', 'fill'];\n\
     w.grp.tab.expr.blueC.blueet = w.grp.tab.expr.blueC.add ('edittext', undefined, blueExpr,{multiline:true});\n\
     w.grp.tab.expr.alphast = w.grp.tab.expr.add ('statictext', undefined, 'Alpha Channel Expression :');\n\
     w.grp.tab.expr.alphaC = w.grp.tab.expr.add('group');\n\
     w.grp.tab.expr.alphaC.orientation = 'row';\n\
+	w.grp.tab.expr.alphaC.alignment = ['fill', 'fill'];\n\
     w.grp.tab.expr.alphaC.alignChildren = ['fill', 'fill'];\n\
     w.grp.tab.expr.alphaC.alphaet = w.grp.tab.expr.alphaC.add ('edittext', undefined, alphaExpr,{multiline:true});\n\
     // \n\
     \n\
-w.grp.PresetN = w.grp.add('group');\n\
-w.grp.PresetN.orientation = 'row';\n\
-w.grp.PresetN.alignChildren = ['fill', 'fill'];\n\
-w.grp.PresetN.stN =w.grp.PresetN.add ('statictext', undefined, 'Preset Name');\n\
-w.grp.PresetN.name = w.grp.PresetN.add ('edittext', undefined, presetName);\n\
-w.grp.descriptionGrp = w.grp.add('group');\n\
-w.grp.descriptionGrp.orientation = 'row';\n\
-w.grp.descriptionGrp.alignChildren = ['fill', 'fill'];\n\
-w.grp.descriptionGrp.descrst = w.grp.descriptionGrp.add ('statictext', undefined, 'Description:');\n\
-w.grp.descriptionGrp.description = w.grp.descriptionGrp.add ('edittext', undefined, presetDescription,{multiline:true});\n\
+//tab UI\n\
+	w.grp.tab.paramUI.descriptionGrp = w.grp.tab.paramUI.add('group');\n\
+	w.grp.tab.paramUI.descriptionGrp.orientation = 'row';\n\
+	w.grp.tab.paramUI.descriptionGrp.alignment = ['fill', 'fill'];\n\
+	w.grp.tab.paramUI.descriptionGrp.descrst = w.grp.tab.paramUI.descriptionGrp.add ('statictext', undefined, 'Description:');\n\
+	w.grp.tab.paramUI.descriptionGrp.description = w.grp.tab.paramUI.descriptionGrp.add ('edittext', undefined, presetDescription,{multiline:true});\n\
 w.grp.btnGrp = w.grp.add('Group');\n\
 w.grp.btnGrp.orientation = 'row';\n\
 w.grp.btnGrp.Ok =w.grp.btnGrp.add ('button', undefined, 'Apply');\n\
 w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\n\
 w.grp.btnGrp.loadBtn = w.grp.btnGrp.add ('button', undefined, 'Load Preset');\n\
 w.grp.btnGrp.saveBtn =w.grp.btnGrp.add('button', undefined, 'Save Preset');\n\
-var result_temp = createJson(w.grp.tab.expr.redC.redet.text, w.grp.tab.expr.greenC.greenet.text, w.grp.tab.expr.blueC.blueet.text, w.grp.tab.expr.alphaC.alphaet.text, pluginVersion, w.grp.tab.expr.PresetN.name.text,w.grp.tab.expr.descriptionGrp.description.text);\n\
+\n\
+\n\
+exprCl.redExpr = w.grp.tab.expr.redC.redet.text;\n\
+exprCl.greenExpr = w.grp.tab.expr.greenC.greenet.text;\n\
+exprCl.blueExpr =  w.grp.tab.expr.blueC.blueet.text;\n\
+exprCl.alphaExpr = w.grp.tab.expr.alphaC.alphaet.text;\n\
+exprCl.presetName = w.grp.PresetN.name.text; \n\
+exprCl.description = w.grp.tab.paramUI.descriptionGrp.description.text; \n\
+\n\
+var result_temp = createJson(exprCl, pluginVersion);\n\
 var result = JSON.stringify(result_temp);\n\
 w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
@@ -134,17 +152,17 @@ w.grp.btnGrp.loadBtn.onClick = function (){\n\
         w.grp.greenC.greenet.text=	exprObj.greenExpr;\n\
         w.grp.blueC.blueet.text =	exprObj.blueExpr;\n\
         w.grp.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
-        w.grp.PresetN.name.text      =   exprObj.presetName; \n\
-        w.grp.descriptionGrp.description.text =   exprObj.description \n\
+        w.grp.PresetN.name.text= exprObj.presetName; \n\
+        w.grp.descriptionGrp.description.text = exprObj.description; \n\
     }\n\
     else { \n\
         alert (exprObj.error)};\n\
     }\n\
 w.grp.btnGrp.saveBtn.onClick = function (){\n\
-    saveAsJson (w.grp.tab.expr.redC.redet.text,w.grp.tab.expr.greenC.greenet.text, w.grp.tab.expr.blueC.blueet.text, w.grp.tab.expr.alphaC.alphaet.text, pluginVersion, w.grp.tab.expr.grp.PresetN.name.text,w.grp.tab.expr.grp.descriptionGrp.description.text);\n\
+    saveAsJson (exprCl, pluginVersion);\n\
 }\n\
 w.grp.btnGrp.Ok.onClick = function(){\n\
-    var strExpr =createJson(w.grp.tab.expr.redC.redet.text, w.grp.tab.expr.tab.expr.grp.greenC.greenet.text, w.grp.tab.expr.blueC.blueet.text, w.grp.tab.expr.alphaC.alphaet.text, pluginVersion, w.grp.tab.expr.PresetN.name.text,w.grp.tab.expr.descriptionGrp.description.text);\n\
+    var strExpr =createJson(exprCl, pluginVersion);\n\
 w.close();\n\
 result =JSON.stringify(strExpr);\n\
 }\n\
