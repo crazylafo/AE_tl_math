@@ -391,7 +391,7 @@ PopDialog(
 
 	AEGP_MemHandle     resultMemH = NULL;
 	A_char *resultAC = NULL;
-	A_char          scriptAC[12288] = { '\0' };
+	A_char          scriptAC[20000] { '\0' };
 	std::string Majvers = std::to_string(MAJOR_VERSION);
 	std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
@@ -400,19 +400,19 @@ PopDialog(
     PF_ParamDef arb_param;
     
     //strings to send expr to script
-    std::string tempName ="'";
-    std::string tempDescription ="'";
-     std::string tempParserMode="'";
+    std::string tempName;
+    std::string tempDescription;
+    std::string tempParserMode= "0";
     
-    std::string tempGlsl ="'";
+    std::string tempGlsl;
     
-    std::string tempRedS ="'";
-    std::string tempGreenS ="'";
-    std::string tempBlueS ="'";
-    std::string tempAlphaS ="'";
-    std::string tempfunc1S ="'";
-    std::string tempfunc2S ="'";
-    std::string tempfunc3S ="'";
+    std::string tempRedS;
+    std::string tempGreenS;
+    std::string tempBlueS;
+    std::string tempAlphaS;
+    std::string tempfunc1S;
+    std::string tempfunc2S;
+    std::string tempfunc3S;
 
 
 	PF_Handle		arbOutH = NULL;
@@ -441,18 +441,6 @@ PopDialog(
         }
        
     }
-    tempName.append("'");
-    tempDescription.append("'");
-    tempParserMode="'";
-    tempGlsl ="'";
-    tempRedS.append("'");
-    tempGreenS.append("'");
-    tempBlueS.append("'");
-    tempAlphaS.append("'");
-    tempfunc1S ="'";
-    tempfunc2S ="'";
-    tempfunc3S ="'";
-
 	//to force the parser to keep \n before to send it to js
 	strReplace(tempRedS, "\n", "\\n");
 	strReplace(tempGreenS, "\n", "\\n");
@@ -480,9 +468,12 @@ PopDialog(
     jToJs["func3Str"]=tempfunc3S;
     jToJs["glslExpr"]=tempGlsl;
     
-    std::string jsonDump = jToJs.dump(4);
+	std::string jsonDump = "'''";
+	jsonDump .append(jToJs.dump());
+	jsonDump.append("'''");
     
     sprintf( scriptAC,
+			script_ui.c_str(),
             jsonDump.c_str(),
             Majvers.c_str(),
             MinVers .c_str(),
