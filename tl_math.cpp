@@ -400,12 +400,20 @@ PopDialog(
     PF_ParamDef arb_param;
     
     //strings to send expr to script
+    std::string tempName ="'";
+    std::string tempDescription ="'";
+     std::string tempParserMode="'";
+    
+    std::string tempGlsl ="'";
+    
     std::string tempRedS ="'";
     std::string tempGreenS ="'";
     std::string tempBlueS ="'";
     std::string tempAlphaS ="'";
-    std::string tempName ="'";
-    std::string tempDescription ="'";
+    std::string tempfunc1S ="'";
+    std::string tempfunc2S ="'";
+    std::string tempfunc3S ="'";
+
 
 	PF_Handle		arbOutH = NULL;
 	m_ArbData		*arbInP = NULL;
@@ -433,13 +441,17 @@ PopDialog(
         }
        
     }
-
+    tempName.append("'");
+    tempDescription.append("'");
+    tempParserMode="'";
+    tempGlsl ="'";
     tempRedS.append("'");
     tempGreenS.append("'");
     tempBlueS.append("'");
     tempAlphaS.append("'");
-    tempName.append("'");
-    tempDescription.append("'");
+    tempfunc1S ="'";
+    tempfunc2S ="'";
+    tempfunc3S ="'";
 
 	//to force the parser to keep \n before to send it to js
 	strReplace(tempRedS, "\n", "\\n");
@@ -447,14 +459,31 @@ PopDialog(
 	strReplace(tempBlueS, "\n", "\\n");
 	strReplace(tempAlphaS, "\n", "\\n");
     strReplace(tempDescription, "\n", "\\n");
+    strReplace(tempParserMode, "\n", "\\n");
+    strReplace(tempGlsl, "\n", "\\n");
+    strReplace(tempfunc1S, "\n", "\\n");
+    strReplace(tempfunc2S, "\n", "\\n");
+    strReplace(tempfunc3S, "\n", "\\n");
+    
+    
+
+    nlohmann::json  jToJs;
+    jToJs["parserMode"] = tempParserMode;
+    jToJs["presetName"] =tempName;
+    jToJs["description"]=tempDescription;
+    jToJs["redExpr"]=tempRedS;
+    jToJs["greenExpr"]=tempGreenS;
+    jToJs["blueExpr"]=tempBlueS;
+    jToJs["alphaExpr"]=tempAlphaS;
+    jToJs["func1Str"]=tempfunc1S;
+    jToJs["func2Str"]=tempfunc2S;
+    jToJs["func3Str"]=tempfunc3S;
+    jToJs["glslExpr"]=tempGlsl;
+    
+    std::string jsonDump = jToJs.dump(4);
+    
     sprintf( scriptAC,
-            script_ae.c_str(),
-            tempRedS.c_str(),
-            tempGreenS.c_str(),
-            tempBlueS.c_str() ,
-            tempAlphaS.c_str(),
-            tempName.c_str(),
-            tempDescription.c_str(),
+            jsonDump.c_str(),
             Majvers.c_str(),
             MinVers .c_str(),
             Bugvers.c_str());
@@ -483,16 +512,16 @@ PopDialog(
 		arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec3_"));
 		arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
         
-        nlohmann::json  j = nlohmann::json::parse(resultStr);
+        nlohmann::json  jresult = nlohmann::json::parse(resultStr);
 
-        std::string redResultStr =   j["/redExpr"_json_pointer];
-        std::string greenResultStr = j["/greenExpr"_json_pointer];
-        std::string blueResultStr =  j["/blueExpr"_json_pointer];
-        std::string alphaResultStr = j["/alphaExpr"_json_pointer];
+        std::string redResultStr =   jresult["/redExpr"_json_pointer];
+        std::string greenResultStr = jresult["/greenExpr"_json_pointer];
+        std::string blueResultStr =  jresult["/blueExpr"_json_pointer];
+        std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
         
         
-        std::string presetNameStr = j["/presetName"_json_pointer];
-        std::string descriptionStr = j["/description"_json_pointer];
+        std::string presetNameStr = jresult["/presetName"_json_pointer];
+        std::string descriptionStr = jresult["/description"_json_pointer];
         
         presetNameStr.erase(std::remove(presetNameStr.begin(), presetNameStr.end(), '\n'), presetNameStr.end());
 
