@@ -9,7 +9,7 @@
 #define scipt_h
 
 
-std::string script_getcallBacks = "getcallBacks(w){\n\
+std::string script_getcallBacks = "function getcallBacks(w){\n\
     var exprCb = {};\n\
     exprCb.parserMode   =   w.grp.ParserMode.selec.selection; \n\
     exprCb.presetName   =   w.grp.PresetN.name.text; \n\
@@ -67,11 +67,11 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
             if (testObj.effectName === \"tlMath\" && testObj.minimalPluginVersion <=pluginVersion){\n\
                 ExprObj.pluginVesion = testObj.pluginVesion;\n\
                 ExprObj.minimalPluginVersion = testObj.minimalPluginVersion;\n\
-                ExprObj.parserMode  = testObj.parserMode\n\
+                ExprObj.parserMode  = testObj.parserMode;\n\
                 ExprObj.category = testObj.category;\n\
                 ExprObj.glslExpr    = testObj.glslExpr;\n\
                 ExprObj.presetName  = testObj.presetName; \n\
-                ExprObj.description = testObj.description \n\
+                ExprObj.description = testObj.description;\n\
                 ExprObj.redExpr     = testObj.redExpr;\n\
                 ExprObj.greenExpr   = testObj.greenExpr;\n\
                 ExprObj.blueExpr    = testObj.blueExpr;\n\
@@ -108,15 +108,15 @@ w.grp.alignChildren = ['fill', 'fill'];\n\
 //PARSER MODE\n\
 w.grp.ParserMode = w.grp.add('group');\n\
 w.grp.ParserMode.orientation = 'row';\n\
-w.grp.ParserMode.alignChildren = ['fill', 'fill'];\n\
-w.grp.ParserModestN =w.grp.ParserMode.add ('statictext', undefined, 'Preset Name');\n\
-w.grp.ParserMode.selec = w.grp.ParserMode.add ('dropdownlist', undefined, [('Math Expression', 'Glsl' ])\n\
-w.grp.ParserMode.selec=exprCl.parserMode;\n\
+w.grp.ParserMode.alignChildren = ['left', 'fill'];\n\
+w.grp.ParserMode.st =w.grp.ParserMode.add ('statictext', undefined, 'Parser Mode');\n\
+w.grp.ParserMode.selec = w.grp.ParserMode.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
+w.grp.ParserMode.selec.selection = parseInt(exprCl.parserMode);\n\
 // \n\
 //PRESET NAME\n\
 w.grp.PresetN = w.grp.add('group');\n\
 w.grp.PresetN.orientation = 'row';\n\
-w.grp.PresetN.alignChildren = ['fill', 'fill'];\n\
+w.grp.PresetN.alignChildren = ['left', 'fill'];\n\
 w.grp.PresetN.stN =w.grp.PresetN.add ('statictext', undefined, 'Preset Name');\n\
 w.grp.PresetN.name = w.grp.PresetN.add ('edittext', undefined, exprCl.presetName);\n\
 // \n\
@@ -181,12 +181,12 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
 // GLSL TAB \n\
     w.grp.tab.glsl.orientation='column';\n\
     w.grp.tab.glsl.alignment = ['fill', 'fill'];\n\
-    w.grp.tab.glsl.fragShst = w.grp.tab.func.add ('statictext', undefined,'GLSL Fragment Shader : ');\n\
-    w.grp.tab.glsl.fragSh = w.grp.tab.func.add('group');\n\
+    w.grp.tab.glsl.fragShst = w.grp.tab.glsl.add ('statictext', undefined,'GLSL Fragment Shader : ');\n\
+    w.grp.tab.glsl.fragSh = w.grp.tab.glsl.add('group');\n\
     w.grp.tab.glsl.fragSh.orientation = 'row';\n\
     w.grp.tab.glsl.fragSh.alignment = ['fill', 'fill'];\n\
     w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'fill'];\n\
-    w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragShet.add ('edittext', undefined, exprCl.glslExpr,{multiline:true});\n\
+    w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add ('edittext', undefined, exprCl.glslExpr,{multiline:true});\n\
 // \n\
 \n\
 //tab UI\n\
@@ -211,37 +211,46 @@ var result = JSON.stringify(result_temp);\n\
 w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
     if (exprObj.error === \"none\"){\n\
-        w.grp.redC.redet.text =		exprObj.redExpr;\n\
-        w.grp.greenC.greenet.text=	exprObj.greenExpr;\n\
-        w.grp.blueC.blueet.text =	exprObj.blueExpr;\n\
-        w.grp.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
+		w.grp.ParserMode.selec.selection =  parseInt(exprObj.parserMode); \n\
+		w.grp.tab.func.func1C.funcet.text = exprObj.func1Str;\n\
+		w.grp.tab.func.func2C.funcet.text = exprObj.func2Str;\n\
+		w.grp.tab.func.func3C.funcet.text = exprObj.func3Str;\n\
+		w.grp.tab.glsl.fragSh.fragShet.text = exprObj.glslExpr;\n\
+        w.grp.tab.expr.redC.redet.text =		exprObj.redExpr;\n\
+        w.grp.tab.expr.greenC.greenet.text=	exprObj.greenExpr;\n\
+        w.grp.tab.expr.blueC.blueet.text =	exprObj.blueExpr;\n\
+        w.grp.tab.expr.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
         w.grp.PresetN.name.text= exprObj.presetName; \n\
         w.grp.tab.paramUI.descriptionGrp.description.text = exprObj.description; \n\
-    }\n\
+		}\n\
     else { \n\
-        alert (exprObj.error)};\n\
+        alert (exprObj.error);\n\
+		}\n\
     }\n\
+\n\
 w.grp.btnGrp.saveBtn.onClick = function (){\n\
     var exprRet =getcallBacks (w);\n\
     saveAsJson (exprRet, pluginVersion);\n\
-}\n\
+    }\n\
 w.grp.btnGrp.Ok.onClick = function(){\n\
     var exprRet = getcallBacks (w);\n\
     var strExpr =createJson(exprRet, pluginVersion);\n\
-w.close();\n\
-result =JSON.stringify(strExpr);\n\
-}\n\
+	w.close();\n\
+	result =JSON.stringify(strExpr);\n\
+	}\n\
 w.grp.btnGrp.Cancel.onClick = function(){\n\
     var exprRet = getcallBacks (w);\n\
     var ret = createJson(exprRet, pluginVersion);\n\
-w.close();\n\
-result = JSON.stringify(ret);\n\
-}\n\
+	w.close();\n\
+	result = JSON.stringify(ret);\n\
+	}\n\
 w.onResizing = w.onResize = function(){this.layout.resize();}\n\
 w.show();\n\
 return result\n\
 }\n\
-exprScript(%s,%s,%s,%s);";
+\n\
+exprScript(%s,%s,%s,%s);\n\
+";
 
 std::string script_ae = script_ui.append(script_getcallBacks).append(json_createJson).append(json_saveAsJson).append(json_readJson);
 
