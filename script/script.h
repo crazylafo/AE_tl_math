@@ -11,7 +11,7 @@
 
 std::string script_getcallBacks = "function getcallBacks(w){\n\
     var exprCb = {};\n\
-    exprCb.parserMode   =   w.grp.ParserMode.selec.selection; \n\
+    exprCb.parserMode   =   parseInt(w.grp.ParserMode.ddl.selection.index); \n\
     exprCb.presetName   =   w.grp.PresetN.name.text; \n\
     exprCb.description  =   w.grp.tab.paramUI.descriptionGrp.description.text; \n\
     exprCb.redExpr      =   w.grp.tab.expr.redC.redet.text;\n\
@@ -110,8 +110,8 @@ w.grp.ParserMode = w.grp.add('group');\n\
 w.grp.ParserMode.orientation = 'row';\n\
 w.grp.ParserMode.alignChildren = ['left', 'fill'];\n\
 w.grp.ParserMode.st =w.grp.ParserMode.add ('statictext', undefined, 'Parser Mode');\n\
-w.grp.ParserMode.selec = w.grp.ParserMode.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
-w.grp.ParserMode.selec.selection = parseInt(exprCl.parserMode);\n\
+w.grp.ParserMode.ddl = w.grp.ParserMode.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
+w.grp.ParserMode.ddl.selection.index =  parseInt(exprCl.parserMode);\n\
 // \n\
 //PRESET NAME\n\
 w.grp.PresetN = w.grp.add('group');\n\
@@ -211,7 +211,7 @@ var result = JSON.stringify(result_temp);\n\
 w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
     if (exprObj.error === \"none\"){\n\
-		w.grp.ParserMode.selec.selection =  parseInt(exprObj.parserMode); \n\
+		w.grp.ParserMode.ddl.selection.index =  parseInt(exprObj.parserMode); \n\
 		w.grp.tab.func.func1C.funcet.text = exprObj.func1Str;\n\
 		w.grp.tab.func.func2C.funcet.text = exprObj.func2Str;\n\
 		w.grp.tab.func.func3C.funcet.text = exprObj.func3Str;\n\
