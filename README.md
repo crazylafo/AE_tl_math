@@ -6,6 +6,8 @@ version of the https://opensource.org/licenses/gpl-3.0.html.
 
 The plugin uses Exprtk by Arash Partow
 https://github.com/ArashPartow/exprtk
+
+
 The plugin uses JSON for Modern C++
 https://nlohmann.github.io/json/
 
