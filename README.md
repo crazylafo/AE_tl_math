@@ -50,11 +50,18 @@ Alpha 04 (V1.12)
  -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
  
  
+ 
+ 
 table of contents
+
 01-HOW TO INSTALL
+
 02-BASIC EXEMPLE
+
 03-GRAMMAR RULES
+
 04-VARIABLES
+
 05-FUNCTIONS
  
  
