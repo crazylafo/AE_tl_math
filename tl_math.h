@@ -62,25 +62,50 @@ typedef exprtk::parser<PF_FpShort>             parser_t;
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
+
     A_char  redExAc[4096];
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
+    A_char  functionOneAc[4096];
+    A_char  functionTwoAc[4096];
+    A_char  functionThreeAc[4096];
+    A_char  Glsl_FragmentShAc[4096];
+    A_char  descriptionAc[2048];
     A_char  presetNameAc[32];
-    A_char  descriptionAc[4096];
+
+
+     A_char MATH_INPONE_NameAC[32];
+     A_char MATH_INPTWO_NameAC[32];
+     A_char MATH_INPTHREE_NameAC[32];
+     A_char MATH_INPFOUR_NameAC[32];
+     A_char MATH_INP_POINT_ONE_NameAC[32];
+     A_char MATH_INP_POINT_TWO_NameAC[32];
+     A_char MATH_INP_COLOR_ONE_NameAC[32];
+     A_char MATH_INP_COLOR_TWO_NameAC[32];
+
+    
     //duplicate in order to keep the "/n" in javascript
     A_char  redExAcFlat[4096];
     A_char  greenExAcFlat[4096];
     A_char  blueExAcFlat[4096];
     A_char  alphaExAcFlat [4096];
-    A_char  presetNameAcFlat[32];
-    A_char  descriptionAcFlat [4096];
 
+    A_char  functionOneFlat[4096];
+    A_char  functionTwoFlat[4096];
+    A_char  functionThreeFlat[4096];
+    A_char  Glsl_FragmentShFlat[4096];
+    A_char  descriptionAcFlat [4096];
+    
+    //Mode
+    PF_Boolean parserModeB;
 	//Boolean information about chars
 	PF_Boolean NeedsPixelAroundB;
 	PF_Boolean PixelsCallExternalInputB;
 	PF_Boolean NeedsLumaB;
 	PF_Boolean PresetHasWideInputB;
+    
+
 
 } m_ArbData;
 

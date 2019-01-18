@@ -29,29 +29,61 @@ CreateDefaultArb(
                 strncpy_s(arbP->alphaExAc, "1", 4096);
                 strncpy_s(arbP->presetNameAc,"Preset Name", 32);
                 strncpy_s(arbP->descriptionAc,"Describe your preset here", 2048);
-            
+                strncpy_s(arbP->functionOneAc, "function 1", 4096);
+                strncpy_s(arbP->functionTwoAc, "function 2", 4096);
+                strncpy_s(arbP->functionThreeAc, "function 3", 4096);
+                strncpy_s(arbP->Glsl_FragmentShAc, "Fragment Shader", 4096);
+                strncpy_s(arbP->MATH_INPONE_NameAC,"variable 1", 32);
+                strncpy_s(arbP->MATH_INPTWO_NameAC,"variable 2", 32);
+                strncpy_s(arbP->MATH_INPTHREE_NameAC,"variable 3", 32);
+                strncpy_s(arbP->MATH_INPFOUR_NameAC,"variable 4", 32);
+                strncpy_s(arbP->MATH_INP_POINT_ONE_NameAC,"Point 1", 32);
+                strncpy_s(arbP->MATH_INP_POINT_TWO_NameAC,"Point 2", 32);
+                strncpy_s(arbP->MATH_INP_COLOR_ONE_NameAC,"Color 1", 32);
+                strncpy_s(arbP->MATH_INP_COLOR_TWO_NameAC,"Color 2", 32);
                 strncpy_s(arbP->redExAcFlat , "in_red", 4096);
                 strncpy_s(arbP->greenExAcFlat ,"in_green", 4096);
                 strncpy_s(arbP->blueExAcFlat ,"in_blue", 4096);
                 strncpy_s(arbP->alphaExAcFlat , "1", 4096);
-                strncpy_s(arbP->presetNameAcFlat,"Preset Name", 32);
                 strncpy_s(arbP->descriptionAcFlat,"Describe your preset here", 2048);
+                strncpy_s(arbP->functionOneFlat,"function 1", 4096);
+                strncpy_s(arbP->functionTwoFlat,"function 2", 4096);
+                strncpy_s(arbP->functionThreeFlat,"function 3", 4096);
+                strncpy_s(arbP->Glsl_FragmentShFlat, "Fragment Shader", 4096);
+
+         
             
 			#pragma warning (pop)
             #else
-                strncpy(arbP->redExAc,   "in_red", 4096);
+                strncpy(arbP->redExAc, "in_red", 4096);
                 strncpy(arbP->greenExAc, "in_green", 4096);
-                strncpy(arbP->blueExAc,  "in_blue", 4096);
-                strncpy(arbP->alphaExAc,  "1", 4096);
+                strncpy(arbP->blueExAc, "in_blue", 4096);
+                strncpy(arbP->alphaExAc, "1", 4096);
                 strncpy(arbP->presetNameAc,"Preset Name", 32);
                 strncpy(arbP->descriptionAc,"Describe your preset here", 2048);
-
-                strncpy(arbP->redExAcFlat, "in_red", 4096);
-                strncpy(arbP->greenExAcFlat,"in_green", 4096);
-                strncpy(arbP->blueExAcFlat, "in_blue", 4096);
-                strncpy(arbP->alphaExAcFlat, "1", 4096);
+                strncpy(arbP->functionOneAc, "function 1", 4096);
+                strncpy(arbP->functionTwoAc, "function 2", 4096);
+                strncpy(arbP->functionThreeAc, "function 3", 4096);
+                strncpy(arbP->Glsl_FragmentShAc, "Fragment Shader", 4096);
+                strncpy(arbP->MATH_INPONE_NameAC,"variable 1", 32);
+                strncpy(arbP->MATH_INPTWO_NameAC,"variable 2", 32);
+                strncpy(arbP->MATH_INPTHREE_NameAC,"variable 3", 32);
+                strncpy(arbP->MATH_INPFOUR_NameAC,"variable 4", 32);
+                strncpy(arbP->MATH_INP_POINT_ONE_NameAC,"Point 1", 32);
+                strncpy(arbP->MATH_INP_POINT_TWO_NameAC,"Point 2", 32);
+                strncpy(arbP->MATH_INP_COLOR_ONE_NameAC,"Color 1", 32);
+                strncpy(arbP->MATH_INP_COLOR_TWO_NameAC,"Color 2", 32);
+                strncpy(arbP->redExAcFlat , "in_red", 4096);
+                strncpy(arbP->greenExAcFlat ,"in_green", 4096);
+                strncpy(arbP->blueExAcFlat ,"in_blue", 4096);
+                strncpy(arbP->alphaExAcFlat , "1", 4096);
                 strncpy(arbP->descriptionAcFlat,"Describe your preset here", 2048);
+                strncpy(arbP->functionOneFlat,"function 1", 4096);
+                strncpy(arbP->functionTwoFlat,"function 2", 4096);
+                strncpy(arbP->functionThreeFlat,"function 3", 4096);
+                strncpy(arbP->Glsl_FragmentShFlat, "Fragment Shader", 4096);
             #endif
+                arbP->parserModeB = false;
 				arbP->NeedsPixelAroundB = false;
 				arbP->PixelsCallExternalInputB = false;
 				arbP->NeedsLumaB = false;
@@ -184,7 +216,6 @@ Arb_Compare(
 			total_aV.emplace_back (strlen(first_arbP->greenExAcFlat));
 			total_aV.emplace_back (strlen(first_arbP->blueExAcFlat));
 			total_aV.emplace_back (strlen(first_arbP->alphaExAcFlat));
-			total_aV.emplace_back (strlen(first_arbP->presetNameAcFlat));
 			total_aV.emplace_back (strlen(first_arbP->descriptionAcFlat));
 
 			total_aV.emplace_back (first_arbP->NeedsPixelAroundB);
@@ -192,24 +223,63 @@ Arb_Compare(
 			total_aV.emplace_back (first_arbP->NeedsLumaB);
 			total_aV.emplace_back (first_arbP->PresetHasWideInputB);
             
+            total_aV.emplace_back (first_arbP->parserModeB);
+            total_aV.emplace_back ( strlen(first_arbP->functionOneAc));
+            total_aV.emplace_back ( strlen(first_arbP->functionTwoAc));
+            total_aV.emplace_back ( strlen(first_arbP->functionThreeAc));
+            total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShAc));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INPONE_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INPTWO_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INPTHREE_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INPFOUR_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_ONE_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_TWO_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_ONE_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_TWO_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->functionOneFlat));
+            total_aV.emplace_back ( strlen(first_arbP->functionTwoFlat));
+            total_aV.emplace_back ( strlen(first_arbP->functionThreeFlat));
+            total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShFlat));
+
+            
 			total_bV.emplace_back ( strlen(second_arbP->redExAc));
 			total_bV.emplace_back ( strlen(second_arbP->greenExAc));
 			total_bV.emplace_back ( strlen(second_arbP->blueExAc));
 			total_bV.emplace_back ( strlen(second_arbP->alphaExAc));
 			total_bV.emplace_back ( strlen(second_arbP->presetNameAc));
-			total_bV.emplace_back ( strlen(second_arbP->descriptionAc));
+
+            
             
 			total_bV.emplace_back (strlen(second_arbP->redExAcFlat));
 			total_bV.emplace_back (strlen(second_arbP->greenExAcFlat));
 			total_bV.emplace_back (strlen(second_arbP->blueExAcFlat));
 			total_bV.emplace_back ( strlen(second_arbP->alphaExAcFlat));
-			total_bV.emplace_back (strlen(second_arbP->presetNameAcFlat));
 			total_bV.emplace_back (strlen(second_arbP->descriptionAcFlat));
 
 			total_bV.emplace_back (  second_arbP->NeedsPixelAroundB);
             total_bV.emplace_back (second_arbP->PixelsCallExternalInputB);
 			total_bV.emplace_back ( second_arbP->NeedsLumaB);
 			total_bV.emplace_back ( second_arbP->PresetHasWideInputB);
+            
+            total_bV.emplace_back (first_arbP->parserModeB);
+            total_bV.emplace_back ( strlen(first_arbP->functionOneAc));
+            total_bV.emplace_back ( strlen(first_arbP->functionTwoAc));
+            total_bV.emplace_back ( strlen(first_arbP->functionThreeAc));
+            total_bV.emplace_back ( strlen(first_arbP->Glsl_FragmentShAc));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INPONE_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INPTWO_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INPTHREE_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INPFOUR_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_ONE_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_TWO_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_ONE_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_TWO_NameAC));
+            total_bV.emplace_back ( strlen(first_arbP->functionOneFlat));
+            total_bV.emplace_back ( strlen(first_arbP->functionTwoFlat));
+            total_bV.emplace_back ( strlen(first_arbP->functionThreeFlat));
+            total_bV.emplace_back ( strlen(first_arbP->Glsl_FragmentShFlat));
+            
+            
 
 			total_aL = std::accumulate(total_aV.begin(), total_aV.end(), 0);
 			total_bL = std::accumulate(total_bV.begin(), total_bV.end(), 0);

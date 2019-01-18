@@ -436,7 +436,7 @@ PopDialog(
             tempGreenS.append(arbInP->greenExAcFlat);
             tempBlueS.append(arbInP->blueExAcFlat);
             tempAlphaS.append(arbInP->alphaExAcFlat);
-            tempName.append(arbInP->presetNameAcFlat);
+            tempName.append(arbInP->presetNameAc);
             tempDescription.append(arbInP->descriptionAcFlat);
         }
        
@@ -522,14 +522,12 @@ PopDialog(
             strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
-            strncpy_s( arbOutP->presetNameAcFlat, presetNameStr.c_str(), presetNameStr.length()+1);
             strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
         #else
             strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
             strncpy(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
-            strncpy( arbOutP->presetNameAcFlat, presetNameStr.c_str(), presetNameStr.length()+1);
             strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
         #endif
         
