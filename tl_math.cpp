@@ -224,7 +224,7 @@ ParamsSetup (
                                                                                                kPFEffectUISuiteVersion1,
                                                                                                out_data);
     
-    ERR(effect_ui_suiteP->PF_SetOptionsButtonName(in_data->effect_ref, "Math Expression"));
+    ERR(effect_ui_suiteP->PF_SetOptionsButtonName(in_data->effect_ref, "Expressions"));
 
 
 	return err;
@@ -410,6 +410,7 @@ PopDialog(
     std::string tempGreenS;
     std::string tempBlueS;
     std::string tempAlphaS;
+    
     std::string tempfunc1S;
     std::string tempfunc2S;
     std::string tempfunc3S;
@@ -497,6 +498,7 @@ PopDialog(
         strReplace(resultStr, "++",  "+=1");
         strReplace(resultStr, "--",  "-=1");
         strReplace(resultStr, " = ", " := ");
+        
 
 		arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
 		arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("extL"));
@@ -504,13 +506,17 @@ PopDialog(
 		arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
         
         nlohmann::json  jresult = nlohmann::json::parse(resultStr);
-
+        arbOutP->parserModeB = (PF_Boolean) jresult["/exprCl.parserMode"_json_pointer];
+        
         std::string redResultStr =   jresult["/redExpr"_json_pointer];
         std::string greenResultStr = jresult["/greenExpr"_json_pointer];
         std::string blueResultStr =  jresult["/blueExpr"_json_pointer];
         std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
-        
-        
+        std::string func1Str   = jresult["/func1Str"_json_pointer];
+        std::string func2Str   = jresult["/func2Str"_json_pointer];
+        std::string func3Str   = jresult["/func3Str"_json_pointer];
+        std::string glslExpr = jresult["/glslExpr"_json_pointer];
+
         std::string presetNameStr = jresult["/presetName"_json_pointer];
         std::string descriptionStr = jresult["/description"_json_pointer];
         
@@ -522,12 +528,23 @@ PopDialog(
             strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+
+            strncpy_s( arbOutP->functionOneFlat, func1Str.c_str(), func1Str.length()+1);
+            strncpy_s( arbOutP->functionTwoFlat, func2Str.c_str(), func2Str.length()+1);
+            strncpy_s( arbOutP->functionThreeFlat, func1-3Str.c_str(), func3Str.length()+1);
+            strncpy_s( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
+
             strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
         #else
             strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
             strncpy(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+            strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
+            strncpy( arbOutP->functionOneFlat, func1Str.c_str(), func1Str.length()+1);
+            strncpy ( arbOutP->functionTwoFlat, func2Str.c_str(), func2Str.length()+1);
+            strncpy (arbOutP->functionThreeFlat, func3Str.c_str(), func3Str.length()+1);
+            strncpy( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
             strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
         #endif
         
@@ -536,6 +553,12 @@ PopDialog(
         greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
         blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
         alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
+
+        func1Str.erase(std::remove(func1Str.begin(), func1Str.end(), '\n'), func1Str.end());
+        func2Str.erase(std::remove(func2Str.begin(), func2Str.end(), '\n'), func2Str.end());
+        func3Str.erase(std::remove(func3Str.begin(), func3Str.end(), '\n'), func3Str.end());
+        glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\n'), glslExpr.end());
+
         descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
         
         #ifdef AE_OS_WIN
@@ -544,13 +567,22 @@ PopDialog(
             strncpy_s( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy_s( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
             strncpy_s( arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length()+1);
+
+            strncpy_s( arbOutP->functionOneAc, func1Str.c_str(), func1Str.length()+1);
+            strncpy_s( arbOutP->functionTwoac, func2Str.c_str(), func2Str.length()+1);
+            strncpy_s( arbOutP->functionThreeAc, func3Str.c_str(), func3Str.length()+1);
+            strncpy_s( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
             strncpy_s( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
         #else
  			strncpy( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
-            strncpy(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
+            strncpy( arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
             strncpy( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
             strncpy( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
             strncpy( arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length()+1);
+            strncpy( arbOutP->functionOneAc, func1Str.c_str(), func1Str.length()+1);
+            strncpy( arbOutP->functionTwoAc, func2Str.c_str(), func2Str.length()+1);
+            strncpy( arbOutP->functionThreeAc, func3Str.c_str(), func3Str.length()+1);
+            strncpy( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
             strncpy( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
         
         #endif
@@ -668,71 +700,71 @@ LineIteration8Func ( void *refconPV,
                 in12 = in02 + 1;//bottom middle pixel in 3X3.
                 in22 = in12 + 1;//bottom right pixel in 3X3.
 				if (yL - 1 >= 0) {
-					miP->m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_blue[0] = PF_FpShort(in00->blue) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_alpha[0] = PF_FpShort(in00->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_blue[0] = PF_FpShort(in00->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_alpha[0] = PF_FpShort(in00->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 
-					miP->m3P_red[1] = PF_FpShort(in10->red) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_green[1] = PF_FpShort(in10->green) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_blue[1] = PF_FpShort(in10->blue) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_alpha[1] = PF_FpShort(in10->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_red[1] = PF_FpShort(in10->red) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_green[1] = PF_FpShort(in10->green) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_blue[1] = PF_FpShort(in10->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_alpha[1] = PF_FpShort(in10->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 					if (xL + 1 <= inW.width) {
-						miP->m3P_red[2] = PF_FpShort(in20->red) / (PF_FpShort)PF_MAX_CHAN8;
-						miP->m3P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN8;
-						miP->m3P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN8;
-						miP->m3P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_red[2] = PF_FpShort(in20->red) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 					}
 					else {
-						miP->m3P_red[2] = 0;
-						miP->m3P_green[2] = 0;
-						miP->m3P_blue[2] = 0;
-						miP->m3P_alpha[2] = 0;
+						miP->m9P_red[2] = 0;
+						miP->m9P_green[2] = 0;
+						miP->m9P_blue[2] = 0;
+						miP->m9P_alpha[2] = 0;
 					}
 				}
-				miP->m3P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN8;
-				miP->m3P_green[3] = PF_FpShort(in01->green) / (PF_FpShort)PF_MAX_CHAN8;
-				miP->m3P_blue[3] = PF_FpShort(in01->blue) / (PF_FpShort)PF_MAX_CHAN8;
-				miP->m3P_alpha[3] = PF_FpShort(in01->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_green[3] = PF_FpShort(in01->green) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_blue[3] = PF_FpShort(in01->blue) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_alpha[3] = PF_FpShort(in01->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 
-				miP->m3P_red[4] = PF_FpShort(bop_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
-				miP->m3P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
-				miP->m3P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
-				miP->m3P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_red[4] = PF_FpShort(bop_inP->red) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
+				miP->m9P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 				if (xL + 1 <= inW.height) {
-					miP->m3P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 				}
 				else {
-					miP->m3P_red[5] = 0;
-					miP->m3P_green[5] = 0;
-					miP->m3P_blue[5] = 0;
-					miP->m3P_alpha[5] = 0;
+					miP->m9P_red[5] = 0;
+					miP->m9P_green[5] = 0;
+					miP->m9P_blue[5] = 0;
+					miP->m9P_alpha[5] = 0;
 				}
 				if (yL + 1 <= inW.height) {
-					miP->m3P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_blue[6] = PF_FpShort(in02->blue) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_alpha[6] = PF_FpShort(in02->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_blue[6] = PF_FpShort(in02->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_alpha[6] = PF_FpShort(in02->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 
-					miP->m3P_red[7] = PF_FpShort(in12->red) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_green[7] = PF_FpShort(in12->green) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_blue[7] = PF_FpShort(in12->blue) / (PF_FpShort)PF_MAX_CHAN8;
-					miP->m3P_alpha[7] = PF_FpShort(in12->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_red[7] = PF_FpShort(in12->red) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_green[7] = PF_FpShort(in12->green) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_blue[7] = PF_FpShort(in12->blue) / (PF_FpShort)PF_MAX_CHAN8;
+					miP->m9P_alpha[7] = PF_FpShort(in12->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 
 					if (xL + 1 <= inW.width) {
-						miP->m3P_red[8] = PF_FpShort(in22->red) / (PF_FpShort)PF_MAX_CHAN8;
-						miP->m3P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN8;
-						miP->m3P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN8;
-						miP->m3P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_red[8] = PF_FpShort(in22->red) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN8;
+						miP->m9P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN8;
 					}
 					else {
-						miP->m3P_red[8] = 0;
-						miP->m3P_green[8] = 0;
-						miP->m3P_blue[8] = 0;
-						miP->m3P_alpha[8] = 0;
+						miP->m9P_red[8] = 0;
+						miP->m9P_green[8] = 0;
+						miP->m9P_blue[8] = 0;
+						miP->m9P_alpha[8] = 0;
 					}
 				}
 			}
@@ -836,71 +868,71 @@ LineIteration16Func(void *refconPV,
 			in22 = in12 + 1;//bottom right pixel in 3X3.
 
 			if (yL - 1 >= 0) {
-				miP->m3P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_blue[0] = PF_FpShort(in00->blue) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_alpha[0] = PF_FpShort(in00->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_red[0] = PF_FpShort(in00->red) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_green[0] = PF_FpShort(in00->green) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_blue[0] = PF_FpShort(in00->blue) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_alpha[0] = PF_FpShort(in00->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 
-				miP->m3P_red[1] = PF_FpShort(in10->red) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_green[1] = PF_FpShort(in10->green) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_blue[1] = PF_FpShort(in10->blue) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_alpha[1] = PF_FpShort(in10->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_red[1] = PF_FpShort(in10->red) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_green[1] = PF_FpShort(in10->green) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_blue[1] = PF_FpShort(in10->blue) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_alpha[1] = PF_FpShort(in10->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 				if (xL + 1 <= inW.width) {
-					miP->m3P_red[2] = PF_FpShort(in20->red) / (PF_FpShort)PF_MAX_CHAN16;
-					miP->m3P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN16;
-					miP->m3P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN16;
-					miP->m3P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_red[2] = PF_FpShort(in20->red) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_green[2] = PF_FpShort(in20->green) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_blue[2] = PF_FpShort(in20->blue) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_alpha[2] = PF_FpShort(in20->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 				}
 				else {
-					miP->m3P_red[2] = 0;
-					miP->m3P_green[2] = 0;
-					miP->m3P_blue[2] = 0;
-					miP->m3P_alpha[2] = 0;
+					miP->m9P_red[2] = 0;
+					miP->m9P_green[2] = 0;
+					miP->m9P_blue[2] = 0;
+					miP->m9P_alpha[2] = 0;
 				}
 			}
-			miP->m3P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN16;
-			miP->m3P_green[3] = PF_FpShort(in01->green) / (PF_FpShort)PF_MAX_CHAN16;
-			miP->m3P_blue[3] = PF_FpShort(in01->blue) / (PF_FpShort)PF_MAX_CHAN16;
-			miP->m3P_alpha[3] = PF_FpShort(in01->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_red[3] = PF_FpShort(in01->red) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_green[3] = PF_FpShort(in01->green) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_blue[3] = PF_FpShort(in01->blue) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_alpha[3] = PF_FpShort(in01->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 
-			miP->m3P_red[4] = PF_FpShort(bop_inP->red) / (PF_FpShort)PF_MAX_CHAN16;
-			miP->m3P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN16;
-			miP->m3P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN16;
-			miP->m3P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_red[4] = PF_FpShort(bop_inP->red) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN16;
+			miP->m9P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 			if (xL + 1 <= inW.height) {
-				miP->m3P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_alpha[5] = PF_FpShort(in21->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 			}
 			else {
-				miP->m3P_red[5] = 0;
-				miP->m3P_green[5] = 0;
-				miP->m3P_blue[5] = 0;
-				miP->m3P_alpha[5] = 0;
+				miP->m9P_red[5] = 0;
+				miP->m9P_green[5] = 0;
+				miP->m9P_blue[5] = 0;
+				miP->m9P_alpha[5] = 0;
 			}
 			if (yL + 1 <= inW.height) {
-				miP->m3P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_blue[6] = PF_FpShort(in02->blue) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_alpha[6] = PF_FpShort(in02->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_red[6] = PF_FpShort(in02->red) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_green[6] = PF_FpShort(in02->green) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_blue[6] = PF_FpShort(in02->blue) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_alpha[6] = PF_FpShort(in02->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 
-				miP->m3P_red[7] = PF_FpShort(in12->red) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_green[7] = PF_FpShort(in12->green) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_blue[7] = PF_FpShort(in12->blue) / (PF_FpShort)PF_MAX_CHAN16;
-				miP->m3P_alpha[7] = PF_FpShort(in12->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_red[7] = PF_FpShort(in12->red) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_green[7] = PF_FpShort(in12->green) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_blue[7] = PF_FpShort(in12->blue) / (PF_FpShort)PF_MAX_CHAN16;
+				miP->m9P_alpha[7] = PF_FpShort(in12->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 
 				if (xL + 1 <= inW.width) {
-					miP->m3P_red[8] = PF_FpShort(in22->red) / (PF_FpShort)PF_MAX_CHAN16;
-					miP->m3P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN16;
-					miP->m3P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN16;
-					miP->m3P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_red[8] = PF_FpShort(in22->red) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_green[8] = PF_FpShort(in22->green) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_blue[8] = PF_FpShort(in22->blue) / (PF_FpShort)PF_MAX_CHAN16;
+					miP->m9P_alpha[8] = PF_FpShort(in22->alpha) / (PF_FpShort)PF_MAX_CHAN16;
 				}
 				else {
-					miP->m3P_red[8] = 0;
-					miP->m3P_green[8] = 0;
-					miP->m3P_blue[8] = 0;
-					miP->m3P_alpha[8] = 0;
+					miP->m9P_red[8] = 0;
+					miP->m9P_green[8] = 0;
+					miP->m9P_blue[8] = 0;
+					miP->m9P_alpha[8] = 0;
 				}
 			}
 		}

@@ -262,22 +262,22 @@ Arb_Compare(
 			total_bV.emplace_back ( second_arbP->PresetHasWideInputB);
             
             total_bV.emplace_back (first_arbP->parserModeB);
-            total_bV.emplace_back ( strlen(first_arbP->functionOneAc));
-            total_bV.emplace_back ( strlen(first_arbP->functionTwoAc));
-            total_bV.emplace_back ( strlen(first_arbP->functionThreeAc));
-            total_bV.emplace_back ( strlen(first_arbP->Glsl_FragmentShAc));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INPONE_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INPTWO_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INPTHREE_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INPFOUR_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_ONE_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_TWO_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_ONE_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_TWO_NameAC));
-            total_bV.emplace_back ( strlen(first_arbP->functionOneFlat));
-            total_bV.emplace_back ( strlen(first_arbP->functionTwoFlat));
-            total_bV.emplace_back ( strlen(first_arbP->functionThreeFlat));
-            total_bV.emplace_back ( strlen(first_arbP->Glsl_FragmentShFlat));
+            total_bV.emplace_back ( strlen(second_arbP->functionOneAc));
+            total_bV.emplace_back ( strlen(second_arbP->functionTwoAc));
+            total_bV.emplace_back ( strlen(second_arbP->functionThreeAc));
+            total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShAc));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INPONE_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INPTWO_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INPTHREE_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INPFOUR_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_POINT_ONE_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_POINT_TWO_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_COLOR_ONE_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_COLOR_TWO_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->functionOneFlat));
+            total_bV.emplace_back ( strlen(second_arbP->functionTwoFlat));
+            total_bV.emplace_back ( strlen(second_arbP->functionThreeFlat));
+            total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShFlat));
             
             
 

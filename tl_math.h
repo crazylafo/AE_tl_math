@@ -59,6 +59,7 @@
 typedef exprtk::symbol_table<PF_FpShort> symbol_table_t;
 typedef exprtk::expression<PF_FpShort>     expression_t;
 typedef exprtk::parser<PF_FpShort>             parser_t;
+  typedef exprtk::function_compositor<PF_FpShort> compositor_t;
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
@@ -178,6 +179,12 @@ typedef struct FlagsInfo {
 	PF_Boolean PixelsCallExternalInputB;
 	PF_Boolean NeedsLumaB;
 	PF_Boolean PresetHasWideInput;
+    PF_Boolean      CallsAEGP_CompB;
+    PF_Boolean      CallsAEGP_layerB;
+    PF_Boolean      hasFuncOneB;
+    PF_Boolean      hasFuncTwoB;
+    PF_Boolean      hasFuncThreeB;
+
 }FlagsInfoP;
 
 typedef struct funcTransfertInfo {
@@ -188,6 +195,10 @@ typedef struct funcTransfertInfo {
 	PF_Boolean      hasErrorB;
 	std::string     channelErrorstr;
 	std::string     errorstr;
+    std::string     func1str;
+    std::string     func2str;
+    std::string     func3str;
+
 }funcTransfertInfoP;
 
 typedef struct MathInfo{
@@ -230,10 +241,10 @@ typedef struct MathInfo{
     PF_FpShort      pointTwoY;
     PF_FpShort      colorOne[3];
     PF_FpShort      colorTwo[3];
-	PF_FpShort		m3P_red[9];
-	PF_FpShort		m3P_green[9];
-	PF_FpShort		m3P_blue[9];
-	PF_FpShort      m3P_alpha[9];
+	PF_FpShort		m9P_red[9];
+	PF_FpShort		m9P_green[9];
+	PF_FpShort		m9P_blue[9];
+	PF_FpShort      m9P_alpha[9];
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP; 
 } MathInfoP, *MathinfoP, **MathinfoH;
@@ -348,6 +359,7 @@ private:
     std::shared_ptr<exprtk::parser<T>> parser;
     exprtk::expression<T> expression;
     exprtk::symbol_table<T> symbol_table;
+    std::shared_ptr<exprtk::function_compositor<T>> compositor;
 public:
     parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr) {
         MathInfo	*miP	= reinterpret_cast<MathInfo*>(mathRefcon);
@@ -365,11 +377,11 @@ public:
         symbol_table.add_variable("in_blue", miP->inBlueF);
         symbol_table.add_variable("in_alpha", miP->inAlphaF);
         symbol_table.add_variable("in_luma", miP->luma);
-        symbol_table.add_vector("vec3_red", miP->m3P_red);
-        symbol_table.add_vector("vec3_green",miP->m3P_green);
-        symbol_table.add_vector("vec3_blue", miP->m3P_blue);
-        symbol_table.add_vector("vec3_alpha", miP->m3P_alpha);
-        
+        symbol_table.add_vector("vec9_red", miP->m9P_red);
+        symbol_table.add_vector("vec9_green",miP->m9P_green);
+        symbol_table.add_vector("vec9_blue", miP->m9P_blue);
+        symbol_table.add_vector("vec9_alpha", miP->m9P_alpha);
+
         symbol_table.add_variable("extL_red", miP->extL_red);
         symbol_table.add_variable("extL_green", miP->extL_green);
         symbol_table.add_variable("extL_blue", miP->extL_blue);
