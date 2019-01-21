@@ -111,7 +111,7 @@ w.grp.ParserMode.orientation = 'row';\n\
 w.grp.ParserMode.alignChildren = ['left', 'fill'];\n\
 w.grp.ParserMode.st =w.grp.ParserMode.add ('statictext', undefined, 'Parser Mode');\n\
 w.grp.ParserMode.ddl = w.grp.ParserMode.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
-w.grp.ParserMode.ddl.selection.index =  parseInt(exprCl.parserMode);\n\
+w.grp.ParserMode.ddl.selection =  parseInt(exprCl.parserMode);\n\
 // \n\
 //PRESET NAME\n\
 w.grp.PresetN = w.grp.add('group');\n\
