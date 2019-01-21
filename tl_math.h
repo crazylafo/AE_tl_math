@@ -100,12 +100,17 @@ typedef struct {
     
     //Mode
     PF_Boolean parserModeB;
+    PF_Boolean UsesFunctionsB;
 	//Boolean information about chars
+
 	PF_Boolean NeedsPixelAroundB;
 	PF_Boolean PixelsCallExternalInputB;
 	PF_Boolean NeedsLumaB;
 	PF_Boolean PresetHasWideInputB;
-    
+
+    PF_Boolean CallsAEGP_CompB;
+    PF_Boolean CallsAEGP_layerB;
+
 
 
 } m_ArbData;
@@ -179,11 +184,9 @@ typedef struct FlagsInfo {
 	PF_Boolean PixelsCallExternalInputB;
 	PF_Boolean NeedsLumaB;
 	PF_Boolean PresetHasWideInput;
-    PF_Boolean      CallsAEGP_CompB;
-    PF_Boolean      CallsAEGP_layerB;
-    PF_Boolean      hasFuncOneB;
-    PF_Boolean      hasFuncTwoB;
-    PF_Boolean      hasFuncThreeB;
+    PF_Boolean CallsAEGP_CompB;
+    PF_Boolean CallsAEGP_layerB;
+    PF_Boolean UsesFunctionsB;
 
 }FlagsInfoP;
 
@@ -195,6 +198,7 @@ typedef struct funcTransfertInfo {
 	PF_Boolean      hasErrorB;
 	std::string     channelErrorstr;
 	std::string     errorstr;
+    PF_Boolean      UsesFunctionsB;
     std::string     func1str;
     std::string     func2str;
     std::string     func3str;

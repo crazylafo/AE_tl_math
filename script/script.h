@@ -11,13 +11,14 @@
 
 std::string script_getcallBacks = "function getcallBacks(w){\n\
     var exprCb = {};\n\
-    exprCb.parserMode   =   parseInt(w.grp.ParserMode.ddl.selection.index); \n\
+    exprCb.parserModeB   =   parseInt(w.grp.parserModeB.ddl.selection.index); \n\
     exprCb.presetName   =   w.grp.PresetN.name.text; \n\
     exprCb.description  =   w.grp.tab.paramUI.descriptionGrp.description.text; \n\
     exprCb.redExpr      =   w.grp.tab.expr.redC.redet.text;\n\
     exprCb.greenExpr    =   w.grp.tab.expr.greenC.greenet.text;\n\
     exprCb.blueExpr     =   w.grp.tab.expr.blueC.blueet.text;\n\
     exprCb.alphaExpr    =   w.grp.tab.expr.alphaC.alphaet.text;\n\
+    exprcB.funcModeB =  w.grp.tab.func.cbMMode.value;\n\
     exprCb.func1Str     =   w.grp.tab.func.func1C.funcet.text;\n\
     exprCb.func2Str     =   w.grp.tab.func.func2C.funcet.text;\n\
     exprCb.func3Str     =   w.grp.tab.func.func3C.funcet.text;\n\
@@ -28,7 +29,7 @@ std::string script_getcallBacks = "function getcallBacks(w){\n\
 std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
     ExprObj = {\n\
         effectName   : \"tlMath\",\n\
-        parserMode : exprCl.parserMode, \n\
+        parserModeB : exprCl.parserModeB, \n\
         category :  \"Custom\",\n\
         presetName  : exprCl.presetName,\n\
         description : exprCl.description, \n\
@@ -39,6 +40,7 @@ std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
         greenExpr : exprCl.greenExpr,\n\
         blueExpr  : exprCl.blueExpr,\n\
         alphaExpr : exprCl.alphaExpr,\n\
+        funcModeB : exprCl.functionModeB,\n\
         func1Str   : exprCl.func1Str,\n\
         func2Str   : exprCl.func2Str,\n\
         func3Str   : exprCl.func3Str\n\
@@ -67,7 +69,7 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
             if (testObj.effectName === \"tlMath\" && testObj.minimalPluginVersion <=pluginVersion){\n\
                 ExprObj.pluginVesion = testObj.pluginVesion;\n\
                 ExprObj.minimalPluginVersion = testObj.minimalPluginVersion;\n\
-                ExprObj.parserMode  = testObj.parserMode;\n\
+                ExprObj.parserModeB  = testObj.parserModeB;\n\
                 ExprObj.category = testObj.category;\n\
                 ExprObj.glslExpr    = testObj.glslExpr;\n\
                 ExprObj.presetName  = testObj.presetName; \n\
@@ -76,6 +78,7 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
                 ExprObj.greenExpr   = testObj.greenExpr;\n\
                 ExprObj.blueExpr    = testObj.blueExpr;\n\
                 ExprObj.alphaExpr   = testObj.alphaExpr;\n\
+                ExprObj.funcModeB   = testObj.functionModeB;\n\
                 ExprObj.func1Str    = testObj.func1Str;\n\
                 ExprObj.func2Str    = testObj.func2Str;\n\
                 ExprObj.func3Str    = testObj.func3Str;\n\
@@ -106,12 +109,12 @@ w.grp.alignment = ['fill', 'fill'];\n\
 w.grp.alignChildren = ['fill', 'fill'];\n\
 \n\
 //PARSER MODE\n\
-w.grp.ParserMode = w.grp.add('group');\n\
-w.grp.ParserMode.orientation = 'row';\n\
-w.grp.ParserMode.alignChildren = ['left', 'fill'];\n\
-w.grp.ParserMode.st =w.grp.ParserMode.add ('statictext', undefined, 'Parser Mode');\n\
-w.grp.ParserMode.ddl = w.grp.ParserMode.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
-w.grp.ParserMode.ddl.selection =  parseInt(exprCl.parserMode);\n\
+w.grp.parserModeB = w.grp.add('group');\n\
+w.grp.parserModeB.orientation = 'row';\n\
+w.grp.parserModeB.alignChildren = ['left', 'fill'];\n\
+w.grp.parserModeB.st =w.grp.parserModeB.add ('statictext', undefined, 'Parser Mode');\n\
+w.grp.parserModeB.ddl = w.grp.parserModeB.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
+w.grp.parserModeB.ddl.selection =  parseInt(exprCl.parserModeB);\n\
 // \n\
 //PRESET NAME\n\
 w.grp.PresetN = w.grp.add('group');\n\
@@ -158,6 +161,8 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
 //FUNC TABLE TAB \n\
     w.grp.tab.func.orientation='column';\n\
     w.grp.tab.func.alignment = ['fill', 'fill'];\n\
+    w.grp.tab.func.cbMMode =w.grp.tab.func.funcMode.add ('checkbox', 'Activate Functions');\n\
+    w.grp.tab.func.cbMMode.value =exprCl.exprcl.funcModeB;\n\
     w.grp.tab.func.func1st = w.grp.tab.func.add ('statictext', undefined,'Function1 : ');\n\
     w.grp.tab.func.func1C = w.grp.tab.func.add('group');\n\
     w.grp.tab.func.func1C.orientation = 'row';\n\
@@ -211,7 +216,8 @@ var result = JSON.stringify(result_temp);\n\
 w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
     if (exprObj.error === \"none\"){\n\
-		w.grp.ParserMode.ddl.selection.index =  parseInt(exprObj.parserMode); \n\
+		w.grp.parserModeB.ddl.selection.index =  parseInt(exprObj.parserModeB); \n\
+        w.grp.tab.func.cbMMode.value = exprcB.funcModeB;\n\
 		w.grp.tab.func.func1C.funcet.text = exprObj.func1Str;\n\
 		w.grp.tab.func.func2C.funcet.text = exprObj.func2Str;\n\
 		w.grp.tab.func.func3C.funcet.text = exprObj.func3Str;\n\

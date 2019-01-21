@@ -402,7 +402,7 @@ PopDialog(
     //strings to send expr to script
     std::string tempName;
     std::string tempDescription;
-    std::string tempParserMode= "0";
+
     
     std::string tempGlsl;
     
@@ -410,10 +410,13 @@ PopDialog(
     std::string tempGreenS;
     std::string tempBlueS;
     std::string tempAlphaS;
-    
+
     std::string tempfunc1S;
     std::string tempfunc2S;
     std::string tempfunc3S;
+
+    PF_Boolean tempParserModeB;
+    PF_Boolean  tempFuncModeB;
 
 
 	PF_Handle		arbOutH = NULL;
@@ -433,10 +436,18 @@ PopDialog(
         AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
+            tempParserModeB =arbInP->parserModeB;
+            tempFuncModeB = arbInP->UsesFunctionsB;
+
             tempRedS.append(arbInP->redExAcFlat);
             tempGreenS.append(arbInP->greenExAcFlat);
             tempBlueS.append(arbInP->blueExAcFlat);
             tempAlphaS.append(arbInP->alphaExAcFlat);
+
+            tempfunc1S.append (arbInP->functionOneFlat);
+            tempfunc2S.append (arbInP->functionTwoFlat);
+            tempfunc3S.append (arbInP->functionThreeFlat);
+            tempGlsl.append (arbInP->Glsl_FragmentShFlat);
             tempName.append(arbInP->presetNameAc);
             tempDescription.append(arbInP->descriptionAcFlat);
         }
@@ -448,7 +459,6 @@ PopDialog(
 	strReplace(tempBlueS, "\n", "\\n");
 	strReplace(tempAlphaS, "\n", "\\n");
     strReplace(tempDescription, "\n", "\\n");
-    strReplace(tempParserMode, "\n", "\\n");
     strReplace(tempGlsl, "\n", "\\n");
     strReplace(tempfunc1S, "\n", "\\n");
     strReplace(tempfunc2S, "\n", "\\n");
@@ -457,13 +467,14 @@ PopDialog(
     
 
     nlohmann::json  jToJs;
-    jToJs["parserMode"] = tempParserMode;
+    jToJs["parserModeB"] = tempParserModeB;
     jToJs["presetName"] =tempName;
     jToJs["description"]=tempDescription;
     jToJs["redExpr"]=tempRedS;
     jToJs["greenExpr"]=tempGreenS;
     jToJs["blueExpr"]=tempBlueS;
     jToJs["alphaExpr"]=tempAlphaS;
+    jToJs["funcModeB"] =tempFuncModeB;
     jToJs["func1Str"]=tempfunc1S;
     jToJs["func2Str"]=tempfunc2S;
     jToJs["func3Str"]=tempfunc3S;
@@ -504,9 +515,15 @@ PopDialog(
 		arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("extL"));
 		arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec3_"));
 		arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
+
+
+         arbOutP->CallsAEGP_CompB =hasString(resultStr, std::string("layer"));
+         arbOutP->CallsAEGP_layerB =hasString(resultStr, std::string("comp"));
+
         
         nlohmann::json  jresult = nlohmann::json::parse(resultStr);
         arbOutP->parserModeB = (PF_Boolean) jresult["/exprCl.parserMode"_json_pointer];
+        arbOutP->UsesFunctionsB = (PF_Boolean) jresult["/exprCl.funcModeB"_json_pointer];
         
         std::string redResultStr =   jresult["/redExpr"_json_pointer];
         std::string greenResultStr = jresult["/greenExpr"_json_pointer];

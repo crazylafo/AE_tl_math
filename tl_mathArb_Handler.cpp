@@ -88,6 +88,12 @@ CreateDefaultArb(
 				arbP->PixelsCallExternalInputB = false;
 				arbP->NeedsLumaB = false;
 				arbP->PresetHasWideInputB = false;
+
+
+                arbP->CallsAEGP_CompB= false;
+                arbP->CallsAEGP_layerB= false;
+                arbP->UsesFunctionsB= false;
+
 			*dephault = arbH;
 		}
 		suites.HandleSuite1()->host_unlock_handle(arbH);
@@ -241,6 +247,10 @@ Arb_Compare(
             total_aV.emplace_back ( strlen(first_arbP->functionThreeFlat));
             total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShFlat));
 
+            total_aV.emplace_back (first_arbP->CallsAEGP_CompB);
+            total_aV.emplace_back (first_arbP->CallsAEGP_layerB);
+            total_aV.emplace_back (first_arbP->UsesFunctionsB);
+
             
 			total_bV.emplace_back ( strlen(second_arbP->redExAc));
 			total_bV.emplace_back ( strlen(second_arbP->greenExAc));
@@ -278,6 +288,10 @@ Arb_Compare(
             total_bV.emplace_back ( strlen(second_arbP->functionTwoFlat));
             total_bV.emplace_back ( strlen(second_arbP->functionThreeFlat));
             total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShFlat));
+
+            total_bV.emplace_back (second_arbP->CallsAEGP_CompB);
+            total_bV.emplace_back (second_arbP->CallsAEGP_layerB);
+            total_bV.emplace_back (second_arbP->UsesFunctionsB);
             
             
 
