@@ -56,10 +56,10 @@
 #define	STAGE_VERSION	PF_Stage_ALPHA
 #define	BUILD_VERSION	1
 
-typedef exprtk::symbol_table<PF_FpShort> symbol_table_t;
-typedef exprtk::expression<PF_FpShort>     expression_t;
-typedef exprtk::parser<PF_FpShort>             parser_t;
-  typedef exprtk::function_compositor<PF_FpShort> compositor_t;
+//typedef exprtk::symbol_table<PF_FpShort> symbol_table_t;
+//typedef exprtk::expression<PF_FpShort>     expression_t;
+//typedef exprtk::parser<PF_FpShort>             parser_t;
+//typedef exprtk::function_compositor<PF_FpShort> compositor_t;
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
@@ -102,14 +102,13 @@ typedef struct {
     PF_Boolean parserModeB;
     PF_Boolean UsesFunctionsB;
 	//Boolean information about chars
-
 	PF_Boolean NeedsPixelAroundB;
 	PF_Boolean PixelsCallExternalInputB;
 	PF_Boolean NeedsLumaB;
 	PF_Boolean PresetHasWideInputB;
-
     PF_Boolean CallsAEGP_CompB;
     PF_Boolean CallsAEGP_layerB;
+
 
 
 
@@ -332,7 +331,8 @@ Arb_Scan(
 
 
 
-
+PF_Boolean
+strToBoolean( std::string str);
 void
 strReplace(std::string& str,
                 const std::string& oldStr,
@@ -363,7 +363,7 @@ private:
     std::shared_ptr<exprtk::parser<T>> parser;
     exprtk::expression<T> expression;
     exprtk::symbol_table<T> symbol_table;
-    std::shared_ptr<exprtk::function_compositor<T>> compositor;
+    std::shared_ptr<exprtk::function_compositor<T>> compositor_t;
 public:
     parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr) {
         MathInfo	*miP	= reinterpret_cast<MathInfo*>(mathRefcon);
@@ -371,6 +371,12 @@ public:
         std::string expression_string_Safe = "1";
         if (!parser){
             parser = std::make_shared<exprtk::parser<T>>();
+        }
+        if (fiP->UsesFunctionsB){
+            compositor_t =std::make_shared<exprtk::function_compositor<T>>();
+            compositor_t->add(fiP->func1str);
+            compositor_t->add(fiP->func2str);
+            compositor_t->add(fiP->func3str);
         }
         fiP->hasErrorB = FALSE;
         symbol_table.clear();

@@ -11,14 +11,14 @@
 
 std::string script_getcallBacks = "function getcallBacks(w){\n\
     var exprCb = {};\n\
-    exprCb.parserModeB   =   parseInt(w.grp.parserModeB.ddl.selection.index); \n\
+    exprCb.parserModeB   =   parseInt(w.grp.parserModeB.ddl.selection); \n\
     exprCb.presetName   =   w.grp.PresetN.name.text; \n\
     exprCb.description  =   w.grp.tab.paramUI.descriptionGrp.description.text; \n\
     exprCb.redExpr      =   w.grp.tab.expr.redC.redet.text;\n\
     exprCb.greenExpr    =   w.grp.tab.expr.greenC.greenet.text;\n\
     exprCb.blueExpr     =   w.grp.tab.expr.blueC.blueet.text;\n\
     exprCb.alphaExpr    =   w.grp.tab.expr.alphaC.alphaet.text;\n\
-    exprcB.funcModeB =  w.grp.tab.func.cbMMode.value;\n\
+    exprCb.funcModeB    =   w.grp.tab.func.cbMMode.value;\n\
     exprCb.func1Str     =   w.grp.tab.func.func1C.funcet.text;\n\
     exprCb.func2Str     =   w.grp.tab.func.func2C.funcet.text;\n\
     exprCb.func3Str     =   w.grp.tab.func.func3C.funcet.text;\n\
@@ -35,15 +35,15 @@ std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
         description : exprCl.description, \n\
         pluginVesion : \"+ pluginVersion +\",\n\
         minimalPluginVersion : \"1.13\",\n\
-        glslExpr : exprCl.glslExpr,\n\
+        glslExpr  : exprCl.glslExpr,\n\
         redExpr   : exprCl.redExpr,\n\
         greenExpr : exprCl.greenExpr,\n\
         blueExpr  : exprCl.blueExpr,\n\
         alphaExpr : exprCl.alphaExpr,\n\
-        funcModeB : exprCl.functionModeB,\n\
-        func1Str   : exprCl.func1Str,\n\
-        func2Str   : exprCl.func2Str,\n\
-        func3Str   : exprCl.func3Str\n\
+        funcModeB : exprCl.funcModeB,\n\
+        func1Str  : exprCl.func1Str,\n\
+        func2Str  : exprCl.func2Str,\n\
+        func3Str  : exprCl.func3Str\n\
         };\n\
         return ExprObj;\n\
 }";
@@ -161,7 +161,7 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
 //FUNC TABLE TAB \n\
     w.grp.tab.func.orientation='column';\n\
     w.grp.tab.func.alignment = ['fill', 'fill'];\n\
-    w.grp.tab.func.cbMMode =w.grp.tab.func.add ('checkbox', 'Activate Functions');\n\
+    w.grp.tab.func.cbMMode =w.grp.tab.func.add ('checkbox', undefined, 'Activate Functions');\n\
     w.grp.tab.func.cbMMode.value =exprCl.funcModeB;\n\
     w.grp.tab.func.func1st = w.grp.tab.func.add ('statictext', undefined,'Function1 : ');\n\
     w.grp.tab.func.func1C = w.grp.tab.func.add('group');\n\
@@ -216,16 +216,16 @@ var result = JSON.stringify(result_temp);\n\
 w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
     if (exprObj.error === \"none\"){\n\
-		w.grp.parserModeB.ddl.selection.index =  parseInt(exprObj.parserModeB); \n\
-        w.grp.tab.func.cbMMode.value = exprcB.funcModeB;\n\
-		w.grp.tab.func.func1C.funcet.text = exprObj.func1Str;\n\
-		w.grp.tab.func.func2C.funcet.text = exprObj.func2Str;\n\
-		w.grp.tab.func.func3C.funcet.text = exprObj.func3Str;\n\
+		w.grp.parserModeB.ddl.selection =  parseInt(exprObj.parserModeB); \n\
+        w.grp.tab.func.cbMMode.value        = exprObj.funcModeB;\n\
+		w.grp.tab.func.func1C.funcet.text   = exprObj.func1Str;\n\
+		w.grp.tab.func.func2C.funcet.text   = exprObj.func2Str;\n\
+		w.grp.tab.func.func3C.funcet.text   = exprObj.func3Str;\n\
 		w.grp.tab.glsl.fragSh.fragShet.text = exprObj.glslExpr;\n\
-        w.grp.tab.expr.redC.redet.text =		exprObj.redExpr;\n\
-        w.grp.tab.expr.greenC.greenet.text=	exprObj.greenExpr;\n\
-        w.grp.tab.expr.blueC.blueet.text =	exprObj.blueExpr;\n\
-        w.grp.tab.expr.alphaC.alphaet.text=	exprObj.alphaExpr;\n\
+        w.grp.tab.expr.redC.redet.text      = exprObj.redExpr;\n\
+        w.grp.tab.expr.greenC.greenet.text  = exprObj.greenExpr;\n\
+        w.grp.tab.expr.blueC.blueet.text    = exprObj.blueExpr;\n\
+        w.grp.tab.expr.alphaC.alphaet.text  =exprObj.alphaExpr;\n\
         w.grp.PresetN.name.text= exprObj.presetName; \n\
         w.grp.tab.paramUI.descriptionGrp.description.text = exprObj.description; \n\
 		}\n\

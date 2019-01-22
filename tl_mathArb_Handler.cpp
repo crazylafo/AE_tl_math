@@ -46,9 +46,9 @@ CreateDefaultArb(
                 strncpy_s(arbP->blueExAcFlat ,"in_blue", 4096);
                 strncpy_s(arbP->alphaExAcFlat , "1", 4096);
                 strncpy_s(arbP->descriptionAcFlat,"Describe your preset here", 2048);
-                strncpy_s(arbP->functionOneFlat,"function 1", 4096);
-                strncpy_s(arbP->functionTwoFlat,"function 2", 4096);
-                strncpy_s(arbP->functionThreeFlat,"function 3", 4096);
+                strncpy_s(arbP->functionOneFlat,"'function1(x)', 'x/2','x'", 4096);
+                strncpy_s(arbP->functionTwoFlat,"'function2(x)', 'x/3','x'", 4096);
+                strncpy_s(arbP->functionThreeFlat,"'function3(x)', 'x/4','x'", 4096);
                 strncpy_s(arbP->Glsl_FragmentShFlat, "Fragment Shader", 4096);
 
          
@@ -78,9 +78,9 @@ CreateDefaultArb(
                 strncpy(arbP->blueExAcFlat ,"in_blue", 4096);
                 strncpy(arbP->alphaExAcFlat , "1", 4096);
                 strncpy(arbP->descriptionAcFlat,"Describe your preset here", 2048);
-                strncpy(arbP->functionOneFlat,"function 1", 4096);
-                strncpy(arbP->functionTwoFlat,"function 2", 4096);
-                strncpy(arbP->functionThreeFlat,"function 3", 4096);
+                strncpy(arbP->functionOneFlat,"'function 1(x)', 'x/2','x'", 4096);
+                strncpy(arbP->functionTwoFlat,"'function 2(x)', 'x/3','x'", 4096);
+                strncpy(arbP->functionThreeFlat,"'function 3(x)', 'x/4','x'", 4096);
                 strncpy(arbP->Glsl_FragmentShFlat, "Fragment Shader", 4096);
             #endif
                 arbP->parserModeB = false;
