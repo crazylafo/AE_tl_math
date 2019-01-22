@@ -364,6 +364,7 @@ private:
     exprtk::expression<T> expression;
     exprtk::symbol_table<T> symbol_table;
     std::shared_ptr<exprtk::function_compositor<T>> compositor_t;
+
 public:
     parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr) {
         MathInfo	*miP	= reinterpret_cast<MathInfo*>(mathRefcon);
@@ -372,14 +373,18 @@ public:
         if (!parser){
             parser = std::make_shared<exprtk::parser<T>>();
         }
+        fiP->hasErrorB = FALSE;
+        symbol_table.clear();
         if (fiP->UsesFunctionsB){
             compositor_t =std::make_shared<exprtk::function_compositor<T>>();
+
             compositor_t->add(fiP->func1str);
             compositor_t->add(fiP->func2str);
             compositor_t->add(fiP->func3str);
+            symbol_table = compositor_t->symbol_table();
         }
-        fiP->hasErrorB = FALSE;
-        symbol_table.clear();
+
+
         symbol_table.add_variable("xL",  miP->xLF);
         symbol_table.add_variable("yL",  miP->yLF);
         symbol_table.add_variable("in_red", miP->inRedF);
