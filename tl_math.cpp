@@ -44,7 +44,6 @@ GlobalSetup (
 	out_data->out_flags =  PF_OutFlag_CUSTOM_UI			|
                            PF_OutFlag_SEND_UPDATE_PARAMS_UI	|
                            PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
-                           PF_OutFlag_I_DO_DIALOG|
                            PF_OutFlag_NON_PARAM_VARY;
 
 
@@ -80,7 +79,13 @@ ParamsSetup (
 {
 	PF_Err		err		= PF_Err_NONE;
 	PF_ParamDef	def;
-    
+
+	PF_ADD_BUTTON(STR(STR_ID_BUTTON_SETUP_Param_Name),
+				  STR(STR_ID_BUTTON_SETUP_Param_Name),
+				  0,
+				  PF_ParamFlag_SUPERVISE,
+			      MATH_SETUP_DISK_ID);
+
     AEFX_CLR_STRUCT(def);
     ERR(CreateDefaultArb(in_data,
                          out_data,
@@ -218,13 +223,6 @@ ParamsSetup (
     
     out_data->num_params = MATH_NUM_PARAMS;
     
-    AEFX_SuiteScoper<PF_EffectUISuite1> effect_ui_suiteP = AEFX_SuiteScoper<PF_EffectUISuite1>(
-                                                                                               in_data,
-                                                                                               kPFEffectUISuite,
-                                                                                               kPFEffectUISuiteVersion1,
-                                                                                               out_data);
-    
-    ERR(effect_ui_suiteP->PF_SetOptionsButtonName(in_data->effect_ref, "Expressions"));
 
 
 	return err;
@@ -276,7 +274,23 @@ UpdateParameterUI(
 
 
 
+static PF_Err
+UserChangedParam(
+	PF_InData						*in_data,
+	PF_OutData						*out_data,
+	PF_ParamDef						*params[],
+	PF_LayerDef						*outputP,
+	const PF_UserChangedParamExtra	*which_hitP)
+{
+	PF_Err				err = PF_Err_NONE;
 
+	if (which_hitP->param_index == MATH_SETUP)
+	{
+		ERR(SetupDialog(in_data, out_data, params, outputP));
+	}
+
+	return err;
+}
 //math parser's functions
 static PF_FpShort
 inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpShort center_y, PF_FpShort lx,PF_FpShort ly)
@@ -889,11 +903,15 @@ EntryPointFunc (
 										params,
 										extra);
 				break;
+
+			case PF_Cmd_USER_CHANGED_PARAM:
+				err = UserChangedParam(in_data,
+					out_data,
+					params,
+					output,
+					reinterpret_cast<const PF_UserChangedParamExtra *>(extra));
+				break;
             
-                
-            case PF_Cmd_DO_DIALOG:
-                    err = PopDialog(in_data,out_data,params,output);
-                break;
 				
 			case PF_Cmd_RENDER:
 

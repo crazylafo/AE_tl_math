@@ -17,6 +17,9 @@
     <Filter Include="Script">
       <UniqueIdentifier>{cc262249-7e9d-44cc-b7c1-c24a3d80a426}</UniqueIdentifier>
     </Filter>
+    <Filter Include="cpp">
+      <UniqueIdentifier>{16773ec6-8ebb-4230-94cd-9d8281434f6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Headers\A.h">
@@ -93,9 +96,19 @@
     <ClCompile Include="..\..\..\Util\MissingSuiteError.cpp">
       <Filter>Supporting code</Filter>
     </ClCompile>
-    <ClCompile Include="..\tl_math_Strings.cpp" />
     <ClCompile Include="..\tl_math.cpp" />
-    <ClCompile Include="..\tl_mathArb_Handler.cpp" />
+    <ClCompile Include="..\tl_math_Strings.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tl_mathArb_Handler.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tl_math_Dialogs.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tl_math_iterators.cpp">
+      <Filter>cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\tl_mathPiPL.r">

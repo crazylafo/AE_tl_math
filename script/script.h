@@ -11,7 +11,7 @@
 
 std::string script_getcallBacks = "function getcallBacks(w){\n\
     var exprCb = {};\n\
-    exprCb.parserModeB   =   parseInt(w.grp.parserModeB.ddl.selection); \n\
+    exprCb.parserModeA   =   parseInt(w.grp.parserModeA.ddl.selection); \n\
     exprCb.presetName   =   w.grp.PresetN.name.text; \n\
     exprCb.description  =   w.grp.tab.paramUI.descriptionGrp.description.text; \n\
     exprCb.redExpr      =   w.grp.tab.expr.redC.redet.text;\n\
@@ -29,7 +29,7 @@ std::string script_getcallBacks = "function getcallBacks(w){\n\
 std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
     ExprObj = {\n\
         effectName   : \"tlMath\",\n\
-        parserModeB : exprCl.parserModeB, \n\
+        parserModeA : exprCl.parserModeA, \n\
         category :  \"Custom\",\n\
         presetName  : exprCl.presetName,\n\
         description : exprCl.description, \n\
@@ -69,7 +69,7 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
             if (testObj.effectName === \"tlMath\" && testObj.minimalPluginVersion <=pluginVersion){\n\
                 ExprObj.pluginVesion = testObj.pluginVesion;\n\
                 ExprObj.minimalPluginVersion = testObj.minimalPluginVersion;\n\
-                ExprObj.parserModeB  = testObj.parserModeB;\n\
+                ExprObj.parserModeA  = testObj.parserModeA;\n\
                 ExprObj.category = testObj.category;\n\
                 ExprObj.glslExpr    = testObj.glslExpr;\n\
                 ExprObj.presetName  = testObj.presetName; \n\
@@ -109,12 +109,12 @@ w.grp.alignment = ['fill', 'fill'];\n\
 w.grp.alignChildren = ['fill', 'fill'];\n\
 \n\
 //PARSER MODE\n\
-w.grp.parserModeB = w.grp.add('group');\n\
-w.grp.parserModeB.orientation = 'row';\n\
-w.grp.parserModeB.alignChildren = ['left', 'fill'];\n\
-w.grp.parserModeB.st =w.grp.parserModeB.add ('statictext', undefined, 'Parser Mode');\n\
-w.grp.parserModeB.ddl = w.grp.parserModeB.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
-w.grp.parserModeB.ddl.selection =  parseInt(exprCl.parserModeB);\n\
+w.grp.parserModeA = w.grp.add('group');\n\
+w.grp.parserModeA.orientation = 'row';\n\
+w.grp.parserModeA.alignChildren = ['left', 'fill'];\n\
+w.grp.parserModeA.st =w.grp.parserModeA.add ('statictext', undefined, 'Parser Mode');\n\
+w.grp.parserModeA.ddl = w.grp.parserModeA.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
+w.grp.parserModeA.ddl.selection =  parseInt(exprCl.parserModeA);\n\
 // \n\
 //PRESET NAME\n\
 w.grp.PresetN = w.grp.add('group');\n\
@@ -216,7 +216,7 @@ var result = JSON.stringify(result_temp);\n\
 w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
     if (exprObj.error === \"none\"){\n\
-		w.grp.parserModeB.ddl.selection =  parseInt(exprObj.parserModeB); \n\
+		w.grp.parserModeA.ddl.selection =  parseInt(exprObj.parserModeA); \n\
         w.grp.tab.func.cbMMode.value        = exprObj.funcModeB;\n\
 		w.grp.tab.func.func1C.funcet.text   = exprObj.func1Str;\n\
 		w.grp.tab.func.func2C.funcet.text   = exprObj.func2Str;\n\

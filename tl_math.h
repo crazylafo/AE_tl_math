@@ -99,7 +99,7 @@ typedef struct {
     A_char  descriptionAcFlat [4096];
     
     //Mode
-    PF_Boolean parserModeB;
+    A_long parserModeA;
     PF_Boolean UsesFunctionsB;
 	//Boolean information about chars
 	PF_Boolean NeedsPixelAroundB;
@@ -116,6 +116,7 @@ typedef struct {
 
 typedef struct {
     AEGP_PluginID	my_id;
+	std::function<PF_FpShort()> redExpr;
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
 
@@ -133,6 +134,7 @@ typedef struct {
 
 enum {
 	MATH_INPUT = 0,
+	MATH_SETUP,
     MATH_ARB_DATA,
     MATH_TOPIC_SLIDER,
 	MATH_INPONE_VAR,
@@ -156,7 +158,9 @@ enum {
 	MATH_NUM_PARAMS
 };
 
-enum {   MATH_ARB_DATA_DISK_ID =1,
+enum {
+	MATH_SETUP_DISK_ID = 1,
+	MATH_ARB_DATA_DISK_ID,
     MATH_TOPIC_SLIDER_DISK_ID,
     MATH_INPONE_VAR_DISK_ID,
     MATH_INPTWO_VAR_DISK_ID,
@@ -190,6 +194,7 @@ typedef struct  FlagsInfo {
 }FlagsInfoP;
 
 typedef struct funcTransfertInfo {
+	
 	std::function<PF_FpShort()> redExpr;
 	std::function<PF_FpShort()> greenExpr;
 	std::function<PF_FpShort()> blueExpr;
@@ -351,7 +356,7 @@ LineIteration16Func ( void *refconPV,
                       A_long yL);
 
 PF_Err
-PopDialog(
+SetupDialog(
           PF_InData        *in_data,
           PF_OutData        *out_data,
           PF_ParamDef        *params[],

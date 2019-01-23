@@ -108,7 +108,7 @@ AEGP_SetParamStreamValue(PF_InData            *in_data,
 }
 
 PF_Err
-PopDialog(
+SetupDialog(
           PF_InData        *in_data,
           PF_OutData        *out_data,
           PF_ParamDef        *params[],
@@ -144,7 +144,7 @@ PopDialog(
     std::string tempfunc2S;
     std::string tempfunc3S;
 
-    PF_Boolean tempParserModeB;
+    A_long		tempParserModeA;
     PF_Boolean  tempFuncModeB;
 
 
@@ -165,7 +165,7 @@ PopDialog(
         AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
-            tempParserModeB =arbInP->parserModeB;
+            tempParserModeA =arbInP->parserModeA;
             tempFuncModeB = arbInP->UsesFunctionsB;
 
             tempRedS.append(arbInP->redExAcFlat);
@@ -196,7 +196,7 @@ PopDialog(
 
 
     nlohmann::json  jToJs;
-    jToJs["parserModeB"] = tempParserModeB;
+    jToJs["parserModeA"] = tempParserModeA;
     jToJs["presetName"] =tempName;
     jToJs["description"]=tempDescription;
     jToJs["redExpr"]=tempRedS;
@@ -250,9 +250,11 @@ PopDialog(
 
         nlohmann::json  jresult = nlohmann::json::parse(resultStr);
 
-
-        arbOutP->parserModeB =   jresult["/parserModeB"_json_pointer];
-        arbOutP->UsesFunctionsB = jresult["/funcModeB"_json_pointer];
+		bool tempParserModeB, tempUsesFunctionsB;
+		
+		arbOutP->parserModeA = jresult["/parserModeA"_json_pointer];
+		tempUsesFunctionsB = jresult["/funcModeB"_json_pointer];
+        arbOutP->UsesFunctionsB = tempUsesFunctionsB;
 
         std::string redResultStr =   jresult["/redExpr"_json_pointer];
         std::string greenResultStr = jresult["/greenExpr"_json_pointer];
@@ -277,7 +279,7 @@ PopDialog(
 
         strncpy_s( arbOutP->functionOneFlat, func1Str.c_str(), func1Str.length()+1);
         strncpy_s( arbOutP->functionTwoFlat, func2Str.c_str(), func2Str.length()+1);
-        strncpy_s( arbOutP->functionThreeFlat, func1-3Str.c_str(), func3Str.length()+1);
+        strncpy_s( arbOutP->functionThreeFlat, func3Str.c_str(), func3Str.length()+1);
         strncpy_s( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
 
         strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
@@ -315,7 +317,7 @@ PopDialog(
         strncpy_s( arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length()+1);
 
         strncpy_s( arbOutP->functionOneAc, func1Str.c_str(), func1Str.length()+1);
-        strncpy_s( arbOutP->functionTwoac, func2Str.c_str(), func2Str.length()+1);
+        strncpy_s( arbOutP->functionTwoAc, func2Str.c_str(), func2Str.length()+1);
         strncpy_s( arbOutP->functionThreeAc, func3Str.c_str(), func3Str.length()+1);
         strncpy_s( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
         strncpy_s( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);

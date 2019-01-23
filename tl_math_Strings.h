@@ -5,6 +5,7 @@ typedef enum {
 	StrID_NONE, 
 	StrID_Name,
 	StrID_Description,
+	STR_ID_BUTTON_SETUP_Param_Name,
     StrID_TOPIC_SLIDER_Param_Name,
 	StrID_INPUTONE_Param_Name,
     StrID_INPUTTWO_Param_Name,

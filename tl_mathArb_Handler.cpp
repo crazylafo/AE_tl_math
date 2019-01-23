@@ -83,7 +83,7 @@ CreateDefaultArb(
                 strncpy(arbP->functionThreeFlat,"'function 3(x)', 'x/4','x'", 4096);
                 strncpy(arbP->Glsl_FragmentShFlat, "Fragment Shader", 4096);
             #endif
-                arbP->parserModeB = false;
+                arbP->parserModeA = 0;
 				arbP->NeedsPixelAroundB = false;
 				arbP->PixelsCallExternalInputB = false;
 				arbP->NeedsLumaB = false;
@@ -229,7 +229,7 @@ Arb_Compare(
 			total_aV.emplace_back (first_arbP->NeedsLumaB);
 			total_aV.emplace_back (first_arbP->PresetHasWideInputB);
             
-            total_aV.emplace_back (first_arbP->parserModeB);
+            total_aV.emplace_back (first_arbP->parserModeA);
             total_aV.emplace_back ( strlen(first_arbP->functionOneAc));
             total_aV.emplace_back ( strlen(first_arbP->functionTwoAc));
             total_aV.emplace_back ( strlen(first_arbP->functionThreeAc));
@@ -271,7 +271,7 @@ Arb_Compare(
 			total_bV.emplace_back ( second_arbP->NeedsLumaB);
 			total_bV.emplace_back ( second_arbP->PresetHasWideInputB);
             
-            total_bV.emplace_back (first_arbP->parserModeB);
+            total_bV.emplace_back (first_arbP->parserModeA);
             total_bV.emplace_back ( strlen(second_arbP->functionOneAc));
             total_bV.emplace_back ( strlen(second_arbP->functionTwoAc));
             total_bV.emplace_back ( strlen(second_arbP->functionThreeAc));

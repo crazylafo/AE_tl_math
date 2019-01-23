@@ -14,6 +14,7 @@ TableString		g_strs[StrID_NUMTYPES] = {
 	StrID_NONE,						    "",
 	StrID_Name,						    "tl Maths",
 	StrID_Description,				    "Execute Math operations in the pixel world.",
+	STR_ID_BUTTON_SETUP_Param_Name,     "SETUP",
     StrID_TOPIC_SLIDER_Param_Name,      "Variables",
     StrID_INPUTONE_Param_Name,          "variable 1",
     StrID_INPUTTWO_Param_Name,          "variable 2",
