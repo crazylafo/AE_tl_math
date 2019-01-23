@@ -178,15 +178,15 @@ enum {   MATH_ARB_DATA_DISK_ID =1,
     MATH_END_TOPIC_INPUTS_DISK_ID,
 };
 
-typedef struct FlagsInfo {
-	PF_Boolean NeedsPixelAroundB;
-	PF_Boolean PixelsCallExternalInputB;
-	PF_Boolean NeedsLumaB;
-	PF_Boolean PresetHasWideInput;
-    PF_Boolean CallsAEGP_CompB;
-    PF_Boolean CallsAEGP_layerB;
-    PF_Boolean UsesFunctionsB;
+typedef struct  FlagsInfo {
 
+        PF_Boolean NeedsPixelAroundB;
+        PF_Boolean PixelsCallExternalInputB;
+        PF_Boolean NeedsLumaB;
+        PF_Boolean PresetHasWideInput;
+        PF_Boolean CallsAEGP_CompB;
+        PF_Boolean CallsAEGP_layerB;
+        PF_Boolean UsesFunctionsB;
 }FlagsInfoP;
 
 typedef struct funcTransfertInfo {
@@ -349,6 +349,29 @@ LineIteration16Func ( void *refconPV,
                       void *refconFunc,
 					  void *refconFlags,
                       A_long yL);
+
+PF_Err
+PopDialog(
+          PF_InData        *in_data,
+          PF_OutData        *out_data,
+          PF_ParamDef        *params[],
+          PF_LayerDef        *output);
+
+PF_Err
+ShiftImage16 (
+              void         *refcon,
+              A_long         xL,
+              A_long         yL,
+              PF_Pixel16     *inP,
+              PF_Pixel16     *outP);
+PF_Err
+ShiftImage8 (
+             void         *refcon,
+             A_long         xL,
+             A_long         yL,
+             PF_Pixel     *inP,
+             PF_Pixel     *outP);
+
 //math parser's functions
 static PF_FpShort
 inline parseDrawRect(PF_FpShort xL,
