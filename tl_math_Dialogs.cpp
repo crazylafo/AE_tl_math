@@ -250,7 +250,7 @@ SetupDialog(
 
         nlohmann::json  jresult = nlohmann::json::parse(resultStr);
 
-		bool tempParserModeB, tempUsesFunctionsB;
+		bool tempUsesFunctionsB;
 		
 		arbOutP->parserModeA = jresult["/parserModeA"_json_pointer];
 		tempUsesFunctionsB = jresult["/funcModeB"_json_pointer];

@@ -64,6 +64,35 @@ ShiftImage16 (
     return err;
 }
 
+
+PF_Err
+ShiftImage32 (
+              void         *refcon,
+              A_long         xL,
+              A_long         yL,
+              PF_Pixel32     *inP,
+              PF_Pixel32     *outP)
+{
+    OffInfo    *oiP        = (OffInfo*)refcon;
+    PF_InData            *in_data    = &(oiP->in_data);
+    PF_Err                err            = PF_Err_NONE;
+    PF_Fixed            new_xFi         = 0,
+    new_yFi         = 0;
+
+    AEGP_SuiteHandler suites(in_data->pica_basicP);
+
+    // Resample original image at offset point.
+
+    new_xFi = PF_Fixed (((A_long) xL<<16) + oiP->x_offFi);
+    new_yFi = PF_Fixed (((A_long) yL<<16) + oiP->y_offFi);
+    ERR(suites.SamplingFloatSuite1()->subpixel_sample_float(in_data->effect_ref,
+                                                     new_xFi,
+                                                     new_yFi,
+                                                     &oiP->samp_pb,
+                                                     outP));
+    return err;
+}
+
 PF_Err
 LineIteration8Func ( void *refconPV,
                     void *refconFunc,

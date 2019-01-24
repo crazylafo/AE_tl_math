@@ -39,6 +39,7 @@
 #include "AEFX_SuiteHelper.h"
 #include "AE_EffectSuites.h"
 #include "tl_math_Strings.h"
+#include "Smart_Utils.h" // for smartfx
 
 #include <cstdio>
 #include <string>
@@ -362,6 +363,13 @@ SetupDialog(
           PF_ParamDef        *params[],
           PF_LayerDef        *output);
 
+PF_Err
+ShiftImage32 (
+              void         *refcon,
+              A_long         xL,
+              A_long         yL,
+              PF_Pixel32     *inP,
+              PF_Pixel32     *outP);
 PF_Err
 ShiftImage16 (
               void         *refcon,
