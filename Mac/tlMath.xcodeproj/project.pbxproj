@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0412BD6F21F8887B003A5675 /* tl_math_Dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0412BD6E21F8887B003A5675 /* tl_math_Dialogs.cpp */; };
 		041EA84221AD4C9B003F8577 /* script in Resources */ = {isa = PBXBuildFile; fileRef = 041EA84121AD4C9B003F8577 /* script */; };
 		041EA84421AD4CA1003F8577 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = 041EA84321AD4CA1003F8577 /* lib */; };
+		04AF180D21F8C083007A3B55 /* tl_math_iterators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04AF180C21F8C083007A3B55 /* tl_math_iterators.cpp */; };
 		04DFF0622142A11000DF80E6 /* tl_mathArb_Handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */; };
 		7EF36FB716F29701002A3CB3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EF36FB616F29701002A3CB3 /* Cocoa.framework */; };
 		D0FE575F0993C4E900139A60 /* tl_math_Strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FE575A0993C4E900139A60 /* tl_math_Strings.cpp */; };
@@ -19,8 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0412BD6E21F8887B003A5675 /* tl_math_Dialogs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_Dialogs.cpp; path = ../tl_math_Dialogs.cpp; sourceTree = "<group>"; };
 		041EA84121AD4C9B003F8577 /* script */ = {isa = PBXFileReference; lastKnownFileType = folder; name = script; path = ../script; sourceTree = "<group>"; };
 		041EA84321AD4CA1003F8577 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../lib; sourceTree = "<group>"; };
+		04AF180C21F8C083007A3B55 /* tl_math_iterators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_iterators.cpp; path = ../tl_math_iterators.cpp; sourceTree = "<group>"; };
 		04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_mathArb_Handler.cpp; path = ../tl_mathArb_Handler.cpp; sourceTree = "<group>"; };
 		7EF36FB616F29701002A3CB3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		7EF36FB816F29807002A3CB3 /* tl_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math.h; path = ../tl_math.h; sourceTree = "<group>"; };
@@ -49,6 +53,8 @@
 		C4E6187C095A3C800012CA3F = {
 			isa = PBXGroup;
 			children = (
+				04AF180C21F8C083007A3B55 /* tl_math_iterators.cpp */,
+				0412BD6E21F8887B003A5675 /* tl_math_Dialogs.cpp */,
 				D0FE575C0993C4E900139A60 /* tl_math.cpp */,
 				7EF36FB816F29807002A3CB3 /* tl_math.h */,
 				04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */,
@@ -108,7 +114,7 @@
 		C4E6187E095A3C800012CA3F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 1010;
 			};
 			buildConfigurationList = C4E6187F095A3C800012CA3F /* Build configuration list for PBXProject "tlMath" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -155,11 +161,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04AF180D21F8C083007A3B55 /* tl_math_iterators.cpp in Sources */,
 				D0FE575F0993C4E900139A60 /* tl_math_Strings.cpp in Sources */,
 				D0FE57600993C4E900139A60 /* tl_math.cpp in Sources */,
 				D0FE579D0993C5E500139A60 /* AEGP_SuiteHandler.cpp in Sources */,
 				D0FE579E0993C5E500139A60 /* MissingSuiteError.cpp in Sources */,
 				04DFF0622142A11000DF80E6 /* tl_mathArb_Handler.cpp in Sources */,
+				0412BD6F21F8887B003A5675 /* tl_math_Dialogs.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,21 +177,44 @@
 		042DF053219ED98300EA6103 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_MODEL_TUNING = "";
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
 				GCC_REUSE_STRINGS = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
 				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_SHADOW = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
@@ -206,6 +237,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_MODEL_TUNING = G5;
 				GENERATE_PKGINFO_FILE = YES;
@@ -221,21 +253,44 @@
 		C4E61880095A3C800012CA3F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_MODEL_TUNING = "";
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
 				GCC_REUSE_STRINGS = NO;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_THREADSAFE_STATICS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
 				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_SHADOW = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
@@ -258,6 +313,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_ENABLE_OBJC_WEAK = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_MODEL_TUNING = G5;
 				GENERATE_PKGINFO_FILE = YES;
