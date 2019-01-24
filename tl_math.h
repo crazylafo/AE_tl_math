@@ -357,6 +357,12 @@ LineIteration16Func ( void *refconPV,
                       A_long yL);
 
 PF_Err
+LineIteration32Func(void *refconPV,
+					void *refconFunc,
+					void *refconFlags,
+					A_long yL);
+
+PF_Err
 SetupDialog(
           PF_InData        *in_data,
           PF_OutData        *out_data,
@@ -490,6 +496,8 @@ public:
     void render_8(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
     void render_16(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+
+	void render_32(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
     
 };

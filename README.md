@@ -6,8 +6,6 @@ version of the https://opensource.org/licenses/gpl-3.0.html.
 
 The plugin uses Exprtk by Arash Partow
 https://github.com/ArashPartow/exprtk
-
-
 The plugin uses JSON for Modern C++
 https://nlohmann.github.io/json/
 
@@ -50,18 +48,11 @@ Alpha 04 (V1.12)
  -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
  
  
- 
- 
 table of contents
-
 01-HOW TO INSTALL
-
 02-BASIC EXEMPLE
-
 03-GRAMMAR RULES
-
 04-VARIABLES
-
 05-FUNCTIONS
  
  

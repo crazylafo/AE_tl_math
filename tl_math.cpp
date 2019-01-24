@@ -41,15 +41,15 @@ GlobalSetup (
 										BUILD_VERSION);
 
     
-	out_data->out_flags =  PF_OutFlag_CUSTOM_UI			|
-                           PF_OutFlag_SEND_UPDATE_PARAMS_UI	|
-                           PF_OutFlag_DEEP_COLOR_AWARE|	// just 16bpc, not 32bpc
-                           PF_OutFlag_NON_PARAM_VARY|
-                           PF_OutFlag2_FLOAT_COLOR_AWARE|
-                           PF_OutFlag2_SUPPORTS_SMART_RENDER;
+	out_data->out_flags = PF_OutFlag_CUSTOM_UI |
+		PF_OutFlag_SEND_UPDATE_PARAMS_UI |
+		PF_OutFlag_DEEP_COLOR_AWARE |	// just 16bpc, not 32bpc
+		PF_OutFlag_NON_PARAM_VARY ;
 
 
-	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS;
+	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS |
+							PF_OutFlag2_FLOAT_COLOR_AWARE |
+							PF_OutFlag2_SUPPORTS_SMART_RENDER;
     
 
     
@@ -350,9 +350,17 @@ PreRender(
                                   in_data->time_scale,
                                   &arb_param));
 
+			PF_ParamDef extlayer_param;
+			AEFX_CLR_STRUCT(extlayer_param);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_INP_LAYER_ONE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&extlayer_param));
 
 
-            if ( flagsP.CallsAEGP_CompB ||flagsP.CallsAEGP_layerB  ){
+
                 AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
                                                                                                                  kAEGPPFInterfaceSuite,
                                                                                                                  kAEGPPFInterfaceSuiteVersion1,
@@ -387,30 +395,27 @@ PreRender(
                 AEFX_CLR_STRUCT(width);
                 AEFX_CLR_STRUCT(height);
                 itemSuite->AEGP_GetItemDimensions(itemH, &width, &height);
-                miP.compWidthF = PF_FpLong(width);
-                miP.compHeightF = PF_FpLong(height);
+                miP->compWidthF = PF_FpLong(width);
+                miP->compHeightF = PF_FpLong(height);
                 AEGP_DownsampleFactor dsp;
                 compSuite->AEGP_GetCompDownsampleFactor(compH, &dsp);
-                miP.compWidthF *= dsp.xS;
-                miP.compHeightF *= dsp.yS;
+                miP->compWidthF *= dsp.xS;
+                miP->compHeightF *= dsp.yS;
                 PF_FpLong fpsF;
                 compSuite->AEGP_GetCompFramerate(compH,&fpsF);
-                miP.compFpsF = static_cast<float>( fpsF);
+                miP->compFpsF = static_cast<float>( fpsF);
 
                 layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currTime);
                 StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_POSITION, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValP, &strTypeP);
-                miP.layerPos_X = strValP.three_d.x;
-                miP.layerPos_Y = strValP.three_d.y;
-                miP.layerPos_Z = strValP.three_d.z;
+                miP->layerPos_X = strValP.three_d.x;
+                miP->layerPos_Y = strValP.three_d.y;
+                miP->layerPos_Z = strValP.three_d.z;
                 StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
-                miP.layerScale_X= strValSP.three_d.x;
-                miP.layerScale_Y = strValSP.three_d.z;
-                miP.layerScale_Z = strValSP.three_d.z;
-                 }
+                miP->layerScale_X= strValSP.three_d.x;
+				miP->layerScale_Y = strValSP.three_d.z;
+                miP->layerScale_Z = strValSP.three_d.z;
 
 
-
-             ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
             AEFX_CLR_STRUCT(in_result);
 
             if (!err){
@@ -490,18 +495,18 @@ SmartRender(
 
             //CHECKOUT PARAMS
             PF_ParamDef  setup_param,
-
-            var1_param,
-            var2_param,
-            var3_param,
-            var4_param,
-            point1_param,
-            point2_param,
-            color1_param,
-            color2_param,
-            extlayer_param,
-            extlayer_toff_param,
-            extlayer_poff_param;
+						arb_param,
+						var1_param,
+						var2_param,
+						var3_param,
+						var4_param,
+						point1_param,
+						point2_param,
+						color1_param,
+						color2_param,
+						extlayer_param,
+						extlayer_toff_param,
+						extlayer_poff_param;
 
 
             AEFX_CLR_STRUCT(setup_param);
@@ -658,7 +663,7 @@ SmartRender(
             miP->colorTwo[2] = tempFloat2.blue;
 
             //CALL ARB
-            PF_Handle        arbH            = arb_param.u.arb_d.value;
+            arbH            = arb_param.u.arb_d.value;
             arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
             if (arbP) {
                 m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
@@ -834,8 +839,8 @@ SmartRender(
             AEFX_CLR_STRUCT(part_length);
             AEFX_CLR_STRUCT(num_thrd);
             AEFX_CLR_STRUCT(lastPart_length);
-            miP.inW = *inputP;
-            miP.outW = *outputP;
+            miP->inW = *inputP;
+            miP->outW = *outputP;
 
 
             ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
@@ -843,25 +848,41 @@ SmartRender(
             lastPart_length =  part_length + (outputP->height -  (part_length*num_thrd));
 
             threaded_render* thRenderPtr = new threaded_render();
-            if (PF_WORLD_IS_DEEP(outputP)) {
-                AEFX_CLR_STRUCT(workers_thrds);
-                for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-                    workers_thrds.emplace_back(std::thread(&threaded_render::render_16, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id,num_thrd, part_length,lastPart_length));
-                }
-            }
-            else {
-                AEFX_CLR_STRUCT(workers_thrds);
-                for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-                    workers_thrds.emplace_back(std::thread(&threaded_render::render_8, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id,num_thrd, part_length,lastPart_length));
-                }
+			switch (format) {
 
-            }
+			case PF_PixelFormat_ARGB128:
+				AEFX_CLR_STRUCT(workers_thrds);
+				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+					workers_thrds.emplace_back(std::thread(&threaded_render::render_32, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id, num_thrd, part_length, lastPart_length));
+				}
+				break;
+				break;
+
+			case PF_PixelFormat_ARGB64:
+				AEFX_CLR_STRUCT(workers_thrds);
+				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+					workers_thrds.emplace_back(std::thread(&threaded_render::render_16, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id, num_thrd, part_length, lastPart_length));
+				}
+				break;
+
+			case PF_PixelFormat_ARGB32:
+				AEFX_CLR_STRUCT(workers_thrds);
+				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+					workers_thrds.emplace_back(std::thread(&threaded_render::render_8, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id, num_thrd, part_length, lastPart_length));
+				}
+
+				break;
+
+			default:
+				err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+				break;
+			}
 
             for (auto&  t :  workers_thrds){
                 t.join();
             }
             delete thRenderPtr;
-            outputP = &miP.outW;
+            outputP = &miP->outW;
 
 
             // CALL GLSL

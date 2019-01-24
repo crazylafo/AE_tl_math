@@ -109,6 +109,9 @@
     <ClCompile Include="..\tl_math_iterators.cpp">
       <Filter>cpp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Util\Smart_Utils.cpp">
+      <Filter>Headers\AE</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\tl_mathPiPL.r">

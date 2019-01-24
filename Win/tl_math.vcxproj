@@ -373,6 +373,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp" />
     <ClCompile Include="..\..\..\Util\MissingSuiteError.cpp" />
+    <ClCompile Include="..\..\..\Util\Smart_Utils.cpp" />
     <ClCompile Include="..\tl_math.cpp" />
     <ClCompile Include="..\tl_mathArb_Handler.cpp" />
     <ClCompile Include="..\tl_math_Dialogs.cpp" />
