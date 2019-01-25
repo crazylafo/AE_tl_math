@@ -10,6 +10,7 @@
 		0412BD6F21F8887B003A5675 /* tl_math_Dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0412BD6E21F8887B003A5675 /* tl_math_Dialogs.cpp */; };
 		041EA84221AD4C9B003F8577 /* script in Resources */ = {isa = PBXBuildFile; fileRef = 041EA84121AD4C9B003F8577 /* script */; };
 		041EA84421AD4CA1003F8577 /* lib in Resources */ = {isa = PBXBuildFile; fileRef = 041EA84321AD4CA1003F8577 /* lib */; };
+		0474B36021FA2A2100ED30A1 /* Smart_Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0474B35F21FA2A2100ED30A1 /* Smart_Utils.cpp */; };
 		04AF180D21F8C083007A3B55 /* tl_math_iterators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04AF180C21F8C083007A3B55 /* tl_math_iterators.cpp */; };
 		04DFF0622142A11000DF80E6 /* tl_mathArb_Handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */; };
 		7EF36FB716F29701002A3CB3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EF36FB616F29701002A3CB3 /* Cocoa.framework */; };
@@ -24,6 +25,7 @@
 		0412BD6E21F8887B003A5675 /* tl_math_Dialogs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_Dialogs.cpp; path = ../tl_math_Dialogs.cpp; sourceTree = "<group>"; };
 		041EA84121AD4C9B003F8577 /* script */ = {isa = PBXFileReference; lastKnownFileType = folder; name = script; path = ../script; sourceTree = "<group>"; };
 		041EA84321AD4CA1003F8577 /* lib */ = {isa = PBXFileReference; lastKnownFileType = folder; name = lib; path = ../lib; sourceTree = "<group>"; };
+		0474B35F21FA2A2100ED30A1 /* Smart_Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Smart_Utils.cpp; path = ../../../Util/Smart_Utils.cpp; sourceTree = "<group>"; };
 		04AF180C21F8C083007A3B55 /* tl_math_iterators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_iterators.cpp; path = ../tl_math_iterators.cpp; sourceTree = "<group>"; };
 		04DFF0612142A11000DF80E6 /* tl_mathArb_Handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_mathArb_Handler.cpp; path = ../tl_mathArb_Handler.cpp; sourceTree = "<group>"; };
 		7EF36FB616F29701002A3CB3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
@@ -81,6 +83,7 @@
 				041EA84121AD4C9B003F8577 /* script */,
 				7EF36FB616F29701002A3CB3 /* Cocoa.framework */,
 				D0FE579A0993C5E500139A60 /* AEGP_SuiteHandler.cpp */,
+				0474B35F21FA2A2100ED30A1 /* Smart_Utils.cpp */,
 				D0FE579B0993C5E500139A60 /* AEGP_SuiteHandler.h */,
 				D0FE579C0993C5E500139A60 /* MissingSuiteError.cpp */,
 			);
@@ -168,6 +171,7 @@
 				D0FE579E0993C5E500139A60 /* MissingSuiteError.cpp in Sources */,
 				04DFF0622142A11000DF80E6 /* tl_mathArb_Handler.cpp in Sources */,
 				0412BD6F21F8887B003A5675 /* tl_math_Dialogs.cpp in Sources */,
+				0474B36021FA2A2100ED30A1 /* Smart_Utils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
