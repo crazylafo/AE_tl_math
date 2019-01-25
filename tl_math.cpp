@@ -42,14 +42,17 @@ GlobalSetup (
 
     
 	out_data->out_flags = PF_OutFlag_CUSTOM_UI |
+		PF_OutFlag_PIX_INDEPENDENT |
 		PF_OutFlag_SEND_UPDATE_PARAMS_UI |
+		PF_OutFlag_WIDE_TIME_INPUT |
 		PF_OutFlag_DEEP_COLOR_AWARE |	// just 16bpc, not 32bpc
 		PF_OutFlag_NON_PARAM_VARY ;
 
 
 	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS |
 							PF_OutFlag2_FLOAT_COLOR_AWARE |
-							PF_OutFlag2_SUPPORTS_SMART_RENDER;
+							PF_OutFlag2_SUPPORTS_SMART_RENDER | 
+							PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
     
 
     
@@ -294,7 +297,7 @@ UserChangedParam(
 	return err;
 }
 //math parser's functions
-static PF_FpShort
+PF_FpShort
 inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpShort center_y, PF_FpShort lx,PF_FpShort ly)
 {
 
@@ -311,6 +314,12 @@ inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpSho
 	}
 }
 
+PF_PixelFloat
+inline parsePixelFloatAccess( PF_PixelFloat *inP, A_long xoff, A_long yoff)
+{
+	return inP+ xoff +(yoff*(inW.rowbytes / sizeof(PF_Pixel))
+
+}
 
 
 static PF_Err
@@ -630,13 +639,6 @@ SmartRender(
                                   in_data->time_scale,
                                   &color2_param));
 
-
-
-
-
-
-
-
             //layer size
             miP->scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den;
             miP->scale_y = in_data->downsample_y.num*in_data->pixel_aspect_ratio.den/ (float)in_data->downsample_y.den;
@@ -825,8 +827,6 @@ SmartRender(
                 }
 
             }
-
-
 
             //CALL PARSER MODE
             MathInfo    miPP;
@@ -1188,13 +1188,22 @@ QueryDynamicFlags(
 	m_ArbData		*arbP = NULL;
 	arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
 	if (arbP && !err) {
-		if (!arbP->PresetHasWideInputB) {
-            out_data->out_flags  &=  PF_OutFlag_WIDE_TIME_INPUT;
-            out_data->out_flags  &=  PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
-        }
-        if (!arbP->NeedsPixelAroundB){
-            out_data->out_flags &= PF_OutFlag_PIX_INDEPENDENT;
-        }
+		
+		if (arbP->PresetHasWideInputB) {
+			out_data->out_flags &= ~PF_OutFlag_WIDE_TIME_INPUT;
+            out_data->out_flags2  &= ~PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
+		}
+		else {
+			out_data->out_flags &= PF_OutFlag_WIDE_TIME_INPUT;
+			out_data->out_flags2 &= PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
+		}
+        if (arbP->NeedsPixelAroundB){
+			out_data->out_flags &= ~PF_OutFlag_PIX_INDEPENDENT;
+		}
+		else {
+			out_data->out_flags |= PF_OutFlag_PIX_INDEPENDENT;
+			
+		}
 		
 
 	}
