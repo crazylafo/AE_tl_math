@@ -97,25 +97,28 @@ PF_Err
 LineIteration8Func ( void *refconPV,
                     void *refconFunc,
                     void *refconFlags,
+                    void *refconWorld,
                     A_long yL)
 {
     PF_Err err = PF_Err_NONE;
-    MathInfo    *miP    = reinterpret_cast<MathInfo*>(refconPV);
-    funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
-    FlagsInfoP *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
-    PF_EffectWorld inW = miP->inW;//cast input buffer here.
-    PF_EffectWorld outW = miP->outW;//cast output buffer here.
+    MathInfo           *miP    = reinterpret_cast<MathInfo*>(refconPV);
+    funcTransfertInfo  *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
+    FlagsInfoP         *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
+    WorldTransfertInfo *wtiP = reinterpret_cast<WorldTransfertInfo*>(refconWorld);
+    PF_EffectWorld inW = wtiP->inW;//cast input buffer here.
+    PF_EffectWorld outW = wtiP->outW;//cast output buffer here.
+
     PF_EffectWorld extW;
     PF_Pixel8 *bop_extP;
     if (flagsP->PixelsCallExternalInputB){
-        extW = miP->extLW;
+        extW = wtiP->extLW;
         //external layer world
         bop_extP = reinterpret_cast<PF_Pixel8*>(extW.data) + (extW.rowbytes* yL / sizeof(PF_Pixel));
     }
 
     PF_FpShort  red_result, green_result, blue_result, alpha_result;
     PF_Pixel8 *bop_outP = reinterpret_cast<PF_Pixel8*>(outW.data)+ (outW.rowbytes* yL / sizeof(PF_Pixel)),
-    *bop_inP = reinterpret_cast<PF_Pixel8*>(inW.data)+ (inW.rowbytes* yL / sizeof(PF_Pixel));
+               *bop_inP = reinterpret_cast<PF_Pixel8*>(inW.data)+ (inW.rowbytes* yL / sizeof(PF_Pixel));
     AEFX_CLR_STRUCT(miP->yLF);
     miP->yLF = PF_FpShort(yL);
 
@@ -266,18 +269,21 @@ PF_Err
 LineIteration16Func(void *refconPV,
                     void *refconFunc,
                     void *refconFlags,
+                    void *refconWorld,
                     A_long yL)
 {
     PF_Err err = PF_Err_NONE;
-    MathInfo    *miP = reinterpret_cast<MathInfo*>(refconPV);
+    MathInfo*   miP = reinterpret_cast<MathInfo*>(refconPV);
     funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
     FlagsInfoP *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
-    PF_EffectWorld inW = miP->inW;//cast input buffer here.
-    PF_EffectWorld outW = miP->outW;//cast output buffer here.
+    WorldTransfertInfo *wtiP = reinterpret_cast<WorldTransfertInfo*>(refconWorld);
+    PF_EffectWorld inW = wtiP->inW;//cast input buffer here.
+    PF_EffectWorld outW = wtiP->outW;//cast output buffer here.
+
     PF_EffectWorld extW;
     PF_Pixel16 *bop_extP;
     if (flagsP->PixelsCallExternalInputB) {
-        extW = miP->extLW;
+        extW = wtiP->extLW;
         //external layer world
         bop_extP = reinterpret_cast<PF_Pixel16*>(extW.data) + (extW.rowbytes* yL / sizeof(PF_Pixel16));
     }
@@ -436,26 +442,29 @@ LineIteration16Func(void *refconPV,
 
 PF_Err
 LineIteration32Func(void *refconPV,
-	void *refconFunc,
-	void *refconFlags,
+                    void *refconFunc,
+                    void *refconFlags,
+                    void *refconWorld,
 	A_long yL)
 {
 	PF_Err err = PF_Err_NONE;
 	MathInfo    *miP = reinterpret_cast<MathInfo*>(refconPV);
 	funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
 	FlagsInfoP *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
-	PF_EffectWorld inW = miP->inW;//cast input buffer here.
-	PF_EffectWorld outW = miP->outW;//cast output buffer here.
+    WorldTransfertInfo *wtiP = reinterpret_cast<WorldTransfertInfo*>(refconWorld);
+    PF_EffectWorld inW = wtiP->inW;//cast input buffer here.
+    PF_EffectWorld outW = wtiP->outW;//cast output buffer here.
+    
 	PF_EffectWorld extW;
 	PF_PixelFloat *bop_extP;
 	if (flagsP->PixelsCallExternalInputB) {
-		extW = miP->extLW;
+		extW = wtiP->extLW;
 		//external layer world
 		bop_extP = reinterpret_cast<PF_PixelFloat*>(extW.data) + (extW.rowbytes* yL / sizeof(PF_PixelFloat));
 	}
 	PF_FpShort  red_result, green_result, blue_result, alpha_result;
 	PF_PixelFloat *bop_outP = reinterpret_cast<PF_PixelFloat*>(outW.data) + (outW.rowbytes* yL / sizeof(PF_PixelFloat)),
-		*bop_inP = reinterpret_cast<PF_PixelFloat*>(inW.data) + (inW.rowbytes* yL / sizeof(PF_PixelFloat));
+                  *bop_inP = reinterpret_cast<PF_PixelFloat*>(inW.data) + (inW.rowbytes* yL / sizeof(PF_PixelFloat));
 	AEFX_CLR_STRUCT(miP->yLF);
 	miP->yLF = PF_FpShort(yL);
 	for (A_long xL = 0; xL < inW.width; xL++) {
@@ -587,10 +596,10 @@ LineIteration32Func(void *refconPV,
 			AEFX_CLR_STRUCT(alpha_result);
 			alpha_result = MIN(fiP->alphaExpr(), 1);
 
-			bop_outP->alpha = A_u_short(alpha_result);
-			bop_outP->red = A_u_short(red_result);
-			bop_outP->green = A_u_short(green_result );
-			bop_outP->blue = A_u_short(blue_result);
+			bop_outP->alpha =alpha_result;
+			bop_outP->red = red_result;
+			bop_outP->green = green_result;
+			bop_outP->blue = blue_result;
 
 		}
 		else {
@@ -607,7 +616,7 @@ LineIteration32Func(void *refconPV,
 	return err;
 }
 
-void threaded_render::render_8(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void threaded_render::render_8(void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
     curNumIter =numIter;
     if ( thread_idxL == (numThreads-1)){
@@ -618,11 +627,11 @@ void threaded_render::render_8(void *refconPV, void *refconFunc, void *refconFla
     for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
     {
         A_long yL =  thread_idxL*numIter+iterIndex;
-        LineIteration8Func(refconPV, refconFunc, refconFlags, yL);
+        LineIteration8Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
     }
 }
 
-void threaded_render::render_16(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void threaded_render::render_16(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
     curNumIter =numIter;
     if ( thread_idxL == (numThreads-1)){
@@ -632,12 +641,12 @@ void threaded_render::render_16(void *refconPV, void *refconFunc, void *refconFl
     for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
     {
         A_long yL =  thread_idxL*numIter+iterIndex;
-        LineIteration16Func(refconPV,refconFunc, refconFlags, yL);
+        LineIteration16Func(refconPV,refconFunc, refconFlags,refconWorld, yL);
     }
 }
 
 
-void threaded_render::render_32(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void threaded_render::render_32(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
 	curNumIter = numIter;
 	if (thread_idxL == (numThreads - 1)) {
@@ -647,6 +656,6 @@ void threaded_render::render_32(void *refconPV, void *refconFunc, void *refconFl
 	for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
 	{
 		A_long yL = thread_idxL * numIter + iterIndex;
-		LineIteration32Func(refconPV, refconFunc, refconFlags, yL);
+		LineIteration32Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
 	}
 }

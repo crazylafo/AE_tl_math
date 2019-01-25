@@ -29,9 +29,9 @@ CreateDefaultArb(
                 strncpy_s(arbP->alphaExAc, "1", 4096);
                 strncpy_s(arbP->presetNameAc,"Preset Name", 32);
                 strncpy_s(arbP->descriptionAc,"Describe your preset here", 2048);
-                strncpy_s(arbP->functionOneAc, "function 1", 4096);
-                strncpy_s(arbP->functionTwoAc, "function 2", 4096);
-                strncpy_s(arbP->functionThreeAc, "function 3", 4096);
+                strncpy_s(arbP->functionOneAc, "function1", 4096);
+                strncpy_s(arbP->functionTwoAc, "function2", 4096);
+                strncpy_s(arbP->functionThreeAc, "function3", 4096);
                 strncpy_s(arbP->Glsl_FragmentShAc, "Fragment Shader", 4096);
                 strncpy_s(arbP->MATH_INPONE_NameAC,"variable 1", 32);
                 strncpy_s(arbP->MATH_INPTWO_NameAC,"variable 2", 32);

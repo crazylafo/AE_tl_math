@@ -313,10 +313,6 @@ inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpSho
 
 
 
-
-
-
-
 static PF_Err
 PreRender(
           PF_InData                *in_data,
@@ -327,7 +323,7 @@ PreRender(
 
     PF_RenderRequest req    = extraP->input->output_request;
 
-    PF_CheckoutResult        in_result;
+    PF_CheckoutResult        in_result, extL_result;
     AEGP_SuiteHandler        suites(in_data->pica_basicP);
     PF_Handle   infoH        =    suites.HandleSuite1()->host_new_handle(sizeof( MathInfoP));
     AEGP_LayerH        layerH;
@@ -350,15 +346,22 @@ PreRender(
                                   in_data->time_scale,
                                   &arb_param));
 
-			PF_ParamDef extlayer_param;
-			AEFX_CLR_STRUCT(extlayer_param);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_INP_LAYER_ONE,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&extlayer_param));
-
+            PF_ParamDef extlayer_toff_param;
+            AEFX_CLR_STRUCT(extlayer_toff_param);
+            ERR(PF_CHECKOUT_PARAM(in_data,
+                                  MATH_INP_TOFF_ONE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &extlayer_toff_param));
+            PF_ParamDef extlayer_poff_param;
+            AEFX_CLR_STRUCT(extlayer_poff_param);
+            ERR(PF_CHECKOUT_PARAM(in_data,
+                                  MATH_INP_POFF_ONE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &extlayer_poff_param));
 
 
                 AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
@@ -417,6 +420,7 @@ PreRender(
 
 
             AEFX_CLR_STRUCT(in_result);
+            AEFX_CLR_STRUCT(extL_result);
 
             if (!err){
                 req.preserve_rgb_of_zero_alpha = FALSE;
@@ -428,11 +432,40 @@ PreRender(
                                                 in_data->time_step,
                                                 in_data->time_scale,
                                                 &in_result));
+
+
+
+
+
+
                 if (!err){
+
                     UnionLRect(&in_result.result_rect,         &extraP->output->result_rect);
                     UnionLRect(&in_result.max_result_rect,     &extraP->output->max_result_rect);
+
+
+                    ERR(extraP->cb->checkout_layer( in_data->effect_ref,
+                                                   MATH_INP_LAYER_ONE,
+                                                   MATH_INP_LAYER_ONE,
+                                                   &req,
+                                                   (in_data->current_time + A_long(extlayer_toff_param.u.fs_d.value) * in_data->time_step),
+                                                   in_data->time_step,
+                                                   in_data->time_scale,
+                                                   &extL_result));
+
+
+
+                    PF_Fixed     widthFi    = INT2FIX(ABS(extL_result.max_result_rect.right - extL_result.max_result_rect.left)),
+                                heightFi = INT2FIX(ABS(extL_result.max_result_rect.bottom - extL_result.max_result_rect.top));
+
+                    miP->x_offFi = PF_Fixed ( widthFi/2 -extlayer_poff_param.u.td.x_value);
+                    miP->y_offFi = PF_Fixed ( heightFi/2 - extlayer_poff_param.u.td.y_value);
+
+
+
                 }
             }
+
             suites.HandleSuite1()->host_unlock_handle(infoH);
         }
     }
@@ -449,7 +482,9 @@ SmartRender(
     PF_Err            err            = PF_Err_NONE,
     err2        = PF_Err_NONE;
 
-    PF_EffectWorld  *inputP        = NULL, *outputP    = NULL;
+    PF_EffectWorld  *inputP        = NULL,
+                    *outputP    = NULL,
+                    *extLP= NULL;
     PF_PixelFormat    format        =    PF_PixelFormat_INVALID;
     AEGP_SuiteHandler suites(in_data->pica_basicP);
 
@@ -461,7 +496,7 @@ SmartRender(
 
     if (!err){
 
-        MathInfo *miP = reinterpret_cast< MathInfoP*>(suites.HandleSuite1()->host_lock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data)));
+        MathInfo *miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data)));
        //flagInfo
         if (miP){
             OffInfo         oiP;
@@ -470,7 +505,7 @@ SmartRender(
             AEFX_CLR_STRUCT(fiP);
             FlagsInfo      flagsP;
             AEFX_CLR_STRUCT(flagsP);
-            PF_Handle        arbH   ;
+            PF_Handle        arbH ;
             m_ArbData        *arbP            = NULL;
 
             std::string expression_string_red = "1";
@@ -482,7 +517,9 @@ SmartRender(
             std::string expression_string_funcThree = "1";
 
             // checkout input & output buffers.
-            ERR((extraP->cb->checkout_layer_pixels(    in_data->effect_ref, MATH_INPUT, &inputP)));
+            ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INPUT, &inputP)));
+            ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE, &extLP)));
+
             ERR(extraP->cb->checkout_output(in_data->effect_ref, &outputP));
 
             // determine requested output depth
@@ -490,7 +527,10 @@ SmartRender(
 
 
 
-
+            WorldTransfertInfo   wtiP;
+            AEFX_CLR_STRUCT(wtiP);
+            wtiP.inW= *inputP;
+            wtiP.outW = *outputP;
 
 
             //CHECKOUT PARAMS
@@ -503,10 +543,7 @@ SmartRender(
 						point1_param,
 						point2_param,
 						color1_param,
-						color2_param,
-						extlayer_param,
-						extlayer_toff_param,
-						extlayer_poff_param;
+                        color2_param;
 
 
             AEFX_CLR_STRUCT(setup_param);
@@ -594,29 +631,9 @@ SmartRender(
                                   &color2_param));
 
 
-            AEFX_CLR_STRUCT( extlayer_param);
-            ERR(PF_CHECKOUT_PARAM(in_data,
-                                  MATH_INP_LAYER_ONE,
-                                  in_data->current_time,
-                                  in_data->time_step,
-                                  in_data->time_scale,
-                                  &extlayer_param));
 
-            AEFX_CLR_STRUCT(extlayer_toff_param);
-            ERR(PF_CHECKOUT_PARAM(in_data,
-                                  MATH_INP_TOFF_ONE,
-                                  in_data->current_time,
-                                  in_data->time_step,
-                                  in_data->time_scale,
-                                  &extlayer_toff_param));
 
-            AEFX_CLR_STRUCT(extlayer_poff_param);
-            ERR(PF_CHECKOUT_PARAM(in_data,
-                                  MATH_INP_POFF_ONE,
-                                  in_data->current_time,
-                                  in_data->time_step,
-                                  in_data->time_scale,
-                                  &extlayer_poff_param));
+
 
 
 
@@ -686,52 +703,74 @@ SmartRender(
             }
 
             //CALL EXTERNAL LAYER AND TRANSFORM WORLD IF NEEDED
+
             if (flagsP.PixelsCallExternalInputB) {
 
                 PF_Point            origin;
+                PF_PixelFloat empty32 = {0,0,0,0};
                 PF_Pixel16 empty16 = {0,0,0,0};
                 PF_Pixel empty8 = {0,0,0,0};
 
                 PF_EffectWorld Externalworld;
                 Externalworld = *outputP;
-                miP->extLW = *outputP;
+                wtiP.extLW = *outputP;
 
-                if (PF_WORLD_IS_DEEP(outputP)) {
-                    ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
-                                                         &empty16,
-                                                         NULL,
-                                                         &Externalworld));
-                }
-                else {
-                    ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
-                                                       &empty8,
-                                                       NULL,
-                                                       &Externalworld));
+                oiP.x_offFi =  miP->x_offFi;
+                oiP.y_offFi =  miP->y_offFi;
+                switch (format) {
+
+                    case PF_PixelFormat_ARGB128:
+                        ERR(suites.FillMatteSuite2()->fill_float(in_data->effect_ref,
+                                                             &empty32,
+                                                             NULL,
+                                                             &Externalworld));
+
+                        break;
+
+                    case PF_PixelFormat_ARGB64:
+                        ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
+                                                             &empty16,
+                                                             NULL,
+                                                             &Externalworld));
+
+
+                        break;
+
+                    case PF_PixelFormat_ARGB32:
+                        ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
+                                                           &empty8,
+                                                           NULL,
+                                                           &Externalworld));
+                        break;
+
+                    default:
+                        err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+                        break;
                 }
 
-                if (extlayer_param.u.ld.data) {
+
+                if (extLP->data) {
                     if (PF_Quality_HI == in_data->quality) {
                         ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
-                                                                   &extlayer_param.u.ld,
+                                                                   extLP,
                                                                    &Externalworld,
-                                                                   &extlayer_param.u.ld.extent_hint,
+                                                                   &extLP->extent_hint,
                                                                    &Externalworld.extent_hint));
                     }
                     else {
                         ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-                                                                &extlayer_param.u.ld,
+                                                                extLP,
                                                                 &Externalworld,
-                                                                &extlayer_param.u.ld.extent_hint,
+                                                                &extLP->extent_hint,
                                                                 &Externalworld.extent_hint));
                     }
 
                 }
-                oiP.x_offFi = PF_Fixed (((long)inputP->width << 15) -extlayer_poff_param.u.td.x_value);
-                oiP.y_offFi = PF_Fixed (((long)inputP->height << 15) - extlayer_poff_param.u.td.y_value);
+
 
                 if (oiP.x_offFi != 0 || oiP.y_offFi != 0) {
                     oiP.in_data = *in_data;
-                    oiP.samp_pb.src = inputP;
+                    oiP.samp_pb.src = extLP;
                     origin.h = (A_short)(in_data->output_origin_x);
                     origin.v = (A_short)(in_data->output_origin_y);
                     switch (format) {
@@ -746,7 +785,7 @@ SmartRender(
                                                                          &origin,
                                                                          (void*)(&oiP),
                                                                          ShiftImage32,
-                                                                         &miP->extLW));
+                                                                         &wtiP.extLW));
                             break;
 
                         case PF_PixelFormat_ARGB64:
@@ -759,7 +798,7 @@ SmartRender(
                                                                          &origin,
                                                                          (void*)(&oiP),
                                                                          ShiftImage16,
-                                                                         &miP->extLW));
+                                                                         &wtiP.extLW));
                             break;
 
                         case PF_PixelFormat_ARGB32:
@@ -772,7 +811,7 @@ SmartRender(
                                                                         &origin,
                                                                         (void*)(&oiP),
                                                                         ShiftImage8,
-                                                                        &miP->extLW));
+                                                                        &wtiP.extLW));
 
                             break;
 
@@ -782,7 +821,7 @@ SmartRender(
                     }
                 }
                 else {
-                    miP->extLW = Externalworld;
+                    wtiP.extLW = Externalworld;
                 }
 
             }
@@ -790,6 +829,12 @@ SmartRender(
 
 
             //CALL PARSER MODE
+            MathInfo    miPP;
+            AEFX_CLR_STRUCT(miPP); //new pointer wich can be modified in iterations
+            miPP = *miP;
+
+
+
             fiP.UsesFunctionsB = false;
             if (flagsP.UsesFunctionsB){
                 fiP.UsesFunctionsB = true;
@@ -798,7 +843,7 @@ SmartRender(
                 fiP.func3str=expression_string_funcThree;
             }
 
-            fiP.redExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_red);
+            fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_red);
             if (fiP.hasErrorB)
             {   fiP.channelErrorstr = "red channel expression";
                 suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
@@ -806,7 +851,7 @@ SmartRender(
                                                       fiP.channelErrorstr.c_str(),
                                                       fiP.errorstr.c_str());
             }
-            fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_green);
+            fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_green);
             if (fiP.hasErrorB)
             {   fiP.channelErrorstr = "green channel expression";
                 suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
@@ -814,7 +859,7 @@ SmartRender(
                                                       fiP.channelErrorstr.c_str(),
                                                       fiP.errorstr.c_str());
             }
-            fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_blue);
+            fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_blue);
             if (fiP.hasErrorB)
             {   fiP.channelErrorstr = "blue channel expression";
                 suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
@@ -822,7 +867,7 @@ SmartRender(
                                                       fiP.channelErrorstr.c_str(),
                                                       fiP.errorstr.c_str());
             }
-            fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expression_string_alpha);
+            fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_alpha);
             if (fiP.hasErrorB)
             {   fiP.channelErrorstr = "alpha channel expression";
                 suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
@@ -839,10 +884,12 @@ SmartRender(
             AEFX_CLR_STRUCT(part_length);
             AEFX_CLR_STRUCT(num_thrd);
             AEFX_CLR_STRUCT(lastPart_length);
-            miP->inW = *inputP;
-            miP->outW = *outputP;
 
 
+
+
+
+            
             ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
             part_length = A_long ((outputP->height/(float)num_thrd));
             lastPart_length =  part_length + (outputP->height -  (part_length*num_thrd));
@@ -853,23 +900,64 @@ SmartRender(
 			case PF_PixelFormat_ARGB128:
 				AEFX_CLR_STRUCT(workers_thrds);
 				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-					workers_thrds.emplace_back(std::thread(&threaded_render::render_32, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id, num_thrd, part_length, lastPart_length));
+					workers_thrds.emplace_back(std::thread(&threaded_render::render_32,
+                                                           thRenderPtr,
+                                                           (void*)&miPP,
+                                                           (void*)&fiP,
+                                                           (void*)&flagsP,
+                                                           (void*)&wtiP,
+                                                           thrd_id,
+                                                           num_thrd,
+                                                           part_length,
+                                                           lastPart_length));
 				}
-				break;
+                for (auto&  t :  workers_thrds){
+                    t.join();
+                }
+                delete thRenderPtr;
+                 outputP = &wtiP.outW;
 				break;
 
 			case PF_PixelFormat_ARGB64:
 				AEFX_CLR_STRUCT(workers_thrds);
 				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-					workers_thrds.emplace_back(std::thread(&threaded_render::render_16, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id, num_thrd, part_length, lastPart_length));
+					workers_thrds.emplace_back(std::thread(&threaded_render::render_16,
+                                                           thRenderPtr,
+                                                           (void*)&miPP,
+                                                           (void*)&fiP,
+                                                           (void*)&flagsP,
+                                                           (void*)&wtiP,
+                                                           thrd_id,
+                                                           num_thrd,
+                                                           part_length,
+                                                           lastPart_length));
 				}
+                for (auto&  t :  workers_thrds){
+                    t.join();
+                }
+                delete thRenderPtr;
+                outputP = &wtiP.outW;
 				break;
 
 			case PF_PixelFormat_ARGB32:
 				AEFX_CLR_STRUCT(workers_thrds);
 				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-					workers_thrds.emplace_back(std::thread(&threaded_render::render_8, thRenderPtr, (void*)&miP, (void*)&fiP, (void*)&flagsP, thrd_id, num_thrd, part_length, lastPart_length));
+					workers_thrds.emplace_back(std::thread(&threaded_render::render_8,
+                                                           thRenderPtr,
+                                                           (void*)&miPP,
+                                                           (void*)&fiP,
+                                                           (void*)&flagsP,
+                                                           (void*)&wtiP,
+                                                           thrd_id,
+                                                           num_thrd,
+                                                           part_length,
+                                                           lastPart_length));
 				}
+                for (auto&  t :  workers_thrds){
+                        t.join();
+                    }
+                delete thRenderPtr;
+                    outputP = &wtiP.outW;
 
 				break;
 
@@ -878,11 +966,7 @@ SmartRender(
 				break;
 			}
 
-            for (auto&  t :  workers_thrds){
-                t.join();
-            }
-            delete thRenderPtr;
-            outputP = &miP->outW;
+
 
 
             // CALL GLSL
@@ -900,12 +984,11 @@ SmartRender(
             ERR2(PF_CHECKIN_PARAM(in_data, &point2_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &color1_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &color2_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &extlayer_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &extlayer_toff_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &extlayer_poff_param));
+
 
             PF_UNLOCK_HANDLE(arbH);
             ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
+            ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
         }
         suites.HandleSuite1()->host_unlock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data));
     }
@@ -1105,11 +1188,11 @@ QueryDynamicFlags(
 	m_ArbData		*arbP = NULL;
 	arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
 	if (arbP && !err) {
-		if (arbP->PresetHasWideInputB) {
+		if (!arbP->PresetHasWideInputB) {
             out_data->out_flags  &=  PF_OutFlag_WIDE_TIME_INPUT;
             out_data->out_flags  &=  PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
         }
-        if (arbP->NeedsPixelAroundB){
+        if (!arbP->NeedsPixelAroundB){
             out_data->out_flags &= PF_OutFlag_PIX_INDEPENDENT;
         }
 		

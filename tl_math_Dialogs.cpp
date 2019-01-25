@@ -241,7 +241,7 @@ SetupDialog(
 
 
         arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
-        arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("extL"));
+        arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("layerTime"));
         arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec9_"));
         arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
         arbOutP->CallsAEGP_CompB =hasString(resultStr, std::string("layer"));

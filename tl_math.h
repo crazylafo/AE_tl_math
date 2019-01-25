@@ -210,16 +210,20 @@ typedef struct funcTransfertInfo {
 
 }funcTransfertInfoP;
 
-typedef struct MathInfo{
+typedef struct WorldTransfertInfo {
     PF_EffectWorld  inW;
     PF_EffectWorld  outW;
+    PF_EffectWorld  extLW;
+}WorldTransfertInfoP;
+
+
+typedef struct MathInfo{
     PF_FpShort		inRedF;
     PF_FpShort		inGreenF;
     PF_FpShort		inBlueF;
     PF_FpShort		inAlphaF;
     PF_FpShort		xLF;
     PF_FpShort		yLF;
-    PF_EffectWorld  extLW;
     PF_FpShort      extL_red;
     PF_FpShort      extL_green;
     PF_FpShort      extL_blue;
@@ -255,15 +259,19 @@ typedef struct MathInfo{
 	PF_FpShort		m9P_blue[9];
 	PF_FpShort      m9P_alpha[9];
 	PF_FpShort		luma;
-	PF_PixelFloat   PixelOFfP; 
+	PF_PixelFloat   PixelOFfP;
+    PF_Fixed    x_offFi;
+    PF_Fixed    y_offFi;
+
 } MathInfoP, *MathinfoP, **MathinfoH;
 
 
 typedef struct {
-    PF_Fixed	x_offFi;
-    PF_Fixed	y_offFi;
-    PF_SampPB	samp_pb;
-    PF_InData	in_data;
+    PF_Fixed    x_offFi;
+    PF_Fixed    y_offFi;
+    PF_SampPB    samp_pb;
+    PF_InData    in_data;
+
 } OffInfo;
 
 #ifdef __cplusplus
@@ -349,17 +357,20 @@ PF_Err
 LineIteration8Func ( void *refconPV,
                     void *refconFunc,
 					void *refconFlags,
+                    void *refconWorld,
                     A_long yL);
 PF_Err
 LineIteration16Func ( void *refconPV,
                       void *refconFunc,
 					  void *refconFlags,
+                      void *refconWorld,
                       A_long yL);
 
 PF_Err
 LineIteration32Func(void *refconPV,
 					void *refconFunc,
 					void *refconFlags,
+                    void *refconWorld,
 					A_long yL);
 
 PF_Err
@@ -473,6 +484,7 @@ public:
         symbol_table.add_constant("compWidth", miP->compWidthF);
         symbol_table.add_constant("compHeight", miP->compHeightF);
         symbol_table.add_constant("compFps", miP->compFpsF);
+
         symbol_table.add_function("drawRect", parseDrawRect);
         expression.register_symbol_table(symbol_table);
         parser->compile(exprstr,expression);
@@ -493,11 +505,11 @@ private:
     A_long curNumIter;
 public:
     
-    void render_8(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+    void render_8(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld,  A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
-    void render_16(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+    void render_16(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
-	void render_32(void *refconPV, void *refconFunc, void *refconFlags, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+	void render_32(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
 
     
 };
