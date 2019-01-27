@@ -182,6 +182,9 @@ SetupDialog(
         }
 
     }
+	if (tempGlsl == "fragSh") {
+		tempGlsl = glfrag1str;
+	}
     //to force the parser to keep \n before to send it to js
     strReplace(tempRedS, "\n", "\\n");
     strReplace(tempGreenS, "\n", "\\n");
@@ -268,6 +271,10 @@ SetupDialog(
         std::string presetNameStr = jresult["/presetName"_json_pointer];
         std::string descriptionStr = jresult["/description"_json_pointer];
 
+		if (glslExpr != arbInP->Glsl_FragmentShFlat) {
+			arbOutP->ShaderResetB = true;
+		}
+
         presetNameStr.erase(std::remove(presetNameStr.begin(), presetNameStr.end(), '\n'), presetNameStr.end());
 
         //copy to flat ARB (keeping /n and other speical char from js
@@ -281,7 +288,7 @@ SetupDialog(
         strncpy_s( arbOutP->functionTwoFlat, func2Str.c_str(), func2Str.length()+1);
         strncpy_s( arbOutP->functionThreeFlat, func3Str.c_str(), func3Str.length()+1);
         strncpy_s( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
-
+		strncpy_s(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
 #else
         strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
@@ -293,6 +300,7 @@ SetupDialog(
         strncpy ( arbOutP->functionTwoFlat, func2Str.c_str(), func2Str.length()+1);
         strncpy (arbOutP->functionThreeFlat, func3Str.c_str(), func3Str.length()+1);
         strncpy( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
+		strncpy(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
 #endif
 
@@ -305,7 +313,7 @@ SetupDialog(
         func1Str.erase(std::remove(func1Str.begin(), func1Str.end(), '\n'), func1Str.end());
         func2Str.erase(std::remove(func2Str.begin(), func2Str.end(), '\n'), func2Str.end());
         func3Str.erase(std::remove(func3Str.begin(), func3Str.end(), '\n'), func3Str.end());
-        glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\n'), glslExpr.end());
+        
 
         descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
 
@@ -320,6 +328,7 @@ SetupDialog(
         strncpy_s( arbOutP->functionTwoAc, func2Str.c_str(), func2Str.length()+1);
         strncpy_s( arbOutP->functionThreeAc, func3Str.c_str(), func3Str.length()+1);
         strncpy_s( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
+		strncpy_s(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy_s( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
 #else
         strncpy( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
@@ -331,6 +340,7 @@ SetupDialog(
         strncpy( arbOutP->functionTwoAc, func2Str.c_str(), func2Str.length()+1);
         strncpy( arbOutP->functionThreeAc, func3Str.c_str(), func3Str.length()+1);
         strncpy( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
+		strncpy(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
 
 #endif

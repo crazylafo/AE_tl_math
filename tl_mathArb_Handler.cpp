@@ -32,7 +32,8 @@ CreateDefaultArb(
                 strncpy_s(arbP->functionOneAc, "function1", 4096);
                 strncpy_s(arbP->functionTwoAc, "function2", 4096);
                 strncpy_s(arbP->functionThreeAc, "function3", 4096);
-                strncpy_s(arbP->Glsl_FragmentShAc, "Fragment Shader", 4096);
+                strncpy_s(arbP->Glsl_FragmentShAc, "fragSh", 4096);
+				strncpy_s(arbP->Glsl_VertexShAc, "vertexSh", 4096);
                 strncpy_s(arbP->MATH_INPONE_NameAC,"variable 1", 32);
                 strncpy_s(arbP->MATH_INPTWO_NameAC,"variable 2", 32);
                 strncpy_s(arbP->MATH_INPTHREE_NameAC,"variable 3", 32);
@@ -49,7 +50,8 @@ CreateDefaultArb(
                 strncpy_s(arbP->functionOneFlat,"'function1(x)', 'x/2','x'", 4096);
                 strncpy_s(arbP->functionTwoFlat,"'function2(x)', 'x/3','x'", 4096);
                 strncpy_s(arbP->functionThreeFlat,"'function3(x)', 'x/4','x'", 4096);
-                strncpy_s(arbP->Glsl_FragmentShFlat, "Fragment Shader", 4096);
+                strncpy_s(arbP->Glsl_FragmentShFlat, "fragSh", 4096);
+				strncpy_s(arbP->Glsl_VertexShFlat, "vertexSh", 4096);
 
          
             
@@ -64,7 +66,8 @@ CreateDefaultArb(
                 strncpy(arbP->functionOneAc, "function 1", 4096);
                 strncpy(arbP->functionTwoAc, "function 2", 4096);
                 strncpy(arbP->functionThreeAc, "function 3", 4096);
-                strncpy(arbP->Glsl_FragmentShAc, "Fragment Shader", 4096);
+                strncpy(arbP->Glsl_FragmentShAc, "fragSh", 4096);
+				strncpy(arbP->Glsl_VertexShAc, "vertexSh", 4096);
                 strncpy(arbP->MATH_INPONE_NameAC,"variable 1", 32);
                 strncpy(arbP->MATH_INPTWO_NameAC,"variable 2", 32);
                 strncpy(arbP->MATH_INPTHREE_NameAC,"variable 3", 32);
@@ -81,18 +84,18 @@ CreateDefaultArb(
                 strncpy(arbP->functionOneFlat,"'function 1(x)', 'x/2','x'", 4096);
                 strncpy(arbP->functionTwoFlat,"'function 2(x)', 'x/3','x'", 4096);
                 strncpy(arbP->functionThreeFlat,"'function 3(x)', 'x/4','x'", 4096);
-                strncpy(arbP->Glsl_FragmentShFlat, "Fragment Shader", 4096);
+                strncpy(arbP->Glsl_FragmentShFlat, "fragSh", 4096);
+				strncpy(arbP->Glsl_VertexShFlat, "vertexSh", 4096);
             #endif
                 arbP->parserModeA = 0;
 				arbP->NeedsPixelAroundB = false;
 				arbP->PixelsCallExternalInputB = false;
 				arbP->NeedsLumaB = false;
 				arbP->PresetHasWideInputB = false;
-
-
                 arbP->CallsAEGP_CompB= false;
                 arbP->CallsAEGP_layerB= false;
                 arbP->UsesFunctionsB= false;
+				arbP->ShaderResetB = false;
 
 			*dephault = arbH;
 		}
@@ -234,6 +237,7 @@ Arb_Compare(
             total_aV.emplace_back ( strlen(first_arbP->functionTwoAc));
             total_aV.emplace_back ( strlen(first_arbP->functionThreeAc));
             total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShAc));
+			total_aV.emplace_back( strlen(first_arbP->Glsl_VertexShAc));
             total_aV.emplace_back ( strlen(first_arbP->MATH_INPONE_NameAC));
             total_aV.emplace_back ( strlen(first_arbP->MATH_INPTWO_NameAC));
             total_aV.emplace_back ( strlen(first_arbP->MATH_INPTHREE_NameAC));
@@ -246,11 +250,12 @@ Arb_Compare(
             total_aV.emplace_back ( strlen(first_arbP->functionTwoFlat));
             total_aV.emplace_back ( strlen(first_arbP->functionThreeFlat));
             total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShFlat));
+			total_aV.emplace_back(strlen(first_arbP->Glsl_VertexShFlat));
 
             total_aV.emplace_back (first_arbP->CallsAEGP_CompB);
             total_aV.emplace_back (first_arbP->CallsAEGP_layerB);
             total_aV.emplace_back (first_arbP->UsesFunctionsB);
-
+			total_aV.emplace_back(first_arbP->ShaderResetB);
             
 			total_bV.emplace_back ( strlen(second_arbP->redExAc));
 			total_bV.emplace_back ( strlen(second_arbP->greenExAc));
@@ -271,11 +276,12 @@ Arb_Compare(
 			total_bV.emplace_back ( second_arbP->NeedsLumaB);
 			total_bV.emplace_back ( second_arbP->PresetHasWideInputB);
             
-            total_bV.emplace_back (first_arbP->parserModeA);
+            total_bV.emplace_back (second_arbP->parserModeA);
             total_bV.emplace_back ( strlen(second_arbP->functionOneAc));
             total_bV.emplace_back ( strlen(second_arbP->functionTwoAc));
             total_bV.emplace_back ( strlen(second_arbP->functionThreeAc));
             total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShAc));
+			total_bV.emplace_back(strlen(second_arbP->Glsl_VertexShAc));
             total_bV.emplace_back ( strlen(second_arbP->MATH_INPONE_NameAC));
             total_bV.emplace_back ( strlen(second_arbP->MATH_INPTWO_NameAC));
             total_bV.emplace_back ( strlen(second_arbP->MATH_INPTHREE_NameAC));
@@ -288,10 +294,12 @@ Arb_Compare(
             total_bV.emplace_back ( strlen(second_arbP->functionTwoFlat));
             total_bV.emplace_back ( strlen(second_arbP->functionThreeFlat));
             total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShFlat));
+			total_bV.emplace_back ( strlen(second_arbP->Glsl_VertexShFlat));
 
             total_bV.emplace_back (second_arbP->CallsAEGP_CompB);
             total_bV.emplace_back (second_arbP->CallsAEGP_layerB);
             total_bV.emplace_back (second_arbP->UsesFunctionsB);
+			total_bV.emplace_back(second_arbP->ShaderResetB);
             
             
 

@@ -8,11 +8,14 @@
 #ifndef TLMATH_H
 #define TLMATH_H
 
-
-
 #define PF_TABLE_BITS	12
 #define PF_TABLE_SZ_16	4096
-
+typedef unsigned char		u_char;
+typedef unsigned short		u_short;
+typedef unsigned short		u_int16;
+typedef unsigned long		u_long;
+typedef short int			int16;
+typedef float				fpshort;
 #define PF_DEEP_COLOR_AWARE 1	// make sure we get 16bpc pixels; 
 								// AE_Effect.h checks for this.
 
@@ -20,7 +23,6 @@
 
 #ifdef AE_OS_WIN
 	typedef unsigned short PixelType;
-	#include <assert.h>
 	#include <Windows.h>
 #endif
 
@@ -44,7 +46,19 @@
 #include <cstdio>
 #include <string>
 #include <thread>
+#include <map>
 #include <mutex>
+#include <assert.h>
+#include <atomic>
+
+#include "GL_base.h"
+#include "vmath.hpp"
+#include "glbinding/gl33ext/gl.h"
+#include <glbinding/gl/extension.h>
+
+using namespace AESDK_OpenGL;
+using namespace gl33core;
+
 
 #include "lib/exprtk.hpp"
 #include "lib/json.hpp"
@@ -57,11 +71,6 @@
 #define	STAGE_VERSION	PF_Stage_ALPHA
 #define	BUILD_VERSION	1
 
-//typedef exprtk::symbol_table<PF_FpShort> symbol_table_t;
-//typedef exprtk::expression<PF_FpShort>     expression_t;
-//typedef exprtk::parser<PF_FpShort>             parser_t;
-//typedef exprtk::function_compositor<PF_FpShort> compositor_t;
-
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
 
@@ -72,11 +81,10 @@ typedef struct {
     A_char  functionOneAc[4096];
     A_char  functionTwoAc[4096];
     A_char  functionThreeAc[4096];
+	A_char  Glsl_VertexShAc[4096];
     A_char  Glsl_FragmentShAc[4096];
     A_char  descriptionAc[2048];
     A_char  presetNameAc[32];
-
-
      A_char MATH_INPONE_NameAC[32];
      A_char MATH_INPTWO_NameAC[32];
      A_char MATH_INPTHREE_NameAC[32];
@@ -96,6 +104,7 @@ typedef struct {
     A_char  functionOneFlat[4096];
     A_char  functionTwoFlat[4096];
     A_char  functionThreeFlat[4096];
+	A_char  Glsl_VertexShFlat[4096];
     A_char  Glsl_FragmentShFlat[4096];
     A_char  descriptionAcFlat [4096];
     
@@ -103,6 +112,7 @@ typedef struct {
     A_long parserModeA;
     PF_Boolean UsesFunctionsB;
 	//Boolean information about chars
+	PF_Boolean ShaderResetB;
 	PF_Boolean NeedsPixelAroundB;
 	PF_Boolean PixelsCallExternalInputB;
 	PF_Boolean NeedsLumaB;
@@ -184,7 +194,6 @@ enum {
 };
 
 typedef struct  FlagsInfo {
-
         PF_Boolean NeedsPixelAroundB;
         PF_Boolean PixelsCallExternalInputB;
         PF_Boolean NeedsLumaB;
@@ -192,6 +201,7 @@ typedef struct  FlagsInfo {
         PF_Boolean CallsAEGP_CompB;
         PF_Boolean CallsAEGP_layerB;
         PF_Boolean UsesFunctionsB;
+		A_long parserModeA  ;
 }FlagsInfoP;
 
 typedef struct funcTransfertInfo {
@@ -514,6 +524,61 @@ public:
     
 };
 
+//GLSL SCRIPTS
+std::string glvertstr = "#version 330 \n\
+in vec4 Position;\n\
+in vec2 UVs;\n\
+out vec4 out_pos;\n\
+out vec2 out_uvs;\n\
+uniform mat4 ModelviewProjection;\n\
+void main(void)\n\
+{\n\
+	out_pos = ModelviewProjection * Position; \n\
+	gl_Position = out_pos; \n\
+	out_uvs = UVs;\n\
+}";
+
+std::string glfrag1str = "#version 330\n\
+uniform sampler2D videoTexture; \n\
+uniform float sliderVal; \n\
+uniform float multiplier16bit; \n\
+in vec4 out_pos; \n\
+in vec2 out_uvs; \n\
+out vec4 colourOut; \n\
+void main(void)\n\
+{\n\
+	colourOut = texture(videoTexture, out_uvs.xy); \n\
+	colourOut = colourOut * multiplier16bit; \n\
+	colourOut = vec4(colourOut.g, colourOut.b, colourOut.a, colourOut.r); \n\
+	colourOut = vec4(colourOut.a * colourOut.r, colourOut.a * colourOut.g, colourOut.a * colourOut.b, colourOut.a); \n\
+	colourOut.g = sliderVal;\n\
+}";
+
+std::string glfrag2str = "#version 330\n\
+uniform sampler2D videoTexture;\n\
+uniform float multiplier16bit;\n\
+in vec4 out_pos;\n\
+in vec2 out_uvs;\n\
+out vec4 colourOut;\n\
+void main(void)\n\
+{\n\
+	colourOut = texture( videoTexture, out_uvs.xy ); \n\
+	if (colourOut.a == 0) {\n\
+		colourOut = vec4(0, 0, 0, 0);\n\
+	} else {\n\
+		colourOut = vec4(colourOut.a, colourOut.r / colourOut.a, colourOut.g / colourOut.a, colourOut.b / colourOut.a); \n\
+	}\n\
+	colourOut = colourOut / multiplier16bit;\n\
+}";
+//helper func
+inline u_char AlphaLookup(u_int16 inValSu, u_int16 inMaxSu)
+{
+	fpshort normValFp = 1.0f - (inValSu) / static_cast<fpshort>(inMaxSu);
+	return static_cast<u_char>(normValFp*normValFp*0.8f * 255);
+}
+
+//error checking macro
+#define CHECK(err) {PF_Err err1 = err; if (err1 != PF_Err_NONE ){ throw PF_Err(err1);}}
 
 #endif
 

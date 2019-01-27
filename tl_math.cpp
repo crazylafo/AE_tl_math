@@ -2,6 +2,369 @@
 
 
 
+namespace {
+	THREAD_LOCAL int t_thread = -1;
+
+	std::atomic_int S_cnt;
+	std::map<int, std::shared_ptr<AESDK_OpenGL::AESDK_OpenGL_EffectRenderData> > S_render_contexts;
+	std::recursive_mutex S_mutex;
+
+	AESDK_OpenGL::AESDK_OpenGL_EffectCommonDataPtr S_GLator_EffectCommonData; //global context
+
+
+																			  // - OpenGL resources are restricted per thread, mimicking the OGL driver
+																			  // - The filter will eliminate all TLS (Thread Local Storage) at PF_Cmd_GLOBAL_SETDOWN
+	AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr GetCurrentRenderContext()
+	{
+		S_mutex.lock();
+		AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr result;
+
+		if (t_thread == -1) {
+			t_thread = S_cnt++;
+
+			result.reset(new AESDK_OpenGL::AESDK_OpenGL_EffectRenderData());
+			S_render_contexts[t_thread] = result;
+		}
+		else {
+			result = S_render_contexts[t_thread];
+		}
+		S_mutex.unlock();
+		return result;
+	}
+
+#ifdef AE_OS_WIN
+	std::string get_string_from_wcs(const wchar_t* pcs)
+	{
+		int res = WideCharToMultiByte(CP_ACP, 0, pcs, -1, NULL, 0, NULL, NULL);
+
+		std::auto_ptr<char> shared_pbuf(new char[res]);
+
+		char *pbuf = shared_pbuf.get();
+
+		res = WideCharToMultiByte(CP_ACP, 0, pcs, -1, pbuf, res, NULL, NULL);
+
+		return std::string(pbuf);
+	}
+#endif
+
+	void RenderQuad(GLuint vbo)
+	{
+		glEnableVertexAttribArray(PositionSlot);
+		glEnableVertexAttribArray(UVSlot);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glVertexAttribPointer(PositionSlot, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+		glVertexAttribPointer(UVSlot, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glDisableVertexAttribArray(PositionSlot);
+		glDisableVertexAttribArray(UVSlot);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+
+
+
+	struct CopyPixelFloat_t {
+		PF_PixelFloat	*floatBufferP;
+		PF_EffectWorld	*input_worldP;
+	};
+
+	PF_Err
+		CopyPixelFloatIn(
+			void			*refcon,
+			A_long			x,
+			A_long			y,
+			PF_PixelFloat	*inP,
+			PF_PixelFloat	*)
+	{
+		CopyPixelFloat_t	*thiS = reinterpret_cast<CopyPixelFloat_t*>(refcon);
+		PF_PixelFloat		*outP = thiS->floatBufferP + y * thiS->input_worldP->width + x;
+
+		outP->red = inP->red;
+		outP->green = inP->green;
+		outP->blue = inP->blue;
+		outP->alpha = inP->alpha;
+
+		return PF_Err_NONE;
+	}
+
+	PF_Err
+		CopyPixelFloatOut(
+			void			*refcon,
+			A_long			x,
+			A_long			y,
+			PF_PixelFloat	*,
+			PF_PixelFloat	*outP)
+	{
+		CopyPixelFloat_t		*thiS = reinterpret_cast<CopyPixelFloat_t*>(refcon);
+		const PF_PixelFloat		*inP = thiS->floatBufferP + y * thiS->input_worldP->width + x;
+
+		outP->red = inP->red;
+		outP->green = inP->green;
+		outP->blue = inP->blue;
+		outP->alpha = inP->alpha;
+
+		return PF_Err_NONE;
+	}
+
+
+	gl::GLuint UploadTexture(AEGP_SuiteHandler& suites,					// >>
+		PF_PixelFormat			format,				// >>
+		PF_EffectWorld			*input_worldP,		// >>
+		PF_EffectWorld			*output_worldP,		// >>
+		PF_InData				*in_data,			// >>
+		size_t& pixSizeOut,						// <<
+		gl::GLenum& glFmtOut,						// <<
+		float& multiplier16bitOut)					// <<
+	{
+		// - upload to texture memory
+		// - we will convert on-the-fly from ARGB to RGBA, and also to pre-multiplied alpha,
+		// using a fragment shader
+#ifdef _DEBUG
+		GLint nUnpackAlignment;
+		::glGetIntegerv(GL_UNPACK_ALIGNMENT, &nUnpackAlignment);
+		assert(nUnpackAlignment == 4);
+#endif
+
+		gl::GLuint inputFrameTexture;
+		glGenTextures(1, &inputFrameTexture);
+		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)GL_CLAMP_TO_EDGE);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, (GLint)GL_RGBA32F, input_worldP->width, input_worldP->height, 0, GL_RGBA, GL_FLOAT, nullptr);
+
+		multiplier16bitOut = 1.0f;
+		switch (format)
+		{
+		case PF_PixelFormat_ARGB128:
+		{
+			glFmtOut = GL_FLOAT;
+			pixSizeOut = sizeof(PF_PixelFloat);
+
+			std::auto_ptr<PF_PixelFloat> bufferFloat(new PF_PixelFloat[input_worldP->width * input_worldP->height]);
+			CopyPixelFloat_t refcon = { bufferFloat.get(), input_worldP };
+
+			CHECK(suites.IterateFloatSuite1()->iterate(in_data,
+				0,
+				input_worldP->height,
+				input_worldP,
+				nullptr,
+				reinterpret_cast<void*>(&refcon),
+				CopyPixelFloatIn,
+				output_worldP));
+
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->width);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_FLOAT, bufferFloat.get());
+			break;
+		}
+
+		case PF_PixelFormat_ARGB64:
+		{
+			glFmtOut = GL_UNSIGNED_SHORT;
+			pixSizeOut = sizeof(PF_Pixel16);
+			multiplier16bitOut = 65535.0f / 32768.0f;
+
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->rowbytes / sizeof(PF_Pixel16));
+			PF_Pixel16 *pixelDataStart = NULL;
+			PF_GET_PIXEL_DATA16(input_worldP, NULL, &pixelDataStart);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_SHORT, pixelDataStart);
+			break;
+		}
+
+		case PF_PixelFormat_ARGB32:
+		{
+			glFmtOut = GL_UNSIGNED_BYTE;
+			pixSizeOut = sizeof(PF_Pixel8);
+
+			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->rowbytes / sizeof(PF_Pixel8));
+			PF_Pixel8 *pixelDataStart = NULL;
+			PF_GET_PIXEL_DATA8(input_worldP, NULL, &pixelDataStart);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_BYTE, pixelDataStart);
+			break;
+		}
+
+		default:
+			CHECK(PF_Err_BAD_CALLBACK_PARAM);
+			break;
+		}
+
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+
+		//unbind all textures
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return inputFrameTexture;
+	}
+
+	void ReportIfErrorFramebuffer(PF_InData *in_data, PF_OutData *out_data)
+	{
+		// Check for errors...
+		std::string error_msg;
+		if ((error_msg = CheckFramebufferStatus()) != std::string("OK"))
+		{
+			out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE;
+			PF_SPRINTF(out_data->return_msg, error_msg.c_str());
+			CHECK(PF_Err_OUT_OF_MEMORY);
+		}
+	}
+
+
+	void SwizzleGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
+		A_long widthL, A_long heightL,
+		gl::GLuint		inputFrameTexture,
+		float			multiplier16bit)
+	{
+		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
+
+		glUseProgram(renderContext->mProgramObj2Su);
+
+		// view matrix, mimic windows coordinates
+		vmath::Matrix4 ModelviewProjection = vmath::Matrix4::translation(vmath::Vector3(-1.0f, -1.0f, 0.0f)) *
+			vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
+
+		GLint location = glGetUniformLocation(renderContext->mProgramObj2Su, "ModelviewProjection");
+		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
+		location = glGetUniformLocation(renderContext->mProgramObj2Su, "multiplier16bit");
+		glUniform1f(location, multiplier16bit);
+
+		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObj2Su, inputFrameTexture, std::string("videoTexture"));
+
+		// render
+		glBindVertexArray(renderContext->vao);
+		RenderQuad(renderContext->quad);
+		glBindVertexArray(0);
+
+		glUseProgram(0);
+
+		glFlush();
+	}
+
+	void RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
+		A_long widthL, A_long heightL,
+		gl::GLuint		inputFrameTexture,
+		PF_FpLong			sliderVal,
+		float				multiplier16bit)
+	{
+		// - make sure we blend correctly inside the framebuffer
+		// - even though we just cleared it, another effect may want to first
+		// draw some kind of background to blend with
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendEquation(GL_FUNC_ADD);
+
+		// view matrix, mimic windows coordinates
+		vmath::Matrix4 ModelviewProjection = vmath::Matrix4::translation(vmath::Vector3(-1.0f, -1.0f, 0.0f)) *
+			vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
+
+		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
+
+		glUseProgram(renderContext->mProgramObjSu);
+
+		// program uniforms
+		GLint location = glGetUniformLocation(renderContext->mProgramObjSu, "ModelviewProjection");
+		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "sliderVal");
+		glUniform1f(location, sliderVal);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
+		glUniform1f(location, multiplier16bit);
+
+		// Identify the texture to use and bind it to texture unit 0
+		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObjSu, inputFrameTexture, std::string("videoTexture"));
+
+		// render
+		glBindVertexArray(renderContext->vao);
+		RenderQuad(renderContext->quad);
+		glBindVertexArray(0);
+
+		glUseProgram(0);
+		glDisable(GL_BLEND);
+	}
+
+	void DownloadTexture(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
+		AEGP_SuiteHandler&		suites,				// >>
+		PF_EffectWorld			*input_worldP,		// >>
+		PF_EffectWorld			*output_worldP,		// >>
+		PF_InData				*in_data,			// >>
+		PF_PixelFormat			format,				// >>
+		size_t					pixSize,			// >>
+		gl::GLenum				glFmt				// >>
+	)
+	{
+		//download from texture memory onto the same surface
+		PF_Handle bufferH = NULL;
+		bufferH = suites.HandleSuite1()->host_new_handle(((renderContext->mRenderBufferWidthSu * renderContext->mRenderBufferHeightSu)* pixSize));
+		if (!bufferH) {
+			CHECK(PF_Err_OUT_OF_MEMORY);
+		}
+		void *bufferP = suites.HandleSuite1()->host_lock_handle(bufferH);
+
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+		glReadPixels(0, 0, renderContext->mRenderBufferWidthSu, renderContext->mRenderBufferHeightSu, GL_RGBA, glFmt, bufferP);
+
+		switch (format)
+		{
+		case PF_PixelFormat_ARGB128:
+		{
+			PF_PixelFloat* bufferFloatP = reinterpret_cast<PF_PixelFloat*>(bufferP);
+			CopyPixelFloat_t refcon = { bufferFloatP, input_worldP };
+
+			CHECK(suites.IterateFloatSuite1()->iterate(in_data,
+				0,
+				input_worldP->height,
+				input_worldP,
+				nullptr,
+				reinterpret_cast<void*>(&refcon),
+				CopyPixelFloatOut,
+				output_worldP));
+			break;
+		}
+
+		case PF_PixelFormat_ARGB64:
+		{
+			PF_Pixel16* buffer16P = reinterpret_cast<PF_Pixel16*>(bufferP);
+
+			//copy to output_worldP
+			for (int y = 0; y < output_worldP->height; ++y)
+			{
+				PF_Pixel16 *pixelDataStart = NULL;
+				PF_GET_PIXEL_DATA16(output_worldP, NULL, &pixelDataStart);
+				::memcpy(pixelDataStart + (y * output_worldP->rowbytes / sizeof(PF_Pixel16)),
+					buffer16P + (y * renderContext->mRenderBufferWidthSu),
+					output_worldP->width * sizeof(PF_Pixel16));
+			}
+			break;
+		}
+
+		case PF_PixelFormat_ARGB32:
+		{
+			PF_Pixel8 *buffer8P = reinterpret_cast<PF_Pixel8*>(bufferP);
+
+			//copy to output_worldP
+			for (int y = 0; y < output_worldP->height; ++y)
+			{
+				PF_Pixel8 *pixelDataStart = NULL;
+				PF_GET_PIXEL_DATA8(output_worldP, NULL, &pixelDataStart);
+				::memcpy(pixelDataStart + (y * output_worldP->rowbytes / sizeof(PF_Pixel8)),
+					buffer8P + (y * renderContext->mRenderBufferWidthSu),
+					output_worldP->width * sizeof(PF_Pixel8));
+			}
+			break;
+		}
+
+		default:
+			CHECK(PF_Err_BAD_CALLBACK_PARAM);
+			break;
+		}
+
+		//clean the data after being copied
+		suites.HandleSuite1()->host_unlock_handle(bufferH);
+		suites.HandleSuite1()->host_dispose_handle(bufferH);
+	}
+} // anonymous namespace
+
+
 static PF_Err 
 About (	
 	PF_InData		*in_data,
@@ -68,12 +431,33 @@ GlobalSetup (
             }
         }
         suites.HandleSuite1()->host_unlock_handle(globH);
-    } else	{
+    }
+	else	{
         err = PF_Err_INTERNAL_STRUCT_DAMAGED;
     }
-	
-	return 	err;
+	try
+	{
+		// always restore back AE's own OGL context
+		SaveRestoreOGLContext oSavedContext;
+		AEGP_SuiteHandler suites(in_data->pica_basicP);
+
+		//Now comes the OpenGL part - OS specific loading to start with
+		S_GLator_EffectCommonData.reset(new AESDK_OpenGL::AESDK_OpenGL_EffectCommonData());
+		AESDK_OpenGL_Startup(*S_GLator_EffectCommonData.get());
+
+	}
+	catch (PF_Err& thrown_err)
+	{
+		err = thrown_err;
+	}
+	catch (...)
+	{
+		err = PF_Err_OUT_OF_MEMORY;
+	}
+
+	return err;
 }
+
 
 static PF_Err 
 ParamsSetup (	
@@ -314,12 +698,7 @@ inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpSho
 	}
 }
 
-PF_PixelFloat
-inline parsePixelFloatAccess( PF_PixelFloat *inP, A_long xoff, A_long yoff)
-{
-	return inP+ xoff +(yoff*(inW.rowbytes / sizeof(PF_Pixel))
 
-}
 
 
 static PF_Err
@@ -524,6 +903,9 @@ SmartRender(
             std::string expression_string_funcOne = "1";
             std::string expression_string_funcTwo = "1";
             std::string expression_string_funcThree = "1";
+			std::string expression_string_frag1str = "0";
+			std::string expression_string_vertexstr = glvertstr;
+			std::string  expression_string_frag2str =  glfrag2str;
 
             // checkout input & output buffers.
             ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INPUT, &inputP)));
@@ -670,7 +1052,7 @@ SmartRender(
             //CONVERT COLOR PARAMS TO FLOAT BYSMART WAY
             PF_PixelFloat tempFloat1, tempFloat2;
             ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, & color1_param, &tempFloat1));
-             ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, & color2_param, &tempFloat2));
+            ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, & color2_param, &tempFloat2));
 
             //user param color
             miP->colorOne[0] = tempFloat1.red;
@@ -693,6 +1075,7 @@ SmartRender(
                 expression_string_funcOne = tempPointer-> functionOneAc;
                 expression_string_funcTwo =  tempPointer->functionTwoAc;
                 expression_string_funcThree =  tempPointer->functionThreeAc;
+				expression_string_frag1str = tempPointer->Glsl_FragmentShAc;
 
                 flagsP.PixelsCallExternalInputB = tempPointer->PixelsCallExternalInputB;
                 flagsP.PresetHasWideInput = tempPointer->PresetHasWideInputB;
@@ -701,6 +1084,7 @@ SmartRender(
                 flagsP.CallsAEGP_CompB = tempPointer-> CallsAEGP_CompB;
                 flagsP.CallsAEGP_layerB = tempPointer->CallsAEGP_layerB;
                 flagsP.UsesFunctionsB = tempPointer->UsesFunctionsB;
+				flagsP.parserModeA = tempPointer->parserModeA;
 
             }
 
@@ -829,147 +1213,234 @@ SmartRender(
             }
 
             //CALL PARSER MODE
-            MathInfo    miPP;
-            AEFX_CLR_STRUCT(miPP); //new pointer wich can be modified in iterations
-            miPP = *miP;
+			if (flagsP.parserModeA == 0) {
+				MathInfo    miPP;
+				AEFX_CLR_STRUCT(miPP); //new pointer wich can be modified in iterations
+				miPP = *miP;
 
 
 
-            fiP.UsesFunctionsB = false;
-            if (flagsP.UsesFunctionsB){
-                fiP.UsesFunctionsB = true;
-                fiP.func1str=expression_string_funcOne;
-                fiP.func2str=expression_string_funcTwo;
-                fiP.func3str=expression_string_funcThree;
-            }
-
-            fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_red);
-            if (fiP.hasErrorB)
-            {   fiP.channelErrorstr = "red channel expression";
-                suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-                                                      "Error in %s : %s",
-                                                      fiP.channelErrorstr.c_str(),
-                                                      fiP.errorstr.c_str());
-            }
-            fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_green);
-            if (fiP.hasErrorB)
-            {   fiP.channelErrorstr = "green channel expression";
-                suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-                                                      "Error in %s : %s",
-                                                      fiP.channelErrorstr.c_str(),
-                                                      fiP.errorstr.c_str());
-            }
-            fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_blue);
-            if (fiP.hasErrorB)
-            {   fiP.channelErrorstr = "blue channel expression";
-                suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-                                                      "Error in %s : %s",
-                                                      fiP.channelErrorstr.c_str(),
-                                                      fiP.errorstr.c_str());
-            }
-            fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_alpha);
-            if (fiP.hasErrorB)
-            {   fiP.channelErrorstr = "alpha channel expression";
-                suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-                                                      "Error in %s : %s",
-                                                      fiP.channelErrorstr.c_str(),
-                                                      fiP.errorstr.c_str());
-            }
-
-
-
-
-            std::vector<std::thread> workers_thrds;
-            A_long part_length, lastPart_length, num_thrd;
-            AEFX_CLR_STRUCT(part_length);
-            AEFX_CLR_STRUCT(num_thrd);
-            AEFX_CLR_STRUCT(lastPart_length);
-
-
-
-
-
-            
-            ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
-            part_length = A_long ((outputP->height/(float)num_thrd));
-            lastPart_length =  part_length + (outputP->height -  (part_length*num_thrd));
-
-            threaded_render* thRenderPtr = new threaded_render();
-			switch (format) {
-
-			case PF_PixelFormat_ARGB128:
-				AEFX_CLR_STRUCT(workers_thrds);
-				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-					workers_thrds.emplace_back(std::thread(&threaded_render::render_32,
-                                                           thRenderPtr,
-                                                           (void*)&miPP,
-                                                           (void*)&fiP,
-                                                           (void*)&flagsP,
-                                                           (void*)&wtiP,
-                                                           thrd_id,
-                                                           num_thrd,
-                                                           part_length,
-                                                           lastPart_length));
+				fiP.UsesFunctionsB = false;
+				if (flagsP.UsesFunctionsB) {
+					fiP.UsesFunctionsB = true;
+					fiP.func1str = expression_string_funcOne;
+					fiP.func2str = expression_string_funcTwo;
+					fiP.func3str = expression_string_funcThree;
 				}
-                for (auto&  t :  workers_thrds){
-                    t.join();
-                }
-                delete thRenderPtr;
-                 outputP = &wtiP.outW;
-				break;
 
-			case PF_PixelFormat_ARGB64:
-				AEFX_CLR_STRUCT(workers_thrds);
-				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-					workers_thrds.emplace_back(std::thread(&threaded_render::render_16,
-                                                           thRenderPtr,
-                                                           (void*)&miPP,
-                                                           (void*)&fiP,
-                                                           (void*)&flagsP,
-                                                           (void*)&wtiP,
-                                                           thrd_id,
-                                                           num_thrd,
-                                                           part_length,
-                                                           lastPart_length));
+				fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_red);
+				if (fiP.hasErrorB)
+				{
+					fiP.channelErrorstr = "red channel expression";
+					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+						"Error in %s : %s",
+						fiP.channelErrorstr.c_str(),
+						fiP.errorstr.c_str());
 				}
-                for (auto&  t :  workers_thrds){
-                    t.join();
-                }
-                delete thRenderPtr;
-                outputP = &wtiP.outW;
-				break;
-
-			case PF_PixelFormat_ARGB32:
-				AEFX_CLR_STRUCT(workers_thrds);
-				for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-					workers_thrds.emplace_back(std::thread(&threaded_render::render_8,
-                                                           thRenderPtr,
-                                                           (void*)&miPP,
-                                                           (void*)&fiP,
-                                                           (void*)&flagsP,
-                                                           (void*)&wtiP,
-                                                           thrd_id,
-                                                           num_thrd,
-                                                           part_length,
-                                                           lastPart_length));
+				fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_green);
+				if (fiP.hasErrorB)
+				{
+					fiP.channelErrorstr = "green channel expression";
+					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+						"Error in %s : %s",
+						fiP.channelErrorstr.c_str(),
+						fiP.errorstr.c_str());
 				}
-                for (auto&  t :  workers_thrds){
-                        t.join();
-                    }
-                delete thRenderPtr;
-                    outputP = &wtiP.outW;
+				fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_blue);
+				if (fiP.hasErrorB)
+				{
+					fiP.channelErrorstr = "blue channel expression";
+					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+						"Error in %s : %s",
+						fiP.channelErrorstr.c_str(),
+						fiP.errorstr.c_str());
+				}
+				fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_alpha);
+				if (fiP.hasErrorB)
+				{
+					fiP.channelErrorstr = "alpha channel expression";
+					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+						"Error in %s : %s",
+						fiP.channelErrorstr.c_str(),
+						fiP.errorstr.c_str());
+				}
 
-				break;
 
-			default:
-				err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-				break;
+
+
+				std::vector<std::thread> workers_thrds;
+				A_long part_length, lastPart_length, num_thrd;
+				AEFX_CLR_STRUCT(part_length);
+				AEFX_CLR_STRUCT(num_thrd);
+				AEFX_CLR_STRUCT(lastPart_length);
+
+
+
+
+				ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
+				part_length = A_long((outputP->height / (float)num_thrd));
+				lastPart_length = part_length + (outputP->height - (part_length*num_thrd));
+
+				threaded_render* thRenderPtr = new threaded_render();
+				switch (format) {
+
+				case PF_PixelFormat_ARGB128:
+					AEFX_CLR_STRUCT(workers_thrds);
+					for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+						workers_thrds.emplace_back(std::thread(&threaded_render::render_32,
+							thRenderPtr,
+							(void*)&miPP,
+							(void*)&fiP,
+							(void*)&flagsP,
+							(void*)&wtiP,
+							thrd_id,
+							num_thrd,
+							part_length,
+							lastPart_length));
+					}
+					for (auto& t : workers_thrds) {
+						t.join();
+					}
+					delete thRenderPtr;
+					outputP = &wtiP.outW;
+					break;
+
+				case PF_PixelFormat_ARGB64:
+					AEFX_CLR_STRUCT(workers_thrds);
+					for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+						workers_thrds.emplace_back(std::thread(&threaded_render::render_16,
+							thRenderPtr,
+							(void*)&miPP,
+							(void*)&fiP,
+							(void*)&flagsP,
+							(void*)&wtiP,
+							thrd_id,
+							num_thrd,
+							part_length,
+							lastPart_length));
+					}
+					for (auto& t : workers_thrds) {
+						t.join();
+					}
+					delete thRenderPtr;
+					outputP = &wtiP.outW;
+					break;
+
+				case PF_PixelFormat_ARGB32:
+					AEFX_CLR_STRUCT(workers_thrds);
+					for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+						workers_thrds.emplace_back(std::thread(&threaded_render::render_8,
+							thRenderPtr,
+							(void*)&miPP,
+							(void*)&fiP,
+							(void*)&flagsP,
+							(void*)&wtiP,
+							thrd_id,
+							num_thrd,
+							part_length,
+							lastPart_length));
+					}
+					for (auto& t : workers_thrds) {
+						t.join();
+					}
+					delete thRenderPtr;
+					outputP = &wtiP.outW;
+
+					break;
+
+				default:
+					err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+					break;
+				}
+
 			}
-
-
-
-
             // CALL GLSL
+			else {
+				try
+				{
+
+					// always restore back AE's own OGL context
+					SaveRestoreOGLContext oSavedContext;
+
+					// our render specific context (one per thread)
+					AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr renderContext = GetCurrentRenderContext();
+
+					if (!renderContext->mInitialized || arbP->ShaderResetB) {
+						//Now comes the OpenGL part - OS specific loading to start with
+						AESDK_OpenGL_Startup(*renderContext.get(), S_GLator_EffectCommonData.get());
+						renderContext->mInitialized = true;
+					}
+
+					renderContext->mProgramObjSu = 0;
+
+					renderContext->SetPluginContext();
+
+					// - Gremedy OpenGL debugger
+					// - Example of using a OpenGL extension
+					bool hasGremedy = renderContext->mExtensions.find(gl::GLextension::GL_GREMEDY_frame_terminator) != renderContext->mExtensions.end();
+
+					A_long				widthL = inputP->width;
+					A_long				heightL = inputP->height;
+
+					//loading OpenGL resources
+					AESDK_OpenGL_InitResources(*renderContext.get(),
+						widthL,
+						heightL,
+						expression_string_vertexstr,
+						expression_string_frag1str,
+						expression_string_frag2str);
+
+					CHECK(wsP->PF_GetPixelFormat(inputP, &format));
+
+					// upload the input world to a texture
+					size_t pixSize;
+					gl::GLenum glFmt;
+					float multiplier16bit;
+					gl::GLuint inputFrameTexture = UploadTexture(suites, format, inputP, outputP, in_data, pixSize, glFmt, multiplier16bit);
+
+					// Set up the frame-buffer object just like a window.
+					AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), renderContext->mOutputFrameTexture);
+					ReportIfErrorFramebuffer(in_data, out_data);
+
+					glViewport(0, 0, widthL, heightL);
+					glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+					glClear(GL_COLOR_BUFFER_BIT);
+
+					// - simply blend the texture inside the frame buffer
+					// - TODO: hack your own shader there
+					RenderGL(renderContext, widthL, heightL, inputFrameTexture, miP->inOneF, multiplier16bit);
+
+					// - we toggle PBO textures (we use the PBO we just created as an input)
+					AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);
+					ReportIfErrorFramebuffer(in_data, out_data);
+
+					glClear(GL_COLOR_BUFFER_BIT);
+
+					// swizzle using the previous output
+					SwizzleGL(renderContext, widthL, heightL, renderContext->mOutputFrameTexture, multiplier16bit);
+
+					if (hasGremedy) {
+						gl::glFrameTerminatorGREMEDY();
+					}
+
+					// - get back to CPU the result, and inside the output world
+					DownloadTexture(renderContext, suites, inputP, outputP, in_data,
+						format, pixSize, glFmt);
+
+					glBindFramebuffer(GL_FRAMEBUFFER, 0);
+					glBindTexture(GL_TEXTURE_2D, 0);
+					glDeleteTextures(1, &inputFrameTexture);
+				}
+				catch (PF_Err& thrown_err)
+				{
+					err = thrown_err;
+				}
+				catch (...)
+				{
+					err = PF_Err_OUT_OF_MEMORY;
+				}
+
+			}
 
 
 
@@ -1000,13 +1471,45 @@ SmartRender(
 
 static PF_Err
 GlobalSetdown(
-              PF_InData		*in_data)
+	PF_InData		*in_data,
+	PF_OutData		*out_data,
+	PF_ParamDef		*params[],
+	PF_LayerDef		*output)
 {
+	PF_Err			err = PF_Err_NONE;
     AEGP_SuiteHandler	suites(in_data->pica_basicP);
     
     if (in_data->global_data) {
         suites.HandleSuite1()->host_dispose_handle(in_data->global_data);
     }
+	try
+	{
+		// always restore back AE's own OGL context
+		SaveRestoreOGLContext oSavedContext;
+
+		S_mutex.lock();
+		S_render_contexts.clear();
+		S_mutex.unlock();
+
+		//OS specific unloading
+		AESDK_OpenGL_Shutdown(*S_GLator_EffectCommonData.get());
+		S_GLator_EffectCommonData.reset();
+
+		if (in_data->sequence_data) {
+			PF_DISPOSE_HANDLE(in_data->sequence_data);
+			out_data->sequence_data = NULL;
+		}
+	}
+	catch (PF_Err& thrown_err)
+	{
+		err = thrown_err;
+	}
+	catch (...)
+	{
+		err = PF_Err_OUT_OF_MEMORY;
+	}
+
+	return err;
     
     return PF_Err_NONE;
 }
@@ -1245,7 +1748,10 @@ EntryPointFunc (
 				break;
                 
             case PF_Cmd_GLOBAL_SETDOWN:
-                err = GlobalSetdown(in_data);
+                err = GlobalSetdown(in_data,
+									out_data,
+									params,
+									output);
                 break;
                 
             case PF_Cmd_PARAMS_SETUP:
