@@ -53,8 +53,8 @@ typedef float				fpshort;
 
 #include "GL_base.h"
 #include "vmath.hpp"
-#include "glbinding/gl33ext/gl.h"
-#include <glbinding/gl/extension.h>
+
+
 
 using namespace AESDK_OpenGL;
 using namespace gl33core;
@@ -62,6 +62,7 @@ using namespace gl33core;
 
 #include "lib/exprtk.hpp"
 #include "lib/json.hpp"
+
 
 /* Versioning information */
 
@@ -525,7 +526,7 @@ public:
 };
 
 //GLSL SCRIPTS
-std::string glvertstr = "#version 330 \n\
+static std::string glvertstr = "#version 330 \n\
 in vec4 Position;\n\
 in vec2 UVs;\n\
 out vec4 out_pos;\n\
@@ -538,7 +539,7 @@ void main(void)\n\
 	out_uvs = UVs;\n\
 }";
 
-std::string glfrag1str = "#version 330\n\
+static std::string glfrag1str = "#version 330\n\
 uniform sampler2D videoTexture; \n\
 uniform float sliderVal; \n\
 uniform float multiplier16bit; \n\
@@ -554,7 +555,7 @@ void main(void)\n\
 	colourOut.g = sliderVal;\n\
 }";
 
-std::string glfrag2str = "#version 330\n\
+static std::string glfrag2str = "#version 330\n\
 uniform sampler2D videoTexture;\n\
 uniform float multiplier16bit;\n\
 in vec4 out_pos;\n\
