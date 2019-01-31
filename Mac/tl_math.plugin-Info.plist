@@ -9,7 +9,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>GLator</string>
+	<string>tl_math</string>
 	<key>CFBundlePackageType</key>
 	<string>eFKT</string>
 	<key>CFBundleSignature</key>
@@ -19,6 +19,6 @@
 	<key>NSAppleScriptEnabled</key>
 	<string>No</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>© 1992-2006 Adobe Systems Incorporated</string>
+	<string>@2018 Thomas Laforge</string>
 </dict>
 </plist>

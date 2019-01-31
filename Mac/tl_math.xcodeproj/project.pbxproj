@@ -54,7 +54,6 @@
 		044359E9220339CC00860F4E /* tl_math_iterators.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_iterators.cpp; path = ../src/tl_math_iterators.cpp; sourceTree = "<group>"; };
 		044359EB220339E200860F4E /* tl_math_Dialogs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_Dialogs.cpp; path = ../src/tl_math_Dialogs.cpp; sourceTree = "<group>"; };
 		044F1E3721C432F100288C72 /* tl_mathArb_Handler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_mathArb_Handler.cpp; path = ../src/tl_mathArb_Handler.cpp; sourceTree = "<group>"; };
-		04899CBC21C1276A003ECF0B /* script */ = {isa = PBXFileReference; lastKnownFileType = folder; name = script; path = ../../tl_Math/script; sourceTree = "<group>"; };
 		7EB428A80FBA1B62003C7DD1 /* tl_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math.h; path = ../include/tl_math.h; sourceTree = SOURCE_ROOT; };
 		7EB428DB0FBA1C77003C7DD1 /* GL_base.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GL_base.h; path = ../lib/GL/GL_base.h; sourceTree = SOURCE_ROOT; };
 		7EB428DC0FBA1C80003C7DD1 /* tl_math_Strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math_Strings.h; path = ../include/tl_math_Strings.h; sourceTree = SOURCE_ROOT; };
@@ -159,7 +158,6 @@
 				D7DCC59E1B239204007E769E /* AEFX_SuiteHelper.h */,
 				D7DCC59A1B2391F6007E769E /* Smart_Utils.cpp */,
 				D7DCC59B1B2391F6007E769E /* Smart_Utils.h */,
-				04899CBC21C1276A003ECF0B /* script */,
 			);
 			name = "Supporting Code";
 			sourceTree = "<group>";
