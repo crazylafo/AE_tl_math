@@ -11,7 +11,7 @@ https://nlohmann.github.io/json/
 
 An After Effect plugin project.
 The user can write math expression for each pixels and by channels (RGBA). 
-whatever your Color Space, the expected values are bewteen 0 and 1.
+whatever your Color Space, the expected values are between 0 and 1.
 
 
 Verion note:
