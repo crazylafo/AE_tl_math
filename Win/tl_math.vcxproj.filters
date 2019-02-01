@@ -2,23 +2,29 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resources">
-      <UniqueIdentifier>{b69af876-1d29-49fa-9917-fd2efa165225}</UniqueIdentifier>
+      <UniqueIdentifier>{8cb54d3b-232b-4673-9735-96eed9ebdd87}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
     <Filter Include="Headers">
-      <UniqueIdentifier>{e1cf207c-552f-4fd4-96ed-76ccc9ebdf72}</UniqueIdentifier>
+      <UniqueIdentifier>{5d285a54-c385-45e9-8a07-1d2f0853fa1e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Headers\AE">
-      <UniqueIdentifier>{728b7ff5-0e0a-45d2-999a-696b548f9a28}</UniqueIdentifier>
+      <UniqueIdentifier>{50b6f164-a831-4644-9908-b80b57adabd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Supporting code">
-      <UniqueIdentifier>{f2f05dcb-eed5-4aa5-b2d0-504449ce3cf4}</UniqueIdentifier>
+    <Filter Include="GL">
+      <UniqueIdentifier>{d5d16868-4dea-428a-96d0-8807728aaba7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Script">
-      <UniqueIdentifier>{cc262249-7e9d-44cc-b7c1-c24a3d80a426}</UniqueIdentifier>
+    <Filter Include="GL\glbinding">
+      <UniqueIdentifier>{84fd5098-2911-41a7-b21f-72e866091f60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="cpp">
-      <UniqueIdentifier>{16773ec6-8ebb-4230-94cd-9d8281434f6b}</UniqueIdentifier>
+    <Filter Include="GL\glbinding\gl">
+      <UniqueIdentifier>{88fc9faa-129c-4133-b5da-49c09f9f1921}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Supporting code">
+      <UniqueIdentifier>{79927c73-6487-4b67-912d-3fefeb174109}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{30c6c523-801a-4ca5-b804-70222c4d447d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -76,41 +82,160 @@
     <ClInclude Include="..\..\..\Util\String_Utils.h">
       <Filter>Headers\AE</Filter>
     </ClInclude>
-    <ClInclude Include="..\tl_math.h">
+    <ClInclude Include="..\..\..\Util\AEFX_SuiteHelper.h">
+      <Filter>Headers\Supporting code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Util\Smart_Utils.h">
+      <Filter>Headers\Supporting code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\json.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\tl_math_Strings.h">
+    <ClInclude Include="..\lib\exprtk.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\exprtk.hpp">
+    <ClInclude Include="..\lib\GL_base.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\script\script.h">
-      <Filter>Script</Filter>
+    <ClInclude Include="..\include\script.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tl_math.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tl_math_Strings.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\vmath.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\callbacks_private.h">
+      <Filter>GL\glbinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\glrevision.h">
+      <Filter>GL\glbinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\logging_private.h">
+      <Filter>GL\glbinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\Meta_Maps.h">
+      <Filter>GL\glbinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\RingBuffer.h">
+      <Filter>GL\glbinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\RingBuffer.hpp">
+      <Filter>GL\glbinding</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp">
-      <Filter>Supporting code</Filter>
+      <Filter>Headers\Supporting code</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Util\MissingSuiteError.cpp">
-      <Filter>Supporting code</Filter>
+      <Filter>Headers\Supporting code</Filter>
     </ClCompile>
-    <ClCompile Include="..\tl_math.cpp" />
-    <ClCompile Include="..\tl_math_Strings.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\tl_mathArb_Handler.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\tl_math_Dialogs.cpp">
-      <Filter>cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\tl_math_iterators.cpp">
-      <Filter>cpp</Filter>
+    <ClCompile Include="..\..\..\Util\AEFX_SuiteHelper.c">
+      <Filter>Headers\Supporting code</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Util\Smart_Utils.cpp">
-      <Filter>Headers\AE</Filter>
+      <Filter>Headers\Supporting code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tl_math_Strings.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tl_math_iterators.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tl_math_Dialogs.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tl_math.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\GL_base.cpp">
+      <Filter>GL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\AbstractFunction.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\AbstractValue.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Binding.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Binding_objects.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\callbacks.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\ContextHandle.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\logging.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_BitfieldsByString.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_BooleansByString.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_EnumsByString.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_ExtensionsByString.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_ExtensionsByFunctionString.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_FunctionStringsByExtension.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_ReqVersionsByExtension.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_StringsByBitfield.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_StringsByBoolean.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_StringsByEnum.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Meta_StringsByExtension.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\ProcAddress.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Value.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Version.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Version_ValidVersions.cpp">
+      <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\gl\functions.cpp">
+      <Filter>GL\glbinding\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\gl\types.cpp">
+      <Filter>GL\glbinding\gl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tl_mathArb_Handler.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\ContextInfo.cpp">
+      <Filter>GL\glbinding</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
