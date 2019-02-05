@@ -543,19 +543,19 @@ void main(void)\n\
 }";
 
 static std::string glfrag1str = "#version 330\n\
-uniform sampler2D videoTexture; \n\
-uniform float sliderVal; \n\
-uniform float multiplier16bit; \n\
-in vec4 out_pos; \n\
-in vec2 out_uvs; \n\
-out vec4 colourOut; \n\
+uniform sampler2D videoTexture;\n\
+uniform float sliderVal;\n\
+uniform float multiplier16bit;\n\
+in vec4 out_pos;\n\
+in vec2 out_uvs;\n\
+out vec4 colourOut;\n\
 void main(void)\n\
 {\n\
-	colourOut = texture(videoTexture, out_uvs.xy); \n\
-	colourOut = colourOut * multiplier16bit; \n\
-	colourOut = vec4(colourOut.g, colourOut.b, colourOut.a, colourOut.r); \n\
-	colourOut = vec4(colourOut.a * colourOut.r, colourOut.a * colourOut.g, colourOut.a * colourOut.b, colourOut.a); \n\
-	colourOut.g = sliderVal;\n\
+    colourOut = texture(videoTexture, out_uvs.xy);\n\
+    colourOut = colourOut * multiplier16bit;\n\
+    colourOut = vec4(colourOut.g, colourOut.b, colourOut.a, colourOut.r);\n\
+    colourOut = vec4(colourOut.a * colourOut.r, colourOut.a * colourOut.g, colourOut.a * colourOut.b, colourOut.a);\n\
+    colourOut.g = sliderVal;\n\
 }";
 
 static std::string glfrag2str = "#version 330\n\

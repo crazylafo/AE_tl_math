@@ -100,7 +100,10 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
 std::string script_ui = "function exprScript( jsonInput, pluginMAJORV, pluginMINORV, pluginBUGV){ \n\
 var pluginVersion = pluginMAJORV+'.'+pluginMINORV+pluginBUGV;\n\
 pluginVersion = parseFloat (pluginVersion); \n\
-var exprCl = JSON.parse(jsonInput);\n\
+var exprCl;\n\
+try {\n\
+	 exprCl= JSON.parse(jsonInput);\n\
+}catch(e) { alert(e) }\n\
 var w = new Window('dialog', 'Maths Expressions V'+pluginVersion, undefined, {resizeable:true} );\n\
 w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\n\
 w.grp = w.add('group');\n\
@@ -259,5 +262,6 @@ exprScript(%s,%s,%s,%s);\n\
 ";
 
 std::string script_ae = script_ui.append(script_getcallBacks).append(json_createJson).append(json_saveAsJson).append(json_readJson);
+
 
 #endif /* scipt_h */

@@ -918,14 +918,38 @@ SmartRender(
             // determine requested output depth
             ERR(wsP->PF_GetPixelFormat(outputP, &format));
 
-
-
             WorldTransfertInfo   wtiP;
             AEFX_CLR_STRUCT(wtiP);
-            wtiP.inW= *inputP;
-            wtiP.outW = *outputP;
-
-
+			ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, inputP->width, inputP->height, inputP->world_flags, &wtiP.inW));
+			if (PF_Quality_HI == in_data->quality) {
+				ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+					inputP,
+					&wtiP.inW,
+					&inputP->extent_hint,
+					&wtiP.inW.extent_hint));
+			}
+			else {
+				ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+					inputP,
+					&wtiP.inW,
+					&inputP->extent_hint,
+					&wtiP.inW.extent_hint));
+			}
+			ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, outputP->width, outputP->height, outputP->world_flags, &wtiP.outW));
+			if (PF_Quality_HI == in_data->quality) {
+				ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+					outputP,
+					&wtiP.outW,
+					&outputP->extent_hint,
+					&wtiP.outW.extent_hint));
+			}
+			else {
+				ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+					outputP,
+					&wtiP.outW,
+					&outputP->extent_hint,
+					&wtiP.outW.extent_hint));
+			}
             //CHECKOUT PARAMS
             PF_ParamDef  setup_param,
 						arb_param,
@@ -1100,8 +1124,22 @@ SmartRender(
                 PF_Pixel empty8 = {0,0,0,0};
 
                 PF_EffectWorld Externalworld;
-                Externalworld = *outputP;
-                wtiP.extLW = *outputP;
+				ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, outputP->width, outputP->height, outputP->world_flags, &Externalworld));
+				if (PF_Quality_HI == in_data->quality) {
+					ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+						outputP,
+						&Externalworld,
+						&outputP->extent_hint,
+						&Externalworld.extent_hint));
+				}
+				else {
+					ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+						outputP,
+						&Externalworld,
+						&outputP->extent_hint,
+						&Externalworld.extent_hint));
+				}
+				ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, outputP->width, outputP->height, outputP->world_flags, &wtiP.extLW));
 
                 oiP.x_offFi =  miP->x_offFi;
                 oiP.y_offFi =  miP->y_offFi;
@@ -1211,7 +1249,9 @@ SmartRender(
                 else {
                     wtiP.extLW = Externalworld;
                 }
-
+				if (Externalworld.data) {
+					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &Externalworld));
+				}
             }
 
             //CALL PARSER MODE
@@ -1354,7 +1394,15 @@ SmartRender(
 					err = PF_Err_INTERNAL_STRUCT_DAMAGED;
 					break;
 				}
-
+				if (wtiP.inW.data) {
+					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &wtiP.inW));
+				}
+				if (wtiP.outW.data) {
+					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &wtiP.outW));
+				}
+				if (wtiP.extLW.data) {
+					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &wtiP.extLW));
+				}
 			}
             // CALL GLSL
 			else {
@@ -1367,7 +1415,7 @@ SmartRender(
 					// our render specific context (one per thread)
 					AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr renderContext = GetCurrentRenderContext();
 
-					if (!renderContext->mInitialized || arbP->ShaderResetB) {
+					if (!renderContext->mInitialized) {
 						//Now comes the OpenGL part - OS specific loading to start with
 						AESDK_OpenGL_Startup(*renderContext.get(), S_GLator_EffectCommonData.get());
 						renderContext->mInitialized = true;
@@ -1384,13 +1432,24 @@ SmartRender(
 					A_long				widthL = inputP->width;
 					A_long				heightL = inputP->height;
 
+					std::string errorStr;
+					PF_Boolean hasErrorB = false;
 					//loading OpenGL resources
 					AESDK_OpenGL_InitResources(*renderContext.get(),
 						widthL,
 						heightL,
+						arbP->ShaderResetB,
 						expression_string_vertexstr,
 						expression_string_frag1str,
-						expression_string_frag2str);
+						expression_string_frag2str,
+						&hasErrorB,
+						errorStr);
+					if (hasErrorB) {
+						suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+							"Error in GLSL : %s",
+							errorStr.c_str());
+
+					}
 
 					CHECK(wsP->PF_GetPixelFormat(inputP, &format));
 
@@ -1410,7 +1469,7 @@ SmartRender(
 
 					// - simply blend the texture inside the frame buffer
 					// - TODO: hack your own shader there
-					RenderGL(renderContext, widthL, heightL, inputFrameTexture, miP->inOneF, multiplier16bit);
+					RenderGL(renderContext, widthL, heightL, inputFrameTexture, PF_FpLong(miP->inOneF), multiplier16bit);
 
 					// - we toggle PBO textures (we use the PBO we just created as an input)
 					AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);

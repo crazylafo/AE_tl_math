@@ -232,7 +232,7 @@ Arb_Compare(
 			total_aV.emplace_back (first_arbP->NeedsLumaB);
 			total_aV.emplace_back (first_arbP->PresetHasWideInputB);
             
-            total_aV.emplace_back (first_arbP->parserModeA);
+            total_aV.emplace_back ((size_t)first_arbP->parserModeA);
             total_aV.emplace_back ( strlen(first_arbP->functionOneAc));
             total_aV.emplace_back ( strlen(first_arbP->functionTwoAc));
             total_aV.emplace_back ( strlen(first_arbP->functionThreeAc));
@@ -276,7 +276,7 @@ Arb_Compare(
 			total_bV.emplace_back ( second_arbP->NeedsLumaB);
 			total_bV.emplace_back ( second_arbP->PresetHasWideInputB);
             
-            total_bV.emplace_back (second_arbP->parserModeA);
+            total_bV.emplace_back ((size_t)second_arbP->parserModeA);
             total_bV.emplace_back ( strlen(second_arbP->functionOneAc));
             total_bV.emplace_back ( strlen(second_arbP->functionTwoAc));
             total_bV.emplace_back ( strlen(second_arbP->functionThreeAc));

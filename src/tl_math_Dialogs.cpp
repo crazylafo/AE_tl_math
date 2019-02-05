@@ -19,7 +19,14 @@ void strReplace(std::string& str,
         pos += newStr.length();
     }
 }
-
+void ExprtkCorrectorStr(std::string &str) {
+	//adapt exprtk language to AE expression's language.
+	strReplace(str, "&&", "&");
+	strReplace(str, "||", "|");
+	strReplace(str, "++", "+=1");
+	strReplace(str, "--", "-=1");
+	strReplace(str, " = ", " := ");
+}
 //detect if a string has a specified string
 static PF_Boolean
 hasString(std::string str, std::string expr)
@@ -167,36 +174,37 @@ SetupDialog(
         if (arbInP){
             tempParserModeA =arbInP->parserModeA;
             tempFuncModeB = arbInP->UsesFunctionsB;
-
             tempRedS.append(arbInP->redExAcFlat);
             tempGreenS.append(arbInP->greenExAcFlat);
             tempBlueS.append(arbInP->blueExAcFlat);
             tempAlphaS.append(arbInP->alphaExAcFlat);
-
             tempfunc1S.append (arbInP->functionOneFlat);
             tempfunc2S.append (arbInP->functionTwoFlat);
             tempfunc3S.append (arbInP->functionThreeFlat);
-            tempGlsl.append (arbInP->Glsl_FragmentShFlat);
             tempName.append(arbInP->presetNameAc);
+			tempGlsl.append(arbInP->Glsl_FragmentShFlat);
             tempDescription.append(arbInP->descriptionAcFlat);
         }
 
     }
-	if (tempGlsl == "fragSh") {
-		tempGlsl = glfrag1str;
-	}
     //to force the parser to keep \n before to send it to js
     strReplace(tempRedS, "\n", "\\n");
     strReplace(tempGreenS, "\n", "\\n");
     strReplace(tempBlueS, "\n", "\\n");
     strReplace(tempAlphaS, "\n", "\\n");
     strReplace(tempDescription, "\n", "\\n");
-    strReplace(tempGlsl, "\n", "\\n");
+    strReplace(tempGlsl, "\n" , "\\n");
     strReplace(tempfunc1S, "\n", "\\n");
     strReplace(tempfunc2S, "\n", "\\n");
     strReplace(tempfunc3S, "\n", "\\n");
+	
+	
+	if (tempGlsl == "fragSh") {
+	tempGlsl = glfrag1str;
+	strReplace(tempGlsl, "\n", "\\n");
+	}
 
-
+	
 
     nlohmann::json  jToJs;
     jToJs["parserModeA"] = tempParserModeA;
@@ -212,6 +220,7 @@ SetupDialog(
     jToJs["func3Str"]=tempfunc3S;
     jToJs["glslExpr"]=tempGlsl;
 
+	
     std::string jsonDump = "'''";
     jsonDump .append(jToJs.dump());
     jsonDump.append("'''");
@@ -235,12 +244,7 @@ SetupDialog(
         //set result per channel
         std::string resultStr = resultAC;
 
-        //adapt exprtk language to AE expression's language.
-        strReplace(resultStr, "&&",  "&");
-        strReplace(resultStr, "||",  "|");
-        strReplace(resultStr, "++",  "+=1");
-        strReplace(resultStr, "--",  "-=1");
-        strReplace(resultStr, " = ", " := ");
+
 
 
         arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
@@ -260,12 +264,19 @@ SetupDialog(
         arbOutP->UsesFunctionsB = tempUsesFunctionsB;
 
         std::string redResultStr =   jresult["/redExpr"_json_pointer];
+		ExprtkCorrectorStr(redResultStr);
         std::string greenResultStr = jresult["/greenExpr"_json_pointer];
+		ExprtkCorrectorStr(greenResultStr);
         std::string blueResultStr =  jresult["/blueExpr"_json_pointer];
+		ExprtkCorrectorStr(blueResultStr);
         std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
+		ExprtkCorrectorStr(alphaResultStr);
         std::string func1Str   = jresult["/func1Str"_json_pointer];
+		ExprtkCorrectorStr(func1Str);
         std::string func2Str   = jresult["/func2Str"_json_pointer];
+		ExprtkCorrectorStr(func2Str);
         std::string func3Str   = jresult["/func3Str"_json_pointer];
+		ExprtkCorrectorStr(func3Str);
         std::string glslExpr = jresult["/glslExpr"_json_pointer];
 
         std::string presetNameStr = jresult["/presetName"_json_pointer];
@@ -309,10 +320,10 @@ SetupDialog(
         greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
         blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
         alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
-
         func1Str.erase(std::remove(func1Str.begin(), func1Str.end(), '\n'), func1Str.end());
         func2Str.erase(std::remove(func2Str.begin(), func2Str.end(), '\n'), func2Str.end());
         func3Str.erase(std::remove(func3Str.begin(), func3Str.end(), '\n'), func3Str.end());
+		//glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\n'), glslExpr.end());
         
 
         descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
