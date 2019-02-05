@@ -1,26 +1,8 @@
-/*******************************************************************/
-/*                                                                 */
-/*                      ADOBE CONFIDENTIAL                         */
-/*                   _ _ _ _ _ _ _ _ _ _ _ _ _                     */
-/*                                                                 */
-/* Copyright 2007-2015 Adobe Systems Incorporated                  */
-/* All Rights Reserved.                                            */
-/*                                                                 */
-/* NOTICE:  All information contained herein is, and remains the   */
-/* property of Adobe Systems Incorporated and its suppliers, if    */
-/* any.  The intellectual and technical concepts contained         */
-/* herein are proprietary to Adobe Systems Incorporated and its    */
-/* suppliers and may be covered by U.S. and Foreign Patents,       */
-/* patents in process, and are protected by trade secret or        */
-/* copyright law.  Dissemination of this information or            */
-/* reproduction of this material is strictly forbidden unless      */
-/* prior written permission is obtained from Adobe Systems         */
-/* Incorporated.                                                   */
-/*                                                                 */
-/*******************************************************************/
+
 
 /*
 	GL_base.h
+	Based on Adobe After Efffect SDK
 */
 
 #pragma once
@@ -155,9 +137,9 @@ enum { PositionSlot, UVSlot };
 void AESDK_OpenGL_Startup(AESDK_OpenGL_EffectCommonData& inData, const AESDK_OpenGL_EffectCommonData* inRootContext = nullptr);
 void AESDK_OpenGL_Shutdown(AESDK_OpenGL_EffectCommonData& inData);
 
-void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData, u_short inBufferWidth, u_short inBufferHeight, const std::string& vert1Str, const std::string& frag1Str, const std::string& frag2Str );
+void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData, u_short inBufferWidth, u_short inBufferHeight, PF_Boolean ShaderResetB, const std::string& vert1Str, const std::string& frag1Str, const std::string& frag2Str, PF_Boolean *hasErrorB, std::string& shaderErrStr );
 void AESDK_OpenGL_MakeReadyToRender(AESDK_OpenGL_EffectRenderData& inData, gl::GLuint textureHandle);
-gl::GLuint AESDK_OpenGL_InitShader(std::string inVertexShaderStr, std::string inFragmentShaderStr);
+void AESDK_OpenGL_InitShader(gl::GLuint *ObjSu, std::string inVertexShaderStr, std::string inFragmentShaderStr, PF_Boolean *hasErrorB, std::string& shaderErrStr);
 void AESDK_OpenGL_BindTextureToTarget(gl::GLuint program, gl::GLint inTexture, std::string inTargetName);
 
 

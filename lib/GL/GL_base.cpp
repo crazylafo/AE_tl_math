@@ -1,34 +1,4 @@
-/*******************************************************************/
-/*                                                                 */
-/*                      ADOBE CONFIDENTIAL                         */
-/*                   _ _ _ _ _ _ _ _ _ _ _ _ _                     */
-/*                                                                 */
-/* Copyright 2007-2015 Adobe Systems Incorporated                  */
-/* All Rights Reserved.                                            */
-/*                                                                 */
-/* NOTICE:  All information contained herein is, and remains the   */
-/* property of Adobe Systems Incorporated and its suppliers, if    */
-/* any.  The intellectual and technical concepts contained         */
-/* herein are proprietary to Adobe Systems Incorporated and its    */
-/* suppliers and may be covered by U.S. and Foreign Patents,       */
-/* patents in process, and are protected by trade secret or        */
-/* copyright law.  Dissemination of this information or            */
-/* reproduction of this material is strictly forbidden unless      */
-/* prior written permission is obtained from Adobe Systems         */
-/* Incorporated.                                                   */
-/*                                                                 */
-/*******************************************************************/
 
-/*	GL_base.cpp
-
-	This file invokes the basic OpenGL framework, keeping in mind that
-	you would render to a hidden surface (FBO) and read-back into an AE frame
-	
-	Revision history: 
-
-	1.0 Win and Mac versions use the same base files.	anindyar	7/4/2007
-	1.1 Completely re-written for OGL 3.3 and threads	aparente	7/1/2015
-*/
 
 #include "GL_base.h"
 
@@ -532,14 +502,22 @@ void AESDK_OpenGL_Shutdown(AESDK_OpenGL_EffectCommonData& inData)
 /*
 ** OpenGL resource loading
 */
-void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData, u_short inBufferWidth, u_short inBufferHeight, const std::string& vert1Str, const std::string& frag1Str, const std::string& frag2Str)
+void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData,
+	u_short inBufferWidth,
+	u_short inBufferHeight,
+	PF_Boolean ShaderResetB,
+	const std::string& vert1Str,
+	const std::string& frag1Str,
+	const std::string& frag2Str,
+	PF_Boolean *hasErrorB,
+	std::string& shaderErrStr)
 {
 	bool sizeChangedB = inData.mRenderBufferWidthSu != inBufferWidth || inData.mRenderBufferHeightSu != inBufferHeight;
 	
 	inData.mRenderBufferWidthSu = inBufferWidth;
 	inData.mRenderBufferHeightSu = inBufferHeight;
 
-	if (sizeChangedB) {
+	if (sizeChangedB || ShaderResetB) {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -605,15 +583,19 @@ void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData, u_short i
 
 	if (inData.mProgramObjSu == 0) {
 		//initialize and compile the shader objects
-		inData.mProgramObjSu = AESDK_OpenGL_InitShader(
-			vert1Str,
-			frag1Str);
+		 AESDK_OpenGL_InitShader(&inData.mProgramObjSu,
+								vert1Str,
+								frag1Str,
+								hasErrorB,
+								shaderErrStr);
 	}
 	if (inData.mProgramObj2Su == 0) {
 		//initialize and compile the shader objects
-		inData.mProgramObj2Su = AESDK_OpenGL_InitShader(
+		 AESDK_OpenGL_InitShader(&inData.mProgramObj2Su,
 			vert1Str,
-			frag2Str);
+			frag2Str, 
+			hasErrorB,
+			shaderErrStr);
 	}
 }
 
@@ -637,7 +619,7 @@ void AESDK_OpenGL_MakeReadyToRender(AESDK_OpenGL_EffectRenderData& inData, gl::G
 /*
 ** Initializing the Shader objects
 */
-gl::GLuint AESDK_OpenGL_InitShader(std::string inVertexShaderStr, std::string inFragmentShaderStr)
+void AESDK_OpenGL_InitShader( gl::GLuint *ObjSu, std::string inVertexShaderStr, std::string inFragmentShaderStr, PF_Boolean *hasErrorB, std::string& shaderErrStr)
 {
 	const char *vertexShaderStringsP = inVertexShaderStr.c_str();
 	const char *fragmentShaderStringsP = inFragmentShaderStr.c_str();
@@ -689,6 +671,8 @@ gl::GLuint AESDK_OpenGL_InitShader(std::string inVertexShaderStr, std::string in
 
 	if( !linkedB ) {
 		glGetProgramInfoLog(programObjSu, sizeof(str), NULL, str);
+		*hasErrorB = true;
+		shaderErrStr = str;
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
 	}
 
@@ -697,7 +681,7 @@ gl::GLuint AESDK_OpenGL_InitShader(std::string inVertexShaderStr, std::string in
 	glDeleteShader(vertexShaderSu);
 	glDeleteShader(fragmentShaderSu);
 
-	return programObjSu;
+	*ObjSu = programObjSu;
 }
 
 /*
