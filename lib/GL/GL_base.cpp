@@ -654,6 +654,8 @@ void AESDK_OpenGL_InitShader( gl::GLuint *ObjSu, std::string inVertexShaderStr, 
 	glGetShaderiv(fragmentShaderSu, GL_COMPILE_STATUS, &fragCompiledB);
 	if(!fragCompiledB) {
 		glGetShaderInfoLog(fragmentShaderSu, sizeof(str), NULL, str);
+		*hasErrorB = true;
+		shaderErrStr = str;
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
 	}
 
@@ -671,8 +673,6 @@ void AESDK_OpenGL_InitShader( gl::GLuint *ObjSu, std::string inVertexShaderStr, 
 
 	if( !linkedB ) {
 		glGetProgramInfoLog(programObjSu, sizeof(str), NULL, str);
-		*hasErrorB = true;
-		shaderErrStr = str;
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
 	}
 
@@ -745,37 +745,5 @@ std::string CheckFramebufferStatus()
 	return std::string("Unknown error!");
 }
 
-/*
-** ReadShaderFile
-*/
-unsigned char *ReadShaderFile(std::string inFilename)
-{
-    FILE *fileP;
-	unsigned char *bufferP = NULL;
-#ifdef AE_OS_WIN
-	fopen_s(&fileP, inFilename.c_str() , "r" );
-#elif defined(AE_OS_MAC)
-	fileP = fopen( inFilename.c_str() , "r" );
-#endif	
-	if(NULL != fileP)
-	{
-		fseek(fileP, 0L, SEEK_END);
-		int32_t fileLength = ftell( fileP);
-		rewind(fileP);
-		bufferP = new unsigned char[fileLength];
-		int32_t bytes = static_cast<int32_t>(fread( bufferP, 1, fileLength, fileP ));
-		bufferP[bytes] = 0;
-
-#if defined(AE_OS_WIN) && defined(_DEBUG)
-		OutputDebugStringA((const char*)bufferP);
-		OutputDebugStringA("\n");
-#endif
-#if defined(AE_OS_MAC) && defined(_DEBUG)
-		std::cout << bufferP << std::endl;
-#endif
-	}
-		
-	return bufferP;
-}
 
 } //namespace ends

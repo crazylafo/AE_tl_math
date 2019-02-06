@@ -158,8 +158,8 @@ void AESDK_OpenGL_BindTextureToTarget(gl::GLuint program, gl::GLint inTexture, s
 std::string ReportError(AESDK_OpenGL_Err inError);
 //helper function - check frame buffer status before final render call
 std::string CheckFramebufferStatus();
-//helper function - read shader file into the compiler
-unsigned char* ReadShaderFile(std::string inFile);
+
+
 
 /*
 //	Error class and macros used to trap errors
