@@ -246,9 +246,10 @@ namespace {
 	void RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
 		A_long widthL, A_long heightL,
 		gl::GLuint		inputFrameTexture,
-		PF_FpLong			sliderVal,
-		float				multiplier16bit)
+		void			*refcon,
+		float			multiplier16bit)
 	{
+		MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
 		// - make sure we blend correctly inside the framebuffer
 		// - even though we just cleared it, another effect may want to first
 		// draw some kind of background to blend with
@@ -267,11 +268,42 @@ namespace {
 		// program uniforms
 		GLint location = glGetUniformLocation(renderContext->mProgramObjSu, "ModelviewProjection");
 		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "sliderVal");
-		glUniform1f(location, sliderVal);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "var1");
+		glUniform1f(location, miP->inOneF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "var2");
+		glUniform1f(location, miP->inTwoF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "var3");
+		glUniform1f(location, miP->inThreeF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "var4");
+		glUniform1f(location, miP->inFourF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt1");
+		glUniform2f(location, miP->pointOneX, miP->pointOneY);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt2");
+		glUniform2f(location, miP->pointTwoX, miP->pointTwoY);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "cl1");
+		glUniform3f(location, miP->colorOne[0], miP->colorOne[1], miP->colorOne[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "cl2");
+		glUniform3f(location, miP->colorTwo[0], miP->colorTwo[1], miP->colorTwo[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "time");
+		glUniform1f(location, miP->layerTime_Sec);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "layertime_sec");
+		glUniform1f(location, miP->layerTime_Sec);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerTime_frame");
+		glUniform1f(location, miP->layerTime_Frame);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerDuration");
+		glUniform1f(location, miP->layerDuration);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerPosition");
+		glUniform3f(location, miP->layerPos_X, miP->layerPos_Y, miP->layerPos_Z);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerScale");
+		glUniform3f(location, miP->layerScale_X, miP->layerScale_Y, miP->layerScale_Z);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "compWidth");
+		glUniform1f(location, miP->compWidthF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "compHeight");
+		glUniform1f(location, miP->compHeightF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "compFps");
+		glUniform1f(location, miP->compFpsF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
-
 		// Identify the texture to use and bind it to texture unit 0
 		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObjSu, inputFrameTexture, std::string("videoTexture"));
 
@@ -855,7 +887,7 @@ PreRender(
 
                 }
             }
-
+			ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
             suites.HandleSuite1()->host_unlock_handle(infoH);
         }
     }
@@ -895,8 +927,8 @@ SmartRender(
             AEFX_CLR_STRUCT(fiP);
             FlagsInfo      flagsP;
             AEFX_CLR_STRUCT(flagsP);
-            PF_Handle        arbH ;
             m_ArbData        *arbP            = NULL;
+			PF_Handle arbH = NULL;
 
             std::string expression_string_red = "1";
             std::string expression_string_green = "1";
@@ -1056,14 +1088,10 @@ SmartRender(
             miP->layerTime_Sec = PF_FpShort(in_data->current_time)/PF_FpShort(in_data->time_scale);
             miP->layerTime_Frame = PF_FpShort(in_data->current_time/ (float)in_data->time_step);
             miP->layerDuration =PF_FpShort( in_data->total_time / in_data->time_scale);
-
-
             miP->inOneF    = var1_param.u.fs_d.value;
             miP->inTwoF    = var2_param.u.fs_d.value;
             miP->inThreeF= var3_param.u.fs_d.value;
             miP->inFourF    =  var4_param.u.fs_d.value;
-
-
 
             //user param points
             miP->pointOneX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point1_param.u.td.x_value)));
@@ -1090,27 +1118,26 @@ SmartRender(
             miP->colorTwo[2] = tempFloat2.blue;
 
             //CALL ARB
-            arbH            = arb_param.u.arb_d.value;
-            arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
-            if (arbP) {
-                m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-                expression_string_red = tempPointer->redExAc;
-                expression_string_green = tempPointer->greenExAc;
-                expression_string_blue = tempPointer->blueExAc;
-                expression_string_alpha = tempPointer->alphaExAc;
-                expression_string_funcOne = tempPointer-> functionOneAc;
-                expression_string_funcTwo =  tempPointer->functionTwoAc;
-                expression_string_funcThree =  tempPointer->functionThreeAc;
-				expression_string_frag1str = tempPointer->Glsl_FragmentShAc;
+			arbH = arb_param.u.arb_d.value;
+			arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+            if (arbP && !err) {
+                expression_string_red = arbP->redExAc;
+                expression_string_green = arbP->greenExAc;
+                expression_string_blue = arbP->blueExAc;
+                expression_string_alpha = arbP->alphaExAc;
+                expression_string_funcOne = arbP-> functionOneAc;
+                expression_string_funcTwo =  arbP->functionTwoAc;
+                expression_string_funcThree =  arbP->functionThreeAc;
+				expression_string_frag1str = arbP->Glsl_FragmentShAc;
 
-                flagsP.PixelsCallExternalInputB = tempPointer->PixelsCallExternalInputB;
-                flagsP.PresetHasWideInput = tempPointer->PresetHasWideInputB;
-                flagsP.NeedsPixelAroundB = tempPointer->NeedsPixelAroundB;
-                flagsP.NeedsLumaB = tempPointer->NeedsLumaB;
-                flagsP.CallsAEGP_CompB = tempPointer-> CallsAEGP_CompB;
-                flagsP.CallsAEGP_layerB = tempPointer->CallsAEGP_layerB;
-                flagsP.UsesFunctionsB = tempPointer->UsesFunctionsB;
-				flagsP.parserModeA = tempPointer->parserModeA;
+                flagsP.PixelsCallExternalInputB = arbP->PixelsCallExternalInputB;
+                flagsP.PresetHasWideInput = arbP->PresetHasWideInputB;
+                flagsP.NeedsPixelAroundB = arbP->NeedsPixelAroundB;
+                flagsP.NeedsLumaB = arbP->NeedsLumaB;
+                flagsP.CallsAEGP_CompB = arbP-> CallsAEGP_CompB;
+                flagsP.CallsAEGP_layerB = arbP->CallsAEGP_layerB;
+                flagsP.UsesFunctionsB = arbP->UsesFunctionsB;
+				flagsP.parserModeB = arbP->parserModeB;
 
             }
 
@@ -1255,7 +1282,7 @@ SmartRender(
             }
 
             //CALL PARSER MODE
-			if (flagsP.parserModeA == 0) {
+			if (arbP && !err && flagsP.parserModeB == false) {
 				MathInfo    miPP;
 				AEFX_CLR_STRUCT(miPP); //new pointer wich can be modified in iterations
 				miPP = *miP;
@@ -1306,9 +1333,6 @@ SmartRender(
 						fiP.channelErrorstr.c_str(),
 						fiP.errorstr.c_str());
 				}
-
-
-
 
 				std::vector<std::thread> workers_thrds;
 				A_long part_length, lastPart_length, num_thrd;
@@ -1405,7 +1429,7 @@ SmartRender(
 				}
 			}
             // CALL GLSL
-			else {
+			else if (arbP && !err){
 				try
 				{
 
@@ -1469,7 +1493,7 @@ SmartRender(
 
 					// - simply blend the texture inside the frame buffer
 					// - TODO: hack your own shader there
-					RenderGL(renderContext, widthL, heightL, inputFrameTexture, PF_FpLong(miP->inOneF), multiplier16bit);
+					RenderGL(renderContext, widthL, heightL, inputFrameTexture, (void*)miP, multiplier16bit);
 
 					// - we toggle PBO textures (we use the PBO we just created as an input)
 					AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);
@@ -1503,9 +1527,8 @@ SmartRender(
 
 			}
 
-
-
             //CHECKIN PARAMS
+			PF_UNLOCK_HANDLE(arbH);
             ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &var1_param));
@@ -1517,11 +1540,10 @@ SmartRender(
             ERR2(PF_CHECKIN_PARAM(in_data, &color1_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &color2_param));
 
-
-            PF_UNLOCK_HANDLE(arbH);
             ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
             ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
         }
+		
         suites.HandleSuite1()->host_unlock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data));
     }
 

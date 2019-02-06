@@ -113,7 +113,7 @@ typedef struct {
     A_char  descriptionAcFlat [4096];
     
     //Mode
-    A_long parserModeA;
+	PF_Boolean  parserModeB;
     PF_Boolean UsesFunctionsB;
 	//Boolean information about chars
 	PF_Boolean ShaderResetB;
@@ -205,7 +205,7 @@ typedef struct  FlagsInfo {
         PF_Boolean CallsAEGP_CompB;
         PF_Boolean CallsAEGP_layerB;
         PF_Boolean UsesFunctionsB;
-		A_long parserModeA  ;
+		PF_Boolean parserModeB  ;
 }FlagsInfoP;
 
 typedef struct funcTransfertInfo {
@@ -492,7 +492,7 @@ public:
         symbol_table.add_constant("layerPosition_x", miP->layerPos_X);
         symbol_table.add_constant("layerPosition_y", miP->layerPos_Y);
         symbol_table.add_constant("layerPosition_z", miP->layerPos_Z);
-        symbol_table.add_constant("layerScale_z", miP->layerScale_X);
+        symbol_table.add_constant("layerScale_x", miP->layerScale_X);
         symbol_table.add_constant("layerScale_y", miP->layerScale_Y);
         symbol_table.add_constant("layerScale_z", miP->layerScale_Z);
         symbol_table.add_constant("compWidth", miP->compWidthF);
@@ -544,7 +544,10 @@ void main(void)\n\
 
 static std::string glfrag1str = "#version 330\n\
 uniform sampler2D videoTexture;\n\
-uniform float sliderVal;\n\
+uniform float var1;\n\
+uniform float var2;\n\
+uniform float var3;\n\
+uniform float var4;\n\
 uniform float multiplier16bit;\n\
 in vec4 out_pos;\n\
 in vec2 out_uvs;\n\
@@ -555,7 +558,10 @@ void main(void)\n\
     colourOut = colourOut * multiplier16bit;\n\
     colourOut = vec4(colourOut.g, colourOut.b, colourOut.a, colourOut.r);\n\
     colourOut = vec4(colourOut.a * colourOut.r, colourOut.a * colourOut.g, colourOut.a * colourOut.b, colourOut.a);\n\
-    colourOut.g = sliderVal;\n\
+    colourOut.r *=var1;\n\
+    colourOut.g *= var2;\n\
+    colourOut.b *= var3;\n\
+    colourOut.a *= var4;\n\
 }";
 
 static std::string glfrag2str = "#version 330\n\

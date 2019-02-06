@@ -26,6 +26,7 @@ void ExprtkCorrectorStr(std::string &str) {
 	strReplace(str, "++", "+=1");
 	strReplace(str, "--", "-=1");
 	strReplace(str, " = ", " := ");
+	strReplace(str, "\t", "    ");
 }
 //detect if a string has a specified string
 static PF_Boolean
@@ -151,7 +152,7 @@ SetupDialog(
     std::string tempfunc2S;
     std::string tempfunc3S;
 
-    A_long		tempParserModeA;
+	PF_Boolean		tempParserModeB;
     PF_Boolean  tempFuncModeB;
 
 
@@ -172,7 +173,7 @@ SetupDialog(
         AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
-            tempParserModeA =arbInP->parserModeA;
+            tempParserModeB =arbInP->parserModeB;
             tempFuncModeB = arbInP->UsesFunctionsB;
             tempRedS.append(arbInP->redExAcFlat);
             tempGreenS.append(arbInP->greenExAcFlat);
@@ -207,7 +208,7 @@ SetupDialog(
 	
 
     nlohmann::json  jToJs;
-    jToJs["parserModeA"] = tempParserModeA;
+    jToJs["parserModeB"] = tempParserModeB;
     jToJs["presetName"] =tempName;
     jToJs["description"]=tempDescription;
     jToJs["redExpr"]=tempRedS;
@@ -257,9 +258,10 @@ SetupDialog(
 
         nlohmann::json  jresult = nlohmann::json::parse(resultStr);
 
-		bool tempUsesFunctionsB;
+		bool ParserModeB, tempUsesFunctionsB;
 		
-		arbOutP->parserModeA = jresult["/parserModeA"_json_pointer];
+		ParserModeB = jresult["/parserModeB"_json_pointer];
+		arbOutP->parserModeB = ParserModeB;
 		tempUsesFunctionsB = jresult["/funcModeB"_json_pointer];
         arbOutP->UsesFunctionsB = tempUsesFunctionsB;
 
@@ -282,7 +284,7 @@ SetupDialog(
         std::string presetNameStr = jresult["/presetName"_json_pointer];
         std::string descriptionStr = jresult["/description"_json_pointer];
 
-		if (glslExpr != arbInP->Glsl_FragmentShFlat) {
+		if (glslExpr.compare(arbInP->Glsl_FragmentShFlat) !=0)  {
 			arbOutP->ShaderResetB = true;
 		}
 
