@@ -9,7 +9,8 @@
 #define scipt_h
 
 std::string script_parseBoolToInt = "function parseBoolToInt (bin){ \n\
-if (bin === 'false'|| bin === 'FALSE' ){return 0}\n\
+alert (bin)\n\
+if (bin === 'false'|| bin === 'FALSE'  ){return 0}\n\
 else {return 1}\n\
 }";
 std::string script_parseIntToBool = "function parseIntToBool (intvar){ \n\
@@ -26,10 +27,6 @@ std::string script_getcallBacks = "function getcallBacks(w){\n\
     exprCb.greenExpr    =   w.grp.tab.expr.greenC.greenet.text;\n\
     exprCb.blueExpr     =   w.grp.tab.expr.blueC.blueet.text;\n\
     exprCb.alphaExpr    =   w.grp.tab.expr.alphaC.alphaet.text;\n\
-    exprCb.funcModeB    =   w.grp.tab.func.cbMMode.value;\n\
-    exprCb.func1Str     =   w.grp.tab.func.func1C.funcet.text;\n\
-    exprCb.func2Str     =   w.grp.tab.func.func2C.funcet.text;\n\
-    exprCb.func3Str     =   w.grp.tab.func.func3C.funcet.text;\n\
     exprCb.glslExpr     =   w.grp.tab.glsl.fragSh.fragShet.text;\n\
     return exprCb ;\n\
 }";
@@ -48,10 +45,6 @@ std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
         greenExpr : exprCl.greenExpr,\n\
         blueExpr  : exprCl.blueExpr,\n\
         alphaExpr : exprCl.alphaExpr,\n\
-        funcModeB : exprCl.funcModeB,\n\
-        func1Str  : exprCl.func1Str,\n\
-        func2Str  : exprCl.func2Str,\n\
-        func3Str  : exprCl.func3Str\n\
         };\n\
         return ExprObj;\n\
 }";
@@ -86,10 +79,6 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
                 ExprObj.greenExpr   = testObj.greenExpr;\n\
                 ExprObj.blueExpr    = testObj.blueExpr;\n\
                 ExprObj.alphaExpr   = testObj.alphaExpr;\n\
-                ExprObj.funcModeB   = testObj.functionModeB;\n\
-                ExprObj.func1Str    = testObj.func1Str;\n\
-                ExprObj.func2Str    = testObj.func2Str;\n\
-                ExprObj.func3Str    = testObj.func3Str;\n\
                 ExprObj.error       = \"none\";\n\
                 }\n\
             else {\n\
@@ -125,7 +114,7 @@ w.grp.parserModeB.orientation = 'row';\n\
 w.grp.parserModeB.alignChildren = ['left', 'fill'];\n\
 w.grp.parserModeB.st =w.grp.parserModeB.add ('statictext', undefined, 'Parser Mode');\n\
 w.grp.parserModeB.ddl = w.grp.parserModeB.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
-w.grp.parserModeB.ddl.selection =  parseBoolToInt (exprCl.parserModeB);\n\
+w.grp.parserModeB.ddl.selection =  exprCl.parserModeB;\n\
 // \n\
 //PRESET NAME\n\
 w.grp.PresetN = w.grp.add('group');\n\
@@ -137,7 +126,6 @@ w.grp.PresetN.name = w.grp.PresetN.add ('edittext', undefined, exprCl.presetName
 w.grp.tab = w.grp.add('tabbedpanel');\n\
 //Mode expr \n\
 w.grp.tab.expr = w.grp.tab.add('tab', undefined, 'Math Expressions');\n\
-w.grp.tab.func = w.grp.tab.add('tab', undefined, 'Math Functions');\n\
 w.grp.tab.glsl= w.grp.tab.add('tab', undefined, 'Glsl');\n\
 w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
  //EXPR TAB \n\
@@ -169,30 +157,6 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
     w.grp.tab.expr.alphaC.alphaet = w.grp.tab.expr.alphaC.add ('edittext', undefined, exprCl.alphaExpr,{multiline:true});\n\
     // \n\
     \n\
-//FUNC TABLE TAB \n\
-    w.grp.tab.func.orientation='column';\n\
-    w.grp.tab.func.alignment = ['fill', 'fill'];\n\
-    w.grp.tab.func.cbMMode =w.grp.tab.func.add ('checkbox', undefined, 'Activate Functions');\n\
-    w.grp.tab.func.cbMMode.value =exprCl.funcModeB;\n\
-    w.grp.tab.func.func1st = w.grp.tab.func.add ('statictext', undefined,'Function1 : ');\n\
-    w.grp.tab.func.func1C = w.grp.tab.func.add('group');\n\
-    w.grp.tab.func.func1C.orientation = 'row';\n\
-    w.grp.tab.func.func1C.alignment = ['fill', 'fill'];\n\
-    w.grp.tab.func.func1C.alignChildren = ['fill', 'fill'];\n\
-    w.grp.tab.func.func1C.funcet = w.grp.tab.func.func1C.add ('edittext', undefined, exprCl.func1Str,{multiline:true});\n\
-    w.grp.tab.func.func2st = w.grp.tab.func.add ('statictext', undefined,'Function2 : ');\n\
-    w.grp.tab.func.func2C = w.grp.tab.func.add('group');\n\
-    w.grp.tab.func.func2C.orientation = 'row';\n\
-    w.grp.tab.func.func2C.alignment = ['fill', 'fill'];\n\
-    w.grp.tab.func.func2C.alignChildren = ['fill', 'fill'];\n\
-    w.grp.tab.func.func2C.funcet = w.grp.tab.func.func2C.add ('edittext', undefined, exprCl.func2Str,{multiline:true});\n\
-    w.grp.tab.func.func3st = w.grp.tab.func.add ('statictext', undefined,'Function3 : ');\n\
-    w.grp.tab.func.func3C = w.grp.tab.func.add('group');\n\
-    w.grp.tab.func.func3C.orientation = 'row';\n\
-    w.grp.tab.func.func3C.alignment = ['fill', 'fill'];\n\
-    w.grp.tab.func.func3C.alignChildren = ['fill', 'fill'];\n\
-    w.grp.tab.func.func3C.funcet = w.grp.tab.func.func3C.add ('edittext', undefined, exprCl.func3Str,{multiline:true});\n\
-// \n\
 \n\
 // GLSL TAB \n\
     w.grp.tab.glsl.orientation='column';\n\
@@ -228,10 +192,6 @@ w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
     if (exprObj.error === \"none\"){\n\
 		w.grp.parserModeB.ddl.selection =  parseInt(exprObj.parserModeB); \n\
-        w.grp.tab.func.cbMMode.value        = parseBoolToInt (exprObj.funcModeB);\n\
-		w.grp.tab.func.func1C.funcet.text   = exprObj.func1Str;\n\
-		w.grp.tab.func.func2C.funcet.text   = exprObj.func2Str;\n\
-		w.grp.tab.func.func3C.funcet.text   = exprObj.func3Str;\n\
 		w.grp.tab.glsl.fragSh.fragShet.text = exprObj.glslExpr;\n\
         w.grp.tab.expr.redC.redet.text      = exprObj.redExpr;\n\
         w.grp.tab.expr.greenC.greenet.text  = exprObj.greenExpr;\n\

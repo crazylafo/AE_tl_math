@@ -82,9 +82,6 @@ typedef struct {
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
-    A_char  functionOneAc[4096];
-    A_char  functionTwoAc[4096];
-    A_char  functionThreeAc[4096];
 	A_char  Glsl_VertexShAc[4096];
     A_char  Glsl_FragmentShAc[4096];
     A_char  descriptionAc[2048];
@@ -104,17 +101,12 @@ typedef struct {
     A_char  greenExAcFlat[4096];
     A_char  blueExAcFlat[4096];
     A_char  alphaExAcFlat [4096];
-
-    A_char  functionOneFlat[4096];
-    A_char  functionTwoFlat[4096];
-    A_char  functionThreeFlat[4096];
 	A_char  Glsl_VertexShFlat[4096];
     A_char  Glsl_FragmentShFlat[4096];
     A_char  descriptionAcFlat [4096];
     
     //Mode
 	PF_Boolean  parserModeB;
-    PF_Boolean UsesFunctionsB;
 	//Boolean information about chars
 	PF_Boolean ShaderResetB;
 	PF_Boolean NeedsPixelAroundB;
@@ -204,9 +196,18 @@ typedef struct  FlagsInfo {
         PF_Boolean PresetHasWideInput;
         PF_Boolean CallsAEGP_CompB;
         PF_Boolean CallsAEGP_layerB;
-        PF_Boolean UsesFunctionsB;
-		PF_Boolean parserModeB  ;
+		PF_Boolean parserModeB;
 }FlagsInfoP;
+
+typedef struct {
+	std::string  *redstr;
+	std::string  *greenstr;
+	std::string  *bluestr;
+	std::string  *alphastr;
+	std::string  *frag1str;
+	std::string  *frag2str;
+	std::string  *vertexstr;
+}ExprInfoP;
 
 typedef struct funcTransfertInfo {
 	
@@ -217,10 +218,8 @@ typedef struct funcTransfertInfo {
 	PF_Boolean      hasErrorB;
 	std::string     channelErrorstr;
 	std::string     errorstr;
-    PF_Boolean      UsesFunctionsB;
-    std::string     func1str;
-    std::string     func2str;
-    std::string     func3str;
+
+
 
 }funcTransfertInfoP;
 
@@ -285,7 +284,6 @@ typedef struct {
     PF_Fixed    y_offFi;
     PF_SampPB    samp_pb;
     PF_InData    in_data;
-
 } OffInfo;
 
 #ifdef __cplusplus
@@ -430,28 +428,17 @@ private:
     std::shared_ptr<exprtk::parser<T>> parser;
     exprtk::expression<T> expression;
     exprtk::symbol_table<T> symbol_table;
-    std::shared_ptr<exprtk::function_compositor<T>> compositor_t;
-
 public:
     parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr) {
         MathInfo	*miP	= reinterpret_cast<MathInfo*>(mathRefcon);
 		funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
-        std::string expression_string_Safe = "1";
+        std::string  expression_string_Safe = "1";
         if (!parser){
             parser = std::make_shared<exprtk::parser<T>>();
         }
         fiP->hasErrorB = FALSE;
         symbol_table.clear();
-        if (fiP->UsesFunctionsB){
-            compositor_t =std::make_shared<exprtk::function_compositor<T>>();
-
-            compositor_t->add(fiP->func1str);
-            compositor_t->add(fiP->func2str);
-            compositor_t->add(fiP->func3str);
-            symbol_table = compositor_t->symbol_table();
-        }
-
-
+		
         symbol_table.add_variable("xL",  miP->xLF);
         symbol_table.add_variable("yL",  miP->yLF);
         symbol_table.add_variable("in_red", miP->inRedF);
@@ -543,7 +530,8 @@ void main(void)\n\
 }";
 
 static std::string glfrag1str = "#version 330\n\
-uniform sampler2D videoTexture;\n\
+uniform sampler2D layerTex;\n\
+uniform sampler2D extLayerTex;\n\
 uniform float var1;\n\
 uniform float var2;\n\
 uniform float var3;\n\
@@ -554,7 +542,7 @@ in vec2 out_uvs;\n\
 out vec4 colourOut;\n\
 void main(void)\n\
 {\n\
-    colourOut = texture(videoTexture, out_uvs.xy);\n\
+    colourOut = texture(layerTex, out_uvs.xy);\n\
     colourOut = colourOut * multiplier16bit;\n\
     colourOut = vec4(colourOut.g, colourOut.b, colourOut.a, colourOut.r);\n\
     colourOut = vec4(colourOut.a * colourOut.r, colourOut.a * colourOut.g, colourOut.a * colourOut.b, colourOut.a);\n\
@@ -565,14 +553,14 @@ void main(void)\n\
 }";
 
 static std::string glfrag2str = "#version 330\n\
-uniform sampler2D videoTexture;\n\
+uniform sampler2D layerTex;\n\
 uniform float multiplier16bit;\n\
 in vec4 out_pos;\n\
 in vec2 out_uvs;\n\
 out vec4 colourOut;\n\
 void main(void)\n\
 {\n\
-	colourOut = texture( videoTexture, out_uvs.xy ); \n\
+	colourOut = texture( layerTex, out_uvs.xy ); \n\
 	if (colourOut.a == 0) {\n\
 		colourOut = vec4(0, 0, 0, 0);\n\
 	} else {\n\
