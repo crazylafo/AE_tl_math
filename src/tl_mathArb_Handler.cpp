@@ -29,9 +29,6 @@ CreateDefaultArb(
                 strncpy_s(arbP->alphaExAc, "1", 4096);
                 strncpy_s(arbP->presetNameAc,"Preset Name", 32);
                 strncpy_s(arbP->descriptionAc,"Describe your preset here", 2048);
-                strncpy_s(arbP->functionOneAc, "function1", 4096);
-                strncpy_s(arbP->functionTwoAc, "function2", 4096);
-                strncpy_s(arbP->functionThreeAc, "function3", 4096);
                 strncpy_s(arbP->Glsl_FragmentShAc, "fragSh", 4096);
 				strncpy_s(arbP->Glsl_VertexShAc, "vertexSh", 4096);
                 strncpy_s(arbP->MATH_INPONE_NameAC,"variable 1", 32);
@@ -47,9 +44,6 @@ CreateDefaultArb(
                 strncpy_s(arbP->blueExAcFlat ,"in_blue", 4096);
                 strncpy_s(arbP->alphaExAcFlat , "1", 4096);
                 strncpy_s(arbP->descriptionAcFlat,"Describe your preset here", 2048);
-                strncpy_s(arbP->functionOneFlat,"'function1(x)', 'x/2','x'", 4096);
-                strncpy_s(arbP->functionTwoFlat,"'function2(x)', 'x/3','x'", 4096);
-                strncpy_s(arbP->functionThreeFlat,"'function3(x)', 'x/4','x'", 4096);
                 strncpy_s(arbP->Glsl_FragmentShFlat, "fragSh", 4096);
 				strncpy_s(arbP->Glsl_VertexShFlat, "vertexSh", 4096);
 
@@ -63,9 +57,6 @@ CreateDefaultArb(
                 strncpy(arbP->alphaExAc, "1", 4096);
                 strncpy(arbP->presetNameAc,"Preset Name", 32);
                 strncpy(arbP->descriptionAc,"Describe your preset here", 2048);
-                strncpy(arbP->functionOneAc, "function 1", 4096);
-                strncpy(arbP->functionTwoAc, "function 2", 4096);
-                strncpy(arbP->functionThreeAc, "function 3", 4096);
                 strncpy(arbP->Glsl_FragmentShAc, "fragSh", 4096);
 				strncpy(arbP->Glsl_VertexShAc, "vertexSh", 4096);
                 strncpy(arbP->MATH_INPONE_NameAC,"variable 1", 32);
@@ -81,9 +72,6 @@ CreateDefaultArb(
                 strncpy(arbP->blueExAcFlat ,"in_blue", 4096);
                 strncpy(arbP->alphaExAcFlat , "1", 4096);
                 strncpy(arbP->descriptionAcFlat,"Describe your preset here", 2048);
-                strncpy(arbP->functionOneFlat,"'function 1(x)', 'x/2','x'", 4096);
-                strncpy(arbP->functionTwoFlat,"'function 2(x)', 'x/3','x'", 4096);
-                strncpy(arbP->functionThreeFlat,"'function 3(x)', 'x/4','x'", 4096);
                 strncpy(arbP->Glsl_FragmentShFlat, "fragSh", 4096);
 				strncpy(arbP->Glsl_VertexShFlat, "vertexSh", 4096);
             #endif
@@ -94,7 +82,6 @@ CreateDefaultArb(
 				arbP->PresetHasWideInputB = false;
                 arbP->CallsAEGP_CompB= false;
                 arbP->CallsAEGP_layerB= false;
-                arbP->UsesFunctionsB= false;
 				arbP->ShaderResetB = false;
 
 			*dephault = arbH;
@@ -233,9 +220,6 @@ Arb_Compare(
 			total_aV.emplace_back (first_arbP->PresetHasWideInputB);
             
             total_aV.emplace_back ((first_arbP->parserModeB));
-            total_aV.emplace_back ( strlen(first_arbP->functionOneAc));
-            total_aV.emplace_back ( strlen(first_arbP->functionTwoAc));
-            total_aV.emplace_back ( strlen(first_arbP->functionThreeAc));
             total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShAc));
 			total_aV.emplace_back( strlen(first_arbP->Glsl_VertexShAc));
             total_aV.emplace_back ( strlen(first_arbP->MATH_INPONE_NameAC));
@@ -246,15 +230,11 @@ Arb_Compare(
             total_aV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_TWO_NameAC));
             total_aV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_ONE_NameAC));
             total_aV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_TWO_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->functionOneFlat));
-            total_aV.emplace_back ( strlen(first_arbP->functionTwoFlat));
-            total_aV.emplace_back ( strlen(first_arbP->functionThreeFlat));
             total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShFlat));
 			total_aV.emplace_back(strlen(first_arbP->Glsl_VertexShFlat));
 
             total_aV.emplace_back (first_arbP->CallsAEGP_CompB);
             total_aV.emplace_back (first_arbP->CallsAEGP_layerB);
-            total_aV.emplace_back (first_arbP->UsesFunctionsB);
 			total_aV.emplace_back(first_arbP->ShaderResetB);
             
 			total_bV.emplace_back ( strlen(second_arbP->redExAc));
@@ -277,9 +257,6 @@ Arb_Compare(
 			total_bV.emplace_back ( second_arbP->PresetHasWideInputB);
             
             total_bV.emplace_back ((second_arbP->parserModeB));
-            total_bV.emplace_back ( strlen(second_arbP->functionOneAc));
-            total_bV.emplace_back ( strlen(second_arbP->functionTwoAc));
-            total_bV.emplace_back ( strlen(second_arbP->functionThreeAc));
             total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShAc));
 			total_bV.emplace_back(strlen(second_arbP->Glsl_VertexShAc));
             total_bV.emplace_back ( strlen(second_arbP->MATH_INPONE_NameAC));
@@ -290,21 +267,17 @@ Arb_Compare(
             total_bV.emplace_back ( strlen(second_arbP->MATH_INP_POINT_TWO_NameAC));
             total_bV.emplace_back ( strlen(second_arbP->MATH_INP_COLOR_ONE_NameAC));
             total_bV.emplace_back ( strlen(second_arbP->MATH_INP_COLOR_TWO_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->functionOneFlat));
-            total_bV.emplace_back ( strlen(second_arbP->functionTwoFlat));
-            total_bV.emplace_back ( strlen(second_arbP->functionThreeFlat));
             total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShFlat));
 			total_bV.emplace_back ( strlen(second_arbP->Glsl_VertexShFlat));
 
             total_bV.emplace_back (second_arbP->CallsAEGP_CompB);
             total_bV.emplace_back (second_arbP->CallsAEGP_layerB);
-            total_bV.emplace_back (second_arbP->UsesFunctionsB);
 			total_bV.emplace_back(second_arbP->ShaderResetB);
             
             
 
-			total_aL = std::accumulate(total_aV.begin(), total_aV.end(), 0);
-			total_bL = std::accumulate(total_bV.begin(), total_bV.end(), 0);
+			total_aL = (size_t)std::accumulate(total_aV.begin(), total_aV.end(), 0);
+			total_bL = (size_t)std::accumulate(total_bV.begin(), total_bV.end(), 0);
 			if(total_aL > total_bL)	{
 				*resultP = PF_ArbCompare_MORE;
 			} else if(total_aL < total_bL){

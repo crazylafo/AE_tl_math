@@ -148,12 +148,10 @@ SetupDialog(
     std::string tempBlueS;
     std::string tempAlphaS;
 
-    std::string tempfunc1S;
-    std::string tempfunc2S;
-    std::string tempfunc3S;
+
 
 	PF_Boolean		tempParserModeB;
-    PF_Boolean  tempFuncModeB;
+
 
 
     PF_Handle        arbOutH = NULL;
@@ -174,14 +172,10 @@ SetupDialog(
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
             tempParserModeB =arbInP->parserModeB;
-            tempFuncModeB = arbInP->UsesFunctionsB;
             tempRedS.append(arbInP->redExAcFlat);
             tempGreenS.append(arbInP->greenExAcFlat);
             tempBlueS.append(arbInP->blueExAcFlat);
             tempAlphaS.append(arbInP->alphaExAcFlat);
-            tempfunc1S.append (arbInP->functionOneFlat);
-            tempfunc2S.append (arbInP->functionTwoFlat);
-            tempfunc3S.append (arbInP->functionThreeFlat);
             tempName.append(arbInP->presetNameAc);
 			tempGlsl.append(arbInP->Glsl_FragmentShFlat);
             tempDescription.append(arbInP->descriptionAcFlat);
@@ -195,9 +189,7 @@ SetupDialog(
     strReplace(tempAlphaS, "\n", "\\n");
     strReplace(tempDescription, "\n", "\\n");
     strReplace(tempGlsl, "\n" , "\\n");
-    strReplace(tempfunc1S, "\n", "\\n");
-    strReplace(tempfunc2S, "\n", "\\n");
-    strReplace(tempfunc3S, "\n", "\\n");
+
 	
 	
 	if (tempGlsl == "fragSh") {
@@ -215,10 +207,6 @@ SetupDialog(
     jToJs["greenExpr"]=tempGreenS;
     jToJs["blueExpr"]=tempBlueS;
     jToJs["alphaExpr"]=tempAlphaS;
-    jToJs["funcModeB"] =tempFuncModeB;
-    jToJs["func1Str"]=tempfunc1S;
-    jToJs["func2Str"]=tempfunc2S;
-    jToJs["func3Str"]=tempfunc3S;
     jToJs["glslExpr"]=tempGlsl;
 
 	
@@ -258,13 +246,10 @@ SetupDialog(
 
         nlohmann::json  jresult = nlohmann::json::parse(resultStr);
 
-		bool ParserModeB, tempUsesFunctionsB;
+		bool ParserModeB;
 		
 		ParserModeB = jresult["/parserModeB"_json_pointer];
 		arbOutP->parserModeB = ParserModeB;
-		tempUsesFunctionsB = jresult["/funcModeB"_json_pointer];
-        arbOutP->UsesFunctionsB = tempUsesFunctionsB;
-
         std::string redResultStr =   jresult["/redExpr"_json_pointer];
 		ExprtkCorrectorStr(redResultStr);
         std::string greenResultStr = jresult["/greenExpr"_json_pointer];
@@ -273,12 +258,6 @@ SetupDialog(
 		ExprtkCorrectorStr(blueResultStr);
         std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
 		ExprtkCorrectorStr(alphaResultStr);
-        std::string func1Str   = jresult["/func1Str"_json_pointer];
-		ExprtkCorrectorStr(func1Str);
-        std::string func2Str   = jresult["/func2Str"_json_pointer];
-		ExprtkCorrectorStr(func2Str);
-        std::string func3Str   = jresult["/func3Str"_json_pointer];
-		ExprtkCorrectorStr(func3Str);
         std::string glslExpr = jresult["/glslExpr"_json_pointer];
 
         std::string presetNameStr = jresult["/presetName"_json_pointer];
@@ -297,9 +276,6 @@ SetupDialog(
         strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
         strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
 
-        strncpy_s( arbOutP->functionOneFlat, func1Str.c_str(), func1Str.length()+1);
-        strncpy_s( arbOutP->functionTwoFlat, func2Str.c_str(), func2Str.length()+1);
-        strncpy_s( arbOutP->functionThreeFlat, func3Str.c_str(), func3Str.length()+1);
         strncpy_s( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
 		strncpy_s(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
@@ -309,9 +285,6 @@ SetupDialog(
         strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
         strncpy( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
         strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
-        strncpy( arbOutP->functionOneFlat, func1Str.c_str(), func1Str.length()+1);
-        strncpy ( arbOutP->functionTwoFlat, func2Str.c_str(), func2Str.length()+1);
-        strncpy (arbOutP->functionThreeFlat, func3Str.c_str(), func3Str.length()+1);
         strncpy( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
 		strncpy(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
@@ -322,9 +295,6 @@ SetupDialog(
         greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
         blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
         alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
-        func1Str.erase(std::remove(func1Str.begin(), func1Str.end(), '\n'), func1Str.end());
-        func2Str.erase(std::remove(func2Str.begin(), func2Str.end(), '\n'), func2Str.end());
-        func3Str.erase(std::remove(func3Str.begin(), func3Str.end(), '\n'), func3Str.end());
 		//glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\n'), glslExpr.end());
         
 
@@ -336,10 +306,6 @@ SetupDialog(
         strncpy_s( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
         strncpy_s( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
         strncpy_s( arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length()+1);
-
-        strncpy_s( arbOutP->functionOneAc, func1Str.c_str(), func1Str.length()+1);
-        strncpy_s( arbOutP->functionTwoAc, func2Str.c_str(), func2Str.length()+1);
-        strncpy_s( arbOutP->functionThreeAc, func3Str.c_str(), func3Str.length()+1);
         strncpy_s( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
 		strncpy_s(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy_s( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
@@ -349,9 +315,6 @@ SetupDialog(
         strncpy( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
         strncpy( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
         strncpy( arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length()+1);
-        strncpy( arbOutP->functionOneAc, func1Str.c_str(), func1Str.length()+1);
-        strncpy( arbOutP->functionTwoAc, func2Str.c_str(), func2Str.length()+1);
-        strncpy( arbOutP->functionThreeAc, func3Str.c_str(), func3Str.length()+1);
         strncpy( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
 		strncpy(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);

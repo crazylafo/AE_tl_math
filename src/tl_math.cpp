@@ -246,6 +246,7 @@ namespace {
 	void RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
 		A_long widthL, A_long heightL,
 		gl::GLuint		inputFrameTexture,
+		gl::GLuint	inputExtFrameTexture,
 		void			*refcon,
 		float			multiplier16bit)
 	{
@@ -305,8 +306,8 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
 		// Identify the texture to use and bind it to texture unit 0
-		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObjSu, inputFrameTexture, std::string("videoTexture"));
-
+		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObjSu, inputFrameTexture, std::string("layerTex"));
+		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObjSu, inputExtFrameTexture, std::string("extLayerTex"));
 		// render
 		glBindVertexArray(renderContext->vao);
 		RenderQuad(renderContext->quad);
@@ -693,10 +694,6 @@ UpdateParameterUI(
     return err;
 }
 
-
-
-
-
 static PF_Err
 UserChangedParam(
 	PF_InData						*in_data,
@@ -732,7 +729,416 @@ inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpSho
 	}
 }
 
+static PF_Err
+Render_GLSL(PF_InData                *in_data,
+		    PF_OutData               *out_data,
+			PF_EffectWorld           *inputP,
+			PF_EffectWorld           *outputP,
+			PF_EffectWorld           *extLW,
+			PF_PixelFormat           format,
+			AEGP_SuiteHandler        &suites,
+			void                    *refcon, 
+			PF_Boolean              ShaderResetB,
+			const std::string&		vertexShstr,
+			const std::string&		fragSh1str,
+			const std::string&		fragSh2str
+)
 
+{
+	PF_Err err = PF_Err_NONE;
+	MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
+	try
+	{
+
+		// always restore back AE's own OGL context
+		SaveRestoreOGLContext oSavedContext;
+
+		// our render specific context (one per thread)
+		AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr renderContext = GetCurrentRenderContext();
+
+		if (!renderContext->mInitialized) {
+			//Now comes the OpenGL part - OS specific loading to start with
+			AESDK_OpenGL_Startup(*renderContext.get(), S_GLator_EffectCommonData.get());
+			renderContext->mInitialized = true;
+		}
+
+		renderContext->mProgramObjSu = 0;
+		renderContext->SetPluginContext();
+
+		// - Gremedy OpenGL debugger
+		// - Example of using a OpenGL extension
+		bool hasGremedy = renderContext->mExtensions.find(gl::GLextension::GL_GREMEDY_frame_terminator) != renderContext->mExtensions.end();
+
+		A_long				widthL = inputP->width;
+		A_long				heightL = inputP->height;
+
+		std::string errorStr;
+		PF_Boolean hasErrorB = false;
+		//loading OpenGL resources
+		AESDK_OpenGL_InitResources(*renderContext.get(),
+			widthL,
+			heightL,
+			ShaderResetB,
+			vertexShstr,
+			fragSh1str,
+			fragSh2str,
+			&hasErrorB,
+			errorStr);
+		if (hasErrorB) {
+			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+				"Error in GLSL : %s",
+				errorStr.c_str());
+
+		}
+
+		//CHECK(format);
+		// upload the input world to a texture
+		size_t pixSize;
+		gl::GLenum glFmt;
+		float multiplier16bit;
+		gl::GLuint inputFrameTexture = UploadTexture(suites, format, inputP, outputP, in_data, pixSize, glFmt, multiplier16bit);
+		gl::GLuint inputExtFrameTexture = UploadTexture(suites, format, inputP, extLW , in_data, pixSize, glFmt, multiplier16bit);
+		// Set up the frame-buffer object just like a window.
+		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), renderContext->mOutputFrameTexture);
+		ReportIfErrorFramebuffer(in_data, out_data);
+
+		glViewport(0, 0, widthL, heightL);
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// - simply blend the texture inside the frame buffer
+		// - TODO: hack your own shader there
+		RenderGL(renderContext, widthL, heightL, inputFrameTexture, inputExtFrameTexture,(void*)miP, multiplier16bit);
+
+		// - we toggle PBO textures (we use the PBO we just created as an input)
+		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);
+		ReportIfErrorFramebuffer(in_data, out_data);
+
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// swizzle using the previous output
+		SwizzleGL(renderContext, widthL, heightL, renderContext->mOutputFrameTexture, multiplier16bit);
+
+		if (hasGremedy) {
+			gl::glFrameTerminatorGREMEDY();
+		}
+
+		// - get back to CPU the result, and inside the output world
+		DownloadTexture(renderContext, suites, inputP, outputP, in_data,
+			format, pixSize, glFmt);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glDeleteTextures(1, &inputFrameTexture);
+	}
+	catch (PF_Err& thrown_err)
+	{
+		err = thrown_err;
+	}
+	catch (...)
+	{
+		err = PF_Err_OUT_OF_MEMORY;
+	}
+	return  err;
+}
+
+static PF_Err
+ExtLayerInput(void *refcon,
+				PF_InData       *in_data,
+				PF_EffectWorld *inputP,
+				PF_EffectWorld *extLP,
+				PF_EffectWorld *extLW,
+				AEGP_SuiteHandler &suites,
+				PF_PixelFormat   format)
+{
+	PF_Err err = PF_Err_NONE, err2 = PF_Err_NONE;
+	OffInfo    *oiP = (OffInfo*)refcon;
+	PF_Point            origin;
+	PF_PixelFloat empty32 = { 0,0,0,0 };
+	PF_Pixel16 empty16 = { 0,0,0,0 };
+	PF_Pixel empty8 = { 0,0,0,0 };
+
+	PF_EffectWorld Externalworld;
+	ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, inputP->width, inputP->height, format, &Externalworld));
+	Externalworld.world_flags = extLW->world_flags;
+	switch (format) {
+
+	case PF_PixelFormat_ARGB128:
+		ERR(suites.FillMatteSuite2()->fill_float(in_data->effect_ref,
+			&empty32,
+			NULL,
+			&Externalworld));
+
+		break;
+
+	case PF_PixelFormat_ARGB64:
+		ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
+			&empty16,
+			NULL,
+			&Externalworld));
+
+
+		break;
+
+	case PF_PixelFormat_ARGB32:
+		ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
+			&empty8,
+			NULL,
+			&Externalworld));
+		break;
+
+	default:
+		err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+		break;
+	}
+
+
+	if (extLP && extLP->data) {
+		if (PF_Quality_HI == in_data->quality) {
+			ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+				extLP,
+				&Externalworld,
+				&extLP->extent_hint,
+				&extLP->extent_hint));
+		}
+		else {
+			ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+				extLP,
+				&Externalworld,
+				&extLP->extent_hint,
+				&extLP->extent_hint));
+		}
+
+	}
+	if (oiP->x_offFi != 0 || oiP->y_offFi != 0 &!err) {
+		oiP->in_data = *in_data;
+		oiP->samp_pb.src = &Externalworld;
+		origin.h = (A_short)(in_data->output_origin_x);
+		origin.v = (A_short)(in_data->output_origin_y);
+		switch (format) {
+		case PF_PixelFormat_ARGB128:
+			ERR(suites.IterateFloatSuite1()->iterate_origin(in_data,
+				0,
+				Externalworld.height,
+				&Externalworld,
+				&Externalworld.extent_hint,
+				&origin,
+				(void*)(&oiP),
+				ShiftImage32,
+				extLW));
+			break;
+
+		case PF_PixelFormat_ARGB64:
+
+			ERR(suites.Iterate16Suite1()->iterate_origin(in_data,
+				0,
+				Externalworld.height,
+				&Externalworld,
+				&Externalworld.extent_hint,
+				&origin,
+				(void*)(&oiP),
+				ShiftImage16,
+				extLW));
+			break;
+
+		case PF_PixelFormat_ARGB32:
+
+			ERR(suites.Iterate8Suite1()->iterate_origin(in_data,
+				0,
+				Externalworld.height,
+				&Externalworld,
+				NULL,
+				&origin,
+				(void*)(oiP),
+				ShiftImage8,
+				extLW));
+
+			break;
+
+		default:
+			err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+			break;
+		}
+	}
+	else {
+		if (PF_Quality_HI == in_data->quality) {
+			ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+				&Externalworld,
+				extLW,
+				NULL,
+				NULL));
+		}
+		else {
+			ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+				&Externalworld,
+				extLW,
+				NULL,
+				NULL));
+		}
+	}
+	if (Externalworld.data) {
+		ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &Externalworld));
+	}
+	return err;
+}
+
+static PF_Err
+ExprRender( PF_OutData     *out_data,
+			PF_PixelFormat format,
+			PF_EffectWorld *inputP,
+			PF_EffectWorld *outputP,
+			PF_EffectWorld *extLW,
+			AEGP_SuiteHandler &suites,
+			void    *refcon,
+			void    *refconFlags,
+			void    *refconExpr)
+{
+	PF_Err err = PF_Err_NONE;
+	MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
+	MathInfo    miPP;
+	AEFX_CLR_STRUCT(miPP); //new pointer wich can be modified in iterations
+	miPP = *miP;
+	FlagsInfoP         *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
+	FlagsInfoP flagsPP;
+	AEFX_CLR_STRUCT(flagsPP);
+	flagsPP = *flagsP;
+	ExprInfoP          *exprP = reinterpret_cast<ExprInfoP*>(refconExpr);
+	funcTransfertInfo fiP;
+	AEFX_CLR_STRUCT(fiP);
+	
+
+	WorldTransfertInfo   wtiP;
+	AEFX_CLR_STRUCT(wtiP);
+	wtiP.inW = *inputP;
+	wtiP.outW = *outputP;
+	if (&extLW->data && flagsPP.PixelsCallExternalInputB) {
+		wtiP.extLW = *extLW;
+	}
+
+
+
+	std::string exprErrStr = "Error \n";
+	PF_Boolean returnExprErrB = false;
+
+	fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->redstr);
+	if (fiP.hasErrorB)
+	{
+		fiP.channelErrorstr = "red channel expression";
+		returnExprErrB = true;
+		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+
+	}
+	fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->greenstr);
+	if (fiP.hasErrorB)
+	{
+		fiP.channelErrorstr = "green channel expression";
+		returnExprErrB = true;
+		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+
+	}
+	fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->bluestr);
+	if (fiP.hasErrorB)
+	{
+		fiP.channelErrorstr = "blue channel expression";
+		returnExprErrB = true;
+		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+
+	}
+	fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->alphastr);
+	if (fiP.hasErrorB)
+	{
+		fiP.channelErrorstr = "alpha channel expression";
+		returnExprErrB = true;
+		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+
+		
+	}
+	if (returnExprErrB) {
+		suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+			exprErrStr.c_str());
+	}
+
+	std::vector<std::thread> workers_thrds;
+	A_long part_length, lastPart_length, num_thrd;
+	AEFX_CLR_STRUCT(part_length);
+	AEFX_CLR_STRUCT(num_thrd);
+	AEFX_CLR_STRUCT(lastPart_length);
+	ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
+	part_length = A_long((outputP->height / (float)num_thrd));
+	lastPart_length = part_length + (outputP->height - (part_length*num_thrd));
+	threaded_render* thRenderPtr = new threaded_render();
+	switch (format) {
+
+	case PF_PixelFormat_ARGB128:
+		AEFX_CLR_STRUCT(workers_thrds);
+		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+			workers_thrds.emplace_back(std::thread(&threaded_render::render_32,
+				thRenderPtr,
+				(void*)&miPP,
+				(void*)&fiP,
+				(void*)&flagsPP,
+				(void*)&wtiP,
+				thrd_id,
+				num_thrd,
+				part_length,
+				lastPart_length));
+		}
+		for (auto& t : workers_thrds) {
+			t.join();
+		}
+		delete thRenderPtr;
+		outputP = &wtiP.outW;
+		break;
+
+	case PF_PixelFormat_ARGB64:
+		AEFX_CLR_STRUCT(workers_thrds);
+		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+			workers_thrds.emplace_back(std::thread(&threaded_render::render_16,
+				thRenderPtr,
+				(void*)&miPP,
+				(void*)&fiP,
+				(void*)&flagsPP,
+				(void*)&wtiP,
+				thrd_id,
+				num_thrd,
+				part_length,
+				lastPart_length));
+		}
+		for (auto& t : workers_thrds) {
+			t.join();
+		}
+		delete thRenderPtr;
+		outputP = &wtiP.outW;
+		break;
+
+	case PF_PixelFormat_ARGB32:
+		AEFX_CLR_STRUCT(workers_thrds);
+		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
+			workers_thrds.emplace_back(std::thread(&threaded_render::render_8,
+				thRenderPtr,
+				(void*)&miPP,
+				(void*)&fiP,
+				(void*)&flagsPP,
+				(void*)&wtiP,
+				thrd_id,
+				num_thrd,
+				part_length,
+				lastPart_length));
+		}
+		for (auto& t : workers_thrds) {
+			t.join();
+		}
+		delete thRenderPtr;
+		outputP = &wtiP.outW;
+
+		break;
+
+	default:
+		err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+		break;
+	}
+	return err;
+}
 
 
 static PF_Err
@@ -757,7 +1163,6 @@ PreRender(
          miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(infoH));
         if ( miP){
             extraP->output->pre_render_data = infoH;
-
 
             PF_ParamDef  arb_param;
             AEFX_CLR_STRUCT(arb_param);
@@ -876,11 +1281,10 @@ PreRender(
                                                    &extL_result));
 
 
-
                     PF_Fixed     widthFi    = INT2FIX(ABS(extL_result.max_result_rect.right - extL_result.max_result_rect.left)),
-                                heightFi = INT2FIX(ABS(extL_result.max_result_rect.bottom - extL_result.max_result_rect.top));
+                                 heightFi = INT2FIX(ABS(extL_result.max_result_rect.bottom - extL_result.max_result_rect.top));
 
-                    miP->x_offFi = PF_Fixed ( widthFi/2 -extlayer_poff_param.u.td.x_value);
+                    miP->x_offFi = PF_Fixed ( widthFi/2 -  extlayer_poff_param.u.td.x_value);
                     miP->y_offFi = PF_Fixed ( heightFi/2 - extlayer_poff_param.u.td.y_value);
 
 
@@ -923,23 +1327,14 @@ SmartRender(
         if (miP){
             OffInfo         oiP;
             AEFX_CLR_STRUCT(oiP);
-            funcTransfertInfo fiP;
-            AEFX_CLR_STRUCT(fiP);
             FlagsInfo      flagsP;
             AEFX_CLR_STRUCT(flagsP);
             m_ArbData        *arbP            = NULL;
 			PF_Handle arbH = NULL;
+			PF_EffectWorld extLW;
+			ExprInfoP       ExprP;
+			AEFX_CLR_STRUCT(ExprP);
 
-            std::string expression_string_red = "1";
-            std::string expression_string_green = "1";
-            std::string expression_string_blue = "1";
-            std::string expression_string_alpha = "1";
-            std::string expression_string_funcOne = "1";
-            std::string expression_string_funcTwo = "1";
-            std::string expression_string_funcThree = "1";
-			std::string expression_string_frag1str = "0";
-			std::string expression_string_vertexstr = glvertstr;
-			std::string  expression_string_frag2str =  glfrag2str;
 
             // checkout input & output buffers.
             ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INPUT, &inputP)));
@@ -950,38 +1345,9 @@ SmartRender(
             // determine requested output depth
             ERR(wsP->PF_GetPixelFormat(outputP, &format));
 
-            WorldTransfertInfo   wtiP;
-            AEFX_CLR_STRUCT(wtiP);
-			ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, inputP->width, inputP->height, inputP->world_flags, &wtiP.inW));
-			if (PF_Quality_HI == in_data->quality) {
-				ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
-					inputP,
-					&wtiP.inW,
-					&inputP->extent_hint,
-					&wtiP.inW.extent_hint));
-			}
-			else {
-				ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-					inputP,
-					&wtiP.inW,
-					&inputP->extent_hint,
-					&wtiP.inW.extent_hint));
-			}
-			ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, outputP->width, outputP->height, outputP->world_flags, &wtiP.outW));
-			if (PF_Quality_HI == in_data->quality) {
-				ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
-					outputP,
-					&wtiP.outW,
-					&outputP->extent_hint,
-					&wtiP.outW.extent_hint));
-			}
-			else {
-				ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-					outputP,
-					&wtiP.outW,
-					&outputP->extent_hint,
-					&wtiP.outW.extent_hint));
-			}
+			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extLW));
+
+
             //CHECKOUT PARAMS
             PF_ParamDef  setup_param,
 						arb_param,
@@ -1079,6 +1445,7 @@ SmartRender(
                                   in_data->time_scale,
                                   &color2_param));
 
+
             //layer size
             miP->scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num/ (float)in_data->downsample_x.den;
             miP->scale_y = in_data->downsample_y.num*in_data->pixel_aspect_ratio.den/ (float)in_data->downsample_y.den;
@@ -1120,411 +1487,67 @@ SmartRender(
             //CALL ARB
 			arbH = arb_param.u.arb_d.value;
 			arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+			std::string redExprStr, greenExprStr, blueExprStr, alphaExprStr, funcOneStr, funcTwoStr, funcThreeStr, frag1str;
             if (arbP && !err) {
-                expression_string_red = arbP->redExAc;
-                expression_string_green = arbP->greenExAc;
-                expression_string_blue = arbP->blueExAc;
-                expression_string_alpha = arbP->alphaExAc;
-                expression_string_funcOne = arbP-> functionOneAc;
-                expression_string_funcTwo =  arbP->functionTwoAc;
-                expression_string_funcThree =  arbP->functionThreeAc;
-				expression_string_frag1str = arbP->Glsl_FragmentShAc;
-
-                flagsP.PixelsCallExternalInputB = arbP->PixelsCallExternalInputB;
-                flagsP.PresetHasWideInput = arbP->PresetHasWideInputB;
-                flagsP.NeedsPixelAroundB = arbP->NeedsPixelAroundB;
-                flagsP.NeedsLumaB = arbP->NeedsLumaB;
-                flagsP.CallsAEGP_CompB = arbP-> CallsAEGP_CompB;
-                flagsP.CallsAEGP_layerB = arbP->CallsAEGP_layerB;
-                flagsP.UsesFunctionsB = arbP->UsesFunctionsB;
+				redExprStr = arbP->redExAc;
+				greenExprStr = arbP->greenExAc;
+				blueExprStr = arbP->blueExAc;
+				alphaExprStr = arbP->alphaExAc;
+				frag1str = arbP->Glsl_FragmentShAc;
+				flagsP.PixelsCallExternalInputB = arbP->PixelsCallExternalInputB;
+				flagsP.PresetHasWideInput = arbP->PresetHasWideInputB;
+				flagsP.NeedsPixelAroundB = arbP->NeedsPixelAroundB;
+				flagsP.NeedsLumaB = arbP->NeedsLumaB;
+				flagsP.CallsAEGP_CompB = arbP->CallsAEGP_CompB;
+				flagsP.CallsAEGP_layerB = arbP->CallsAEGP_layerB;
 				flagsP.parserModeB = arbP->parserModeB;
-
             }
+
+			ExprP.redstr = &redExprStr;
+			ExprP.greenstr = &greenExprStr;
+			ExprP.bluestr = &blueExprStr;
+			ExprP.alphastr = &alphaExprStr;
+			ExprP.frag1str  = &frag1str;
+			ExprP.vertexstr = &glvertstr;
+			ExprP.frag2str  = &glfrag2str;
 
             //CALL EXTERNAL LAYER AND TRANSFORM WORLD IF NEEDED
-
-            if (flagsP.PixelsCallExternalInputB) {
-
-                PF_Point            origin;
-                PF_PixelFloat empty32 = {0,0,0,0};
-                PF_Pixel16 empty16 = {0,0,0,0};
-                PF_Pixel empty8 = {0,0,0,0};
-
-                PF_EffectWorld Externalworld;
-				ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, outputP->width, outputP->height, outputP->world_flags, &Externalworld));
-				if (PF_Quality_HI == in_data->quality) {
-					ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
-						outputP,
-						&Externalworld,
-						&outputP->extent_hint,
-						&Externalworld.extent_hint));
-				}
-				else {
-					ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-						outputP,
-						&Externalworld,
-						&outputP->extent_hint,
-						&Externalworld.extent_hint));
-				}
-				ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, outputP->width, outputP->height, outputP->world_flags, &wtiP.extLW));
-
-                oiP.x_offFi =  miP->x_offFi;
-                oiP.y_offFi =  miP->y_offFi;
-                switch (format) {
-
-                    case PF_PixelFormat_ARGB128:
-                        ERR(suites.FillMatteSuite2()->fill_float(in_data->effect_ref,
-                                                             &empty32,
-                                                             NULL,
-                                                             &Externalworld));
-
-                        break;
-
-                    case PF_PixelFormat_ARGB64:
-                        ERR(suites.FillMatteSuite2()->fill16(in_data->effect_ref,
-                                                             &empty16,
-                                                             NULL,
-                                                             &Externalworld));
-
-
-                        break;
-
-                    case PF_PixelFormat_ARGB32:
-                        ERR(suites.FillMatteSuite2()->fill(in_data->effect_ref,
-                                                           &empty8,
-                                                           NULL,
-                                                           &Externalworld));
-                        break;
-
-                    default:
-                        err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-                        break;
-                }
-
-
-                if (extLP->data) {
-                    if (PF_Quality_HI == in_data->quality) {
-                        ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
-                                                                   extLP,
-                                                                   &Externalworld,
-                                                                   &extLP->extent_hint,
-                                                                   &Externalworld.extent_hint));
-                    }
-                    else {
-                        ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-                                                                extLP,
-                                                                &Externalworld,
-                                                                &extLP->extent_hint,
-                                                                &Externalworld.extent_hint));
-                    }
-
-                }
-
-
-                if (oiP.x_offFi != 0 || oiP.y_offFi != 0) {
-                    oiP.in_data = *in_data;
-                    oiP.samp_pb.src = extLP;
-                    origin.h = (A_short)(in_data->output_origin_x);
-                    origin.v = (A_short)(in_data->output_origin_y);
-                    switch (format) {
-
-                        case PF_PixelFormat_ARGB128:
-
-                            ERR(suites.IterateFloatSuite1()->iterate_origin(in_data,
-                                                                         0,
-                                                                         Externalworld.height,
-                                                                         &Externalworld,
-                                                                         &Externalworld.extent_hint,
-                                                                         &origin,
-                                                                         (void*)(&oiP),
-                                                                         ShiftImage32,
-                                                                         &wtiP.extLW));
-                            break;
-
-                        case PF_PixelFormat_ARGB64:
-
-                            ERR(suites.Iterate16Suite1()->iterate_origin(in_data,
-                                                                         0,
-                                                                         Externalworld.height,
-                                                                         &Externalworld,
-                                                                         &Externalworld.extent_hint,
-                                                                         &origin,
-                                                                         (void*)(&oiP),
-                                                                         ShiftImage16,
-                                                                         &wtiP.extLW));
-                            break;
-
-                        case PF_PixelFormat_ARGB32:
-
-                            ERR(suites.Iterate8Suite1()->iterate_origin(in_data,
-                                                                        0,
-                                                                        Externalworld.height,
-                                                                        &Externalworld,
-                                                                        &Externalworld.extent_hint,
-                                                                        &origin,
-                                                                        (void*)(&oiP),
-                                                                        ShiftImage8,
-                                                                        &wtiP.extLW));
-
-                            break;
-
-                        default:
-                            err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-                            break;
-                    }
-                }
-                else {
-                    wtiP.extLW = Externalworld;
-                }
-				if (Externalworld.data) {
-					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &Externalworld));
-				}
-            }
+		
+			if (flagsP.PixelsCallExternalInputB) {
+				oiP.x_offFi = miP->x_offFi;
+				oiP.y_offFi = miP->y_offFi;
+				
+				ERR(ExtLayerInput((void*)&oiP,
+					in_data,
+					inputP,
+					extLP,
+					&extLW,
+					suites,
+					format));
+			}
 
             //CALL PARSER MODE
 			if (arbP && !err && flagsP.parserModeB == false) {
-				MathInfo    miPP;
-				AEFX_CLR_STRUCT(miPP); //new pointer wich can be modified in iterations
-				miPP = *miP;
-
-
-
-				fiP.UsesFunctionsB = false;
-				if (flagsP.UsesFunctionsB) {
-					fiP.UsesFunctionsB = true;
-					fiP.func1str = expression_string_funcOne;
-					fiP.func2str = expression_string_funcTwo;
-					fiP.func3str = expression_string_funcThree;
-				}
-
-				fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_red);
-				if (fiP.hasErrorB)
-				{
-					fiP.channelErrorstr = "red channel expression";
-					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-						"Error in %s : %s",
-						fiP.channelErrorstr.c_str(),
-						fiP.errorstr.c_str());
-				}
-				fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_green);
-				if (fiP.hasErrorB)
-				{
-					fiP.channelErrorstr = "green channel expression";
-					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-						"Error in %s : %s",
-						fiP.channelErrorstr.c_str(),
-						fiP.errorstr.c_str());
-				}
-				fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_blue);
-				if (fiP.hasErrorB)
-				{
-					fiP.channelErrorstr = "blue channel expression";
-					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-						"Error in %s : %s",
-						fiP.channelErrorstr.c_str(),
-						fiP.errorstr.c_str());
-				}
-				fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, expression_string_alpha);
-				if (fiP.hasErrorB)
-				{
-					fiP.channelErrorstr = "alpha channel expression";
-					suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-						"Error in %s : %s",
-						fiP.channelErrorstr.c_str(),
-						fiP.errorstr.c_str());
-				}
-
-				std::vector<std::thread> workers_thrds;
-				A_long part_length, lastPart_length, num_thrd;
-				AEFX_CLR_STRUCT(part_length);
-				AEFX_CLR_STRUCT(num_thrd);
-				AEFX_CLR_STRUCT(lastPart_length);
-
-
-
-
-				ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
-				part_length = A_long((outputP->height / (float)num_thrd));
-				lastPart_length = part_length + (outputP->height - (part_length*num_thrd));
-
-				threaded_render* thRenderPtr = new threaded_render();
-				switch (format) {
-
-				case PF_PixelFormat_ARGB128:
-					AEFX_CLR_STRUCT(workers_thrds);
-					for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-						workers_thrds.emplace_back(std::thread(&threaded_render::render_32,
-							thRenderPtr,
-							(void*)&miPP,
-							(void*)&fiP,
-							(void*)&flagsP,
-							(void*)&wtiP,
-							thrd_id,
-							num_thrd,
-							part_length,
-							lastPart_length));
-					}
-					for (auto& t : workers_thrds) {
-						t.join();
-					}
-					delete thRenderPtr;
-					outputP = &wtiP.outW;
-					break;
-
-				case PF_PixelFormat_ARGB64:
-					AEFX_CLR_STRUCT(workers_thrds);
-					for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-						workers_thrds.emplace_back(std::thread(&threaded_render::render_16,
-							thRenderPtr,
-							(void*)&miPP,
-							(void*)&fiP,
-							(void*)&flagsP,
-							(void*)&wtiP,
-							thrd_id,
-							num_thrd,
-							part_length,
-							lastPart_length));
-					}
-					for (auto& t : workers_thrds) {
-						t.join();
-					}
-					delete thRenderPtr;
-					outputP = &wtiP.outW;
-					break;
-
-				case PF_PixelFormat_ARGB32:
-					AEFX_CLR_STRUCT(workers_thrds);
-					for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-						workers_thrds.emplace_back(std::thread(&threaded_render::render_8,
-							thRenderPtr,
-							(void*)&miPP,
-							(void*)&fiP,
-							(void*)&flagsP,
-							(void*)&wtiP,
-							thrd_id,
-							num_thrd,
-							part_length,
-							lastPart_length));
-					}
-					for (auto& t : workers_thrds) {
-						t.join();
-					}
-					delete thRenderPtr;
-					outputP = &wtiP.outW;
-
-					break;
-
-				default:
-					err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-					break;
-				}
-				if (wtiP.inW.data) {
-					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &wtiP.inW));
-				}
-				if (wtiP.outW.data) {
-					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &wtiP.outW));
-				}
-				if (wtiP.extLW.data) {
-					ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &wtiP.extLW));
-				}
+				ERR(ExprRender(out_data, format, inputP, outputP, &extLW, suites,
+					(void*)miP,
+					(void*)&flagsP,
+					(void*)&ExprP));
+				
 			}
             // CALL GLSL
 			else if (arbP && !err){
-				try
-				{
-
-					// always restore back AE's own OGL context
-					SaveRestoreOGLContext oSavedContext;
-
-					// our render specific context (one per thread)
-					AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr renderContext = GetCurrentRenderContext();
-
-					if (!renderContext->mInitialized) {
-						//Now comes the OpenGL part - OS specific loading to start with
-						AESDK_OpenGL_Startup(*renderContext.get(), S_GLator_EffectCommonData.get());
-						renderContext->mInitialized = true;
-					}
-
-					renderContext->mProgramObjSu = 0;
-
-					renderContext->SetPluginContext();
-
-					// - Gremedy OpenGL debugger
-					// - Example of using a OpenGL extension
-					bool hasGremedy = renderContext->mExtensions.find(gl::GLextension::GL_GREMEDY_frame_terminator) != renderContext->mExtensions.end();
-
-					A_long				widthL = inputP->width;
-					A_long				heightL = inputP->height;
-
-					std::string errorStr;
-					PF_Boolean hasErrorB = false;
-					//loading OpenGL resources
-					AESDK_OpenGL_InitResources(*renderContext.get(),
-						widthL,
-						heightL,
-						arbP->ShaderResetB,
-						expression_string_vertexstr,
-						expression_string_frag1str,
-						expression_string_frag2str,
-						&hasErrorB,
-						errorStr);
-					if (hasErrorB) {
-						suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-							"Error in GLSL : %s",
-							errorStr.c_str());
-
-					}
-
-					CHECK(wsP->PF_GetPixelFormat(inputP, &format));
-
-					// upload the input world to a texture
-					size_t pixSize;
-					gl::GLenum glFmt;
-					float multiplier16bit;
-					gl::GLuint inputFrameTexture = UploadTexture(suites, format, inputP, outputP, in_data, pixSize, glFmt, multiplier16bit);
-
-					// Set up the frame-buffer object just like a window.
-					AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), renderContext->mOutputFrameTexture);
-					ReportIfErrorFramebuffer(in_data, out_data);
-
-					glViewport(0, 0, widthL, heightL);
-					glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-					glClear(GL_COLOR_BUFFER_BIT);
-
-					// - simply blend the texture inside the frame buffer
-					// - TODO: hack your own shader there
-					RenderGL(renderContext, widthL, heightL, inputFrameTexture, (void*)miP, multiplier16bit);
-
-					// - we toggle PBO textures (we use the PBO we just created as an input)
-					AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);
-					ReportIfErrorFramebuffer(in_data, out_data);
-
-					glClear(GL_COLOR_BUFFER_BIT);
-
-					// swizzle using the previous output
-					SwizzleGL(renderContext, widthL, heightL, renderContext->mOutputFrameTexture, multiplier16bit);
-
-					if (hasGremedy) {
-						gl::glFrameTerminatorGREMEDY();
-					}
-
-					// - get back to CPU the result, and inside the output world
-					DownloadTexture(renderContext, suites, inputP, outputP, in_data,
-						format, pixSize, glFmt);
-
-					glBindFramebuffer(GL_FRAMEBUFFER, 0);
-					glBindTexture(GL_TEXTURE_2D, 0);
-					glDeleteTextures(1, &inputFrameTexture);
-				}
-				catch (PF_Err& thrown_err)
-				{
-					err = thrown_err;
-				}
-				catch (...)
-				{
-					err = PF_Err_OUT_OF_MEMORY;
-				}
-
+				ERR(Render_GLSL(in_data,
+					out_data,
+					inputP,
+					outputP,
+					&extLW,
+					format,
+					suites,
+					(void*)miP,
+					arbP->ShaderResetB,
+					*ExprP.vertexstr,
+					*ExprP.frag1str,
+					*ExprP.frag2str));
 			}
 
             //CHECKIN PARAMS
@@ -1539,7 +1562,7 @@ SmartRender(
             ERR2(PF_CHECKIN_PARAM(in_data, &point2_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &color1_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &color2_param));
-
+			ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extLW));
             ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
             ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
         }
