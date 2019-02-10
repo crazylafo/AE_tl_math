@@ -367,7 +367,6 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\Meta_Maps.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\RingBuffer.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\RingBuffer.hpp" />
-    <ClInclude Include="..\lib\GL_base.h" />
     <ClInclude Include="..\lib\exprtk.hpp" />
     <ClInclude Include="..\include\tl_math.h" />
     <ClInclude Include="..\include\tl_math_Strings.h" />
@@ -389,6 +388,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClInclude Include="..\..\..\Util\Param_Utils.h" />
     <ClInclude Include="..\..\..\Headers\PF_Masks.h" />
     <ClInclude Include="..\..\..\Util\String_Utils.h" />
+    <ClInclude Include="..\include\GL_base.h" />
     <ClInclude Include="..\lib\json.hpp" />
     <ClInclude Include="..\include\script.h" />
     <ClInclude Include="..\lib\vmath.hpp" />
@@ -429,7 +429,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Value.cpp" />
     <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Version.cpp" />
     <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\Version_ValidVersions.cpp" />
-    <ClCompile Include="..\lib\GL\GL_base.cpp" />
+    <ClCompile Include="..\src\GL_base.cpp" />
     <ClCompile Include="..\..\..\Util\MissingSuiteError.cpp" />
     <ClCompile Include="..\src\tl_math.cpp" />
   </ItemGroup>

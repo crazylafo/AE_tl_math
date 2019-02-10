@@ -94,9 +94,6 @@
     <ClInclude Include="..\lib\exprtk.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\lib\GL_base.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\script.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -127,6 +124,9 @@
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\RingBuffer.hpp">
       <Filter>GL\glbinding</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\GL_base.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp">
@@ -152,9 +152,6 @@
     </ClCompile>
     <ClCompile Include="..\src\tl_math.cpp">
       <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\lib\GL\GL_base.cpp">
-      <Filter>GL</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\AbstractFunction.cpp">
       <Filter>GL\glbinding</Filter>
@@ -236,6 +233,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\ContextInfo.cpp">
       <Filter>GL\glbinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GL_base.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

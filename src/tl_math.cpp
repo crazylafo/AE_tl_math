@@ -776,14 +776,14 @@ Render_GLSL(PF_InData                *in_data,
 		PF_Boolean hasErrorB = false;
 		//loading OpenGL resources
 		AESDK_OpenGL_InitResources(*renderContext.get(),
+			out_data,
+			suites,
 			widthL,
 			heightL,
 			ShaderResetB,
 			vertexShstr,
 			fragSh1str,
-			fragSh2str,
-			&hasErrorB,
-			errorStr);
+			fragSh2str);
 		if (hasErrorB) {
 			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
 				"Error in GLSL : %s",
