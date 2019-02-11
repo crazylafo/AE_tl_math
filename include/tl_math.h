@@ -83,7 +83,7 @@ typedef struct {
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
 	A_char  Glsl_VertexShAc[4096];
-    A_char  Glsl_FragmentShAc[4096];
+    A_char  Glsl_FragmentShAc[15000];
     A_char  descriptionAc[2048];
     A_char  presetNameAc[32];
      A_char MATH_INPONE_NameAC[32];
@@ -102,7 +102,7 @@ typedef struct {
     A_char  blueExAcFlat[4096];
     A_char  alphaExAcFlat [4096];
 	A_char  Glsl_VertexShFlat[4096];
-    A_char  Glsl_FragmentShFlat[4096];
+    A_char  Glsl_FragmentShFlat[15000];
     A_char  descriptionAcFlat [4096];
     
     //Mode

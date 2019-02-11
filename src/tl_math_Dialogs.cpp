@@ -220,7 +220,6 @@ SetupDialog(
             Majvers.c_str(),
             MinVers .c_str(),
             Bugvers.c_str());
-
     ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
     //AEGP SETSTREAMVALUR TO ARB
     AEFX_CLR_STRUCT(resultAC);
@@ -237,7 +236,9 @@ SetupDialog(
 
 
         arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
+		arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extLayerTex"));
         arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("layerTime"));
+		arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("time"));
         arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec9_"));
         arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
         arbOutP->CallsAEGP_CompB =hasString(resultStr, std::string("layer"));
@@ -259,6 +260,7 @@ SetupDialog(
         std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
 		ExprtkCorrectorStr(alphaResultStr);
         std::string glslExpr = jresult["/glslExpr"_json_pointer];
+		strReplace(glslExpr, "\t", "    ");
 
         std::string presetNameStr = jresult["/presetName"_json_pointer];
         std::string descriptionStr = jresult["/description"_json_pointer];
@@ -295,7 +297,7 @@ SetupDialog(
         greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
         blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
         alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
-		//glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\n'), glslExpr.end());
+		glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\t'), glslExpr.end());
         
 
         descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
