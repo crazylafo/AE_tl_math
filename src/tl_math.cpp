@@ -772,8 +772,7 @@ Render_GLSL(PF_InData                *in_data,
 		A_long				widthL = inputP->width;
 		A_long				heightL = inputP->height;
 
-		std::string errorStr;
-		PF_Boolean hasErrorB = false;
+
 		//loading OpenGL resources
 		AESDK_OpenGL_InitResources(*renderContext.get(),
 			out_data,
@@ -784,12 +783,7 @@ Render_GLSL(PF_InData                *in_data,
 			vertexShstr,
 			fragSh1str,
 			fragSh2str);
-		if (hasErrorB) {
-			suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-				"Error in GLSL : %s",
-				errorStr.c_str());
 
-		}
 
 		//CHECK(format);
 		// upload the input world to a texture
@@ -1562,7 +1556,9 @@ SmartRender(
             ERR2(PF_CHECKIN_PARAM(in_data, &point2_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &color1_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &color2_param));
-			ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extLW));
+			if (extLW.data) {
+				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extLW));
+			}
             ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
             ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
         }

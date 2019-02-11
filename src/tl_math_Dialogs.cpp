@@ -247,9 +247,9 @@ SetupDialog(
 			arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("layerTime"));
 			arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec9_"));
 			arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
-			arbOutP->CallsAEGP_CompB = hasString(resultStr, std::string("layer"));
-			arbOutP->CallsAEGP_layerB = hasString(resultStr, std::string("comp"));
 		}
+		arbOutP->CallsAEGP_CompB = hasString(resultStr, std::string("layer"));
+		arbOutP->CallsAEGP_layerB = hasString(resultStr, std::string("comp"));
 
         std::string redResultStr =   jresult["/redExpr"_json_pointer];
 		ExprtkCorrectorStr(redResultStr);
