@@ -232,25 +232,25 @@ SetupDialog(
         //set result per channel
         std::string resultStr = resultAC;
 
-
-
-
-        arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
-		arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extLayerTex"));
-        arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("layerTime"));
-		arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("time"));
-        arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec9_"));
-        arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
-        arbOutP->CallsAEGP_CompB =hasString(resultStr, std::string("layer"));
-        arbOutP->CallsAEGP_layerB =hasString(resultStr, std::string("comp"));
-
-
         nlohmann::json  jresult = nlohmann::json::parse(resultStr);
 
 		bool ParserModeB;
 		
 		ParserModeB = jresult["/parserModeB"_json_pointer];
 		arbOutP->parserModeB = ParserModeB;
+		if (ParserModeB) {
+			arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("time"));
+			arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extLayerTex"));
+		}
+		else {
+			arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
+			arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("layerTime"));
+			arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec9_"));
+			arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
+			arbOutP->CallsAEGP_CompB = hasString(resultStr, std::string("layer"));
+			arbOutP->CallsAEGP_layerB = hasString(resultStr, std::string("comp"));
+		}
+
         std::string redResultStr =   jresult["/redExpr"_json_pointer];
 		ExprtkCorrectorStr(redResultStr);
         std::string greenResultStr = jresult["/greenExpr"_json_pointer];
