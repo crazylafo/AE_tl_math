@@ -293,6 +293,8 @@ namespace {
 		glUniform1f(location, miP->layerTime_Frame);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerDuration");
 		glUniform1f(location, miP->layerDuration);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "resolution");
+		glUniform2f(location, miP->compWidthF, miP->compHeightF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerPosition");
 		glUniform3f(location, miP->layerPos_X, miP->layerPos_Y, miP->layerPos_Z);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerScale");
