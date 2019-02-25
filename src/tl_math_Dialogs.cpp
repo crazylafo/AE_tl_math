@@ -5,6 +5,8 @@
 //
 //
 
+
+
 #include "tl_math.h"
 #include "script.h"
 
@@ -213,6 +215,9 @@ SetupDialog(
     std::string jsonDump = "'''";
     jsonDump .append(jToJs.dump());
     jsonDump.append("'''");
+
+	
+
 
     sprintf( scriptAC,
             script_ui.c_str(),

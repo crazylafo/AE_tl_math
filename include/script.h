@@ -94,6 +94,16 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
     return ExprObj;\n\
 };";
 
+std::string script_updateNumOfLines = "function updateNumOfLines(textEditorStr) { \n\
+    var numLinesStr ='';\n\
+	var numberOfLineBreaks = (textEditorStr.match(/\\n/g)||[]).length;\n\
+	for (var i=0; i<numberOfLineBreaks; i++){\n\
+		numLinesStr+=i.toString()\n\
+		numLinesStr +='\\n';\n\
+	}\n\
+	return numLinesStr;\n\
+}";
+
 std::string script_ui = "function exprScript( jsonInput, pluginMAJORV, pluginMINORV, pluginBUGV){ \n\
 var pluginVersion = pluginMAJORV+'.'+pluginMINORV+pluginBUGV;\n\
 pluginVersion = parseFloat (pluginVersion); \n\
@@ -102,7 +112,6 @@ try {\n\
 	 exprCl= JSON.parse(jsonInput);\n\
 }catch(e) { alert(e) }\n\
 var w = new Window('dialog', 'Maths Expressions V'+pluginVersion, undefined, {resizeable:true} );\n\
-w.sttxt= w.add ('statictext', undefined, 'Write here your math operations for each channels. Math operations are based on Mathematical Expression Toolkit Library');\n\
 w.grp = w.add('group');\n\
 w.grp.orientation='column';\n\
 w.grp.alignment = ['fill', 'fill'];\n\
@@ -111,6 +120,7 @@ w.grp.alignChildren = ['fill', 'fill'];\n\
 //PARSER MODE\n\
 w.grp.parserModeB = w.grp.add('group');\n\
 w.grp.parserModeB.orientation = 'row';\n\
+w.grp.parserModeB.alignChildren = ['fill', 'fill'];\n\
 w.grp.parserModeB.alignChildren = ['left', 'fill'];\n\
 w.grp.parserModeB.st =w.grp.parserModeB.add ('statictext', undefined, 'Parser Mode');\n\
 w.grp.parserModeB.ddl = w.grp.parserModeB.add ('dropdownlist', undefined, ['Math Expressions','Glsl'])\n\
@@ -119,6 +129,7 @@ w.grp.parserModeB.ddl.selection =  exprCl.parserModeB;\n\
 //PRESET NAME\n\
 w.grp.PresetN = w.grp.add('group');\n\
 w.grp.PresetN.orientation = 'row';\n\
+w.grp.PresetN.alignChildren = ['fill', 'fill'];\n\
 w.grp.PresetN.alignChildren = ['left', 'fill'];\n\
 w.grp.PresetN.stN =w.grp.PresetN.add ('statictext', undefined, 'Preset Name');\n\
 w.grp.PresetN.name = w.grp.PresetN.add ('edittext', undefined, exprCl.presetName);\n\
@@ -128,6 +139,7 @@ w.grp.tab = w.grp.add('tabbedpanel');\n\
 w.grp.tab.expr = w.grp.tab.add('tab', undefined, 'Math Expressions');\n\
 w.grp.tab.glsl= w.grp.tab.add('tab', undefined, 'Glsl');\n\
 w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
+w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;\n\
  //EXPR TAB \n\
     w.grp.tab.expr.orientation='column';\n\
     w.grp.tab.expr.alignment = ['fill', 'fill'];\n\
@@ -163,10 +175,12 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
     w.grp.tab.glsl.alignment = ['fill', 'fill'];\n\
     w.grp.tab.glsl.fragShst = w.grp.tab.glsl.add ('statictext', undefined,'GLSL Fragment Shader : ');\n\
     w.grp.tab.glsl.fragSh = w.grp.tab.glsl.add('group');\n\
-    w.grp.tab.glsl.fragSh.orientation = 'row';\n\
+    w.grp.tab.glsl.fragSh.orientation = 'column';\n\
     w.grp.tab.glsl.fragSh.alignment = ['fill', 'fill'];\n\
-    w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'fill'];\n\
-    w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add ('edittext', undefined, exprCl.glslExpr,{multiline:true});\n\
+    w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'center'];\n\
+	w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add('edittext', undefined, exprCl.glslExpr, { multiline:true }); \n\
+	w.grp.tab.glsl.fragSh.fragShet.font = ScriptUI.newFont('Arial', 'Regular', 50); \n\
+	w.grp.tab.glsl.fragSh.glslErrReturn = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console',{readonly:true, multiline:true});\n\
 // \n\
 \n\
 //tab UI\n\
@@ -177,6 +191,8 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');\n\
 	w.grp.tab.paramUI.descriptionGrp.description = w.grp.tab.paramUI.descriptionGrp.add ('edittext', undefined, exprCl.description,{multiline:true});\n\
 w.grp.btnGrp = w.grp.add('Group');\n\
 w.grp.btnGrp.orientation = 'row';\n\
+w.grp.btnGrp.alignChildren = ['fill', 'fill'];\n\
+w.grp.btnGrp.alignChildren = ['left', 'fill'];\n\
 w.grp.btnGrp.Ok =w.grp.btnGrp.add ('button', undefined, 'Apply');\n\
 w.grp.btnGrp.Cancel =w.grp.btnGrp.add ('button', undefined, 'Cancel');\n\
 w.grp.btnGrp.loadBtn = w.grp.btnGrp.add ('button', undefined, 'Load Preset');\n\
@@ -188,6 +204,14 @@ w.grp.btnGrp.saveBtn =w.grp.btnGrp.add('button', undefined, 'Save Preset');\n\
 var tempRet =getcallBacks (w);\n\
 var result_temp = createJson(tempRet, pluginVersion);\n\
 var result = JSON.stringify(result_temp);\n\
+w.grp.parserModeB.ddl.onChange = function (){ \n\
+	if (w.grp.parserModeB.ddl.selection == 0){\n\
+		w.grp.tab.selection = 0;\n\
+		}\n\
+	else{\n\
+		w.grp.tab.selection =1;\n\
+		}\n\
+	}\n\
 w.grp.btnGrp.loadBtn.onClick = function (){\n\
     var exprObj = readJson(pluginVersion);\n\
     if (exprObj.error === \"none\"){\n\
@@ -226,10 +250,18 @@ w.show();\n\
 return result\n\
 }\n\
 \n\
-exprScript(%s,%s,%s,%s);\n\
+try{\n\
+	exprScript(%s, %s, %s, %s); \n\
+	}catch (e){alert(e);}\n\
 ";
 
-std::string script_ae = script_ui.append(script_parseBoolToInt).append(script_parseIntToBool).append(script_getcallBacks).append(json_createJson).append(json_saveAsJson).append(json_readJson);
+std::string script_ae = script_ui.append(script_parseBoolToInt)
+								 .append(script_parseIntToBool)
+								 .append(script_getcallBacks)
+								 .append(json_createJson)
+								 .append(json_saveAsJson)
+								 .append(json_readJson)
+								 .append(script_updateNumOfLines);
 
 
 #endif /* scipt_h */
