@@ -86,14 +86,18 @@ typedef struct {
     A_char  Glsl_FragmentShAc[15000];
     A_char  descriptionAc[2048];
     A_char  presetNameAc[32];
-     A_char MATH_INPONE_NameAC[32];
-     A_char MATH_INPTWO_NameAC[32];
-     A_char MATH_INPTHREE_NameAC[32];
-     A_char MATH_INPFOUR_NameAC[32];
-     A_char MATH_INP_POINT_ONE_NameAC[32];
-     A_char MATH_INP_POINT_TWO_NameAC[32];
-     A_char MATH_INP_COLOR_ONE_NameAC[32];
-     A_char MATH_INP_COLOR_TWO_NameAC[32];
+	A_char uiSliderGrp_NameAC[32];
+    A_char uiSliderOne_NameAC[32];
+    A_char uiSliderTwo_NameAC[32];
+    A_char uiSliderThree_NameAC[32];
+    A_char uiSliderFour_NameAC[32];
+	A_char uiPointGrp_NameAC[32];
+	A_char uiPointOne_NameAC[32];
+	A_char uiPointTwo_NameAC[32];
+	A_char uiColorGrp_NameAC[32];
+	A_char uiColorOne_NameAC[32];
+	A_char uiColorTwo_NameAC[32];
+	A_char uiExtLGrp_NameAC[32];
 
     
     //duplicate in order to keep the "/n" in javascript
@@ -115,6 +119,19 @@ typedef struct {
 	PF_Boolean PresetHasWideInputB;
     PF_Boolean CallsAEGP_CompB;
     PF_Boolean CallsAEGP_layerB;
+
+	PF_Boolean  uiSliderGrpB;
+	PF_Boolean uiSliderOneB;
+	PF_Boolean uiSliderTwoB;
+	PF_Boolean uiSliderThreeB;
+	PF_Boolean uiSliderFourB;
+	PF_Boolean uiPointGrpB;
+	PF_Boolean uiPointOneB;
+	PF_Boolean uiPointTwoB;
+	PF_Boolean uiColorGrpB;
+	PF_Boolean uiColorOneB;
+	PF_Boolean uiColorTwoB;
+	PF_Boolean uiExtLGrpB;
 
 
 
@@ -144,18 +161,18 @@ enum {
 	MATH_SETUP,
     MATH_ARB_DATA,
     MATH_TOPIC_SLIDER,
-	MATH_INPONE_VAR,
-    MATH_INPTWO_VAR,
-    MATH_INPTHREE_VAR,
-    MATH_INPFOUR_VAR,
+	MATH_SLIDER_ONE_VAR,
+    MATH_SLIDER_TWO_VAR,
+    MATH_SLIDER_THREE_VAR,
+    MATH_SLIDER_FOUR_VAR,
     MATH_END_TOPIC_SLIDER,
     MATH_TOPIC_POINTS,
-    MATH_INP_POINT_ONE,
-    MATH_INP_POINT_TWO,
+    MATH_POINT_ONE,
+	MATH_POINT_TWO,
     MATH_END_TOPIC_POINTS,
     MATH_TOPIC_COLORS,
-    MATH_INP_COLOR_ONE,
-    MATH_INP_COLOR_TWO,
+    MATH_COLOR_ONE,
+	MATH_COLOR_TWO,
     MATH_END_TOPIC_COLORS,
     MATH_TOPIC_INPUTS,
     MATH_INP_LAYER_ONE,
@@ -169,18 +186,18 @@ enum {
 	MATH_SETUP_DISK_ID = 1,
 	MATH_ARB_DATA_DISK_ID,
     MATH_TOPIC_SLIDER_DISK_ID,
-    MATH_INPONE_VAR_DISK_ID,
-    MATH_INPTWO_VAR_DISK_ID,
-    MATH_INPTHREE_VAR_DISK_ID,
-    MATH_INPFOUR_VAR_DISK_ID,
+    uiSliderOne_VAR_DISK_ID,
+    MATH_SLIDER_TWO_VAR_DISK_ID,
+    MATH_SLIDER_THREE_VAR_DISK_ID,
+    MATH_SLIDER_FOUR_VAR_DISK_ID,
     MATH_END_TOPIC_SLIDER_DISK_ID,
     MATH_TOPIC_POINTS_DISK_ID,
-    MATH_INP_POINT_ONE_DISK_ID,
-    MATH_INP_POINT_TWO_DISK_ID,
+    MATH_POINT_ONE_DISK_ID,
+    MATH_POINT_TWO_DISK_ID,
     MATH_END_TOPIC_POINTS_DISK_ID,
     MATH_TOPIC_COLORS_DISK_ID,
-    MATH_INP_COLOR_ONE_DISK_ID,
-    MATH_INP_COLOR_TWO_DISK_ID,
+    MATH_COLOR_ONE_DISK_ID,
+    MATH_COLOR_TWO_DISK_ID,
     MATH_END_TOPIC_COLORS_DISK_ID,
     MATH_TOPIC_INPUTS_DISK_ID,
     MATH_INP_LAYER_ONE_DISK_ID,

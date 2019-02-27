@@ -279,6 +279,10 @@ namespace {
 		glUniform1f(location, miP->inFourF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt1");
 		glUniform2f(location, miP->pointOneX, miP->pointOneY);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "mouse");
+		glUniform2f(location, miP->pointOneX, miP->pointOneY);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "iMouse");
+		glUniform2f(location, miP->pointOneX, miP->pointOneY);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt2");
 		glUniform2f(location, miP->pointTwoX, miP->pointTwoY);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "cl1");
@@ -287,6 +291,8 @@ namespace {
 		glUniform3f(location, miP->colorTwo[0], miP->colorTwo[1], miP->colorTwo[2]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "time");
 		glUniform1f(location, miP->layerTime_Sec);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "iTime");
+		glUniform1f(location, miP->layerTime_Sec);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layertime_sec");
 		glUniform1f(location, miP->layerTime_Sec);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerTime_frame");
@@ -294,6 +300,8 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerDuration");
 		glUniform1f(location, miP->layerDuration);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "resolution");
+		glUniform2f(location, miP->compWidthF, miP->compHeightF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "iResolution");
 		glUniform2f(location, miP->compWidthF, miP->compHeightF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerPosition");
 		glUniform3f(location, miP->layerPos_X, miP->layerPos_Y, miP->layerPos_Z);
@@ -546,7 +554,7 @@ ParamsSetup (
         err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
     }
     AEFX_CLR_STRUCT(def);
-
+	def.flags= PF_ParamFlag_SUPERVISE;
     PF_ADD_TOPIC(STR( StrID_TOPIC_SLIDER_Param_Name),  MATH_TOPIC_SLIDER_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
@@ -558,8 +566,8 @@ ParamsSetup (
 							MATH_VAR_DFLT,
 							PF_Precision_THOUSANDTHS,
 							0,
-							0,
-							MATH_INPONE_VAR_DISK_ID);
+							PF_ParamFlag_SUPERVISE,
+							uiSliderOne_VAR_DISK_ID);
 
 	AEFX_CLR_STRUCT(def);
     
@@ -571,8 +579,8 @@ ParamsSetup (
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
                          0,
-                         0,
-                         MATH_INPTWO_VAR_DISK_ID);
+						PF_ParamFlag_SUPERVISE,
+                         MATH_SLIDER_TWO_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
@@ -584,8 +592,8 @@ ParamsSetup (
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
                          0,
-                         0,
-                         MATH_INPTHREE_VAR_DISK_ID);
+		   				PF_ParamFlag_SUPERVISE,
+                         MATH_SLIDER_THREE_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     
@@ -597,36 +605,40 @@ ParamsSetup (
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
                          0,
-                         0,
-                         MATH_INPFOUR_VAR_DISK_ID);
+						 PF_ParamFlag_SUPERVISE,
+                         MATH_SLIDER_FOUR_VAR_DISK_ID);
     
     AEFX_CLR_STRUCT(def);
     PF_END_TOPIC( MATH_TOPIC_SLIDER_DISK_ID);
 
     AEFX_CLR_STRUCT(def);
     
-
+	def.flags = PF_ParamFlag_SUPERVISE;
     PF_ADD_TOPIC(STR( StrID_TOPIC_POINTS_Param_Name), MATH_TOPIC_POINTS_DISK_ID);
 	AEFX_CLR_STRUCT(def);
-    PF_ADD_POINT(STR (strID_INPUTPOINTONE_Param_Name), 50, 50, FALSE, MATH_INP_POINT_ONE_DISK_ID);
+	 def.flags = PF_ParamFlag_SUPERVISE;
+    PF_ADD_POINT(STR (strID_INPUTPOINTONE_Param_Name), 50, 50, FALSE, MATH_POINT_ONE_DISK_ID);
     AEFX_CLR_STRUCT(def);
-    PF_ADD_POINT(STR(strID_INPUTPOINTTWO_Param_Name), 50, 50, FALSE, MATH_INP_POINT_TWO_DISK_ID);
+	def.flags = PF_ParamFlag_SUPERVISE;
+    PF_ADD_POINT(STR(strID_INPUTPOINTTWO_Param_Name), 50, 50, FALSE, MATH_POINT_TWO_DISK_ID);
     AEFX_CLR_STRUCT(def);
     PF_END_TOPIC(MATH_TOPIC_POINTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
-    
+	def.flags = PF_ParamFlag_SUPERVISE;
     PF_ADD_TOPIC(STR( StrID_TOPIC_COLORS_Param_Name), MATH_TOPIC_COLORS_DISK_ID);
     AEFX_CLR_STRUCT(def);
-    PF_ADD_COLOR(STR(strID_INPUTCOLORONE_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8, MATH_INP_COLOR_ONE_DISK_ID);
+	def.flags = PF_ParamFlag_SUPERVISE;
+    PF_ADD_COLOR(STR(strID_INPUTCOLORONE_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8, MATH_COLOR_ONE_DISK_ID);
     AEFX_CLR_STRUCT(def);
-    PF_ADD_COLOR(STR(strID_INPUTCOLORTWO_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8,MATH_INP_COLOR_TWO_DISK_ID);
+	def.flags = PF_ParamFlag_SUPERVISE;
+    PF_ADD_COLOR(STR(strID_INPUTCOLORTWO_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8,MATH_COLOR_TWO_DISK_ID);
     AEFX_CLR_STRUCT(def);
     PF_END_TOPIC (MATH_TOPIC_COLORS_DISK_ID);
     AEFX_CLR_STRUCT(def);
-    
+	def.flags = PF_ParamFlag_SUPERVISE;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name), MATH_TOPIC_INPUTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
-
+	def.flags = PF_ParamFlag_SUPERVISE;
     PF_ADD_LAYER(STR(StrID_LAYER_ONE_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_ONE_DISK_ID);
     AEFX_CLR_STRUCT(def);
     PF_ADD_FLOAT_SLIDERX(STR( StrID_TOFF_ONE_Param_Name),
@@ -637,7 +649,7 @@ ParamsSetup (
                          TIMEOFFSET_DFLT,
                          PF_Precision_INTEGER,
                          0,
-                         0,
+                         PF_ParamFlag_SUPERVISE ,
                          MATH_INP_TOFF_ONE_DISK_ID);
     
     PF_ADD_POINT(STR(StrID_POFF_ONE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_ONE_DISK_ID);
@@ -656,14 +668,30 @@ ParamsSetup (
 
 static PF_Err
 MakeParamCopy(
-              PF_ParamDef *actual[],	/* >> */
-              PF_ParamDef copy[])		/* << */
+	PF_ParamDef *actual[],	/* >> */
+	PF_ParamDef copy[])		/* << */
 {
-    for (A_short iS = 0; iS < MATH_NUM_PARAMS; ++iS){
-        AEFX_CLR_STRUCT(copy[iS]);	// clean params are important!
-    }
-    copy[MATH_INPUT]			= *actual[MATH_INPUT];
-    copy[MATH_ARB_DATA]			= *actual[MATH_ARB_DATA];
+	for (A_short iS = 0; iS < MATH_NUM_PARAMS; ++iS) {
+		AEFX_CLR_STRUCT(copy[iS]);	// clean params are important!
+	}
+	copy[MATH_INPUT] = *actual[MATH_INPUT];
+	copy[MATH_ARB_DATA] = *actual[MATH_ARB_DATA];
+	copy[MATH_TOPIC_SLIDER] = *actual[MATH_TOPIC_SLIDER];
+	copy[MATH_SLIDER_ONE_VAR] = *actual[MATH_SLIDER_ONE_VAR];
+	copy[MATH_SLIDER_TWO_VAR] = *actual[MATH_SLIDER_TWO_VAR];
+	copy[MATH_SLIDER_THREE_VAR] = *actual[MATH_SLIDER_THREE_VAR];
+	copy[MATH_SLIDER_FOUR_VAR] = *actual[MATH_SLIDER_FOUR_VAR];
+	copy[MATH_TOPIC_POINTS] = *actual[MATH_TOPIC_POINTS];
+	copy[MATH_POINT_ONE] = *actual[MATH_POINT_ONE];
+	copy[MATH_POINT_TWO] = *actual[MATH_POINT_TWO];
+	copy[MATH_TOPIC_COLORS] = *actual[MATH_TOPIC_COLORS];
+	copy[MATH_COLOR_ONE] = *actual[MATH_COLOR_ONE];
+	copy[MATH_COLOR_TWO] = *actual[MATH_COLOR_TWO];
+	copy[MATH_TOPIC_INPUTS] = *actual[MATH_TOPIC_INPUTS];
+	copy[MATH_INP_LAYER_ONE] = *actual[MATH_INP_LAYER_ONE];
+	copy[MATH_INP_TOFF_ONE] = *actual[MATH_INP_TOFF_ONE];
+	copy[MATH_INP_POFF_ONE] = *actual[MATH_INP_POFF_ONE];
+
     
     return PF_Err_NONE;
     
@@ -675,20 +703,156 @@ UpdateParameterUI(
                   PF_ParamDef			*params[],
                   PF_LayerDef			*outputP)
 {
-    PF_Err				err					= PF_Err_NONE;
+    PF_Err				err = PF_Err_NONE ,err2			= PF_Err_NONE;
     PF_Handle		arbH			= params[MATH_ARB_DATA]->u.arb_d.value;
     AEGP_SuiteHandler		suites(in_data->pica_basicP);
     m_ArbData		*arbP			= NULL;
+	AEGP_EffectRefH			meH = NULL;
     PF_ParamDef		param_copy[MATH_NUM_PARAMS];
     ERR(MakeParamCopy(params, param_copy));
+	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
     arbP = reinterpret_cast<m_ArbData*>(suites.HandleSuite1()->host_lock_handle(arbH));
+	AEGP_StreamRefH		MATH_TOPIC_SLIDER_streamH = NULL,
+		MATH_SLIDER_ONE_VAR_streamH = NULL,
+		MATH_SLIDER_TWO_VAR_streamH = NULL,
+		MATH_SLIDER_THREE_VAR_streamH = NULL,
+		MATH_SLIDER_FOUR_VAR_streamH = NULL,
+		MATH_TOPIC_POINTS_streamH = NULL,
+		MATH_POINT_ONE_streamH =NULL,
+		MATH_POINT_TWO_streamH = NULL,
+		MATH_TOPIC_COLORS_streamH = NULL,
+		MATH_COLOR_ONE_streamH = NULL,
+		MATH_COLOR_TWO_streamH = NULL,
+		MATH_TOPIC_INPUTS_streamH = NULL;
+
     if (arbP) {
         m_ArbData *tempPointer = reinterpret_cast<m_ArbData*>(arbP);
-        strcpy(param_copy[MATH_ARB_DATA].name, tempPointer->presetNameAc);
+
+		strcpy(param_copy[MATH_ARB_DATA].name, tempPointer->presetNameAc);
         ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
                                                         MATH_ARB_DATA,
                                                         &param_copy[MATH_ARB_DATA]));
-        
+
+		strcpy(param_copy[MATH_TOPIC_SLIDER].name, tempPointer->uiSliderGrp_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_TOPIC_SLIDER,
+														&param_copy[MATH_TOPIC_SLIDER]));
+
+		strcpy(param_copy[MATH_SLIDER_ONE_VAR].name, tempPointer->uiSliderOne_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_SLIDER_ONE_VAR,
+														&param_copy[MATH_SLIDER_ONE_VAR]));
+		strcpy(param_copy[MATH_SLIDER_TWO_VAR].name, tempPointer->uiSliderTwo_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_SLIDER_TWO_VAR,
+														&param_copy[MATH_SLIDER_TWO_VAR]));
+		strcpy(param_copy[MATH_SLIDER_THREE_VAR].name, tempPointer->uiSliderThree_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_SLIDER_THREE_VAR,
+														&param_copy[MATH_SLIDER_THREE_VAR]));
+		strcpy(param_copy[MATH_SLIDER_FOUR_VAR].name, tempPointer->uiSliderFour_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_SLIDER_FOUR_VAR,
+														&param_copy[MATH_SLIDER_FOUR_VAR]));
+		strcpy(param_copy[MATH_TOPIC_POINTS].name, tempPointer->uiPointGrp_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_TOPIC_POINTS,
+														&param_copy[MATH_TOPIC_POINTS]));
+		strcpy(param_copy[MATH_POINT_ONE].name, tempPointer->uiPointOne_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_POINT_ONE,
+														&param_copy[MATH_POINT_ONE]));
+		strcpy(param_copy[MATH_POINT_TWO].name, tempPointer->uiPointTwo_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_POINT_TWO,
+														&param_copy[MATH_POINT_TWO]));
+		strcpy(param_copy[MATH_TOPIC_COLORS].name, tempPointer->uiColorGrp_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_TOPIC_COLORS,
+														&param_copy[MATH_TOPIC_COLORS]));
+		strcpy(param_copy[MATH_COLOR_ONE].name, tempPointer->uiColorOne_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_COLOR_ONE,
+														&param_copy[MATH_COLOR_ONE]));
+		strcpy(param_copy[MATH_COLOR_TWO].name, tempPointer->uiColorTwo_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+														MATH_COLOR_TWO,
+														&param_copy[MATH_COLOR_TWO]));
+		strcpy(param_copy[MATH_TOPIC_INPUTS].name, tempPointer->uiExtLGrp_NameAC);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+													MATH_TOPIC_INPUTS,
+													&param_copy[MATH_TOPIC_INPUTS]));
+
+		ERR(suites.PFInterfaceSuite1()->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &meH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_SLIDER, &MATH_TOPIC_SLIDER_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_ONE_VAR, &MATH_SLIDER_ONE_VAR_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TWO_VAR, &MATH_SLIDER_TWO_VAR_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_THREE_VAR, &MATH_SLIDER_THREE_VAR_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FOUR_VAR, &MATH_SLIDER_FOUR_VAR_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_POINTS, &MATH_TOPIC_POINTS_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_ONE, &MATH_POINT_ONE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TWO, &MATH_POINT_TWO_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_COLORS, &MATH_TOPIC_COLORS_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_ONE, &MATH_COLOR_ONE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TWO, &MATH_COLOR_TWO_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_INPUTS, &MATH_TOPIC_INPUTS_streamH));
+
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_SLIDER_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiSliderGrpB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_ONE_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiSliderOneB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_TWO_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiSliderTwoB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_THREE_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE,!tempPointer->uiSliderThreeB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_FOUR_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiSliderFourB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_POINTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiPointGrpB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiPointOneB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiPointTwoB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_COLORS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiColorGrpB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiColorOneB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiColorTwoB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_INPUTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !tempPointer->uiExtLGrpB));
+
+		if (meH) {
+			ERR2(suites.EffectSuite2()->AEGP_DisposeEffect(meH));
+		}
+		if (MATH_TOPIC_SLIDER_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_SLIDER_streamH));
+		}
+		if (MATH_SLIDER_ONE_VAR_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_ONE_VAR_streamH));
+		}
+		if (MATH_SLIDER_TWO_VAR_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_TWO_VAR_streamH));
+		}
+		if (MATH_SLIDER_THREE_VAR_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_THREE_VAR_streamH));
+		}
+		if (MATH_SLIDER_FOUR_VAR_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_FOUR_VAR_streamH));
+		}
+		if (MATH_TOPIC_POINTS_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_POINTS_streamH));
+		}
+		if (MATH_POINT_ONE_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_ONE_streamH));
+		}
+		if (MATH_POINT_TWO_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_TWO_streamH));
+		}
+		if (MATH_TOPIC_COLORS_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_COLORS_streamH));
+		}
+		if (MATH_COLOR_ONE_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_ONE_streamH));
+		}
+		if (MATH_COLOR_TWO_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_TWO_streamH));
+		}
+		if (MATH_TOPIC_INPUTS_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_INPUTS_streamH));
+		}
+		if (!err) {
+			out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
+		}
+
     }
     
     
@@ -1375,7 +1539,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(var1_param);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_INPONE_VAR,
+                                  MATH_SLIDER_ONE_VAR,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
@@ -1383,7 +1547,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(var2_param);
             ERR(PF_CHECKOUT_PARAM(in_data,
-                                  MATH_INPTWO_VAR,
+                                  MATH_SLIDER_TWO_VAR,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
@@ -1391,7 +1555,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(var3_param);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_INPTHREE_VAR,
+                                  MATH_SLIDER_THREE_VAR,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
@@ -1399,7 +1563,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(var4_param);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_INPFOUR_VAR,
+                                  MATH_SLIDER_FOUR_VAR,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
@@ -1408,7 +1572,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(point1_param);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_INP_POINT_ONE,
+								  MATH_POINT_ONE,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
@@ -1416,7 +1580,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(point2_param);
             ERR(PF_CHECKOUT_PARAM(in_data,
-                                  MATH_INP_POINT_TWO,
+								  MATH_POINT_TWO,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
@@ -1427,7 +1591,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(color1_param);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_INP_COLOR_ONE,
+								  MATH_COLOR_ONE,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
@@ -1435,7 +1599,7 @@ SmartRender(
 
             AEFX_CLR_STRUCT(color2_param);
             ERR(PF_CHECKOUT_PARAM(in_data,
-                                  MATH_INP_COLOR_TWO,
+								  MATH_COLOR_TWO,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,

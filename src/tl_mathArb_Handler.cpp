@@ -31,14 +31,18 @@ CreateDefaultArb(
                 strncpy_s(arbP->descriptionAc,"Describe your preset here", 2048);
                 strncpy_s(arbP->Glsl_FragmentShAc, "fragSh", 4096);
 				strncpy_s(arbP->Glsl_VertexShAc, "vertexSh", 4096);
-                strncpy_s(arbP->MATH_INPONE_NameAC,"variable 1", 32);
-                strncpy_s(arbP->MATH_INPTWO_NameAC,"variable 2", 32);
-                strncpy_s(arbP->MATH_INPTHREE_NameAC,"variable 3", 32);
-                strncpy_s(arbP->MATH_INPFOUR_NameAC,"variable 4", 32);
-                strncpy_s(arbP->MATH_INP_POINT_ONE_NameAC,"Point 1", 32);
-                strncpy_s(arbP->MATH_INP_POINT_TWO_NameAC,"Point 2", 32);
-                strncpy_s(arbP->MATH_INP_COLOR_ONE_NameAC,"Color 1", 32);
-                strncpy_s(arbP->MATH_INP_COLOR_TWO_NameAC,"Color 2", 32);
+				strncpy_s(arbP->uiSliderGrp_NameAC, "Slider Group", 32);
+                strncpy_s(arbP->uiSliderOne_NameAC,"variable 1", 32);
+                strncpy_s(arbP->uiSliderTwo_NameAC,"variable 2", 32);
+                strncpy_s(arbP->uiSliderThree_NameAC,"variable 3", 32);
+                strncpy_s(arbP->uiSliderFour_NameAC,"variable 4", 32);
+				strncpy_s(arbP->uiPointGrp_NameAC, "Point Group", 32);
+                strncpy_s(arbP->uiPointOne_NameAC,"Point 1", 32);
+                strncpy_s(arbP->uiPointTwo_NameAC,"Point 2", 32);
+				strncpy_s(arbP->uiColorGrp_NameAC, "Color Group", 32);
+                strncpy_s(arbP->uiColorOne_NameAC,"Color 1", 32);
+                strncpy_s(arbP->uiColorTwo_NameAC,"Color 2", 32);
+				strncpy_s(arbP->uiExtLGrp_NameAC, "external Layer", 32);
                 strncpy_s(arbP->redExAcFlat , "in_red", 4096);
                 strncpy_s(arbP->greenExAcFlat ,"in_green", 4096);
                 strncpy_s(arbP->blueExAcFlat ,"in_blue", 4096);
@@ -59,14 +63,18 @@ CreateDefaultArb(
                 strncpy(arbP->descriptionAc,"Describe your preset here", 2048);
                 strncpy(arbP->Glsl_FragmentShAc, "fragSh", 4096);
 				strncpy(arbP->Glsl_VertexShAc, "vertexSh", 4096);
-                strncpy(arbP->MATH_INPONE_NameAC,"variable 1", 32);
-                strncpy(arbP->MATH_INPTWO_NameAC,"variable 2", 32);
-                strncpy(arbP->MATH_INPTHREE_NameAC,"variable 3", 32);
-                strncpy(arbP->MATH_INPFOUR_NameAC,"variable 4", 32);
-                strncpy(arbP->MATH_INP_POINT_ONE_NameAC,"Point 1", 32);
-                strncpy(arbP->MATH_INP_POINT_TWO_NameAC,"Point 2", 32);
-                strncpy(arbP->MATH_INP_COLOR_ONE_NameAC,"Color 1", 32);
-                strncpy(arbP->MATH_INP_COLOR_TWO_NameAC,"Color 2", 32);
+				strncpy(arbP->uiSliderGrp_NameAC, "Slider Group", 32);
+                strncpy(arbP->uiSliderOne_NameAC,"variable 1", 32);
+                strncpy(arbP->uiSliderTwo_NameAC,"variable 2", 32);
+                strncpy(arbP->uiSliderThree_NameAC,"variable 3", 32);
+                strncpy(arbP->uiSliderFour_NameAC,"variable 4", 32);
+				strncpy(arbP->uiPointGrp_NameAC, "Point Group", 32);
+                strncpy(arbP->uiPointOne_NameAC,"Point 1", 32);
+                strncpy(arbP->uiPointTwo_NameAC,"Point 2", 32);
+				strncpy(arbP->uiColorGrp_NameAC, "Color Group", 32);
+                strncpy(arbP->uiColorOne_NameAC,"Color 1", 32);
+                strncpy(arbP->uiColorTwo_NameAC,"Color 2", 32);
+				strncpy(arbP->uiExtLGrp_NameAC, "external Layer", 32);
                 strncpy(arbP->redExAcFlat , "in_red", 4096);
                 strncpy(arbP->greenExAcFlat ,"in_green", 4096);
                 strncpy(arbP->blueExAcFlat ,"in_blue", 4096);
@@ -83,6 +91,18 @@ CreateDefaultArb(
                 arbP->CallsAEGP_CompB= false;
                 arbP->CallsAEGP_layerB= false;
 				arbP->ShaderResetB = false;
+				arbP->uiSliderGrpB = true;
+				arbP->uiSliderOneB = true;
+				arbP->uiSliderTwoB = true;
+				arbP->uiSliderThreeB = true;
+				arbP->uiSliderFourB = true;
+				arbP->uiPointGrpB = true;
+				arbP->uiPointOneB = true;
+				arbP->uiPointTwoB = true;
+				arbP->uiColorGrpB = true;
+				arbP->uiColorOneB = true;
+				arbP->uiColorTwoB = true;
+				arbP->uiExtLGrpB = true;
 
 			*dephault = arbH;
 		}
@@ -222,29 +242,42 @@ Arb_Compare(
             total_aV.emplace_back ((first_arbP->parserModeB));
             total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShAc));
 			total_aV.emplace_back( strlen(first_arbP->Glsl_VertexShAc));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INPONE_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INPTWO_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INPTHREE_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INPFOUR_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_ONE_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_POINT_TWO_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_ONE_NameAC));
-            total_aV.emplace_back ( strlen(first_arbP->MATH_INP_COLOR_TWO_NameAC));
+			total_aV.emplace_back(strlen(first_arbP->uiSliderGrp_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiSliderOne_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiSliderTwo_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiSliderThree_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiSliderFour_NameAC));
+			total_aV.emplace_back(strlen(first_arbP->uiPointGrp_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiPointOne_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiPointTwo_NameAC));
+			total_aV.emplace_back(strlen(first_arbP->uiColorGrp_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiColorOne_NameAC));
+            total_aV.emplace_back ( strlen(first_arbP->uiColorTwo_NameAC));
+			total_aV.emplace_back ( strlen(first_arbP->uiExtLGrp_NameAC));
             total_aV.emplace_back ( strlen(first_arbP->Glsl_FragmentShFlat));
 			total_aV.emplace_back(strlen(first_arbP->Glsl_VertexShFlat));
 
             total_aV.emplace_back (first_arbP->CallsAEGP_CompB);
             total_aV.emplace_back (first_arbP->CallsAEGP_layerB);
 			total_aV.emplace_back(first_arbP->ShaderResetB);
+			total_aV.emplace_back(first_arbP->uiSliderGrpB );
+			total_aV.emplace_back(first_arbP->uiSliderOneB );
+			total_aV.emplace_back(first_arbP->uiSliderTwoB );
+			total_aV.emplace_back(first_arbP->uiSliderThreeB );
+			total_aV.emplace_back(first_arbP->uiSliderFourB );
+			total_aV.emplace_back(first_arbP->uiPointGrpB );
+			total_aV.emplace_back(first_arbP->uiPointOneB );
+			total_aV.emplace_back(first_arbP->uiPointTwoB );
+			total_aV.emplace_back(first_arbP->uiColorGrpB );
+			total_aV.emplace_back(first_arbP->uiColorOneB );
+			total_aV.emplace_back(first_arbP->uiColorTwoB );
+			total_aV.emplace_back(first_arbP->uiExtLGrpB );
             
 			total_bV.emplace_back ( strlen(second_arbP->redExAc));
 			total_bV.emplace_back ( strlen(second_arbP->greenExAc));
 			total_bV.emplace_back ( strlen(second_arbP->blueExAc));
 			total_bV.emplace_back ( strlen(second_arbP->alphaExAc));
 			total_bV.emplace_back ( strlen(second_arbP->presetNameAc));
-
-            
-            
 			total_bV.emplace_back (strlen(second_arbP->redExAcFlat));
 			total_bV.emplace_back (strlen(second_arbP->greenExAcFlat));
 			total_bV.emplace_back (strlen(second_arbP->blueExAcFlat));
@@ -259,25 +292,39 @@ Arb_Compare(
             total_bV.emplace_back ((second_arbP->parserModeB));
             total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShAc));
 			total_bV.emplace_back(strlen(second_arbP->Glsl_VertexShAc));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INPONE_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INPTWO_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INPTHREE_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INPFOUR_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_POINT_ONE_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_POINT_TWO_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_COLOR_ONE_NameAC));
-            total_bV.emplace_back ( strlen(second_arbP->MATH_INP_COLOR_TWO_NameAC));
+			total_bV.emplace_back(strlen(second_arbP->uiSliderGrp_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiSliderOne_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiSliderTwo_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiSliderThree_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiSliderFour_NameAC));
+			total_bV.emplace_back(strlen(second_arbP->uiPointGrp_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiPointOne_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiPointTwo_NameAC));
+			total_bV.emplace_back(strlen(second_arbP->uiColorGrp_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiColorOne_NameAC));
+            total_bV.emplace_back ( strlen(second_arbP->uiColorTwo_NameAC));
+			total_aV.emplace_back ( strlen(second_arbP->uiExtLGrp_NameAC));
             total_bV.emplace_back ( strlen(second_arbP->Glsl_FragmentShFlat));
 			total_bV.emplace_back ( strlen(second_arbP->Glsl_VertexShFlat));
 
             total_bV.emplace_back (second_arbP->CallsAEGP_CompB);
             total_bV.emplace_back (second_arbP->CallsAEGP_layerB);
 			total_bV.emplace_back(second_arbP->ShaderResetB);
-            
-            
+			total_bV.emplace_back(second_arbP->uiSliderGrpB);
+			total_bV.emplace_back(second_arbP->uiSliderOneB);
+			total_bV.emplace_back(second_arbP->uiSliderTwoB);
+			total_bV.emplace_back(second_arbP->uiSliderThreeB);
+			total_bV.emplace_back(second_arbP->uiSliderFourB);
+			total_bV.emplace_back(second_arbP->uiPointGrpB);
+			total_bV.emplace_back(second_arbP->uiPointOneB);
+			total_bV.emplace_back(second_arbP->uiPointTwoB);
+			total_bV.emplace_back(second_arbP->uiColorGrpB);
+			total_bV.emplace_back(second_arbP->uiColorOneB);
+			total_bV.emplace_back(second_arbP->uiColorTwoB);
+			total_bV.emplace_back(second_arbP->uiExtLGrpB);
 
-			total_aL = (size_t)std::accumulate(total_aV.begin(), total_aV.end(), 0);
-			total_bL = (size_t)std::accumulate(total_bV.begin(), total_bV.end(), 0);
+			total_aL = std::accumulate(total_aV.begin(), total_aV.end(), (size_t)0);
+			total_bL =std::accumulate(total_bV.begin(), total_bV.end(), (size_t)0);
 			if(total_aL > total_bL)	{
 				*resultP = PF_ArbCompare_MORE;
 			} else if(total_aL < total_bL){
