@@ -470,7 +470,6 @@ GlobalSetup (
         globP = reinterpret_cast<my_global_dataP>(suites.HandleSuite1()->host_lock_handle(globH));
         if (globP) {
             ERR(suites.UtilitySuite3()->AEGP_RegisterWithAEGP(NULL, STR(StrID_Name), &globP->my_id));
-            
             if (!err){
                 out_data->global_data 	= globH;
             }
@@ -1019,7 +1018,8 @@ ExtLayerInput(void *refcon,
 	PF_Pixel empty8 = { 0,0,0,0 };
 
 	PF_EffectWorld Externalworld;
-	ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, inputP->width, inputP->height, format, &Externalworld));
+
+	ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, extLW->width, extLW->height, format, &Externalworld));
 	Externalworld.world_flags = extLW->world_flags;
 	switch (format) {
 
@@ -1081,9 +1081,9 @@ ExtLayerInput(void *refcon,
 				0,
 				Externalworld.height,
 				&Externalworld,
-				&Externalworld.extent_hint,
+				NULL,
 				&origin,
-				(void*)(&oiP),
+				(void*)(oiP),
 				ShiftImage32,
 				extLW));
 			break;
@@ -1094,9 +1094,9 @@ ExtLayerInput(void *refcon,
 				0,
 				Externalworld.height,
 				&Externalworld,
-				&Externalworld.extent_hint,
+				NULL,
 				&origin,
-				(void*)(&oiP),
+				(void*)(oiP),
 				ShiftImage16,
 				extLW));
 			break;
@@ -1165,6 +1165,7 @@ ExprRender( PF_OutData     *out_data,
 	ExprInfoP          *exprP = reinterpret_cast<ExprInfoP*>(refconExpr);
 	funcTransfertInfo fiP;
 	AEFX_CLR_STRUCT(fiP);
+
 	
 
 	WorldTransfertInfo   wtiP;
@@ -1493,7 +1494,8 @@ SmartRender(
 			PF_Handle arbH = NULL;
 			PF_EffectWorld extLW;
 			ExprInfoP       ExprP;
-			AEFX_CLR_STRUCT(ExprP);
+			AEFX_CLR_STRUCT(ExprP);	
+			PF_PixelFormat formatExtL;
 
 
             // checkout input & output buffers.
@@ -1504,8 +1506,8 @@ SmartRender(
 
             // determine requested output depth
             ERR(wsP->PF_GetPixelFormat(outputP, &format));
-
-			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extLW));
+			ERR(wsP->PF_GetPixelFormat(extLP, &formatExtL));
+			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, formatExtL, &extLW));
 
 
             //CHECKOUT PARAMS

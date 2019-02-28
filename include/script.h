@@ -55,16 +55,18 @@ std::string script_getcallBacks = "function getcallBacks(w){\n\
 	return exprCb ;\n\
 }";
 
-std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
+std::string json_createJson = "function createJson(exprCl, pluginVersion,  inEvalB){\n\
+	pluginVersionStr = pluginVersion.toString();\n\
     ExprObj = {\n\
         effectName   : \"tlMath\",\n\
         parserModeB : exprCl.parserModeB, \n\
         category :  \"Custom\",\n\
         presetName  : exprCl.presetName,\n\
         description : exprCl.description, \n\
-        pluginVesion : \"+ pluginVersion +\",\n\
+        pluginVesion : pluginVersionStr,\n\
         minimalPluginVersion : \"1.13\",\n\
         glslExpr  : exprCl.glslExpr,\n\
+		evalB :     inEvalB,\n\
         redExpr   : exprCl.redExpr,\n\
         greenExpr : exprCl.greenExpr,\n\
         blueExpr  : exprCl.blueExpr,\n\
@@ -98,7 +100,7 @@ std::string json_createJson = "function createJson(exprCl, pluginVersion){\n\
 }";
 
 std::string json_saveAsJson = "function saveAsJson(exprCl, pluginVersion){\n\
-    ExprObj = createJson(exprCl, pluginVersion);\n\
+    ExprObj = createJson(exprCl, pluginVersion,false);\n\
     var presetFile =File.saveDialog('save your preset as a json');\n\
     if (presetFile && presetFile.open('w')){\n\
         presetFile.encoding ='UTF-8';\n\
@@ -121,6 +123,8 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
                 ExprObj.parserModeB  = parseBoolToInt (testObj.parserModeB);\n\
                 ExprObj.category = testObj.category;\n\
 				if (testObj.glslExpr){ExprObj.glslExpr = testObj.glslExpr;}\n\
+				if (testObj.evalglslExp){ExprObj.evalglslExp = testObj.evalglslExp}\n\
+				else {ExprObj.evalglslExp = 'NONE'}\n\
                 if (testObj.presetName) {ExprObj.presetName  = testObj.presetName;} \n\
                 if (testObj.description){ExprObj.description = testObj.description;}\n\
                 if (testObj.redExpr){ExprObj.redExpr     = testObj.redExpr;}\n\
@@ -247,7 +251,6 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;\n\
 	w.grp.tab.expr.alphaC.alignment = ['fill', 'fill'];\n\
     w.grp.tab.expr.alphaC.alignChildren = ['fill', 'fill'];\n\
     w.grp.tab.expr.alphaC.alphaet = w.grp.tab.expr.alphaC.add ('edittext', undefined, exprCl.alphaExpr,{multiline:true});\n\
-	w.grp.tab.expr.glslconsole = w.grp.tab.expr.add ('edittext', undefined, 'glsl console',{readonly:true, multiline:true});\n\
     // \n\
     \n\
 \n\
@@ -255,13 +258,14 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;\n\
     w.grp.tab.glsl.orientation='column';\n\
     w.grp.tab.glsl.alignment = ['fill', 'center'];\n\
     w.grp.tab.glsl.fragShst = w.grp.tab.glsl.add ('statictext', undefined,'GLSL Fragment Shader : ');\n\
+	w.grp.tab.glsl.fragShevalbtn = w.grp.tab.glsl.add ('button', undefined, 'Evaluate Shader');\n\
     w.grp.tab.glsl.fragSh = w.grp.tab.glsl.add('group');\n\
     w.grp.tab.glsl.fragSh.orientation = 'column';\n\
     w.grp.tab.glsl.fragSh.alignment = ['fill', 'center'];\n\
 	w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'fill'];\n\
 	w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add('edittext', undefined, exprCl.glslExpr, { multiline:true }); \n\
 	w.grp.tab.glsl.fragSh.fragShet.font = ScriptUI.newFont('Arial', 'Regular', 50); \n\
-	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console',{readonly:true, multiline:true});\n\
+	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\\r'+exprCl.evalglslExp ,{readonly:true, multiline:true});\n\
 // \n\
 "
 "//tab UI\n\
@@ -353,12 +357,11 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;\n\
 	w.grp.tab.paramUI.descriptionGrp.alignment = ['fill', 'fill'];\n\
 	w.grp.tab.paramUI.descriptionGrp.descrst = w.grp.tab.paramUI.descriptionGrp.add ('statictext', undefined, 'Description:');\n\
 	w.grp.tab.paramUI.descriptionGrp.description = w.grp.tab.paramUI.descriptionGrp.add ('edittext', undefined, exprCl.description,{multiline:true});\n\
-\n\
-\n\
-//CALLBACK \n\
+"
+"//CALLBACK \n\
 \n\
 var tempRet =getcallBacks (w);\n\
-var result_temp = createJson(tempRet, pluginVersion);\n\
+var result_temp = createJson(tempRet, pluginVersion,false);\n\
 var result = JSON.stringify(result_temp);\n\
 w.grp.parserModeB.ddl.onChange = function (){ \n\
 	if (w.grp.parserModeB.ddl.selection == 0){\n\
@@ -413,15 +416,21 @@ w.grp.btnGrp.saveBtn.onClick = function (){\n\
     var exprRet =getcallBacks (w);\n\
     saveAsJson (exprRet, pluginVersion);\n\
     }\n\
+w.grp.tab.glsl.fragShevalbtn.onClick = function(){\n\
+	var exprRet = getcallBacks(w);\n\
+	 var strExpr =createJson(exprRet, pluginVersion,true);\n\
+	 w.close();\n\
+	result =JSON.stringify(strExpr);\n\
+}\n\
 w.grp.btnGrp.Ok.onClick = function(){\n\
-    var exprRet = getcallBacks (w);\n\
-    var strExpr =createJson(exprRet, pluginVersion);\n\
+    var exprRet = getcallBacks(w);\n\
+    var strExpr =createJson(exprRet, pluginVersion,false);\n\
 	w.close();\n\
 	result =JSON.stringify(strExpr);\n\
 	}\n\
 w.grp.btnGrp.Cancel.onClick = function(){\n\
     var exprRet = getcallBacks (w);\n\
-    var ret = createJson(exprRet, pluginVersion);\n\
+    var ret = createJson(exprRet, pluginVersion,false);\n\
 	w.close();\n\
 	result = JSON.stringify(ret);\n\
 	}\n\

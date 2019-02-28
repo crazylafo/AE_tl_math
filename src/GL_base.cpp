@@ -619,6 +619,25 @@ void AESDK_OpenGL_MakeReadyToRender(AESDK_OpenGL_EffectRenderData& inData, gl::G
 /*
 ** Initializing the Shader objects
 */
+void AESDK_OpenGL_evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
+{
+	char str[4096];
+	const char *fragmentShaderStringsP = inFragmentShaderStr.c_str();
+	GLint fragCompiledB;
+	GLuint fragmentShaderSu = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShaderSu, 1, &fragmentShaderStringsP, NULL);
+	glCompileShader(fragmentShaderSu);
+
+	glGetShaderiv(fragmentShaderSu, GL_COMPILE_STATUS, &fragCompiledB);
+	if (!fragCompiledB) {
+		glGetShaderInfoLog(fragmentShaderSu, sizeof(str), NULL, str);
+		errReturn = str;
+	}
+	else {
+		errReturn = "Compile Successful";
+	}
+	glDeleteShader(fragmentShaderSu);
+}
 void AESDK_OpenGL_InitShader( gl::GLuint *ObjSu,
 							  PF_OutData *out_data,
 	                          AEGP_SuiteHandler &suites,
@@ -649,11 +668,8 @@ void AESDK_OpenGL_InitShader( gl::GLuint *ObjSu,
 
 	// Create the fragment shader...
 	GLuint fragmentShaderSu = glCreateShader(GL_FRAGMENT_SHADER);
-
-
 	glShaderSource(fragmentShaderSu, 1, &fragmentShaderStringsP, NULL);
 	glCompileShader(fragmentShaderSu);
-
 
 	glGetShaderiv(fragmentShaderSu, GL_COMPILE_STATUS, &fragCompiledB);
 	if(!fragCompiledB) {

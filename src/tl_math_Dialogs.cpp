@@ -246,14 +246,15 @@ SetupDialog(
 	
 
     nlohmann::json  jToJs;
-    jToJs["parserModeB"] = inputParserModeB;
-    jToJs["presetName"] =inputName;
-    jToJs["description"]=inputDescription;
-    jToJs["redExpr"]=inputRedS;
-    jToJs["greenExpr"]=inputGreenS;
-    jToJs["blueExpr"]=inputBlueS;
-    jToJs["alphaExpr"]=inputAlphaS;
-    jToJs["glslExpr"]=inputGlsl;
+
+	jToJs["parserModeB"] = inputParserModeB;
+	jToJs["presetName"] = inputName;
+	jToJs["description"] = inputDescription;
+	jToJs["redExpr"] = inputRedS;
+	jToJs["greenExpr"] = inputGreenS;
+	jToJs["blueExpr"] = inputBlueS;
+	jToJs["alphaExpr"] = inputAlphaS;
+	jToJs["glslExpr"] = inputGlsl;
 
 	jToJs["uiSliderGrpVisible"] = inputuiSliderGrpVisibleB;
 	jToJs["uiSliderGrpName"] = inputuiSliderGrpNameS;
@@ -280,41 +281,65 @@ SetupDialog(
 	jToJs["extLGrpVisible"] = inputextLGrpVisibleB;
 	jToJs["extLGrpName"] = inputextLGrpNameS;
 
-	
-    std::string jsonDump = "'''";
-    jsonDump .append(jToJs.dump());
-    jsonDump.append("'''");
+	std::string resultStr;
+	bool scriptLoopEvalB = true;
 
-	
+	while (scriptLoopEvalB) {
+		std::string jsonDump = "'''";
+		jsonDump.append(jToJs.dump());
+		jsonDump.append("'''");
 
 
-    sprintf( scriptAC,
-            script_ui.c_str(),
-            jsonDump.c_str(),
-            Majvers.c_str(),
-            MinVers .c_str(),
-            Bugvers.c_str());
-    ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
-    //AEGP SETSTREAMVALUR TO ARB
-    AEFX_CLR_STRUCT(resultAC);
-    ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+		sprintf(scriptAC,
+			script_ui.c_str(),
+			jsonDump.c_str(),
+			Majvers.c_str(),
+			MinVers.c_str(),
+			Bugvers.c_str());
+		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+		//AEGP SETSTREAMVALUR TO ARB
+		AEFX_CLR_STRUCT(resultAC);
+		ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+		if (resultAC) {
+			resultStr = resultAC;
+		}
+		ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+		nlohmann::json jeval = nlohmann::json::parse(resultStr);
+		bool evalB = jeval["/evalB"_json_pointer];
+		if (evalB == false) {
+			scriptLoopEvalB = false;
+		}
+		else {
+			bool ParserModeB = jeval["/parserModeB"_json_pointer];
+			if (ParserModeB == true) {
+				std::string errReturn = "NONE";
+				std::string glslEvalExpr = jeval["/glslExpr"_json_pointer];
+				strReplace(glslEvalExpr, "\t", "    ");
+				AESDK_OpenGL_evalFragShader(glslEvalExpr, errReturn);
+				strReplace(errReturn, "\n", "\\n");
+				strReplace(glslEvalExpr, "\n", "\\n");
+				jToJs["evalglslExp"] = errReturn;
+				jToJs["glslExpr"] = glslEvalExpr;
+			}
+		}
+	}
+		AEFX_CLR_STRUCT(arbOutP);
+		arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
 
-    if  (resultAC){
-        AEFX_CLR_STRUCT(arbOutP);
-        arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-
-        //set result per channel
-        std::string resultStr = resultAC;
-
-        nlohmann::json  jresult = nlohmann::json::parse(resultStr);
-
-		bool ParserModeB, SLIDERGRPB,INPONEB,INPTWOB,INPTHREEB, INPFOURB, 
-			POINTGRPB,POINT_ONEB, POINT_TWOB, COLORGRPB, COLOR_ONEB, COLOR_TWOB, EXTLGRPB;
-
-		ParserModeB = jresult["/parserModeB"_json_pointer];
-		SLIDERGRPB =jresult["/uiSliderGrpVisible"_json_pointer];
+		//set result per channel
 		
 
+		nlohmann::json  jresult = nlohmann::json::parse(resultStr);
+		bool ParserModeB, SLIDERGRPB, INPONEB, INPTWOB, INPTHREEB, INPFOURB,
+			POINTGRPB, POINT_ONEB, POINT_TWOB, COLORGRPB, COLOR_ONEB, COLOR_TWOB, EXTLGRPB;
+
+	
+
+		ParserModeB = jresult["/parserModeB"_json_pointer];
+		//AEGP SETSTREAMVALUE TO ARB
+        AEFX_CLR_STRUCT(arbOutP);
+        arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+		SLIDERGRPB =jresult["/uiSliderGrpVisible"_json_pointer];
 		INPONEB = jresult["/uiSlider1Visible"_json_pointer];
 		INPTWOB= jresult["/uiSlider2Visible"_json_pointer];
 		INPTHREEB = jresult["/uiSlider3Visible"_json_pointer];
@@ -326,6 +351,18 @@ SetupDialog(
 		COLOR_ONEB = jresult["/uiColor1Visible"_json_pointer];
 		COLOR_TWOB = jresult["/uiColor2Visible"_json_pointer];
 		EXTLGRPB = jresult["/extLGrpVisible"_json_pointer];
+
+		std::string redResultStr = jresult["/redExpr"_json_pointer];
+		ExprtkCorrectorStr(redResultStr);
+		std::string greenResultStr = jresult["/greenExpr"_json_pointer];
+		ExprtkCorrectorStr(greenResultStr);
+		std::string blueResultStr = jresult["/blueExpr"_json_pointer];
+		ExprtkCorrectorStr(blueResultStr);
+		std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
+		ExprtkCorrectorStr(alphaResultStr);
+		std::string glslExpr = jresult["/glslExpr"_json_pointer];
+		strReplace(glslExpr, "\t", "    ");
+
 		
 		//bool to PF_Boolean
 		arbOutP->uiSliderGrpB = SLIDERGRPB;
@@ -354,16 +391,6 @@ SetupDialog(
 		arbOutP->CallsAEGP_CompB = hasString(resultStr, std::string("layer"));
 		arbOutP->CallsAEGP_layerB = hasString(resultStr, std::string("comp"));
 
-        std::string redResultStr =   jresult["/redExpr"_json_pointer];
-		ExprtkCorrectorStr(redResultStr);
-        std::string greenResultStr = jresult["/greenExpr"_json_pointer];
-		ExprtkCorrectorStr(greenResultStr);
-        std::string blueResultStr =  jresult["/blueExpr"_json_pointer];
-		ExprtkCorrectorStr(blueResultStr);
-        std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
-		ExprtkCorrectorStr(alphaResultStr);
-        std::string glslExpr = jresult["/glslExpr"_json_pointer];
-		strReplace(glslExpr, "\t", "    ");
 
 		
         std::string presetNameStr = jresult["/presetName"_json_pointer];
@@ -385,6 +412,7 @@ SetupDialog(
 		if (glslExpr.compare(arbInP->Glsl_FragmentShFlat) !=0)  {
 			arbOutP->ShaderResetB = true;
 		}
+		
 
         presetNameStr.erase(std::remove(presetNameStr.begin(), presetNameStr.end(), '\n'), presetNameStr.end());
 
@@ -394,7 +422,6 @@ SetupDialog(
         strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
         strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
         strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
-
         strncpy_s( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
 		strncpy_s(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
         strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
@@ -415,8 +442,6 @@ SetupDialog(
         blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
         alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
 		glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\t'), glslExpr.end());
-        
-
         descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
 
 #ifdef AE_OS_WIN
@@ -464,13 +489,20 @@ SetupDialog(
 		strncpy(arbOutP->uiExtLGrp_NameAC, EXTLGRPS.c_str(), EXTLGRPS.length() + 1);
 
 #endif
+		if (redResultStr.compare(arbOutP->redExAc) !=0 ||
+			greenResultStr.compare(arbOutP->greenExAc) != 0 ||
+			blueResultStr.compare(arbOutP->blueExAc) != 0 ||
+			alphaResultStr.compare(arbOutP->alphaExAc) != 0) {
+			arbOutP->ExprResetB = true;
+		}
+		else { arbOutP->ExprResetB = false; }
         arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
         ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
         PF_UNLOCK_HANDLE(arbOutH);
-    }
+
 
     ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
-    ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+    
     out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
     PF_OutFlag_FORCE_RERENDER;
     return err;

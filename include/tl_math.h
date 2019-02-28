@@ -113,6 +113,7 @@ typedef struct {
 	PF_Boolean  parserModeB;
 	//Boolean information about chars
 	PF_Boolean ShaderResetB;
+	PF_Boolean ExprResetB;
 	PF_Boolean NeedsPixelAroundB;
 	PF_Boolean PixelsCallExternalInputB;
 	PF_Boolean NeedsLumaB;
@@ -138,10 +139,6 @@ typedef struct {
 
 } m_ArbData;
 
-typedef struct {
-    AEGP_PluginID	my_id;
-	std::function<PF_FpShort()> redExpr;
-} my_global_data, *my_global_dataP, **my_global_dataH;
 
 
 /* Parameter defaults */
@@ -235,9 +232,6 @@ typedef struct funcTransfertInfo {
 	PF_Boolean      hasErrorB;
 	std::string     channelErrorstr;
 	std::string     errorstr;
-
-
-
 }funcTransfertInfoP;
 
 typedef struct WorldTransfertInfo {
@@ -302,6 +296,11 @@ typedef struct {
     PF_SampPB    samp_pb;
     PF_InData    in_data;
 } OffInfo;
+
+typedef struct {
+	AEGP_PluginID	my_id;
+} my_global_data, *my_global_dataP, **my_global_dataH;
+
 
 #ifdef __cplusplus
 	extern "C" {

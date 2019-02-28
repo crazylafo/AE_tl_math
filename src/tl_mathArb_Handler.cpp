@@ -84,6 +84,8 @@ CreateDefaultArb(
 				strncpy(arbP->Glsl_VertexShFlat, "vertexSh", 4096);
             #endif
                 arbP->parserModeB = false;
+				PF_Boolean ShaderResetB = false;
+				PF_Boolean ExprResetB = false;
 				arbP->NeedsPixelAroundB = false;
 				arbP->PixelsCallExternalInputB = false;
 				arbP->NeedsLumaB = false;
@@ -260,6 +262,7 @@ Arb_Compare(
             total_aV.emplace_back (first_arbP->CallsAEGP_CompB);
             total_aV.emplace_back (first_arbP->CallsAEGP_layerB);
 			total_aV.emplace_back(first_arbP->ShaderResetB);
+			total_aV.emplace_back(first_arbP->ExprResetB);
 			total_aV.emplace_back(first_arbP->uiSliderGrpB );
 			total_aV.emplace_back(first_arbP->uiSliderOneB );
 			total_aV.emplace_back(first_arbP->uiSliderTwoB );
@@ -310,6 +313,7 @@ Arb_Compare(
             total_bV.emplace_back (second_arbP->CallsAEGP_CompB);
             total_bV.emplace_back (second_arbP->CallsAEGP_layerB);
 			total_bV.emplace_back(second_arbP->ShaderResetB);
+			total_aV.emplace_back(first_arbP->ExprResetB);
 			total_bV.emplace_back(second_arbP->uiSliderGrpB);
 			total_bV.emplace_back(second_arbP->uiSliderOneB);
 			total_bV.emplace_back(second_arbP->uiSliderTwoB);
