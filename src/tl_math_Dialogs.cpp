@@ -380,7 +380,9 @@ SetupDialog(
 		arbOutP->uiExtLGrpB = EXTLGRPB;
 		arbOutP->parserModeB = ParserModeB;
 		if (ParserModeB) {
-			if ((hasString(resultStr, std::string("time"))) || (hasString(resultStr, std::string("extLayerTex")))) {
+			if ((hasString(resultStr, std::string("time"))) ||
+				(hasString(resultStr, std::string("iTime"))) ||
+				(hasString(resultStr, std::string("extLayerTex")))) {
 				arbOutP->PresetHasWideInputB = true;
 			}
 			else {
