@@ -320,6 +320,7 @@ SetupDialog(
 				strReplace(glslEvalExpr, "\n", "\\n");
 				jToJs["evalglslExp"] = errReturn;
 				jToJs["glslExpr"] = glslEvalExpr;
+				jToJs["parserModeB"] = ParserModeB;
 			}
 		}
 	}
@@ -379,12 +380,22 @@ SetupDialog(
 		arbOutP->uiExtLGrpB = EXTLGRPB;
 		arbOutP->parserModeB = ParserModeB;
 		if (ParserModeB) {
-			arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("time"));
+			if ((hasString(resultStr, std::string("time"))) || (hasString(resultStr, std::string("extLayerTex")))) {
+				arbOutP->PresetHasWideInputB = true;
+			}
+			else {
+				arbOutP->PresetHasWideInputB = false;
+			}
 			arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extLayerTex"));
 		}
 		else {
+			if ((hasString(resultStr, std::string("extL")))|| (hasString(resultStr, std::string("layerTime")))) {
+				arbOutP->PresetHasWideInputB = true;
+			}
+			else {
+				arbOutP->PresetHasWideInputB = false;
+			}
 			arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
-			arbOutP->PresetHasWideInputB = hasString(resultStr, std::string("layerTime"));
 			arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec9_"));
 			arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
 		}

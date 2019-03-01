@@ -171,13 +171,15 @@ std::string json_readJson ="function readJson(pluginVersion){\n\
 };";
 
 std::string script_updateNumOfLines = "function updateNumOfLines(textEditorStr) { \n\
-    var numLinesStr ='';\n\
-	var numberOfLineBreaks = (textEditorStr.match(/\\n/g)||[]).length;\n\
-	for (var i=0; i<numberOfLineBreaks; i++){\n\
-		numLinesStr+=i.toString()\n\
-		numLinesStr +='\\n';\n\
+    var numLines =1;\n\
+	var newStr = '';\n\
+	var splitStr = textEditorStr.split(/\\r\\n|\\n/);\n\
+	for (var i=0; i<splitStr.length; i++)\n\
+	{\n\
+		newStr += numLines.toString() +'  -'+splitStr[i] +'\\n';\n\
+		numLines +=1;\n\
 	}\n\
-	return numLinesStr;\n\
+	return newStr;\n\
 }";
 
 std::string script_ui = "function exprScript( jsonInput, pluginMAJORV, pluginMINORV, pluginBUGV){ \n\
@@ -258,7 +260,10 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;\n\
     w.grp.tab.glsl.orientation='column';\n\
     w.grp.tab.glsl.alignment = ['fill', 'center'];\n\
     w.grp.tab.glsl.fragShst = w.grp.tab.glsl.add ('statictext', undefined,'GLSL Fragment Shader : ');\n\
-	w.grp.tab.glsl.fragShevalbtn = w.grp.tab.glsl.add ('button', undefined, 'Evaluate Shader');\n\
+	w.grp.tab.glsl.btnGrp =w.grp.tab.glsl.add ('group');\n\
+	w.grp.tab.glsl.btnGrp.orientation='row';\n\
+	w.grp.tab.glsl.btnGrp.fragShevalbtn = w.grp.tab.glsl.btnGrp.add ('button', undefined, 'Evaluate Shader');\n\
+	w.grp.tab.glsl.btnGrp.fragShShpwBtn =  w.grp.tab.glsl.btnGrp.add ('button', undefined, 'Preview Code');\n\
     w.grp.tab.glsl.fragSh = w.grp.tab.glsl.add('group');\n\
     w.grp.tab.glsl.fragSh.orientation = 'column';\n\
     w.grp.tab.glsl.fragSh.alignment = ['fill', 'center'];\n\
@@ -416,11 +421,14 @@ w.grp.btnGrp.saveBtn.onClick = function (){\n\
     var exprRet =getcallBacks (w);\n\
     saveAsJson (exprRet, pluginVersion);\n\
     }\n\
-w.grp.tab.glsl.fragShevalbtn.onClick = function(){\n\
+w.grp.tab.glsl.btnGrp.fragShevalbtn.onClick = function(){\n\
 	var exprRet = getcallBacks(w);\n\
 	 var strExpr =createJson(exprRet, pluginVersion,true);\n\
 	 w.close();\n\
 	result =JSON.stringify(strExpr);\n\
+}\n\
+w.grp.tab.glsl.btnGrp.fragShShpwBtn.onClick = function(){\n\
+    alert(updateNumOfLines (w.grp.tab.glsl.fragSh.fragShet.text));\n\
 }\n\
 w.grp.btnGrp.Ok.onClick = function(){\n\
     var exprRet = getcallBacks(w);\n\

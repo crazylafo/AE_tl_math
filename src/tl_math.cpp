@@ -1017,10 +1017,11 @@ ExtLayerInput(void *refcon,
 	PF_Pixel16 empty16 = { 0,0,0,0 };
 	PF_Pixel empty8 = { 0,0,0,0 };
 
-	PF_EffectWorld Externalworld;
+	PF_EffectWorld Externalworld, ExternalWorldTransform;
 
-	ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, extLW->width, extLW->height, format, &Externalworld));
-	Externalworld.world_flags = extLW->world_flags;
+	ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, inputP->width, inputP->height, format, &Externalworld));
+	ERR(suites.WorldSuite1()->new_world(in_data->effect_ref, inputP->width, inputP->height, format, &ExternalWorldTransform));
+	//Externalworld.world_flags = extLW->world_flags;
 	switch (format) {
 
 	case PF_PixelFormat_ARGB128:
@@ -1070,7 +1071,7 @@ ExtLayerInput(void *refcon,
 		}
 
 	}
-	if (oiP->x_offFi != 0 || oiP->y_offFi != 0 &!err) {
+	if (oiP->x_offFi != 0 || oiP->y_offFi != 0 & !err) {
 		oiP->in_data = *in_data;
 		oiP->samp_pb.src = &Externalworld;
 		origin.h = (A_short)(in_data->output_origin_x);
@@ -1085,7 +1086,7 @@ ExtLayerInput(void *refcon,
 				&origin,
 				(void*)(oiP),
 				ShiftImage32,
-				extLW));
+				&ExternalWorldTransform));
 			break;
 
 		case PF_PixelFormat_ARGB64:
@@ -1098,7 +1099,7 @@ ExtLayerInput(void *refcon,
 				&origin,
 				(void*)(oiP),
 				ShiftImage16,
-				extLW));
+				&ExternalWorldTransform));
 			break;
 
 		case PF_PixelFormat_ARGB32:
@@ -1111,13 +1112,29 @@ ExtLayerInput(void *refcon,
 				&origin,
 				(void*)(oiP),
 				ShiftImage8,
-				extLW));
+				&ExternalWorldTransform));
 
 			break;
 
 		default:
 			err = PF_Err_INTERNAL_STRUCT_DAMAGED;
 			break;
+		}
+
+
+		if (PF_Quality_HI == in_data->quality) {
+			ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+				&ExternalWorldTransform,
+				extLW,
+				NULL,
+				NULL));
+		}
+		else {
+			ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+				&ExternalWorldTransform,
+				extLW,
+				NULL,
+				NULL));
 		}
 	}
 	else {
@@ -1136,8 +1153,12 @@ ExtLayerInput(void *refcon,
 				NULL));
 		}
 	}
+
 	if (Externalworld.data) {
 		ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &Externalworld));
+	}
+	if (ExternalWorldTransform.data) {
+		ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &ExternalWorldTransform));
 	}
 	return err;
 }
@@ -1495,7 +1516,7 @@ SmartRender(
 			PF_EffectWorld extLW;
 			ExprInfoP       ExprP;
 			AEFX_CLR_STRUCT(ExprP);	
-			PF_PixelFormat formatExtL;
+
 
 
             // checkout input & output buffers.
@@ -1506,8 +1527,7 @@ SmartRender(
 
             // determine requested output depth
             ERR(wsP->PF_GetPixelFormat(outputP, &format));
-			ERR(wsP->PF_GetPixelFormat(extLP, &formatExtL));
-			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, formatExtL, &extLW));
+			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extLW));
 
 
             //CHECKOUT PARAMS
