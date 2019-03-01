@@ -547,7 +547,6 @@ void main(void)\n\
 
 static std::string glfrag1str = "#version 330\n\
 uniform sampler2D layerTex;\n\
-uniform sampler2D extLayerTex;\n\
 uniform float var1;\n\
 uniform float var2;\n\
 uniform float var3;\n\

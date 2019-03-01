@@ -269,7 +269,8 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;\n\
     w.grp.tab.glsl.fragSh.alignment = ['fill', 'center'];\n\
 	w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'fill'];\n\
 	w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add('edittext', undefined, exprCl.glslExpr, { multiline:true }); \n\
-	w.grp.tab.glsl.fragSh.fragShet.font = ScriptUI.newFont('Arial', 'Regular', 50); \n\
+	w.grp.tab.glsl.fragSh.fragShet.maximumSize.height = w.maximumSize.height*0.65;	\n\
+	w.grp.tab.glsl.fragSh.fragShet.text.font = ScriptUI.newFont('Arial', 'Regular', 50); \n\
 	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\\r'+exprCl.evalglslExp ,{readonly:true, multiline:true});\n\
 // \n\
 "
@@ -429,7 +430,8 @@ w.grp.tab.glsl.btnGrp.fragShevalbtn.onClick = function(){\n\
 }\n\
 w.grp.tab.glsl.btnGrp.fragShShpwBtn.onClick = function(){\n\
 	var floatbox = new Window('dialog', 'shader',undefined,{resizeable:true} ); \n\
-	floatbox.add('edittext', undefined, updateNumOfLines(w.grp.tab.glsl.fragSh.fragShet.text), {multiline:true, readonly:true} )\n\
+	floatbox.txt = floatbox.add('edittext', undefined, updateNumOfLines(w.grp.tab.glsl.fragSh.fragShet.text), {multiline:true, readonly:true} )\n\
+	floatbox.txt.maximumSize.height = floatbox.maximumSize.height*0.65;	\n\
 	floatbox.onResizing = w.onResize = function(){this.layout.resize();}\n\
     floatbox.show();\n\
 }\n\
