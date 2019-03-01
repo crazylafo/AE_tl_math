@@ -410,7 +410,7 @@ w.grp.btnGrp.loadBtn.onClick = function (){\n\
 	    w.grp.tab.paramUI.param.paramcolor.paramcolor2.editNameet.text =exprObj.uiColor2Name;\n\
 		w.grp.tab.paramUI.param.paramextL.grpName.cbvisible.value = exprObj.extLGrpVisible;\n\
 		w.grp.tab.paramUI.param.paramextL.grpName.editNameet.text = exprObj.extLGrpName;\n\
-        w.grp.tab.paramUI.param.descriptionGrp.description.text   = exprObj.description; \n\
+        w.grp.tab.paramUI.descriptionGrp.description.text   = exprObj.description; \n\
 		}\n\
     else { \n\
         alert (exprObj.error);\n\
