@@ -258,7 +258,7 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;\n\
 \n\
 // GLSL TAB \n\
     w.grp.tab.glsl.orientation='column';\n\
-    w.grp.tab.glsl.alignment = ['fill', 'center'];\n\
+    w.grp.tab.glsl.alignment = ['fill', 'fill'];\n\
     w.grp.tab.glsl.fragShst = w.grp.tab.glsl.add ('statictext', undefined,'GLSL Fragment Shader : ');\n\
 	w.grp.tab.glsl.btnGrp =w.grp.tab.glsl.add ('group');\n\
 	w.grp.tab.glsl.btnGrp.orientation='row';\n\
@@ -428,7 +428,10 @@ w.grp.tab.glsl.btnGrp.fragShevalbtn.onClick = function(){\n\
 	result =JSON.stringify(strExpr);\n\
 }\n\
 w.grp.tab.glsl.btnGrp.fragShShpwBtn.onClick = function(){\n\
-    alert(updateNumOfLines (w.grp.tab.glsl.fragSh.fragShet.text));\n\
+	var floatbox = new Window('dialog', 'shader',undefined,{resizeable:true} ); \n\
+	floatbox.add('edittext', undefined, updateNumOfLines(w.grp.tab.glsl.fragSh.fragShet.text), {multiline:true, readonly:true} )\n\
+	floatbox.onResizing = w.onResize = function(){this.layout.resize();}\n\
+    floatbox.show();\n\
 }\n\
 w.grp.btnGrp.Ok.onClick = function(){\n\
     var exprRet = getcallBacks(w);\n\
