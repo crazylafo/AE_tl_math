@@ -956,7 +956,7 @@ Render_GLSL(PF_InData                *in_data,
 		gl::GLenum glFmt;
 		float multiplier16bit;
 		gl::GLuint inputFrameTexture = UploadTexture(suites, format, inputP, outputP, in_data, pixSize, glFmt, multiplier16bit);
-		gl::GLuint inputExtFrameTexture = UploadTexture(suites, format, inputP, extLW , in_data, pixSize, glFmt, multiplier16bit);
+		gl::GLuint inputExtFrameTexture = UploadTexture(suites, format, extLW, outputP , in_data, pixSize, glFmt, multiplier16bit);
 		// Set up the frame-buffer object just like a window.
 		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), renderContext->mOutputFrameTexture);
 		ReportIfErrorFramebuffer(in_data, out_data);
