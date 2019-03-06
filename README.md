@@ -79,7 +79,8 @@ On mac : /Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/tl
 on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\tl
 
 
-**2- BASIC EXEMPLE**
+**3- MATH EXPRESSIONS**
+**3-1 BASIC EXEMPLE**
 
 -Apply the effect on a White Solid
 
@@ -91,31 +92,31 @@ on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\tl
    for every pixel, the plugin devide the x coordonate by the total layerWidth of the layer.
    
    
-**3- GRAMMAR RULES**
+**3-2 GRAMMAR RULES**
 
- 3.1-The result
+ 3.2.1-The result
  Whatever the color Dpeth of your project (8/16 or 32 bits) with the plugin you have to think in float beween 0 and 1, like in 32 bits.  The plugin convert the result to the good depth of the project after the calculation.
  
- 3.2-define a variable.
+ 3.2.2-define a variable.
  Like in the After EFfect expression you can define a variable. It's compulsory to call var before to define a new one or you will get an error.
  
 ```
 var foo := in_red*xL/layerWidth;
 ```
-3.3-Sign Equal
+3.2.3-Sign Equal
 The expression Math is based on Exprtk grammar. That's why equal is written like this 
 ```
 :=
 ```
 Note : the plugin will correct your if you write " = " (with spaces before and after). But when you will reopen the expression it will be changed in  " := "
 
-3.4 close your "phrase"
+3.2.4 close your "phrase"
 ```
 ;
 ```
 As in javascript, don't forget to close the end of your phrase with  ";"
 
-3.4 operators
+3.2.5 operators
   Math Operators are similar to operators used in the the Internal Expression system of After Effect.
   
   
@@ -137,10 +138,10 @@ NAME| DESCRIPTION|EXEMPLE|
 `nand`  | logical NAND Returns true if a and b are false | a nand b;|
 `nor`| logical NOR Returns true if a or b is false | a nor b;|
 
-3.5 LOOPS AND CONDITIONS
+3.2.6 LOOPS AND CONDITIONS
 
 
-3.1 IF/ELSE
+3.2.6.1 IF/ELSE
 
 ```
 if (a < b)
@@ -151,7 +152,7 @@ else
   {0}  
 ```
 
-3.2 LOOPS 
+3.2.6.2 LOOPS 
 
 Loops are similar to those like in js. you can use loops for, while, switch.  Be careful, if you write a big loop, the effect will calculate it for each pixels, o limit the range of the loop or take a coffee during render time.
 
@@ -171,9 +172,9 @@ Note the plugin converts "&&" and "||" to the exprtk grammar.
 
 
 
-**4-THE VARIABLES**
+**3.3-THE VARIABLES**
 
-4.1 Pixel Access
+3.3.1 Pixel Access
 
 NAME| TYPE | DESCRIPTION|
 ---------|--------|--------|
@@ -189,7 +190,7 @@ NAME| TYPE | DESCRIPTION|
 `extL_blue`| float  | value of blue channel from the input layer with time and pixel offset|
 `extL_alpha`| float  | value of alphachannel from the input layer with time and pixel offset|
 
-4.2 Matrix 3*3of pixels around
+3.3.2 Matrix 3*3of pixels around
 
 You can access to the pixels around with the Vec3_channel[mat] function where mat is an integer between 0 and 8.
 In the layout, the number 4 represents the current pixel, the other number represents the index of each pixel arounds  
@@ -206,7 +207,7 @@ MATRIX NAME| TYPE INPUT | TYPE OUPUT| DESCRIPTION|
 `vec3_blue[mat]`  | int   | float  | Access to the blue channel from pixel around. mat is an integer between 0 and 8
 `vec3_alpha[mat]`  | int   | float  | Access to the alpha channel from pixel around. mat is an integer between 0 and 8
 
-4.3 Effect UI parameters
+3.3.3 Effect UI parameters
 
 The plugin has some classical parameters to communicate with the other After Effects parameters, other effects and the classical expressions. The next table describe the access to the value with the math Parser.
 
@@ -227,7 +228,7 @@ NAME| TYPE | DESCRIPTION|
 `cl2_green`| float | green value of parameter Color Two |
 `cl2_blue`| float | blue value of parameter Color Two |
 
-4.4 Layer Properties
+3.3.4 Layer Properties
 
 Access to the transform properties of the current layer from the math expressions
 
@@ -245,7 +246,7 @@ NAME| TYPE | DESCRIPTION|
 `layerScale_y` | float | Scale of the layer  on the y axis | 
 `layerScale_z` | float | Scale of the layer  on the z axis | 
 
-4.5 Composition properties
+3.3.5 Composition properties
 
 Access to the compositions properties
 
@@ -256,7 +257,7 @@ NAME| TYPE | DESCRIPTION|
 `compFps` | float |   Return the parameter number of frame per seconds of the composition |
 
 
-6- FUNCTIONS
+3.4- FUNCTIONS
 
 non exaustive list of avaibles functions
  abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos,  cosh,
