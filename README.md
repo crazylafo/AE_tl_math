@@ -20,7 +20,7 @@ In math expression mode, whatever your Color Space, the expected values are betw
 
 Verion note:
 
-Alpha 05 (v 1.13)
+#Alpha 05 (v 1.13)
 
 -New GLSL engine (for fragment shaders and based on OpenGL 3.2)
 
@@ -30,7 +30,7 @@ Alpha 05 (v 1.13)
 
 -Ui costumizable
 
-Alpha 04 (V1.12)
+#Alpha 04 (V1.12)
 
 -new slider values range
 
@@ -47,7 +47,7 @@ Alpha 04 (V1.12)
  -interaction with an other layer it's now possible (in topic input)
  
  
- Alpha 02 (v 1.1)
+# Alpha 02 (v 1.1)
  
  -the plugin works with After Effect CC and above.
  
