@@ -20,7 +20,7 @@ In math expression mode, whatever your Color Space, the expected values are betw
 
 Verion note:
 
-#Alpha 05 (v 1.13)
+# Alpha 05 (v 1.13)
 
 -New GLSL engine (for fragment shaders and based on OpenGL 3.2)
 
@@ -30,7 +30,7 @@ Verion note:
 
 -Ui costumizable
 
-#Alpha 04 (V1.12)
+# Alpha 04 (V1.12)
 
 -new slider values range
 
@@ -64,10 +64,8 @@ Verion note:
  
 table of contents
 01-HOW TO INSTALL
-02-BASIC EXEMPLE
-03-GRAMMAR RULES
-04-VARIABLES
-05-FUNCTIONS
+02- GLSL LANGAGE
+03-MATH EXPRESSION
  
  
 **1-HOW TO INSTALL**
@@ -78,8 +76,67 @@ On mac : /Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/tl
 
 on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\tl
 
+ 
+**2-GLSL**
+**2-1 GLSL SPECIFICATIONS**
+
+The GLSL engine is based on opengL 3.3. You can see the specification :  https://www.khronos.org/registry/OpenGL/specs/gl/GLSLangSpec.3.30.pdf
+
+The plugin is tested on few graphic cards but it may works on graphic card from 2011 and newer. (it works on an intel igpu 620 !)
+
+For now (version 1.13) the plugin edits only fragment Shaders. 
+
+
+**2-2 SOME WEBSITE EXEMPLES**
+
+-www.shadertoy.com is the biggest website with exemples. But using it's code in the plugin requiere some adaptations.
+   -The website uses uniform input  like iTime, iResolution that the plugins has. But  the plugin is limited to 2 textures: the layer source and one external layer.
+   
+www.glslsandbox.com  Most of the glsl exemples can be copy past to the plugin but don't forget to keep #version 330 at the beginning of the code
+
+**2-3 GLSL VARIABLES**
+
+
+**2-3-1 UNIFORMS**
+
+
+NAME| TYPE | DESCRIPTION|
+---------|--------|--------|
+`resolution`       | vec2  | resolution of the frame|
+`iResolution`       | vec2 | resolution of the frame|
+`time` | float  |  current time in seconds|
+`iTime`| float  |  current time in seconds|
+`layerTime_frame` | float  | current time in frames|
+`layerDuration`| float  | duration of the layer in seconds|
+`layerPosition`| vec3  | position of the layer (params in the transform menu on the timeline)|
+`layerScale`| vec3| scale of the layer (params in the transform menu on the timeline)| |
+`compFps`| float  | frame rate of the compositions|
+
+
+NAME| TYPE | DESCRIPTION|
+---------|--------|--------|
+`layerTex`  | 2D sample | 2D texture of the effect's layer|
+`extLayerTex`| 2D sample  | 2D texture of the external layer|
+`var1`  |float | value of slider 1|
+`var2`| float | value of slider 2|
+`var3`  | float|value of slider 3|
+`var4`|float  | value of slider 4|
+'mouse`  | vec2 | x and y postion of point 1 but named as mouse|
+`iMouse`| vec2 | x and y postion of point 1 but named as iMouse|
+`pt1`  | vec2 | x and y postion of point 1|
+`pt2`| vec2  | x and y postion of point 2|
+`cl1`  | vec3 | rgb float values of param color 1|
+`cl2`| vec3  |  rgb float values of param color 2|
+
+
+
+
+
+
+**2-3-2 OUTPUTS**
 
 **3- MATH EXPRESSIONS**
+
 **3-1 BASIC EXEMPLE**
 
 -Apply the effect on a White Solid
