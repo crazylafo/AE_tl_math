@@ -14,17 +14,20 @@ https://nlohmann.github.io/json/
 
 
 An After Effect plugin project.
-The user can write math expression for each pixels and by channels (RGBA) or GLSL Shaders
-whatever your Color Space, the expected values are between 0 and 1.
+The user can write math expression for each pixels and by channels (RGBA) or GLSL Shaders.
+In math expression mode, whatever your Color Space, the expected values are between 0 and 1.
 
 
 Verion note:
 
 Alpha 05 (v 1.13)
 
--support 32bits render
--Faster exprtk render
 -New GLSL engine (for fragment shaders and based on OpenGL 3.2)
+
+-support 32bits render
+
+-Faster exprtk render
+
 -Ui costumizable
 
 Alpha 04 (V1.12)
