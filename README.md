@@ -128,13 +128,6 @@ NAME| TYPE | DESCRIPTION|
 `cl1`  | vec3 | rgb float values of param color 1|
 `cl2`| vec3  |  rgb float values of param color 2|
 
-
-
-
-
-
-**2-3-2 OUTPUTS**
-
 **3- MATH EXPRESSIONS**
 
 **3-1 BASIC EXEMPLE**
