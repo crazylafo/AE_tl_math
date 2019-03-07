@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "D7B73A441B6C20AC00BCC010"
-               BuildableName = "libglbinding.a"
-               BlueprintName = "glbinding"
-               ReferencedContainer = "container:glbinding.xcodeproj">
+               BlueprintIdentifier = "C4E618CB095A3CE80012CA3F"
+               BuildableName = "tlMath.plugin"
+               BlueprintName = "tlMath"
+               ReferencedContainer = "container:tlMath.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -42,13 +42,18 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
+      <PathRunnable
+         runnableDebuggingMode = "0"
+         BundleIdentifier = "com.adobe.AfterEffects"
+         FilePath = "/Applications/Adobe After Effects CC 2018/Adobe After Effects CC 2018.app">
+      </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D7B73A441B6C20AC00BCC010"
-            BuildableName = "libglbinding.a"
-            BlueprintName = "glbinding"
-            ReferencedContainer = "container:glbinding.xcodeproj">
+            BlueprintIdentifier = "C4E618CB095A3CE80012CA3F"
+            BuildableName = "tlMath.plugin"
+            BlueprintName = "tlMath"
+            ReferencedContainer = "container:tlMath.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,15 +68,15 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "D7B73A441B6C20AC00BCC010"
-            BuildableName = "libglbinding.a"
-            BlueprintName = "glbinding"
-            ReferencedContainer = "container:glbinding.xcodeproj">
+            BlueprintIdentifier = "C4E618CB095A3CE80012CA3F"
+            BuildableName = "tlMath.plugin"
+            BlueprintName = "tlMath"
+            ReferencedContainer = "container:tlMath.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
-      buildConfiguration = "Debug">
+      buildConfiguration = "Release">
    </AnalyzeAction>
    <ArchiveAction
       buildConfiguration = "Release"

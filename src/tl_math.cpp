@@ -872,6 +872,7 @@ UserChangedParam(
 	if (which_hitP->param_index == MATH_SETUP)
 	{
 		ERR(SetupDialog(in_data, out_data, params, outputP));
+
 	}
 
 	return err;
@@ -893,7 +894,41 @@ inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpSho
 		return 0;
 	}
 }
+void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
+{
+    // always restore back AE's own OGL context
+    SaveRestoreOGLContext oSavedContext;
 
+    // our render specific context (one per thread)
+    AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr renderContext = GetCurrentRenderContext();
+
+    if (!renderContext->mInitialized) {
+        //Now comes the OpenGL part - OS specific loading to start with
+        AESDK_OpenGL_Startup(*renderContext.get(), S_GLator_EffectCommonData.get());
+        renderContext->mInitialized = true;
+    }
+
+    renderContext->mProgramObjSu = 0;
+    renderContext->SetPluginContext();
+
+    GLint fragCompiledB =0;
+    const char *fragmentShaderStringsP = (const GLchar *) inFragmentShaderStr.c_str();
+
+    GLuint fragmentShaderSu = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShaderSu, 1, &fragmentShaderStringsP, NULL);
+    glCompileShader(fragmentShaderSu);
+
+    glGetShaderiv(fragmentShaderSu, GL_COMPILE_STATUS, &fragCompiledB);
+    if (!fragCompiledB) {
+        char str[4096];
+        glGetShaderInfoLog(fragmentShaderSu, sizeof(str), NULL, str);
+        errReturn = str;
+    }
+    else {
+        errReturn = "Compile Successful";
+    }
+    glDeleteShader(fragmentShaderSu);
+}
 static PF_Err
 Render_GLSL(PF_InData                *in_data,
 		    PF_OutData               *out_data,
@@ -948,6 +983,7 @@ Render_GLSL(PF_InData                *in_data,
 			vertexShstr,
 			fragSh1str,
 			fragSh2str);
+        
 
 
 		//CHECK(format);

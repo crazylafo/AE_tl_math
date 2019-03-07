@@ -10,6 +10,10 @@
 #include "tl_math.h"
 #include "script.h"
 
+
+
+
+
 //fast find/replace all method
 void strReplace(std::string& str,
                 const std::string& oldStr,
@@ -313,9 +317,9 @@ SetupDialog(
 			bool ParserModeB = jeval["/parserModeB"_json_pointer];
 			if (ParserModeB == true) {
 				std::string errReturn = "NONE";
-				std::string glslEvalExpr = jeval["/glslExpr"_json_pointer];
+                std::string glslEvalExpr= jeval["/glslExpr"_json_pointer];
 				strReplace(glslEvalExpr, "\t", "    ");
-				AESDK_OpenGL_evalFragShader(glslEvalExpr, errReturn);
+				evalFragShader(glslEvalExpr, errReturn);
 				strReplace(errReturn, "\n", "\\n");
 				strReplace(glslEvalExpr, "\n", "\\n");
 				jToJs["evalglslExp"] = errReturn;

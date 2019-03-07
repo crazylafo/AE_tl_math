@@ -517,7 +517,7 @@ void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData,
 	inData.mRenderBufferWidthSu = inBufferWidth;
 	inData.mRenderBufferHeightSu = inBufferHeight;
 
-	if (sizeChangedB || ShaderResetB) {
+	if (sizeChangedB  ) {
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -581,7 +581,7 @@ void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData,
 		glTexImage2D(GL_TEXTURE_2D, 0, (GLint)GL_RGBA32F, inData.mRenderBufferWidthSu, inData.mRenderBufferHeightSu, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	}
 
-	if (inData.mProgramObjSu == 0) {
+	if (inData.mProgramObjSu == 0 || ShaderResetB) {
 		//initialize and compile the shader objects
 		 AESDK_OpenGL_InitShader(&inData.mProgramObjSu,
 								out_data,
@@ -619,25 +619,7 @@ void AESDK_OpenGL_MakeReadyToRender(AESDK_OpenGL_EffectRenderData& inData, gl::G
 /*
 ** Initializing the Shader objects
 */
-void AESDK_OpenGL_evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
-{
-	char str[4096];
-	const char *fragmentShaderStringsP = inFragmentShaderStr.c_str();
-	GLint fragCompiledB;
-	GLuint fragmentShaderSu = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShaderSu, 1, &fragmentShaderStringsP, NULL);
-	glCompileShader(fragmentShaderSu);
 
-	glGetShaderiv(fragmentShaderSu, GL_COMPILE_STATUS, &fragCompiledB);
-	if (!fragCompiledB) {
-		glGetShaderInfoLog(fragmentShaderSu, sizeof(str), NULL, str);
-		errReturn = str;
-	}
-	else {
-		errReturn = "Compile Successful";
-	}
-	glDeleteShader(fragmentShaderSu);
-}
 void AESDK_OpenGL_InitShader( gl::GLuint *ObjSu,
 							  PF_OutData *out_data,
 	                          AEGP_SuiteHandler &suites,
