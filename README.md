@@ -87,6 +87,9 @@ The plugin is tested on few graphic cards but it may works on graphic card from 
 For now (version 1.13) the plugin edits only fragment Shaders. 
 
 
+Note: For the output  **out vec4 colourOut** works fine on Mac and Windows but gl_frag_Color works only on windows. (version 1.13).
+
+
 **2-2 SOME WEBSITE EXEMPLES**
 
 -www.shadertoy.com is the biggest website with exemples. But using it's code in the plugin requiere some adaptations.
