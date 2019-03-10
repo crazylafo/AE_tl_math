@@ -300,9 +300,9 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerDuration");
 		glUniform1f(location, miP->layerDuration);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "resolution");
-		glUniform2f(location, miP->compWidthF, miP->compHeightF);
+		glUniform2f(location, miP->layerWidthF, miP->layerHeightF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "iResolution");
-		glUniform2f(location, miP->compWidthF, miP->compHeightF);
+		glUniform2f(location, miP->layerWidthF, miP->layerHeightF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerPosition");
 		glUniform3f(location, miP->layerPos_X, miP->layerPos_Y, miP->layerPos_Z);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerScale");
@@ -969,8 +969,8 @@ Render_GLSL(PF_InData                *in_data,
 		// - Example of using a OpenGL extension
 		bool hasGremedy = renderContext->mExtensions.find(gl::GLextension::GL_GREMEDY_frame_terminator) != renderContext->mExtensions.end();
 
-		A_long				widthL = inputP->width;
-		A_long				heightL = inputP->height;
+		A_long				widthL = miP->layerWidthF; // inputP->width;
+		A_long				heightL = miP->layerHeightF;  //inputP->height;
 
 
 		//loading OpenGL resources
