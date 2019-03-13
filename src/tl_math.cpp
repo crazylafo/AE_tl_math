@@ -231,7 +231,7 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObj2Su, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
 
-		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObj2Su, inputFrameTexture, std::string("videoTexture"));
+		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObj2Su, inputFrameTexture, std::string("videoTexture"));
 
 		// render
 		glBindVertexArray(renderContext->vao);
@@ -316,8 +316,8 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
 		// Identify the texture to use and bind it to texture unit 0
-		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObjSu, inputFrameTexture, std::string("layerTex"));
-		AESDK_OpenGL_BindTextureToTarget(renderContext->mProgramObjSu, inputExtFrameTexture, std::string("extLayerTex"));
+		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObjSu, inputFrameTexture, std::string("layerTex"));
+		AESDK_OpenGL_BindTexture1ToTarget(renderContext->mProgramObjSu, inputExtFrameTexture, std::string("extLayerTex"));
 		// render
 		glBindVertexArray(renderContext->vao);
 		RenderQuad(renderContext->quad);
