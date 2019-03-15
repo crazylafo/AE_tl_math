@@ -611,7 +611,7 @@ void AESDK_OpenGL_MakeReadyToRender(AESDK_OpenGL_EffectRenderData& inData, gl::G
 
 	// Set the render target - primary surface
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-		
+
 	if( CheckFramebufferStatus() != std::string("OK"))
 		GL_CHECK(AESDK_OpenGL_Res_Load_Err);
 }

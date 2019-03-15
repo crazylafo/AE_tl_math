@@ -73,7 +73,7 @@ using namespace gl33core;
 #define	MINOR_VERSION	1
 #define	BUG_VERSION		4
 #define	STAGE_VERSION	PF_Stage_ALPHA
-#define	BUILD_VERSION	2
+#define	BUILD_VERSION	3
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
@@ -548,27 +548,36 @@ void main(void)\n\
 	out_uvs = UVs;\n\
 }";
 
-static std::string glfrag1str = "#version 330\n\
-uniform sampler2D layerTex;\n\
-uniform float var1;\n\
-uniform float var2;\n\
-uniform float var3;\n\
-uniform float var4;\n\
-uniform float multiplier16bit;\n\
-in vec4 out_pos;\n\
-in vec2 out_uvs;\n\
-out vec4 colourOut;\n\
-void main(void)\n\
-{\n\
-    colourOut = texture(layerTex, out_uvs.xy);\n\
-    colourOut = colourOut * multiplier16bit;\n\
-    colourOut = vec4(colourOut.g, colourOut.b, colourOut.a, colourOut.r);\n\
-    colourOut = vec4(colourOut.a * colourOut.r, colourOut.a * colourOut.g, colourOut.a * colourOut.b, colourOut.a);\n\
-    colourOut.r *=var1;\n\
-    colourOut.g *= var2;\n\
-    colourOut.b *= var3;\n\
-    colourOut.a *= var4;\n\
-}";
+static std::string glfrag1str = R"=====(
+#version 330 // glsls version for opengl 3.3
+uniform sampler2D layerTex; //call the layer source
+uniform float var1;// call somes variables from the ui
+uniform float var2;
+uniform float var3;
+uniform float var4;
+uniform vec3 cl1; // call the color param number 1
+uniform float multiplier16bit; //proper to AE 16 bits depth.
+in vec4 out_pos;
+in vec2 out_uvs;
+out vec4 fragColorOut;
+// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs
+vec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)
+{
+    vec4 textureIn = texture( tex2d, uv.xy);
+    textureIn =  textureIn * multiplier16bit;
+    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);
+    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);
+    return  textureIn ;
+}
+
+void main(void)
+{
+    fragColorOut= loadTextureFromAE(layerTex, out_uvs.xy);
+    fragColorOut.r *=var1*cl1.r; //have fun to mix the color from layer/ slider intensity and color param
+    fragColorOut.g *= var2*cl1.g;
+    fragColorOut.b *= var3*cl1.b;
+    fragColorOut.a *= var4;
+})=====";
 
 static std::string glfrag2str = "#version 330\n\
 uniform sampler2D layerTex;\n\

@@ -188,6 +188,9 @@ var pluginVersion = pluginMAJORV+'.'+pluginMINORV+pluginBUGV;
 pluginVersion = parseFloat (pluginVersion); 
 var exprCl;
 exprCl= JSON.parse(jsonInput);
+if (!exprCl.evalglslExp){
+    exprCl.evalglslExp = 'no evalutation';
+}
 var w = new Window('dialog', 'Maths Expressions V'+pluginVersion, undefined, {resizeable:true} );
 w.grp = w.add('group');
 w.grp.orientation='column';
@@ -269,8 +272,8 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;
 	w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'fill'];
 	w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add('edittext', undefined, exprCl.glslExpr, { multiline:true }); 
 	w.grp.tab.glsl.fragSh.fragShet.maximumSize.height = w.maximumSize.height*0.65;	
-	w.grp.tab.glsl.fragSh.fragShet.text.font = ScriptUI.newFont('Arial', 'Regular', 50); 
-	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\\r'+exprCl.evalglslExp ,{readonly:true, multiline:true});
+	w.grp.tab.glsl.fragSh.fragShet.text.font = ScriptUI.newFont('Arial', 'Regular', 50);
+	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\r'+exprCl.evalglslExp ,{readonly:true, multiline:true});
 // 
 
 //tab UI

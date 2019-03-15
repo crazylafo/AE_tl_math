@@ -263,7 +263,7 @@ namespace {
 			vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
 
 		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
-
+        glBindTexture(GL_TEXTURE_2D, inputExtFrameTexture);
 		glUseProgram(renderContext->mProgramObjSu);
 
 		// program uniforms
@@ -1024,7 +1024,9 @@ Render_GLSL(PF_InData                *in_data,
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 1);
 		glDeleteTextures(1, &inputFrameTexture);
+        glDeleteTextures(2, &inputExtFrameTexture);
 	}
 	catch (PF_Err& thrown_err)
 	{
@@ -1107,7 +1109,7 @@ ExtLayerInput(void *refcon,
 		}
 
 	}
-	if (oiP->x_offFi != 0 || oiP->y_offFi != 0 & !err) {
+	if ( !err && (oiP->x_offFi != 0 || oiP->y_offFi != 0) ) {
 		oiP->in_data = *in_data;
 		oiP->samp_pb.src = &Externalworld;
 		origin.h = (A_short)(in_data->output_origin_x);

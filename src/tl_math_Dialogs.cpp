@@ -134,7 +134,7 @@ SetupDialog(
 
     AEGP_MemHandle     resultMemH = NULL;
     A_char *resultAC = NULL;
-    A_char          scriptAC[50000] { '\0' };
+    A_char          scriptAC[70000] { '\0' };
     std::string Majvers = std::to_string(MAJOR_VERSION);
     std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
@@ -239,9 +239,6 @@ SetupDialog(
     strReplace(inputAlphaS, "\n", "\\n");
     strReplace(inputDescription, "\n", "\\n");
     strReplace(inputGlsl, "\n" , "\\n");
-
-	
-	
 	if (inputGlsl == "fragSh") {
 	inputGlsl = glfrag1str;
 	strReplace(inputGlsl, "\n", "\\n");
@@ -259,7 +256,6 @@ SetupDialog(
 	jToJs["blueExpr"] = inputBlueS;
 	jToJs["alphaExpr"] = inputAlphaS;
 	jToJs["glslExpr"] = inputGlsl;
-
 	jToJs["uiSliderGrpVisible"] = inputuiSliderGrpVisibleB;
 	jToJs["uiSliderGrpName"] = inputuiSliderGrpNameS;
 	jToJs["uiSlider1Visible"] = inputuiSlider1VisibleB;
@@ -295,11 +291,12 @@ SetupDialog(
 
 
 		sprintf(scriptAC,
-			script_ui.c_str(),
+            script_ae.c_str(),
 			jsonDump.c_str(),
 			Majvers.c_str(),
 			MinVers.c_str(),
 			Bugvers.c_str());
+
 		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 		//AEGP SETSTREAMVALUR TO ARB
 		AEFX_CLR_STRUCT(resultAC);
