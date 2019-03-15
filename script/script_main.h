@@ -174,10 +174,10 @@ function readJson(pluginVersion){
 function updateNumOfLines(textEditorStr) { 
     var numLines =1;
 	var newStr = '';
-	var splitStr = textEditorStr.split(/\\r\\n|\\n/);
+	var splitStr = textEditorStr.split(/\r\n|\n/);
 	for (var i=0; i<splitStr.length; i++)
 	{
-		newStr += numLines.toString() +'  -'+splitStr[i] +'\\n';
+		newStr += numLines.toString() +'  -'+splitStr[i] +'\n';
 		numLines +=1;
 	}
 	return newStr;

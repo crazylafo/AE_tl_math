@@ -47,13 +47,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		040A7FD2222FFBAC00E7E6D2 /* script.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = script.h; sourceTree = "<group>"; };
+		040A7FD2222FFBAC00E7E6D2 /* script.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = script.h; path = ../script/script.h; sourceTree = "<group>"; };
 		040A7FD9222FFBC600E7E6D2 /* vmath.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vmath.hpp; sourceTree = "<group>"; };
 		040A7FDA222FFBC700E7E6D2 /* exprtk.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = exprtk.hpp; sourceTree = "<group>"; };
 		040A7FDB222FFBC700E7E6D2 /* json.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_mathArb_Handler.cpp; path = ../src/tl_mathArb_Handler.cpp; sourceTree = SOURCE_ROOT; };
 		040A7FDD222FFC8A00E7E6D2 /* tl_math_Dialogs.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_Dialogs.cpp; path = ../src/tl_math_Dialogs.cpp; sourceTree = SOURCE_ROOT; };
 		040A7FDE222FFC8A00E7E6D2 /* tl_math_iterators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_iterators.cpp; path = ../src/tl_math_iterators.cpp; sourceTree = SOURCE_ROOT; };
+		04F4617A223BA625003E0F9F /* script_main.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = script_main.h; path = ../script/script_main.h; sourceTree = "<group>"; };
+		04F4617C223BA625003E0F9F /* json_to_js.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = json_to_js.h; path = ../script/json_to_js.h; sourceTree = "<group>"; };
 		7EB428A80FBA1B62003C7DD1 /* tl_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math.h; path = ../include/tl_math.h; sourceTree = SOURCE_ROOT; };
 		7EB428DB0FBA1C77003C7DD1 /* GL_base.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GL_base.h; path = ../include/GL_base.h; sourceTree = SOURCE_ROOT; };
 		7EB428DC0FBA1C80003C7DD1 /* tl_math_Strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math_Strings.h; path = ../include/tl_math_Strings.h; sourceTree = SOURCE_ROOT; };
@@ -107,7 +109,6 @@
 		04017B8F22300981004E26C6 /* includes */ = {
 			isa = PBXGroup;
 			children = (
-				040A7FD2222FFBAC00E7E6D2 /* script.h */,
 				7EB428A80FBA1B62003C7DD1 /* tl_math.h */,
 				7EB428DB0FBA1C77003C7DD1 /* GL_base.h */,
 				7EB428DC0FBA1C80003C7DD1 /* tl_math_Strings.h */,
@@ -127,9 +128,20 @@
 			path = ../lib;
 			sourceTree = "<group>";
 		};
+		04DB7ED2223AB8660001A457 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				040A7FD2222FFBAC00E7E6D2 /* script.h */,
+				04F4617C223BA625003E0F9F /* json_to_js.h */,
+				04F4617A223BA625003E0F9F /* script_main.h */,
+			);
+			name = script;
+			sourceTree = "<group>";
+		};
 		C4E6187C095A3C800012CA3F = {
 			isa = PBXGroup;
 			children = (
+				04DB7ED2223AB8660001A457 /* script */,
 				04017B90223009A4004E26C6 /* lib */,
 				04017B8F22300981004E26C6 /* includes */,
 				04017B8D22300959004E26C6 /* src */,
@@ -312,6 +324,7 @@
 					../../../Headers/SP,
 					../../../Resources,
 					"../glbinding/source/glbinding/include/**",
+					../script,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				REZ_PREPROCESSOR_DEFINITIONS = __MACH__;
@@ -379,6 +392,7 @@
 					../../../Headers/SP,
 					../../../Resources,
 					"../glbinding/source/glbinding/include/**",
+					../script,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				REZ_PREPROCESSOR_DEFINITIONS = __MACH__;
