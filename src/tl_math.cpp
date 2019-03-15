@@ -115,7 +115,8 @@ namespace {
 		PF_InData				*in_data,			// >>
 		size_t& pixSizeOut,						// <<
 		gl::GLenum& glFmtOut,						// <<
-		float& multiplier16bitOut)					// <<
+		float& multiplier16bitOut,
+	    gl::GLuint  textureNum )					// <<
 	{
 		// - upload to texture memory
 		// - we will convert on-the-fly from ARGB to RGBA, and also to pre-multiplied alpha,
@@ -128,6 +129,7 @@ namespace {
 
 		gl::GLuint inputFrameTexture;
 		glGenTextures(1, &inputFrameTexture);
+
 		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)GL_LINEAR);
@@ -195,7 +197,7 @@ namespace {
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
 		//unbind all textures
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(GL_TEXTURE_2D, textureNum);
 
 		return inputFrameTexture;
 	}
@@ -236,7 +238,7 @@ namespace {
 		// render
 		glBindVertexArray(renderContext->vao);
 		RenderQuad(renderContext->quad);
-		glBindVertexArray(0);
+  		glBindVertexArray(0);
 
 		glUseProgram(0);
 
@@ -260,7 +262,7 @@ namespace {
 
 		// view matrix, mimic windows coordinates
 		vmath::Matrix4 ModelviewProjection = vmath::Matrix4::translation(vmath::Vector3(-1.0f, -1.0f, 0.0f)) *
-			vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
+		vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
 
 		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
         glBindTexture(GL_TEXTURE_2D, inputExtFrameTexture);
@@ -967,7 +969,7 @@ Render_GLSL(PF_InData                *in_data,
 
 		// - Gremedy OpenGL debugger
 		// - Example of using a OpenGL extension
-		bool hasGremedy = renderContext->mExtensions.find(gl::GLextension::GL_GREMEDY_frame_terminator) != renderContext->mExtensions.end();
+		//bool hasGremedy = renderContext->mExtensions.find(gl::GLextension::GL_GREMEDY_frame_terminator) != renderContext->mExtensions.end();
 
 		A_long				widthL = miP->layerWidthF; // inputP->width;
 		A_long				heightL = miP->layerHeightF;  //inputP->height;
@@ -991,8 +993,8 @@ Render_GLSL(PF_InData                *in_data,
 		size_t pixSize;
 		gl::GLenum glFmt;
 		float multiplier16bit;
-		gl::GLuint inputFrameTexture = UploadTexture(suites, format, inputP, outputP, in_data, pixSize, glFmt, multiplier16bit);
-		gl::GLuint inputExtFrameTexture = UploadTexture(suites, format, extLW, outputP , in_data, pixSize, glFmt, multiplier16bit);
+		gl::GLuint inputFrameTexture = UploadTexture(suites, format, inputP, outputP, in_data, pixSize, glFmt, multiplier16bit,0);
+		gl::GLuint inputExtFrameTexture = UploadTexture(suites, format, extLW, outputP , in_data, pixSize, glFmt, multiplier16bit, 1);
 		// Set up the frame-buffer object just like a window.
 		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), renderContext->mOutputFrameTexture);
 		ReportIfErrorFramebuffer(in_data, out_data);
@@ -1002,21 +1004,21 @@ Render_GLSL(PF_InData                *in_data,
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// - simply blend the texture inside the frame buffer
-		// - TODO: hack your own shader there
 		RenderGL(renderContext, widthL, heightL, inputFrameTexture, inputExtFrameTexture,(void*)miP, multiplier16bit);
 
 		// - we toggle PBO textures (we use the PBO we just created as an input)
 		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);
+		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputExtFrameTexture);
 		ReportIfErrorFramebuffer(in_data, out_data);
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// swizzle using the previous output
 		SwizzleGL(renderContext, widthL, heightL, renderContext->mOutputFrameTexture, multiplier16bit);
-
+		/*
 		if (hasGremedy) {
 			gl::glFrameTerminatorGREMEDY();
-		}
+		}*/
 
 		// - get back to CPU the result, and inside the output world
 		DownloadTexture(renderContext, suites, inputP, outputP, in_data,
