@@ -26,6 +26,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{30c6c523-801a-4ca5-b804-70222c4d447d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="script">
+      <UniqueIdentifier>{ee3458da-5a4e-4580-b56f-b5315f25ffb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Headers\A.h">
@@ -94,9 +97,6 @@
     <ClInclude Include="..\lib\exprtk.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\script.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\tl_math.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -126,6 +126,15 @@
     </ClInclude>
     <ClInclude Include="..\include\GL_base.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\script.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\json_to_js.h">
+      <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\script_main.h">
+      <Filter>script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -108,7 +108,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>D:\User_folder\Desktop\AE_SDK\Adobe After Effects CC 2017.1 Win SDK\Examples\thomas\tl_math\src;..\lib\GL\glbinding;..\lib;..\lib\GL;..\include;..\..\..\Headers;..\..\..\Headers\SP;..\..\..\Headers\Win;..\..\..\Resources;..\..\..\Util;..\lib\GL\glbinding\source\glbinding\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\User_folder\Desktop\AE_SDK\Adobe After Effects CC 2017.1 Win SDK\Examples\thomas\tl_math\src;..\lib\GL\glbinding;..\lib;..\lib\GL;..\include;..\..\..\Headers;..\..\..\Headers\SP;..\..\..\Headers\Win;..\..\..\Resources;..\..\..\Util;..\lib\GL\glbinding\source\glbinding\include;..\script;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLBINDING_STATIC;STRINGS_BY_GL;MSWindows;WIN32;CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;_HAS_ITERATOR_DEBUGGING=1;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <StructMemberAlignment>8Bytes</StructMemberAlignment>
@@ -164,7 +164,7 @@
     </Midl>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
-      <AdditionalIncludeDirectories>D:\User_folder\Desktop\AE_SDK\Adobe After Effects CC 2017.1 Win SDK\Examples\thomas\tl_math\src;..\lib\GL\glbinding;..\lib;..\lib\GL;..\include;..\..\..\Headers;..\..\..\Headers\SP;..\..\..\Headers\Win;..\..\..\Resources;..\..\..\Util;..\lib\GL\glbinding\source\glbinding\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\User_folder\Desktop\AE_SDK\Adobe After Effects CC 2017.1 Win SDK\Examples\thomas\tl_math\src;..\lib\GL\glbinding;..\lib;..\lib\GL;..\include;..\..\..\Headers;..\..\..\Headers\SP;..\..\..\Headers\Win;..\..\..\Resources;..\..\..\Util;..\lib\GL\glbinding\source\glbinding\include;..\script;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLBINDING_STATIC;STRINGS_BY_GL;MSWindows;WIN32;CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <StructMemberAlignment>8Bytes</StructMemberAlignment>
@@ -390,8 +390,10 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClInclude Include="..\..\..\Util\String_Utils.h" />
     <ClInclude Include="..\include\GL_base.h" />
     <ClInclude Include="..\lib\json.hpp" />
-    <ClInclude Include="..\include\script.h" />
+    <ClInclude Include="..\script\json_to_js.h" />
+    <ClInclude Include="..\script\script.h" />
     <ClInclude Include="..\lib\vmath.hpp" />
+    <ClInclude Include="..\script\script_main.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEFX_SuiteHelper.c" />
