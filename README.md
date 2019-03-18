@@ -19,6 +19,18 @@ In math expression mode, whatever your Color Space, the expected values are betw
 
 
 Verion note:
+# Alpha 05 (v 1.14)
+
+-fix layer Width and layer height downscales in glsl mode
+
+-fix json error (the json lib is defined in the script part)
+
+-fix glsl textures loading (input layer and external layer)
+
+-new glsl exemple with comments
+
+-math expression : new var name to access pixels around ([colorname]_off[index])
+
 
 # Alpha 05 (v 1.13)
 
@@ -245,20 +257,31 @@ NAME| TYPE | DESCRIPTION|
 
 3.3.2 Matrix 3*3of pixels around
 
-You can access to the pixels around with the Vec3_channel[mat] function where mat is an integer between 0 and 8.
+You can access to the pixels around with the [colorname]_off[index] function where mat is an integer between 0 and 8.
 In the layout, the number 4 represents the current pixel, the other number represents the index of each pixel arounds  
    
  0 | 1 | 2 |
 ---|---|---|
  3 | **4 CURRENT PIXEL** | 5 |
  6 | 7 | 8 |
+ 
+ Exemple of an average between pixels 0 and 8 on the red channel.
+ 
+```
+var a := red_off[0]*red_off[8]/2;
+
+```
+
+Notes: pixels works only with the input layer, not the external layer yet. 
+
+
 
 MATRIX NAME| TYPE INPUT | TYPE OUPUT| DESCRIPTION|
 ---------|--------|--------|--------|
-`vec3_red[mat]`  | int   | float  | Access to the red channel from pixel around. mat is an integer between 0 and 8
-`vec3_green[mat]`  | int   | float  | Access to the green channel from pixel around. mat is an integer between 0 and 8
-`vec3_blue[mat]`  | int   | float  | Access to the blue channel from pixel around. mat is an integer between 0 and 8
-`vec3_alpha[mat]`  | int   | float  | Access to the alpha channel from pixel around. mat is an integer between 0 and 8
+`red_off[index]`  | int   | float  | Access to the red channel from pixel around. mat is an integer between 0 and 8
+`green_off[index]`  | int   | float  | Access to the green channel from pixel around. mat is an integer between 0 and 8
+`blue_off[index]`  | int   | float  | Access to the blue channel from pixel around. mat is an integer between 0 and 8
+`alpha_off[index]`  | int   | float  | Access to the alpha channel from pixel around. mat is an integer between 0 and 8
 
 3.3.3 Effect UI parameters
 
