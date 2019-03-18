@@ -380,6 +380,9 @@ SetupDialog(
 		arbOutP->uiColorTwoB = COLOR_TWOB;
 		arbOutP->uiExtLGrpB = EXTLGRPB;
 		arbOutP->parserModeB = ParserModeB;
+
+
+        //check the flags to change
 		if (ParserModeB) {
 			if ((hasString(resultStr, std::string("time"))) ||
 				(hasString(resultStr, std::string("iTime"))) ||
@@ -399,7 +402,7 @@ SetupDialog(
 				arbOutP->PresetHasWideInputB = false;
 			}
 			arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
-			arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("vec9_"));
+			arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("_off"));
 			arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
 		}
 		arbOutP->CallsAEGP_CompB = hasString(resultStr, std::string("layer"));

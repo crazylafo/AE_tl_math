@@ -278,7 +278,7 @@ typedef struct MathInfo{
     PF_FpShort      pointTwoY;
     PF_FpShort      colorOne[3];
     PF_FpShort      colorTwo[3];
-	PF_FpShort		m9P_red[9];
+	PF_FpShort      m9P_red[9];
 	PF_FpShort		m9P_green[9];
 	PF_FpShort		m9P_blue[9];
 	PF_FpShort      m9P_alpha[9];
@@ -465,10 +465,10 @@ public:
         symbol_table.add_variable("in_blue", miP->inBlueF);
         symbol_table.add_variable("in_alpha", miP->inAlphaF);
         symbol_table.add_variable("in_luma", miP->luma);
-        symbol_table.add_vector("vec9_red", miP->m9P_red);
-        symbol_table.add_vector("vec9_green",miP->m9P_green);
-        symbol_table.add_vector("vec9_blue", miP->m9P_blue);
-        symbol_table.add_vector("vec9_alpha", miP->m9P_alpha);
+        symbol_table.add_vector("red_off", miP->m9P_red);
+        symbol_table.add_vector("green_off",miP->m9P_green);
+        symbol_table.add_vector("blue_off", miP->m9P_blue);
+        symbol_table.add_vector("alpha_off", miP->m9P_alpha);
 
         symbol_table.add_variable("extL_red", miP->extL_red);
         symbol_table.add_variable("extL_green", miP->extL_green);

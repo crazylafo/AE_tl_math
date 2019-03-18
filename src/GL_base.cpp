@@ -704,7 +704,7 @@ void AESDK_OpenGL_BindTexture1ToTarget(gl::GLuint program, GLint inTexture, std:
 	if (inTexture != -1) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, inTexture);
-		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 1);
 	}
 	else {
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
