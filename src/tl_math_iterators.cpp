@@ -173,7 +173,7 @@ LineIteration8Func ( void *refconPV,
             miP->m9P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN8;
             miP->m9P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
             miP->m9P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN8;
-            if (xL + 1 <= inW.height) {
+            if (xL + 1 <= inW.width) {
                 miP->m9P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN8;
                 miP->m9P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN8;
                 miP->m9P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN8;
@@ -344,7 +344,7 @@ LineIteration16Func(void *refconPV,
             miP->m9P_green[4] = PF_FpShort(bop_inP->green) / (PF_FpShort)PF_MAX_CHAN16;
             miP->m9P_blue[4] = PF_FpShort(bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN16;
             miP->m9P_alpha[4] = PF_FpShort(bop_inP->alpha) / (PF_FpShort)PF_MAX_CHAN16;
-            if (xL + 1 <= inW.height) {
+            if (xL + 1 <= inW.width) {
                 miP->m9P_red[5] = PF_FpShort(in21->red) / (PF_FpShort)PF_MAX_CHAN16;
                 miP->m9P_green[5] = PF_FpShort(in21->green) / (PF_FpShort)PF_MAX_CHAN16;
                 miP->m9P_blue[5] = PF_FpShort(in21->blue) / (PF_FpShort)PF_MAX_CHAN16;
