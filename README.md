@@ -255,7 +255,7 @@ NAME| TYPE | DESCRIPTION|
 `extL_blue`| float  | value of blue channel from the input layer with time and pixel offset|
 `extL_alpha`| float  | value of alphachannel from the input layer with time and pixel offset|
 
-3.3.2 Matrix 3*3of pixels around
+3.3.2 Read pixels around
 
 You can access to the pixels around with the [colorname]_off[index] function where mat is an integer between 0 and 8.
 In the layout, the number 4 represents the current pixel, the other number represents the index of each pixel arounds  
@@ -278,10 +278,10 @@ Notes: pixels works only with the input layer, not the external layer yet.
 
 MATRIX NAME| TYPE INPUT | TYPE OUPUT| DESCRIPTION|
 ---------|--------|--------|--------|
-`red_off[index]`  | int   | float  | Access to the red channel from pixel around. mat is an integer between 0 and 8
-`green_off[index]`  | int   | float  | Access to the green channel from pixel around. mat is an integer between 0 and 8
-`blue_off[index]`  | int   | float  | Access to the blue channel from pixel around. mat is an integer between 0 and 8
-`alpha_off[index]`  | int   | float  | Access to the alpha channel from pixel around. mat is an integer between 0 and 8
+`red_off[index]`  | int   | float  | Access to the red channel from pixel around. Index is an integer between 0 and 8
+`green_off[index]`  | int   | float  | Access to the green channel from pixel around. Index is an integer between 0 and 8
+`blue_off[index]`  | int   | float  | Access to the blue channel from pixel around. Index is an integer between 0 and 8
+`alpha_off[index]`  | int   | float  | Access to the alpha channel from pixel around. Index is an integer between 0 and 8
 
 3.3.3 Effect UI parameters
 
