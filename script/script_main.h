@@ -264,7 +264,7 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;
 	w.grp.tab.expr.alphaC.alignment = ['fill', 'fill'];
     w.grp.tab.expr.alphaC.alignChildren = ['fill', 'fill'];
     w.grp.tab.expr.alphaC.alphaet = w.grp.tab.expr.alphaC.add ('edittext', undefined, exprCl.alphaExpr,{multiline:true});
-    w.grp.tab.expr.exprconsole =  w.grp.tab.expr.add ('edittext', undefined, 'math expression console ' +'\r-'+exprCl.evalmathExp,{readonly:true, multiline:true});
+    w.grp.tab.expr.exprconsole =  w.grp.tab.expr.add ('edittext', undefined, 'math expression console ' +'\r'+exprCl.evalmathExp,{readonly:true, multiline:true});
     
 
 // GLSL TAB 
@@ -281,7 +281,7 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;
 	w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'fill'];
 	w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add('edittext', undefined, exprCl.glslExpr, { multiline:true }); 
 	w.grp.tab.glsl.fragSh.fragShet.maximumSize.height = w.maximumSize.height*0.65;
-	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\r-'+exprCl.evalglslExp ,{readonly:true, multiline:true});
+	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\r'+exprCl.evalglslExp ,{readonly:true, multiline:true});
 // 
 
 //tab UI

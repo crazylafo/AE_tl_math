@@ -245,6 +245,12 @@ namespace {
 		glFlush();
 	}
 
+	PF_FpShort convertYCoordAEToGL( PF_FpShort ypt, PF_FpShort wHeight)
+	{
+		return wHeight - ypt; 
+
+	}
+
 	void RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
 		A_long widthL, A_long heightL,
 		gl::GLuint		inputFrameTexture,
@@ -280,13 +286,13 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "var4");
 		glUniform1f(location, miP->inFourF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt1");
-		glUniform2f(location, miP->pointOneX, miP->pointOneY);
+		glUniform2f(location, miP->pointOneX, convertYCoordAEToGL(miP->pointOneY, heightL));
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "mouse");
-		glUniform2f(location, miP->pointOneX, miP->pointOneY);
+		glUniform2f(location, miP->pointOneX, convertYCoordAEToGL(miP->pointOneY, heightL));
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "iMouse");
-		glUniform2f(location, miP->pointOneX, miP->pointOneY);
+		glUniform2f(location, miP->pointOneX, convertYCoordAEToGL(miP->pointOneY, heightL));
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt2");
-		glUniform2f(location, miP->pointTwoX, miP->pointTwoY);
+		glUniform2f(location, miP->pointTwoX, convertYCoordAEToGL(miP->pointOneY, heightL));
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "cl1");
 		glUniform3f(location, miP->colorOne[0], miP->colorOne[1], miP->colorOne[2]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "cl2");
@@ -306,9 +312,9 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "iResolution");
 		glUniform2f(location, miP->layerWidthF, miP->layerHeightF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerPosition");
-		glUniform3f(location, miP->layerPos_X, miP->layerPos_Y, miP->layerPos_Z);
+		glUniform3f(location, miP->layerPos_X, convertYCoordAEToGL(miP->pointOneY, heightL), miP->layerPos_Z);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerScale");
-		glUniform3f(location, miP->layerScale_X, miP->layerScale_Y, miP->layerScale_Z);
+		glUniform3f(location, miP->layerScale_X, convertYCoordAEToGL(miP->pointOneY, heightL), miP->layerScale_Z);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "compWidth");
 		glUniform1f(location, miP->compWidthF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "compHeight");

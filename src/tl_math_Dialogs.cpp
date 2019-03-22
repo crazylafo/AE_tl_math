@@ -592,10 +592,10 @@ SetupDialog(
                 strReplace(greenResultStr, "\n", "\\n");
                 strReplace(blueResultStr, "\n", "\\n");
                 strReplace(alphaResultStr, "\n", "\\n");
-                jToJs["/redExpr"] = redResultStr;
-                jToJs["/greenExpr"] = greenResultStr;
-                jToJs["/blueExpr"] = blueResultStr;
-                jToJs["/alphaExpr"] = alphaResultStr;
+                jToJs["redExpr"] = redResultStr;
+                jToJs["greenExpr"] = greenResultStr;
+                jToJs["blueExpr"] = blueResultStr;
+                jToJs["alphaExpr"] = alphaResultStr;
 
 			}
 			else {
@@ -615,11 +615,11 @@ SetupDialog(
 				strReplace(glslEvalExpr, "\n", "\\n");
 				jToJs["glslExpr"] = glslEvalExpr;
 				jToJs["parserModeB"] = ParserModeB;
-				jToJs["/redExpr"] = redResultStr;
-				jToJs["/greenExpr"] = greenResultStr;
-				jToJs["/blueExpr"] = blueResultStr;
-				jToJs["/alphaExpr"] = alphaResultStr;
-				jToJs["/evalmathExp"] = errReturn;
+				jToJs["redExpr"] = redResultStr;
+				jToJs["greenExpr"] = greenResultStr;
+				jToJs["blueExpr"] = blueResultStr;
+				jToJs["alphaExpr"] = alphaResultStr;
+				jToJs["evalmathExp"] = errReturn;
 
 
 			}
