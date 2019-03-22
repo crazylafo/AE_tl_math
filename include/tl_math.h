@@ -73,7 +73,7 @@ using namespace gl33core;
 #define	MINOR_VERSION	1
 #define	BUG_VERSION		4
 #define	STAGE_VERSION	PF_Stage_ALPHA
-#define	BUILD_VERSION	3
+#define	BUILD_VERSION	4
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
@@ -373,8 +373,12 @@ Arb_Scan(
          PF_ArbitraryH		*arbPH);
 
 
-
-
+void
+copyChar (char *charDest, std::string strSource);
+std::string
+strCopyAndReplace(std::string str,
+                const std::string& oldStr,
+                  const std::string& newStr);
 PF_Boolean
 strToBoolean( std::string str);
 void
@@ -433,14 +437,7 @@ ShiftImage8 (
              PF_Pixel     *inP,
              PF_Pixel     *outP);
 
-//math parser's functions
-static PF_FpShort
-inline parseDrawRect(PF_FpShort xL,
-                     PF_FpShort yL,
-                     PF_FpShort center_x,
-                     PF_FpShort center_y,
-                     PF_FpShort lx,
-                     PF_FpShort ly);
+
 
 template <typename T=PF_FpShort> class parseExpr {
 private:
@@ -504,8 +501,6 @@ public:
         symbol_table.add_constant("compWidth", miP->compWidthF);
         symbol_table.add_constant("compHeight", miP->compHeightF);
         symbol_table.add_constant("compFps", miP->compFpsF);
-
-        symbol_table.add_function("drawRect", parseDrawRect);
         expression.register_symbol_table(symbol_table);
         parser->compile(exprstr,expression);
         if (!parser->compile(exprstr,expression))

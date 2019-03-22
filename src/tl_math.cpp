@@ -927,7 +927,7 @@ void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
         errReturn = str;
     }
     else {
-        errReturn = "Compile Successful";
+        errReturn = "Compiled Successfully";
     }
     glDeleteShader(fragmentShaderSu);
 }

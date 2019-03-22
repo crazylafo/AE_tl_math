@@ -26,6 +26,8 @@ function analyseJson (testObj){
 			if (testObj.glslExpr){ExprObj.glslExpr = testObj.glslExpr;}
 			if (testObj.evalglslExp){ExprObj.evalglslExp = testObj.evalglslExp}
 			else {ExprObj.evalglslExp = 'NONE'}
+			if (testObj.evalmathExp){ExprObj.evalmathExp = testObj.evalmathExp}
+			else {ExprObj.evalmathExp = 'NONE'}
 			if (testObj.presetName) {ExprObj.presetName  = testObj.presetName;} 
 			if (testObj.description){ExprObj.description = testObj.description;}
 			if (testObj.redExpr){ExprObj.redExpr     = testObj.redExpr;}
@@ -191,6 +193,9 @@ exprCl= JSON.parse(jsonInput);
 if (!exprCl.evalglslExp){
     exprCl.evalglslExp = 'no evalutation';
 }
+if (!exprCl.evalmathExp){
+    exprCl.evalmathExp = 'no evalutation';
+}
 var w = new Window('dialog', 'Maths Expressions V'+pluginVersion, undefined, {resizeable:true} );
 w.grp = w.add('group');
 w.grp.orientation='column';
@@ -230,7 +235,11 @@ w.grp.tab.paramUI= w.grp.tab.add('tab', undefined, 'UI Settings');
 w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;
  //EXPR TAB 
     w.grp.tab.expr.orientation='column';
-    w.grp.tab.expr.alignment = ['fill', 'center'];
+    w.grp.tab.expr.alignment  = ['fill', 'fill'];
+    w.grp.tab.expr.alignChildren = ['fill', 'fill'];
+    w.grp.tab.expr.btnGrp =w.grp.tab.expr.add ('group');
+    w.grp.tab.expr.btnGrp.orientation='row';
+    w.grp.tab.expr.btnGrp.exprEvalbtn = w.grp.tab.expr.btnGrp.add ('button', undefined, 'Evaluate Expression');
     w.grp.tab.expr.redst = w.grp.tab.expr.add ('statictext', undefined,'Red Channel Expression : ');
     w.grp.tab.expr.redC = w.grp.tab.expr.add('group');
     w.grp.tab.expr.redC.orientation = 'row';
@@ -255,7 +264,7 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;
 	w.grp.tab.expr.alphaC.alignment = ['fill', 'fill'];
     w.grp.tab.expr.alphaC.alignChildren = ['fill', 'fill'];
     w.grp.tab.expr.alphaC.alphaet = w.grp.tab.expr.alphaC.add ('edittext', undefined, exprCl.alphaExpr,{multiline:true});
-    // 
+    w.grp.tab.expr.exprconsole =  w.grp.tab.expr.add ('edittext', undefined, 'math expression console ' +'\r-'+exprCl.evalmathExp,{readonly:true, multiline:true});
     
 
 // GLSL TAB 
@@ -271,9 +280,8 @@ w.grp.tab.selection = w.grp.parserModeB.ddl.selection.index;
     w.grp.tab.glsl.fragSh.alignment = ['fill', 'center'];
 	w.grp.tab.glsl.fragSh.alignChildren = ['fill', 'fill'];
 	w.grp.tab.glsl.fragSh.fragShet = w.grp.tab.glsl.fragSh.add('edittext', undefined, exprCl.glslExpr, { multiline:true }); 
-	w.grp.tab.glsl.fragSh.fragShet.maximumSize.height = w.maximumSize.height*0.65;	
-	w.grp.tab.glsl.fragSh.fragShet.text.font = ScriptUI.newFont('Arial', 'Regular', 50);
-	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\r'+exprCl.evalglslExp ,{readonly:true, multiline:true});
+	w.grp.tab.glsl.fragSh.fragShet.maximumSize.height = w.maximumSize.height*0.65;
+	w.grp.tab.glsl.fragSh.glslconsole = w.grp.tab.glsl.fragSh.add ('edittext', undefined, 'glsl console ' +'\r-'+exprCl.evalglslExp ,{readonly:true, multiline:true});
 // 
 
 //tab UI
@@ -427,17 +435,24 @@ w.grp.btnGrp.saveBtn.onClick = function (){
     }
 w.grp.tab.glsl.btnGrp.fragShevalbtn.onClick = function(){
 	var exprRet = getcallBacks(w);
-	 var strExpr =createJson(exprRet, pluginVersion,true);
-	 w.close();
+    var strExpr =createJson(exprRet, pluginVersion,true);
+    w.close();
 	result =JSON.stringify(strExpr);
-}
+    }
+w.grp.tab.expr.btnGrp.exprEvalbtn.onClick = function(){
+    var exprRet = getcallBacks(w);
+    var strExpr =createJson(exprRet, pluginVersion,true);
+    w.close();
+    result =JSON.stringify(strExpr);
+    }
+
 w.grp.tab.glsl.btnGrp.fragShShpwBtn.onClick = function(){
 	var floatbox = new Window('dialog', 'shader',undefined,{resizeable:true} ); 
 	floatbox.txt = floatbox.add('edittext', undefined, updateNumOfLines(w.grp.tab.glsl.fragSh.fragShet.text), {multiline:true, readonly:true} )
-	floatbox.txt.maximumSize.height = floatbox.maximumSize.height*0.65;	
+	floatbox.txt.maximumSize.height = floatbox.maximumSize.height*0.8;
 	floatbox.onResizing = w.onResize = function(){this.layout.resize();}
     floatbox.show();
-}
+    }
 w.grp.btnGrp.Ok.onClick = function(){
     var exprRet = getcallBacks(w);
     var strExpr =createJson(exprRet, pluginVersion,false);

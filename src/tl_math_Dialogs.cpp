@@ -4,37 +4,12 @@
 //
 //
 //
-
-
-
 #include "tl_math.h"
 #include "script.h"
 
 
 
-
-
-//fast find/replace all method
-void strReplace(std::string& str,
-                const std::string& oldStr,
-                const std::string& newStr)
-{
-    std::string::size_type pos = 0u;
-    while ((pos = str.find(oldStr, pos)) != std::string::npos) {
-        str.replace(pos, oldStr.length(), newStr);
-        pos += newStr.length();
-    }
-}
-void ExprtkCorrectorStr(std::string &str) {
-	//adapt exprtk language to AE expression's language.
-	strReplace(str, "&&", "&");
-	strReplace(str, "||", "|");
-	strReplace(str, "++", "+=1");
-	strReplace(str, "--", "-=1");
-	strReplace(str, " = ", " := ");
-	strReplace(str, "\t", "    ");
-}
-//detect if a string has a specified string
+//detect if a string has a specified char
 static PF_Boolean
 hasString(std::string str, std::string expr)
 {
@@ -47,6 +22,401 @@ hasString(std::string str, std::string expr)
         return false;
     }
 
+}
+
+static std::string evalMathExprStr (std::string redResultStr, std::string greenResultStr, std::string blueResultStr, std::string alphaResultStr)
+{
+    PF_Boolean returnExprErrB = false;
+    std::string errReturn = "Error \n";
+    MathInfoP miP;
+    funcTransfertInfoP fiP;
+    fiP.redExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, redResultStr);
+    if (fiP.hasErrorB)
+    {
+        fiP.channelErrorstr = "red channel expression";
+        returnExprErrB = true;
+        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+
+    }
+    fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, greenResultStr);
+    if (fiP.hasErrorB)
+    {
+        fiP.channelErrorstr = "green channel expression";
+        returnExprErrB = true;
+        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+
+    }
+    fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, blueResultStr);
+    if (fiP.hasErrorB)
+    {
+        fiP.channelErrorstr = "blue channel expression";
+        returnExprErrB = true;
+        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+
+    }
+    fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, alphaResultStr);
+    if (fiP.hasErrorB)
+    {
+        fiP.channelErrorstr = "alpha channel expression";
+        returnExprErrB = true;
+        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+    }
+    if (!returnExprErrB) {
+        errReturn = "compiled successfully";
+    }
+    return errReturn;
+}
+
+
+static void arbToJson (m_ArbData        *arbInP,
+                       nlohmann::json& Jsondata )
+{
+    std::string inputName;
+    std::string inputDescription;
+    std::string inputGlsl;
+    std::string inputRedS;
+    std::string inputGreenS;
+    std::string inputBlueS;
+    std::string inputAlphaS;
+
+    std::string inputuiSliderGrpNameS;
+    std::string inputuiSlider1NameS;
+    std::string inputuiSlider2NameS;
+    std::string   inputuiSlider3NameS;
+    std::string     inputuiSlider4NameS;
+    std::string     inputuiPointGrpNameS;
+    std::string     inputuiPoint1NameS;
+    std::string     inputuiPoint2NameS;
+    std::string     inputuiColorGrpNameS;
+    std::string     inputuiColor1NameS;
+    std::string inputuiColor2NameS;
+    std::string inputextLGrpNameS;
+
+    PF_Boolean inputuiSliderGrpVisibleB;
+    PF_Boolean inputuiSlider1VisibleB;
+    PF_Boolean inputuiSlider2VisibleB;
+    PF_Boolean inputuiSlider3VisibleB;
+    PF_Boolean inputuiSlider4VisibleB;
+    PF_Boolean inputuiPointGrpVisibleB;
+    PF_Boolean inputuiPoint1VisibleB;
+    PF_Boolean inputuiPoint2VisibleB;
+    PF_Boolean inputuiColorGrpVisibleB;
+    PF_Boolean inputuiColor1VisibleB;
+    PF_Boolean inputuiColor2VisibleB;
+    PF_Boolean inputextLGrpVisibleB;
+    PF_Boolean inputParserModeB;
+
+    inputParserModeB =arbInP->parserModeB;
+    inputRedS.append(arbInP->redExAcFlat);
+    inputGreenS.append(arbInP->greenExAcFlat);
+    inputBlueS.append(arbInP->blueExAcFlat);
+    inputAlphaS.append(arbInP->alphaExAcFlat);
+    inputGlsl.append(arbInP->Glsl_FragmentShFlat);
+    inputDescription.append(arbInP->descriptionAcFlat);
+
+     inputName.append(arbInP->presetNameAc);
+
+    inputuiSliderGrpNameS.append(arbInP->uiSliderGrp_NameAC);
+    inputuiSlider1NameS.append(arbInP->uiSliderOne_NameAC);
+    inputuiSlider2NameS.append(arbInP->uiSliderTwo_NameAC);
+    inputuiSlider3NameS.append(arbInP->uiSliderThree_NameAC);
+    inputuiSlider4NameS.append(arbInP->uiSliderFour_NameAC);
+    inputuiPointGrpNameS.append(arbInP->uiPointGrp_NameAC);
+    inputuiPoint1NameS.append(arbInP->uiPointOne_NameAC);
+    inputuiPoint2NameS.append(arbInP->uiPointTwo_NameAC);
+    inputuiColorGrpNameS.append(arbInP->uiColorGrp_NameAC);
+    inputuiColor1NameS.append(arbInP->uiColorOne_NameAC);
+    inputuiColor2NameS.append(arbInP->uiColorTwo_NameAC);
+    inputuiSliderGrpVisibleB=(arbInP->uiSliderGrpB);
+    inputuiSlider1VisibleB=arbInP->uiSliderOneB;
+    inputuiSlider2VisibleB = arbInP->uiSliderTwoB;
+    inputuiSlider3VisibleB = arbInP->uiSliderThreeB;
+    inputuiSlider4VisibleB= arbInP->uiSliderFourB;
+    inputuiPointGrpVisibleB = arbInP->uiPointGrpB;
+    inputuiPoint1VisibleB= arbInP->uiPointOneB;
+    inputuiPoint2VisibleB= arbInP->uiPointTwoB;
+    inputuiColorGrpVisibleB=arbInP->uiColorGrpB;
+    inputuiColor1VisibleB= arbInP->uiColorOneB;
+    inputuiColor2VisibleB= arbInP->uiColorTwoB;
+    inputextLGrpVisibleB=arbInP->uiExtLGrpB;
+    inputextLGrpNameS.append(arbInP->uiExtLGrp_NameAC);
+
+
+    //to force the parser to keep \n before to send it to js
+    strReplace(inputRedS, "\n", "\\n");
+    strReplace(inputGreenS, "\n", "\\n");
+    strReplace(inputBlueS, "\n", "\\n");
+    strReplace(inputAlphaS, "\n", "\\n");
+    strReplace(inputDescription, "\n", "\\n");
+    strReplace(inputGlsl, "\n" , "\\n");
+    if (inputGlsl == "fragSh") {
+        inputGlsl = glfrag1str;
+        strReplace(inputGlsl, "\n", "\\n");
+    }
+    Jsondata["parserModeB"] = inputParserModeB;
+    Jsondata["presetName"] = inputName;
+    Jsondata["description"] = inputDescription;
+    Jsondata["redExpr"] = inputRedS;
+    Jsondata["greenExpr"] = inputGreenS;
+    Jsondata["blueExpr"] = inputBlueS;
+    Jsondata["alphaExpr"] = inputAlphaS;
+    Jsondata["glslExpr"] = inputGlsl;
+    Jsondata["uiSliderGrpVisible"] = inputuiSliderGrpVisibleB;
+    Jsondata["uiSliderGrpName"] = inputuiSliderGrpNameS;
+    Jsondata["uiSlider1Visible"] = inputuiSlider1VisibleB;
+    Jsondata["uiSlider1Name"] = inputuiSlider1NameS;
+    Jsondata["uiSlider2Visible"] = inputuiSlider2VisibleB;
+    Jsondata["uiSlider2Name"] = inputuiSlider2NameS;
+    Jsondata["uiSlider3Visible"] = inputuiSlider3VisibleB;
+    Jsondata["uiSlider3Name"] = inputuiSlider3NameS;
+    Jsondata["uiSlider4Visible"] = inputuiSlider4VisibleB;
+    Jsondata["uiSlider4Name"] = inputuiSlider4NameS;
+    Jsondata["uiPointGrpVisible"] = inputuiPointGrpVisibleB;
+    Jsondata["uiPointGrpName"] = inputuiPointGrpNameS;
+    Jsondata["uiPoint1Visible"] = inputuiPoint1VisibleB;
+    Jsondata["uiPoint1Name"] = inputuiPoint1NameS;
+    Jsondata["uiPoint2Visible"] = inputuiPoint2VisibleB;
+    Jsondata["uiPoint2Name"] = inputuiPoint2NameS;
+    Jsondata["uiColorGrpVisible"] = inputuiColorGrpVisibleB;
+    Jsondata["uiColorGrpName"] = inputuiColorGrpNameS;
+    Jsondata["uiColor1Visible"] = inputuiColor1VisibleB;
+    Jsondata["uiColor1Name"] = inputuiColor1NameS;
+    Jsondata["uiColor2Visible"] = inputuiColor2VisibleB;
+    Jsondata["uiColor2Name"] = inputuiColor2NameS;
+    Jsondata["extLGrpVisible"] = inputextLGrpVisibleB;
+    Jsondata["extLGrpName"] = inputextLGrpNameS;
+
+}
+
+static void jsonStrToArb (std::string resultStr,
+                         m_ArbData    *arbOutP)
+{
+    nlohmann::json  jresult = nlohmann::json::parse(resultStr);
+    bool ParserModeB, SLIDERGRPB, INPONEB, INPTWOB, INPTHREEB, INPFOURB,
+    POINTGRPB, POINT_ONEB, POINT_TWOB, COLORGRPB, COLOR_ONEB, COLOR_TWOB, EXTLGRPB;
+
+
+
+    ParserModeB = jresult["/parserModeB"_json_pointer];
+
+    SLIDERGRPB =jresult["/uiSliderGrpVisible"_json_pointer];
+    INPONEB = jresult["/uiSlider1Visible"_json_pointer];
+    INPTWOB= jresult["/uiSlider2Visible"_json_pointer];
+    INPTHREEB = jresult["/uiSlider3Visible"_json_pointer];
+    INPFOURB = jresult["/uiSlider4Visible"_json_pointer];
+    POINTGRPB = jresult["/uiPointGrpVisible"_json_pointer];
+    POINT_ONEB = jresult["/uiPoint1Visible"_json_pointer];
+    POINT_TWOB = jresult["/uiPoint2Visible"_json_pointer];
+    COLORGRPB = jresult["/uiColorGrpVisible"_json_pointer];
+    COLOR_ONEB = jresult["/uiColor1Visible"_json_pointer];
+    COLOR_TWOB = jresult["/uiColor2Visible"_json_pointer];
+    EXTLGRPB = jresult["/extLGrpVisible"_json_pointer];
+
+    std::string redResultStr = jresult["/redExpr"_json_pointer];
+    std::string greenResultStr = jresult["/greenExpr"_json_pointer];
+    std::string blueResultStr = jresult["/blueExpr"_json_pointer];
+    std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
+
+
+    ExprtkCorrectorStr(redResultStr);
+    ExprtkCorrectorStr(greenResultStr);
+    ExprtkCorrectorStr(blueResultStr);
+    ExprtkCorrectorStr(alphaResultStr);
+
+
+    std::string glslExpr = jresult["/glslExpr"_json_pointer];
+    strReplace(glslExpr, "\"", " '");
+    strReplace(glslExpr, "\t", "    ");
+
+
+
+    //bool to PF_Boolean
+    arbOutP->uiSliderGrpB = SLIDERGRPB;
+    arbOutP->uiSliderOneB = INPONEB;
+    arbOutP->uiSliderTwoB = INPTWOB;
+    arbOutP->uiSliderThreeB = INPTHREEB;
+    arbOutP->uiSliderFourB = INPFOURB;
+    arbOutP->uiPointGrpB = POINTGRPB;
+    arbOutP->uiPointOneB = POINT_ONEB;
+    arbOutP->uiPointTwoB = POINT_TWOB;
+    arbOutP->uiColorGrpB = COLORGRPB;
+    arbOutP->uiColorOneB = COLOR_ONEB;
+    arbOutP->uiColorTwoB = COLOR_TWOB;
+    arbOutP->uiExtLGrpB = EXTLGRPB;
+    arbOutP->parserModeB = ParserModeB;
+
+
+    //check the flags to change
+    if (ParserModeB) {
+        if ((hasString(resultStr, std::string("time"))) ||
+            (hasString(resultStr, std::string("iTime"))) ||
+            (hasString(resultStr, std::string("extLayerTex")))) {
+            arbOutP->PresetHasWideInputB = true;
+        }
+        else {
+            arbOutP->PresetHasWideInputB = false;
+        }
+        arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extLayerTex"));
+    }
+    else {
+        if ((hasString(resultStr, std::string("extL")))|| (hasString(resultStr, std::string("layerTime")))) {
+            arbOutP->PresetHasWideInputB = true;
+        }
+        else {
+            arbOutP->PresetHasWideInputB = false;
+        }
+        arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
+        arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("_off"));
+        arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
+    }
+    arbOutP->CallsAEGP_CompB = hasString(resultStr, std::string("layer"));
+    arbOutP->CallsAEGP_layerB = hasString(resultStr, std::string("comp"));
+
+
+
+    std::string presetNameStr = jresult["/presetName"_json_pointer];
+    std::string descriptionStr = jresult["/description"_json_pointer];
+
+    std::string SLIDERGRPS= jresult["/uiSliderGrpName"_json_pointer];
+    std::string INPONES  = jresult["/uiSlider1Name"_json_pointer];
+    std::string INPTWOS  = jresult["/uiSlider2Name"_json_pointer];
+    std::string INPTHREES = jresult["/uiSlider3Name"_json_pointer];
+    std::string INPFOURS= jresult["/uiSlider4Name"_json_pointer];
+    std::string POINTGRPS = jresult["/uiPointGrpName"_json_pointer];
+    std::string  POINT_ONES = jresult["/uiPoint1Name"_json_pointer];
+    std::string POINT_TWOS= jresult["/uiPoint2Name"_json_pointer];
+    std::string COLORGRPS = jresult["/uiColorGrpName"_json_pointer];
+    std::string COLOR_ONES = jresult["/uiColor1Name"_json_pointer];
+    std::string COLOR_TWOS = jresult["/uiColor2Name"_json_pointer];
+    std::string EXTLGRPS= jresult["/extLGrpName"_json_pointer];
+
+
+
+
+    presetNameStr.erase(std::remove(presetNameStr.begin(), presetNameStr.end(), '\n'), presetNameStr.end());
+
+
+
+
+    //copy to flat ARB (keeping /n and other speical char from js
+#ifdef AE_OS_WIN
+    strncpy_s( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
+    strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
+    strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
+    strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+    strncpy_s( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
+    strncpy_s(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
+    strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
+#else
+    strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
+    strncpy(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
+    strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
+    strncpy( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
+    strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
+    strncpy( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
+    strncpy(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
+    strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
+#endif
+
+    //delete \nfor execution expr
+    redResultStr.erase(std::remove(redResultStr.begin(), redResultStr.end(), '\n'), redResultStr.end());
+    greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
+    blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
+    alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
+    glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\t'), glslExpr.end());
+    descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
+
+#ifdef AE_OS_WIN
+    strncpy_s( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
+    strncpy_s(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
+    strncpy_s( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
+    strncpy_s( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
+    strncpy_s( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
+    strncpy_s(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
+    strncpy_s( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
+    strncpy_s(arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length() + 1);
+    strncpy_s(arbOutP->uiSliderGrp_NameAC, SLIDERGRPS.c_str(), SLIDERGRPS.length() + 1);
+    strncpy_s(arbOutP->uiSliderOne_NameAC, INPONES.c_str(), INPONES.length() + 1);
+    strncpy_s(arbOutP->uiSliderTwo_NameAC, INPTWOS.c_str(), INPTWOS.length() + 1);
+    strncpy_s(arbOutP->uiSliderThree_NameAC, INPTHREES.c_str(), INPTHREES.length() + 1);
+    strncpy_s(arbOutP->uiSliderFour_NameAC, INPFOURS.c_str(), INPFOURS.length() + 1);
+    strncpy_s(arbOutP->uiPointGrp_NameAC, POINTGRPS.c_str(), POINTGRPS.length() + 1);
+    strncpy_s(arbOutP->uiPointOne_NameAC, POINT_ONES.c_str(), POINT_ONES.length() + 1);
+    strncpy_s(arbOutP->uiPointTwo_NameAC, POINT_TWOS.c_str(), POINT_TWOS.length() + 1);
+    strncpy_s(arbOutP->uiColorGrp_NameAC, COLORGRPS.c_str(), COLORGRPS.length() + 1);
+    strncpy_s(arbOutP->uiColorOne_NameAC, COLOR_ONES.c_str(), COLOR_ONES.length() + 1);
+    strncpy_s(arbOutP->uiColorTwo_NameAC, COLOR_TWOS.c_str(), COLOR_TWOS.length() + 1);
+    strncpy_s(arbOutP->uiExtLGrp_NameAC, EXTLGRPS.c_str(), EXTLGRPS.length() + 1);
+
+#else
+    strncpy( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
+    strncpy( arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
+    strncpy( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
+    strncpy( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
+    strncpy( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
+    strncpy(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
+    strncpy( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
+    strncpy(arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length() + 1);
+    strncpy(arbOutP->uiSliderGrp_NameAC, SLIDERGRPS.c_str(), SLIDERGRPS.length() + 1);
+    strncpy(arbOutP->uiSliderOne_NameAC, INPONES.c_str(), INPONES.length() + 1);
+    strncpy(arbOutP->uiSliderTwo_NameAC, INPTWOS.c_str(), INPTWOS.length() + 1);
+    strncpy(arbOutP->uiSliderThree_NameAC, INPTHREES.c_str(), INPTHREES.length() + 1);
+    strncpy(arbOutP->uiSliderFour_NameAC, INPFOURS.c_str(), INPFOURS.length() + 1);
+    strncpy(arbOutP->uiPointGrp_NameAC, POINTGRPS.c_str(), POINTGRPS.length() + 1);
+    strncpy(arbOutP->uiPointOne_NameAC, POINT_ONES.c_str(), POINT_ONES.length() + 1);
+    strncpy(arbOutP->uiPointTwo_NameAC, POINT_TWOS.c_str(), POINT_TWOS.length() + 1);
+    strncpy(arbOutP->uiColorGrp_NameAC, COLORGRPS.c_str(), COLORGRPS.length() + 1);
+    strncpy(arbOutP->uiColorOne_NameAC, COLOR_ONES.c_str(), COLOR_ONES.length() + 1);
+    strncpy(arbOutP->uiColorTwo_NameAC, COLOR_TWOS.c_str(), COLOR_TWOS.length() + 1);
+    strncpy(arbOutP->uiExtLGrp_NameAC, EXTLGRPS.c_str(), EXTLGRPS.length() + 1);
+
+#endif
+    if (redResultStr.compare(arbOutP->redExAc) !=0 ||
+        greenResultStr.compare(arbOutP->greenExAc) != 0 ||
+        blueResultStr.compare(arbOutP->blueExAc) != 0 ||
+        alphaResultStr.compare(arbOutP->alphaExAc) != 0) {
+        arbOutP->ExprResetB = true;
+    }
+    else { arbOutP->ExprResetB = false; }
+}
+
+
+
+//fast copy/find/replace all method
+std::string strCopyAndReplace(std::string str,
+                              const std::string& oldStr,
+                              const std::string& newStr)
+{
+    std::string copyStr =str;
+    std::string::size_type pos = 0u;
+    while ((pos = copyStr.find(oldStr, pos)) != std::string::npos) {
+        copyStr.replace(pos, oldStr.length(), newStr);
+        pos += newStr.length();
+    }
+    return copyStr;
+
+}
+
+//quick find/replace all method
+void strReplace(std::string& str,
+                const std::string& oldStr,
+                const std::string& newStr)
+{
+    std::string::size_type pos = 0u;
+    while ((pos = str.find(oldStr, pos)) != std::string::npos) {
+        str.replace(pos, oldStr.length(), newStr);
+        pos += newStr.length();
+    }
+}
+void ExprtkCorrectorStr(std::string &str) {
+	//convert some AE javascript operator to exprtk operators
+	strReplace(str, "&&", "&");
+	strReplace(str, "||", "|");
+	strReplace(str, "++", "+=1");
+	strReplace(str, "--", "-=1");
+	strReplace(str, " = ", " := ");
+	strReplace(str, "\t", "    ");
+	strReplace(str, "\"", " '");
 }
 
 PF_Boolean
@@ -142,44 +512,6 @@ SetupDialog(
     //ARB
     PF_ParamDef arb_param;
 
-    //strings to send expr to script
-    std::string inputName;
-    std::string inputDescription;
-    std::string inputGlsl;
-    std::string inputRedS;
-    std::string inputGreenS;
-    std::string inputBlueS;
-    std::string inputAlphaS;
-
-	PF_Boolean inputuiSliderGrpVisibleB;
-	std::string inputuiSliderGrpNameS;
-	PF_Boolean inputuiSlider1VisibleB;
-	std::string inputuiSlider1NameS;
-	PF_Boolean inputuiSlider2VisibleB;
-	std::string inputuiSlider2NameS;
-	PF_Boolean inputuiSlider3VisibleB;
-	std::string   inputuiSlider3NameS;
-	PF_Boolean inputuiSlider4VisibleB;
-	std::string 	inputuiSlider4NameS;
-	PF_Boolean inputuiPointGrpVisibleB;
-	std::string 	inputuiPointGrpNameS;
-	PF_Boolean inputuiPoint1VisibleB;
-	std::string 	inputuiPoint1NameS;
-	PF_Boolean inputuiPoint2VisibleB;
-	std::string 	inputuiPoint2NameS;
-	PF_Boolean inputuiColorGrpVisibleB;
-	std::string 	inputuiColorGrpNameS;
-	PF_Boolean inputuiColor1VisibleB;
-	std::string 	inputuiColor1NameS;
-	PF_Boolean inputuiColor2VisibleB;
-	std::string inputuiColor2NameS;
-	PF_Boolean inputextLGrpVisibleB;
-	std::string inputextLGrpNameS;
-
-	PF_Boolean		inputParserModeB;
-
-
-
     PF_Handle        arbOutH = NULL;
     m_ArbData        *arbInP = NULL;
     m_ArbData        *arbOutP= NULL;
@@ -192,94 +524,16 @@ SetupDialog(
                           in_data->time_step,
                           in_data->time_scale,
                           &arb_param));
+    nlohmann::json  jToJs;
 
     if (!err){
         AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
-			inputParserModeB =arbInP->parserModeB;
-			inputRedS.append(arbInP->redExAcFlat);
-			inputGreenS.append(arbInP->greenExAcFlat);
-			inputBlueS.append(arbInP->blueExAcFlat);
-			inputAlphaS.append(arbInP->alphaExAcFlat);
-			inputName.append(arbInP->presetNameAc);
-			inputGlsl.append(arbInP->Glsl_FragmentShFlat);
-			inputDescription.append(arbInP->descriptionAcFlat);
-			inputuiSliderGrpVisibleB=(arbInP->uiSliderGrpB);
-			inputuiSliderGrpNameS.append(arbInP->uiSliderGrp_NameAC);
-			inputuiSlider1VisibleB=arbInP->uiSliderOneB;
-			inputuiSlider1NameS.append(arbInP->uiSliderOne_NameAC);
-			inputuiSlider2VisibleB = arbInP->uiSliderTwoB;
-			inputuiSlider2NameS.append(arbInP->uiSliderTwo_NameAC);
-			inputuiSlider3VisibleB = arbInP->uiSliderThreeB;
-			inputuiSlider3NameS.append(arbInP->uiSliderThree_NameAC);
-			inputuiSlider4VisibleB= arbInP->uiSliderFourB;
-			inputuiSlider4NameS.append(arbInP->uiSliderFour_NameAC);
-			inputuiPointGrpVisibleB = arbInP->uiPointGrpB;
-			inputuiPointGrpNameS.append(arbInP->uiPointGrp_NameAC);
-			inputuiPoint1VisibleB= arbInP->uiPointOneB;
-			inputuiPoint1NameS.append(arbInP->uiPointOne_NameAC);
-			inputuiPoint2VisibleB= arbInP->uiPointTwoB;
-			inputuiPoint2NameS.append(arbInP->uiPointTwo_NameAC);
-			inputuiColorGrpVisibleB=arbInP->uiColorGrpB;
-			inputuiColorGrpNameS.append(arbInP->uiColorGrp_NameAC);
-			inputuiColor1VisibleB= arbInP->uiColorOneB;
-			inputuiColor1NameS.append(arbInP->uiColorOne_NameAC);
-			inputuiColor2VisibleB= arbInP->uiColorTwoB;
-			inputuiColor2NameS.append(arbInP->uiColorTwo_NameAC);
-			inputextLGrpVisibleB=arbInP->uiExtLGrpB;
-			inputextLGrpNameS.append(arbInP->uiExtLGrp_NameAC);
+            arbToJson (arbInP,jToJs);
         }
 
     }
-    //to force the parser to keep \n before to send it to js
-    strReplace(inputRedS, "\n", "\\n");
-    strReplace(inputGreenS, "\n", "\\n");
-    strReplace(inputBlueS, "\n", "\\n");
-    strReplace(inputAlphaS, "\n", "\\n");
-    strReplace(inputDescription, "\n", "\\n");
-    strReplace(inputGlsl, "\n" , "\\n");
-	if (inputGlsl == "fragSh") {
-	inputGlsl = glfrag1str;
-	strReplace(inputGlsl, "\n", "\\n");
-	}
-
-	
-
-    nlohmann::json  jToJs;
-
-	jToJs["parserModeB"] = inputParserModeB;
-	jToJs["presetName"] = inputName;
-	jToJs["description"] = inputDescription;
-	jToJs["redExpr"] = inputRedS;
-	jToJs["greenExpr"] = inputGreenS;
-	jToJs["blueExpr"] = inputBlueS;
-	jToJs["alphaExpr"] = inputAlphaS;
-	jToJs["glslExpr"] = inputGlsl;
-	jToJs["uiSliderGrpVisible"] = inputuiSliderGrpVisibleB;
-	jToJs["uiSliderGrpName"] = inputuiSliderGrpNameS;
-	jToJs["uiSlider1Visible"] = inputuiSlider1VisibleB;
-	jToJs["uiSlider1Name"] = inputuiSlider1NameS;
-	jToJs["uiSlider2Visible"] = inputuiSlider2VisibleB;
-	jToJs["uiSlider2Name"] = inputuiSlider2NameS;
-	jToJs["uiSlider3Visible"] = inputuiSlider3VisibleB;
-	jToJs["uiSlider3Name"] = inputuiSlider3NameS;
-	jToJs["uiSlider4Visible"] = inputuiSlider4VisibleB;
-	jToJs["uiSlider4Name"] = inputuiSlider4NameS;
-	jToJs["uiPointGrpVisible"] = inputuiPointGrpVisibleB;
-	jToJs["uiPointGrpName"] = inputuiPointGrpNameS;
-	jToJs["uiPoint1Visible"] = inputuiPoint1VisibleB;
-	jToJs["uiPoint1Name"] = inputuiPoint1NameS;
-	jToJs["uiPoint2Visible"] = inputuiPoint2VisibleB;
-	jToJs["uiPoint2Name"] = inputuiPoint2NameS;
-	jToJs["uiColorGrpVisible"] = inputuiColorGrpVisibleB;
-	jToJs["uiColorGrpName"] = inputuiColorGrpNameS;
-	jToJs["uiColor1Visible"] = inputuiColor1VisibleB;
-	jToJs["uiColor1Name"] = inputuiColor1NameS;
-	jToJs["uiColor2Visible"] = inputuiColor2VisibleB;
-	jToJs["uiColor2Name"] = inputuiColor2NameS;
-	jToJs["extLGrpVisible"] = inputextLGrpVisibleB;
-	jToJs["extLGrpName"] = inputextLGrpNameS;
 
 	std::string resultStr;
 	bool scriptLoopEvalB = true;
@@ -302,7 +556,9 @@ SetupDialog(
 		AEFX_CLR_STRUCT(resultAC);
 		ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
 		if (resultAC) {
+
 			resultStr = resultAC;
+			
 		}
 		ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 		nlohmann::json jeval = nlohmann::json::parse(resultStr);
@@ -311,209 +567,74 @@ SetupDialog(
 			scriptLoopEvalB = false;
 		}
 		else {
+			std::string errReturn = "NONE";
+			std::string glslEvalExpr = jeval["/glslExpr"_json_pointer];
 			bool ParserModeB = jeval["/parserModeB"_json_pointer];
+			std::string redResultStr = jeval["/redExpr"_json_pointer];
+			std::string greenResultStr = jeval["/greenExpr"_json_pointer];
+			std::string blueResultStr = jeval["/blueExpr"_json_pointer];
+			std::string alphaResultStr = jeval["/alphaExpr"_json_pointer];
+
+
 			if (ParserModeB == true) {
-				std::string errReturn = "NONE";
-                std::string glslEvalExpr= jeval["/glslExpr"_json_pointer];
+				
 				strReplace(glslEvalExpr, "\t", "    ");
+				strReplace(glslEvalExpr, "\"", " '");
 				evalFragShader(glslEvalExpr, errReturn);
 				strReplace(errReturn, "\n", "\\n");
 				strReplace(glslEvalExpr, "\n", "\\n");
+                
 				jToJs["evalglslExp"] = errReturn;
 				jToJs["glslExpr"] = glslEvalExpr;
 				jToJs["parserModeB"] = ParserModeB;
+
+                strReplace(redResultStr, "\n", "\\n");
+                strReplace(greenResultStr, "\n", "\\n");
+                strReplace(blueResultStr, "\n", "\\n");
+                strReplace(alphaResultStr, "\n", "\\n");
+                jToJs["/redExpr"] = redResultStr;
+                jToJs["/greenExpr"] = greenResultStr;
+                jToJs["/blueExpr"] = blueResultStr;
+                jToJs["/alphaExpr"] = alphaResultStr;
+
+			}
+			else {
+
+				ExprtkCorrectorStr(redResultStr);
+				ExprtkCorrectorStr(greenResultStr);
+				ExprtkCorrectorStr(blueResultStr);
+				ExprtkCorrectorStr(alphaResultStr);
+
+                errReturn= evalMathExprStr (redResultStr,greenResultStr,blueResultStr,alphaResultStr);
+
+				strReplace(redResultStr, "\n", "\\n");
+				strReplace(greenResultStr, "\n", "\\n");
+				strReplace(blueResultStr, "\n", "\\n");
+				strReplace(alphaResultStr, "\n", "\\n");
+				strReplace(errReturn, "\n", "\\n");
+				strReplace(glslEvalExpr, "\n", "\\n");
+				jToJs["glslExpr"] = glslEvalExpr;
+				jToJs["parserModeB"] = ParserModeB;
+				jToJs["/redExpr"] = redResultStr;
+				jToJs["/greenExpr"] = greenResultStr;
+				jToJs["/blueExpr"] = blueResultStr;
+				jToJs["/alphaExpr"] = alphaResultStr;
+				jToJs["/evalmathExp"] = errReturn;
+
+
 			}
 		}
 	}
 		AEFX_CLR_STRUCT(arbOutP);
 		arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+        jsonStrToArb (resultStr, arbOutP);
 
-		//set result per channel
-		
+        if (std::string(arbOutP->Glsl_FragmentShFlat).compare(std::string(arbInP->Glsl_FragmentShFlat)) !=0)  {
+        arbOutP->ShaderResetB = true;
+        }
 
-		nlohmann::json  jresult = nlohmann::json::parse(resultStr);
-		bool ParserModeB, SLIDERGRPB, INPONEB, INPTWOB, INPTHREEB, INPFOURB,
-			POINTGRPB, POINT_ONEB, POINT_TWOB, COLORGRPB, COLOR_ONEB, COLOR_TWOB, EXTLGRPB;
-
-	
-
-		ParserModeB = jresult["/parserModeB"_json_pointer];
-		//AEGP SETSTREAMVALUE TO ARB
-        AEFX_CLR_STRUCT(arbOutP);
-        arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-		SLIDERGRPB =jresult["/uiSliderGrpVisible"_json_pointer];
-		INPONEB = jresult["/uiSlider1Visible"_json_pointer];
-		INPTWOB= jresult["/uiSlider2Visible"_json_pointer];
-		INPTHREEB = jresult["/uiSlider3Visible"_json_pointer];
-		INPFOURB = jresult["/uiSlider4Visible"_json_pointer];
-		POINTGRPB = jresult["/uiPointGrpVisible"_json_pointer];
-		POINT_ONEB = jresult["/uiPoint1Visible"_json_pointer];
-		POINT_TWOB = jresult["/uiPoint2Visible"_json_pointer];
-		COLORGRPB = jresult["/uiColorGrpVisible"_json_pointer];
-		COLOR_ONEB = jresult["/uiColor1Visible"_json_pointer];
-		COLOR_TWOB = jresult["/uiColor2Visible"_json_pointer];
-		EXTLGRPB = jresult["/extLGrpVisible"_json_pointer];
-
-		std::string redResultStr = jresult["/redExpr"_json_pointer];
-		ExprtkCorrectorStr(redResultStr);
-		std::string greenResultStr = jresult["/greenExpr"_json_pointer];
-		ExprtkCorrectorStr(greenResultStr);
-		std::string blueResultStr = jresult["/blueExpr"_json_pointer];
-		ExprtkCorrectorStr(blueResultStr);
-		std::string alphaResultStr = jresult["/alphaExpr"_json_pointer];
-		ExprtkCorrectorStr(alphaResultStr);
-		std::string glslExpr = jresult["/glslExpr"_json_pointer];
-		strReplace(glslExpr, "\t", "    ");
-
-		
-		//bool to PF_Boolean
-		arbOutP->uiSliderGrpB = SLIDERGRPB;
-		arbOutP->uiSliderOneB = INPONEB;
-		arbOutP->uiSliderTwoB = INPTWOB;
-		arbOutP->uiSliderThreeB = INPTHREEB;
-		arbOutP->uiSliderFourB = INPFOURB;
-		arbOutP->uiPointGrpB = POINTGRPB;
-		arbOutP->uiPointOneB = POINT_ONEB;
-		arbOutP->uiPointTwoB = POINT_TWOB;
-		arbOutP->uiColorGrpB = COLORGRPB;
-		arbOutP->uiColorOneB = COLOR_ONEB;
-		arbOutP->uiColorTwoB = COLOR_TWOB;
-		arbOutP->uiExtLGrpB = EXTLGRPB;
-		arbOutP->parserModeB = ParserModeB;
-
-
-        //check the flags to change
-		if (ParserModeB) {
-			if ((hasString(resultStr, std::string("time"))) ||
-				(hasString(resultStr, std::string("iTime"))) ||
-				(hasString(resultStr, std::string("extLayerTex")))) {
-				arbOutP->PresetHasWideInputB = true;
-			}
-			else {
-				arbOutP->PresetHasWideInputB = false;
-			}
-			arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extLayerTex"));
-		}
-		else {
-			if ((hasString(resultStr, std::string("extL")))|| (hasString(resultStr, std::string("layerTime")))) {
-				arbOutP->PresetHasWideInputB = true;
-			}
-			else {
-				arbOutP->PresetHasWideInputB = false;
-			}
-			arbOutP->PixelsCallExternalInputB = hasString(resultStr, std::string("extL"));
-			arbOutP->NeedsPixelAroundB = hasString(resultStr, std::string("_off"));
-			arbOutP->NeedsLumaB = hasString(resultStr, std::string("in_luma"));
-		}
-		arbOutP->CallsAEGP_CompB = hasString(resultStr, std::string("layer"));
-		arbOutP->CallsAEGP_layerB = hasString(resultStr, std::string("comp"));
-
-
-		
-        std::string presetNameStr = jresult["/presetName"_json_pointer];
-        std::string descriptionStr = jresult["/description"_json_pointer];
-
-		std::string SLIDERGRPS= jresult["/uiSliderGrpName"_json_pointer];
-		std::string INPONES  = jresult["/uiSlider1Name"_json_pointer];
-		std::string INPTWOS  = jresult["/uiSlider2Name"_json_pointer];
-		std::string INPTHREES = jresult["/uiSlider3Name"_json_pointer];
-		std::string INPFOURS= jresult["/uiSlider4Name"_json_pointer];
-		std::string POINTGRPS = jresult["/uiPointGrpName"_json_pointer];
-		std::string  POINT_ONES = jresult["/uiPoint1Name"_json_pointer];
-		std::string POINT_TWOS= jresult["/uiPoint2Name"_json_pointer];
-		std::string COLORGRPS = jresult["/uiColorGrpName"_json_pointer];
-		std::string COLOR_ONES = jresult["/uiColor1Name"_json_pointer];
-		std::string COLOR_TWOS = jresult["/uiColor2Name"_json_pointer];
-		std::string EXTLGRPS= jresult["/extLGrpName"_json_pointer];
-
-		if (glslExpr.compare(arbInP->Glsl_FragmentShFlat) !=0)  {
-			arbOutP->ShaderResetB = true;
-		}
-		
-
-        presetNameStr.erase(std::remove(presetNameStr.begin(), presetNameStr.end(), '\n'), presetNameStr.end());
-
-        //copy to flat ARB (keeping /n and other speical char from js
-#ifdef AE_OS_WIN
-        strncpy_s( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
-        strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
-        strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
-        strncpy_s( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
-        strncpy_s( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
-		strncpy_s(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
-        strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
-#else
-        strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
-        strncpy(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
-        strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
-        strncpy( arbOutP->alphaExAcFlat, alphaResultStr.c_str(), alphaResultStr.length()+1);
-        strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
-        strncpy( arbOutP->Glsl_FragmentShFlat, glslExpr.c_str(), glslExpr.length()+1);
-		strncpy(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
-        strncpy( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
-#endif
-
-        //delete \nfor execution expr
-        redResultStr.erase(std::remove(redResultStr.begin(), redResultStr.end(), '\n'), redResultStr.end());
-        greenResultStr.erase(std::remove(greenResultStr.begin(), greenResultStr.end(), '\n'), greenResultStr.end());
-        blueResultStr.erase(std::remove(blueResultStr.begin(), blueResultStr.end(), '\n'), blueResultStr.end());
-        alphaResultStr.erase(std::remove(alphaResultStr.begin(), alphaResultStr.end(), '\n'), alphaResultStr.end());
-		glslExpr.erase(std::remove(glslExpr.begin(), glslExpr.end(), '\t'), glslExpr.end());
-        descriptionStr.erase(std::remove(descriptionStr.begin(), descriptionStr.end(), '\n'), descriptionStr.end());
-
-#ifdef AE_OS_WIN
-        strncpy_s( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
-        strncpy_s(arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
-        strncpy_s( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
-        strncpy_s( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
-        strncpy_s( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
-		strncpy_s(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
-        strncpy_s( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
-		strncpy_s(arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length() + 1);
-		strncpy_s(arbOutP->uiSliderGrp_NameAC, SLIDERGRPS.c_str(), SLIDERGRPS.length() + 1);
-		strncpy_s(arbOutP->uiSliderOne_NameAC, INPONES.c_str(), INPONES.length() + 1);
-		strncpy_s(arbOutP->uiSliderTwo_NameAC, INPTWOS.c_str(), INPTWOS.length() + 1);
-		strncpy_s(arbOutP->uiSliderThree_NameAC, INPTHREES.c_str(), INPTHREES.length() + 1);
-		strncpy_s(arbOutP->uiSliderFour_NameAC, INPFOURS.c_str(), INPFOURS.length() + 1);
-		strncpy_s(arbOutP->uiPointGrp_NameAC, POINTGRPS.c_str(), POINTGRPS.length() + 1);
-		strncpy_s(arbOutP->uiPointOne_NameAC, POINT_ONES.c_str(), POINT_ONES.length() + 1);
-		strncpy_s(arbOutP->uiPointTwo_NameAC, POINT_TWOS.c_str(), POINT_TWOS.length() + 1);
-		strncpy_s(arbOutP->uiColorGrp_NameAC, COLORGRPS.c_str(), COLORGRPS.length() + 1);
-		strncpy_s(arbOutP->uiColorOne_NameAC, COLOR_ONES.c_str(), COLOR_ONES.length() + 1);
-		strncpy_s(arbOutP->uiColorTwo_NameAC, COLOR_TWOS.c_str(), COLOR_TWOS.length() + 1);
-		strncpy_s(arbOutP->uiExtLGrp_NameAC, EXTLGRPS.c_str(), EXTLGRPS.length() + 1);
-
-#else
-        strncpy( arbOutP->redExAc, redResultStr.c_str(), redResultStr.length()+1);
-        strncpy( arbOutP->greenExAc, greenResultStr.c_str(), greenResultStr.length()+1);
-        strncpy( arbOutP->blueExAc, blueResultStr.c_str(), blueResultStr.length()+1);
-        strncpy( arbOutP->alphaExAc, alphaResultStr.c_str(), alphaResultStr.length()+1);
-        strncpy( arbOutP->Glsl_FragmentShAc, glslExpr.c_str(), glslExpr.length()+1);
-		strncpy(arbOutP->Glsl_VertexShAc, glvertstr.c_str(), glvertstr.length() + 1);
-        strncpy( arbOutP->descriptionAc, descriptionStr.c_str(), descriptionStr.length()+1);
-		strncpy(arbOutP->presetNameAc, presetNameStr.c_str(), presetNameStr.length() + 1);
-		strncpy(arbOutP->uiSliderGrp_NameAC, SLIDERGRPS.c_str(), SLIDERGRPS.length() + 1);
-		strncpy(arbOutP->uiSliderOne_NameAC, INPONES.c_str(), INPONES.length() + 1);
-		strncpy(arbOutP->uiSliderTwo_NameAC, INPTWOS.c_str(), INPTWOS.length() + 1);
-		strncpy(arbOutP->uiSliderThree_NameAC, INPTHREES.c_str(), INPTHREES.length() + 1);
-		strncpy(arbOutP->uiSliderFour_NameAC, INPFOURS.c_str(), INPFOURS.length() + 1);
-		strncpy(arbOutP->uiPointGrp_NameAC, POINTGRPS.c_str(), POINTGRPS.length() + 1);
-		strncpy(arbOutP->uiPointOne_NameAC, POINT_ONES.c_str(), POINT_ONES.length() + 1);
-		strncpy(arbOutP->uiPointTwo_NameAC, POINT_TWOS.c_str(), POINT_TWOS.length() + 1);
-		strncpy(arbOutP->uiColorGrp_NameAC, COLORGRPS.c_str(), COLORGRPS.length() + 1);
-		strncpy(arbOutP->uiColorOne_NameAC, COLOR_ONES.c_str(), COLOR_ONES.length() + 1);
-		strncpy(arbOutP->uiColorTwo_NameAC, COLOR_TWOS.c_str(), COLOR_TWOS.length() + 1);
-		strncpy(arbOutP->uiExtLGrp_NameAC, EXTLGRPS.c_str(), EXTLGRPS.length() + 1);
-
-#endif
-		if (redResultStr.compare(arbOutP->redExAc) !=0 ||
-			greenResultStr.compare(arbOutP->greenExAc) != 0 ||
-			blueResultStr.compare(arbOutP->blueExAc) != 0 ||
-			alphaResultStr.compare(arbOutP->alphaExAc) != 0) {
-			arbOutP->ExprResetB = true;
-		}
-		else { arbOutP->ExprResetB = false; }
         arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
+        //AEGP SETSTREAMVALUE TO ARB
         ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
         PF_UNLOCK_HANDLE(arbOutH);
 
