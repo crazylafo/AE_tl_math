@@ -373,10 +373,8 @@ Arb_Scan(
          PF_ArbitraryH		*arbPH);
 
 
-void
-copyChar (char *charDest, std::string strSource);
-std::string
-strCopyAndReplace(std::string str,
+std::string compile_success = "compiled successfully";
+std::string strCopyAndReplace(std::string str,
                 const std::string& oldStr,
                   const std::string& newStr);
 PF_Boolean

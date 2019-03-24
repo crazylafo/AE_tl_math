@@ -62,14 +62,14 @@ static std::string evalMathExprStr (std::string redResultStr, std::string greenR
         errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
     }
     if (!returnExprErrB) {
-        errReturn = "compiled successfully";
+        errReturn = compile_success;
     }
     return errReturn;
 }
 
 
 static void arbToJson (m_ArbData        *arbInP,
-                       nlohmann::json& Jsondata )
+                       nlohmann::json& Jsondata)
 {
     std::string inputName;
     std::string inputDescription;
@@ -189,7 +189,8 @@ static void arbToJson (m_ArbData        *arbInP,
 }
 
 static void jsonStrToArb (std::string resultStr,
-                         m_ArbData    *arbOutP)
+                         m_ArbData    *arbOutP,
+						bool hasErrorB)
 {
     nlohmann::json  jresult = nlohmann::json::parse(resultStr);
     bool ParserModeB, SLIDERGRPB, INPONEB, INPTWOB, INPTHREEB, INPFOURB,
@@ -537,6 +538,7 @@ SetupDialog(
 
 	std::string resultStr;
 	bool scriptLoopEvalB = true;
+	bool hasErrorB = false;
 
 	while (scriptLoopEvalB) {
 		std::string jsonDump = "'''";
@@ -623,11 +625,14 @@ SetupDialog(
 
 
 			}
+			if (errReturn != compile_success){
+				hasErrorB = true;
+			}
 		}
 	}
 		AEFX_CLR_STRUCT(arbOutP);
 		arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-        jsonStrToArb (resultStr, arbOutP);
+        jsonStrToArb (resultStr, arbOutP, hasErrorB);
 
         if (std::string(arbOutP->Glsl_FragmentShFlat).compare(std::string(arbInP->Glsl_FragmentShFlat)) !=0)  {
         arbOutP->ShaderResetB = true;

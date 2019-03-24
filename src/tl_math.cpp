@@ -885,23 +885,7 @@ UserChangedParam(
 
 	return err;
 }
-//math parser's functions
-PF_FpShort
-inline parseDrawRect(PF_FpShort xL, PF_FpShort yL, PF_FpShort center_x, PF_FpShort center_y, PF_FpShort lx,PF_FpShort ly)
-{
 
-	if (xL > (center_x - lx) &&
-		xL <(center_x + lx) &&
-		yL >(center_y - ly) &&
-		yL < (center_y + ly))
-	{
-		return 1;
-	}
-
-	else{
-		return 0;
-	}
-}
 void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
 {
     // always restore back AE's own OGL context
@@ -933,7 +917,7 @@ void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
         errReturn = str;
     }
     else {
-        errReturn = "Compiled Successfully";
+        errReturn = compile_success;
     }
     glDeleteShader(fragmentShaderSu);
 }
