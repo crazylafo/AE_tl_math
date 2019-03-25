@@ -189,8 +189,7 @@ static void arbToJson (m_ArbData        *arbInP,
 }
 
 static void jsonStrToArb (std::string resultStr,
-                         m_ArbData    *arbOutP,
-						bool hasErrorB)
+                         m_ArbData    *arbOutP)
 {
     nlohmann::json  jresult = nlohmann::json::parse(resultStr);
     bool ParserModeB, SLIDERGRPB, INPONEB, INPTWOB, INPTHREEB, INPFOURB,
@@ -381,7 +380,31 @@ static void jsonStrToArb (std::string resultStr,
     else { arbOutP->ExprResetB = false; }
 }
 
+static void jsonSendError (std::string  errorMessage,
+                           m_ArbData    *arbOutP){
 
+    if (arbOutP->parserModeB){
+        #ifdef AE_OS_WIN
+        strncpy_s(arbOutP->Glsl_FragmentShAc, glErrorMessageStr.c_str(), glErrorMessageStr.length()+1);
+        #else
+        strncpy(arbOutP->Glsl_FragmentShAc, glErrorMessageStr.c_str(), glErrorMessageStr.length()+1);
+        #endif
+    }else{
+         #ifdef AE_OS_WIN
+         strncpy_s( arbOutP->alphaExAc,  exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+         strncpy_s(arbOutP->redExAc,  exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+         strncpy_s(arbOutP->greenExAc,  exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+         strncpy_s(arbOutP->blueExAc,    exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+        #else
+        strncpy( arbOutP->alphaExAc,  exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+        strncpy(arbOutP->redExAc,  exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+        strncpy(arbOutP->greenExAc,  exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+        strncpy(arbOutP->blueExAc,    exprErrorMessageStr.c_str(), exprErrorMessageStr.length()+1);
+
+        #endif
+    }
+
+}
 
 //fast copy/find/replace all method
 std::string strCopyAndReplace(std::string str,
@@ -539,6 +562,7 @@ SetupDialog(
 	std::string resultStr;
 	bool scriptLoopEvalB = true;
 	bool hasErrorB = false;
+    std::string errReturn = "NONE";
 
 	while (scriptLoopEvalB) {
 		std::string jsonDump = "'''";
@@ -569,7 +593,7 @@ SetupDialog(
 			scriptLoopEvalB = false;
 		}
 		else {
-			std::string errReturn = "NONE";
+
 			std::string glslEvalExpr = jeval["/glslExpr"_json_pointer];
 			bool ParserModeB = jeval["/parserModeB"_json_pointer];
 			std::string redResultStr = jeval["/redExpr"_json_pointer];
@@ -627,12 +651,21 @@ SetupDialog(
 			}
 			if (errReturn != compile_success){
 				hasErrorB = true;
-			}
+            }else{
+                hasErrorB = false;
+            }
 		}
 	}
 		AEFX_CLR_STRUCT(arbOutP);
 		arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-        jsonStrToArb (resultStr, arbOutP, hasErrorB);
+        jsonStrToArb (resultStr, arbOutP);
+    if (hasErrorB){
+        jsonSendError (errReturn,arbOutP);
+        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+                                              errReturn.c_str());
+
+        }
+
 
         if (std::string(arbOutP->Glsl_FragmentShFlat).compare(std::string(arbInP->Glsl_FragmentShFlat)) !=0)  {
         arbOutP->ShaderResetB = true;
