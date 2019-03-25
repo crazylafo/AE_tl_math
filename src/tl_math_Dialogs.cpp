@@ -561,7 +561,6 @@ SetupDialog(
 
 	std::string resultStr;
 	bool scriptLoopEvalB = true;
-	bool hasErrorB = false;
     std::string errReturn = "NONE";
 
 	while (scriptLoopEvalB) {
@@ -589,77 +588,73 @@ SetupDialog(
 		ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 		nlohmann::json jeval = nlohmann::json::parse(resultStr);
 		bool evalB = jeval["/evalB"_json_pointer];
-		if (evalB == false) {
-			scriptLoopEvalB = false;
+		bool ParserModeB = jeval["/parserModeB"_json_pointer];
+
+		std::string glslEvalExpr = jeval["/glslExpr"_json_pointer];	
+		std::string redResultStr = jeval["/redExpr"_json_pointer];
+		std::string greenResultStr = jeval["/greenExpr"_json_pointer];
+		std::string blueResultStr = jeval["/blueExpr"_json_pointer];
+		std::string alphaResultStr = jeval["/alphaExpr"_json_pointer];
+
+
+		if (ParserModeB == true) {
+				
+			strReplace(glslEvalExpr, "\t", "    ");
+			strReplace(glslEvalExpr, "\"", " '");
+			evalFragShader(glslEvalExpr, errReturn);
 		}
 		else {
 
-			std::string glslEvalExpr = jeval["/glslExpr"_json_pointer];
-			bool ParserModeB = jeval["/parserModeB"_json_pointer];
-			std::string redResultStr = jeval["/redExpr"_json_pointer];
-			std::string greenResultStr = jeval["/greenExpr"_json_pointer];
-			std::string blueResultStr = jeval["/blueExpr"_json_pointer];
-			std::string alphaResultStr = jeval["/alphaExpr"_json_pointer];
+			ExprtkCorrectorStr(redResultStr);
+			ExprtkCorrectorStr(greenResultStr);
+			ExprtkCorrectorStr(blueResultStr);
+			ExprtkCorrectorStr(alphaResultStr);
 
-
-			if (ParserModeB == true) {
-				
-				strReplace(glslEvalExpr, "\t", "    ");
-				strReplace(glslEvalExpr, "\"", " '");
-				evalFragShader(glslEvalExpr, errReturn);
-				strReplace(errReturn, "\n", "\\n");
-				strReplace(glslEvalExpr, "\n", "\\n");
-                
+            errReturn= evalMathExprStr (redResultStr,greenResultStr,blueResultStr,alphaResultStr);
+		}
+		if (evalB == false) {
+			
+			jToJs["glslExpr"] = glslEvalExpr;
+			jToJs["parserModeB"] = ParserModeB;
+			jToJs["redExpr"] = redResultStr;
+			jToJs["greenExpr"] = greenResultStr;
+			jToJs["blueExpr"] = blueResultStr;
+			jToJs["alphaExpr"] = alphaResultStr;
+			if (ParserModeB) {
 				jToJs["evalglslExp"] = errReturn;
-				jToJs["glslExpr"] = glslEvalExpr;
-				jToJs["parserModeB"] = ParserModeB;
-
-                strReplace(redResultStr, "\n", "\\n");
-                strReplace(greenResultStr, "\n", "\\n");
-                strReplace(blueResultStr, "\n", "\\n");
-                strReplace(alphaResultStr, "\n", "\\n");
-                jToJs["redExpr"] = redResultStr;
-                jToJs["greenExpr"] = greenResultStr;
-                jToJs["blueExpr"] = blueResultStr;
-                jToJs["alphaExpr"] = alphaResultStr;
-
 			}
 			else {
-
-				ExprtkCorrectorStr(redResultStr);
-				ExprtkCorrectorStr(greenResultStr);
-				ExprtkCorrectorStr(blueResultStr);
-				ExprtkCorrectorStr(alphaResultStr);
-
-                errReturn= evalMathExprStr (redResultStr,greenResultStr,blueResultStr,alphaResultStr);
-
-				strReplace(redResultStr, "\n", "\\n");
-				strReplace(greenResultStr, "\n", "\\n");
-				strReplace(blueResultStr, "\n", "\\n");
-				strReplace(alphaResultStr, "\n", "\\n");
-				strReplace(errReturn, "\n", "\\n");
-				strReplace(glslEvalExpr, "\n", "\\n");
-				jToJs["glslExpr"] = glslEvalExpr;
-				jToJs["parserModeB"] = ParserModeB;
-				jToJs["redExpr"] = redResultStr;
-				jToJs["greenExpr"] = greenResultStr;
-				jToJs["blueExpr"] = blueResultStr;
-				jToJs["alphaExpr"] = alphaResultStr;
 				jToJs["evalmathExp"] = errReturn;
-
-
 			}
-			if (errReturn != compile_success){
-				hasErrorB = true;
-            }else{
-                hasErrorB = false;
-            }
+			
+			
+			scriptLoopEvalB = false;
+		}
+		else {
+			strReplace(redResultStr, "\n", "\\n");
+			strReplace(greenResultStr, "\n", "\\n");
+			strReplace(blueResultStr, "\n", "\\n");
+			strReplace(alphaResultStr, "\n", "\\n");
+			strReplace(errReturn, "\n", "\\n");
+			strReplace(glslEvalExpr, "\n", "\\n");
+			jToJs["glslExpr"] = glslEvalExpr;
+			jToJs["parserModeB"] = ParserModeB;
+			jToJs["redExpr"] = redResultStr;
+			jToJs["greenExpr"] = greenResultStr;
+			jToJs["blueExpr"] = blueResultStr;
+			jToJs["alphaExpr"] = alphaResultStr;
+			if (ParserModeB) {
+				jToJs["evalglslExp"] = errReturn;
+			}
+			else {
+				jToJs["evalmathExp"] = errReturn;
+			}
 		}
 	}
 		AEFX_CLR_STRUCT(arbOutP);
 		arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         jsonStrToArb (resultStr, arbOutP);
-    if (hasErrorB){
+    if (errReturn != compile_success){
         jsonSendError (errReturn,arbOutP);
         suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
                                               errReturn.c_str());

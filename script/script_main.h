@@ -447,9 +447,13 @@ w.grp.tab.expr.btnGrp.exprEvalbtn.onClick = function(){
     }
 
 w.grp.tab.glsl.btnGrp.fragShShpwBtn.onClick = function(){
-	var floatbox = new Window('dialog', 'shader',undefined,{resizeable:true} ); 
-	floatbox.txt = floatbox.add('edittext', undefined, updateNumOfLines(w.grp.tab.glsl.fragSh.fragShet.text), {multiline:true, readonly:true} )
-	floatbox.txt.maximumSize.height = floatbox.maximumSize.height*0.8;
+	var floatbox = new Window('dialog', 'shader',undefined,{resizeable:true} );
+    floatbox.readGrp = floatbox.add ('group');
+	floatbox.readGrp.orientation = 'column';
+    floatbox.readGrp.alignment = ['fill', 'center'];
+	floatbox.readGrp.alignChildren = ['fill', 'fill'];
+	floatbox.readGrp.txt = floatbox.readGrp.add('edittext', undefined, updateNumOfLines(w.grp.tab.glsl.fragSh.fragShet.text), {multiline:true, readonly:true} )
+	floatbox.readGrp.txt.maximumSize.height = floatbox.readGrp.maximumSize.height*0.8;
 	floatbox.onResizing = w.onResize = function(){this.layout.resize();}
     floatbox.show();
     }

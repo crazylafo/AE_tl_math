@@ -373,7 +373,7 @@ Arb_Scan(
          PF_ArbitraryH		*arbPH);
 
 
-std::string compile_success = "compiled successfully";
+static std::string compile_success = "compiled successfully";
 std::string strCopyAndReplace(std::string str,
                 const std::string& oldStr,
                   const std::string& newStr);
