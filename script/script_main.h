@@ -6,8 +6,7 @@ std::string script_main_functions = R"=====(
 //
 
 
-function parseBoolToInt (bin){ 
-alert (bin)
+function parseBoolToInt (bin){
 if (bin === 'false'|| bin === 'FALSE'  ){return 0}
 else {return 1}
 }
@@ -15,7 +14,7 @@ function parseIntToBool (intvar){
 if (intvar == 0){return false}
 else {return true}
 }
-function analyseJson (testObj){
+function analyseJson (testObj, pluginVersion){
 	ExprObj = {};
 	try{
 		if (testObj.effectName === "tlMath" && testObj.minimalPluginVersion <=pluginVersion){
@@ -24,7 +23,7 @@ function analyseJson (testObj){
 			ExprObj.parserModeB  = parseBoolToInt (testObj.parserModeB);
 			ExprObj.category = testObj.category;
 			if (testObj.glslExpr){ExprObj.glslExpr = testObj.glslExpr;}
-			if (testObj.evalglslExp){ExprObj.evalglslExp = testObj.evalglslExp}
+			if (testObj.evalglslExp){ExprObj.evalglslExp = testObj.evalgslExp}
 			else {ExprObj.evalglslExp = 'NONE'}
 			if (testObj.evalmathExp){ExprObj.evalmathExp = testObj.evalmathExp}
 			else {ExprObj.evalmathExp = 'NONE'}
@@ -58,14 +57,15 @@ function analyseJson (testObj){
 			if (testObj.uiColor2Name){ExprObj.uiColor2Name= testObj.uiColor2Name}
 			if (testObj.extLGrpVisible){ExprObj.extLGrpVisible= testObj.extLGrpVisible}
 			if (testObj.extLGrpName){ExprObj.extLGrpName= testObj.extLGrpName}
-			ExprObj.error       = "none";
+			ExprObj.error = "none";
 			}
 		else {
 			alert ("You must use plugin version "+ testObj.minimalPluginVersion+ " or higher");
-			ExprObj.error = "err";
+            ExprObj.error = "error : can't read json file";
 			}
 	}catch (e) {
-		ExprObj.error = "err";
+        alert (e);
+		ExprObj.error = "error : can't read json file";
 		}
 	return ExprObj;
 }
@@ -155,7 +155,7 @@ function saveAsJson(exprCl, pluginVersion){
     var presetFile =File.saveDialog('save your preset as a json');
     if (presetFile && presetFile.open('w')){
         presetFile.encoding ='UTF-8';
-        presetFile.write(JSON.stringify(ExprObj, undefined, '\\r\\n'));
+        presetFile.write(JSON.stringify(ExprObj, undefined, '\r\n'));
         presetFile.close();
     }
 }
@@ -167,7 +167,7 @@ function readJson(pluginVersion){
         loadFile.encoding ='UTF-8';
         var jsonFile = loadFile.read();
 		var testObj = JSON.parse(jsonFile);
-		ExprObj = analyseJson (testObj);
+		ExprObj = analyseJson (testObj, pluginVersion);
         loadFile.close();
         }
     return ExprObj;
@@ -390,43 +390,52 @@ w.grp.parserModeB.ddl.onChange = function (){
 	}
 w.grp.btnGrp.loadBtn.onClick = function (){
     var exprObj = readJson(pluginVersion);
-    if (exprObj.error === "none"){
-		w.grp.parserModeB.ddl.selection =  parseInt(exprObj.parserModeB); 
-		w.grp.tab.glsl.fragSh.fragShet.text = exprObj.glslExpr;
-        w.grp.tab.expr.redC.redet.text      = exprObj.redExpr;
-        w.grp.tab.expr.greenC.greenet.text  = exprObj.greenExpr;
-        w.grp.tab.expr.blueC.blueet.text    = exprObj.blueExpr;
-        w.grp.tab.expr.alphaC.alphaet.text  =exprObj.alphaExpr;
-        w.grp.PresetN.name.text= exprObj.presetName; 
-		w.grp.tab.paramUI.param.paramslider.grpName.cbvisible= exprObj.uiSliderGrpVisible;
-		w.grp.tab.paramUI.param.paramslider.grpName.editNameet.text= exprObj.uiSliderGrpName;
-		w.grp.tab.paramUI.param.paramslider.paramSlider1.cbvisible.value= exprObj.uiSlider1Visible; 
-		w.grp.tab.paramUI.param.paramslider.paramSlider1.editNameet.text = exprObj.uiSlider1Name; 
-		w.grp.tab.paramUI.param.paramslider.paramSlider2.cbvisible.value = exprObj.uiSlider2Visible; 
-		w.grp.tab.paramUI.param.paramslider.paramSlider2.editNameet.text = exprObj.uiSlider2Name; 
-		w.grp.tab.paramUI.param.paramslider.paramSlider3.cbvisible.value = exprObj.uiSlider3Visible; 
-		w.grp.tab.paramUI.param.paramslider.paramSlider3.editNameet.text = exprObj.uiSlider3Name; 
-		w.grp.tab.paramUI.param.paramslider.paramSlider4.cbvisible.value = exprObj.uiSlider4Visible; 
-		w.grp.tab.paramUI.param.paramslider.paramSlider4.editNameet.text = exprObj.uiSlider4Name; 
-		w.grp.tab.paramUI.param.parampoint.grpName.cbvisible.value = exprObj.uiPointGrpVisible; 
-		w.grp.tab.paramUI.param.parampoint.grpName.editNameet.text = exprObj.uiPointGrpName; 
-		w.grp.tab.paramUI.param.parampoint.parampoint1.cbvisible.value = exprObj.uiPoint1Visible; 
-		w.grp.tab.paramUI.param.parampoint.parampoint1.editNameet.text = exprObj.uiPoint1Name; 
-		w.grp.tab.paramUI.param.parampoint.parampoint2.cbvisible.value = exprObj.uiPoint2Visible; 
-		w.grp.tab.paramUI.param.parampoint.parampoint2.editNameet.text = exprObj.uiPoint2Name; 
-		w.grp.tab.paramUI.param.paramcolor.grpName.cbvisible.value = exprObj.uiColorGrpVisible;  
-		w.grp.tab.paramUI.param.paramcolor.grpName.editNameet.text = exprObj.uiColorGrpName;  
-		w.grp.tab.paramUI.param.paramcolor.paramcolor1.cbvisible.value =exprObj.uiColor1Visible;
-		w.grp.tab.paramUI.param.paramcolor.paramcolor1.editNameet.text=exprObj.uiColor1Name;
-		w.grp.tab.paramUI.param.paramcolor.paramcolor2.cbvisible.value=exprObj.uiColor2Visible;
-	    w.grp.tab.paramUI.param.paramcolor.paramcolor2.editNameet.text =exprObj.uiColor2Name;
-		w.grp.tab.paramUI.param.paramextL.grpName.cbvisible.value = exprObj.extLGrpVisible;
-		w.grp.tab.paramUI.param.paramextL.grpName.editNameet.text = exprObj.extLGrpName;
-        w.grp.tab.paramUI.descriptionGrp.description.text   = exprObj.description; 
-		}
-    else { 
-        alert (exprObj.error);
-		}
+    try{
+        if (exprObj.error === "none"){
+            if (exprObj.parserModeB) {w.grp.parserModeB.ddl.selection =  parseInt(exprObj.parserModeB)};
+            if (exprObj.glslExpr) {w.grp.tab.glsl.fragSh.fragShet.text = exprObj.glslExpr};
+            if (exprObj.redExpr) {w.grp.tab.expr.redC.redet.text      = exprObj.redExpr};
+            if (exprObj.greenExpr) {w.grp.tab.expr.greenC.greenet.text  = exprObj.greenExpr};
+            if (exprObj.blueExpr) {w.grp.tab.expr.blueC.blueet.text    = exprObj.blueExpr};
+            if (exprObj.alphaExpr) {w.grp.tab.expr.alphaC.alphaet.text  =exprObj.alphaExpr};
+            if (exprObj.presetName) {w.grp.PresetN.name.text= exprObj.presetName};
+            if (exprObj.uiSliderGrpVisible) {w.grp.tab.paramUI.param.paramslider.grpName.cbvisible= exprObj.uiSliderGrpVisible};
+            if (exprObj.uiSliderGrpName) {w.grp.tab.paramUI.param.paramslider.grpName.editNameet.text= exprObj.uiSliderGrpName};
+            if (exprObj.uiSlider1Visible) {w.grp.tab.paramUI.param.paramslider.paramSlider1.cbvisible.value= exprObj.uiSlider1Visible};
+            if (exprObj.uiSlider1Name) {w.grp.tab.paramUI.param.paramslider.paramSlider1.editNameet.text = exprObj.uiSlider1Name};
+            if (exprObj.uiSlider2Visible) {w.grp.tab.paramUI.param.paramslider.paramSlider2.cbvisible.value = exprObj.uiSlider2Visible};
+            if (exprObj.uiSlider2Name) {w.grp.tab.paramUI.param.paramslider.paramSlider2.editNameet.text = exprObj.uiSlider2Name};
+
+            if (exprObj.uiSlider3Visible) {w.grp.tab.paramUI.param.paramslider.paramSlider3.cbvisible.value = exprObj.uiSlider3Visible};
+            if (exprObj.uiSlider3Name) {w.grp.tab.paramUI.param.paramslider.paramSlider3.editNameet.text = exprObj.uiSlider3Name};
+            if (exprObj.uiSlider4Visible) {w.grp.tab.paramUI.param.paramslider.paramSlider4.cbvisible.value = exprObj.uiSlider4Visible};
+            if (exprObj.uiSlider4Name) {w.grp.tab.paramUI.param.paramslider.paramSlider4.editNameet.text = exprObj.uiSlider4Name};
+            if (exprObj.uiPointGrpVisible) {w.grp.tab.paramUI.param.parampoint.grpName.cbvisible.value = exprObj.uiPointGrpVisible};
+
+            if (exprObj.uiPointGrpName) {w.grp.tab.paramUI.param.parampoint.grpName.editNameet.text = exprObj.uiPointGrpName};
+            if (exprObj.uiPoint1Visible) {w.grp.tab.paramUI.param.parampoint.parampoint1.cbvisible.value = exprObj.uiPoint1Visible};
+            if (exprObj.uiPoint1Name) {w.grp.tab.paramUI.param.parampoint.parampoint1.editNameet.text = exprObj.uiPoint1Name};
+            if (exprObj.uiPoint2Visible) {w.grp.tab.paramUI.param.parampoint.parampoint2.cbvisible.value = exprObj.uiPoint2Visible};
+            if (exprObj.uiPoint2Name) {w.grp.tab.paramUI.param.parampoint.parampoint2.editNameet.text = exprObj.uiPoint2Name};
+            if (exprObj.uiColorGrpVisible) {w.grp.tab.paramUI.param.paramcolor.grpName.cbvisible.value = exprObj.uiColorGrpVisible};
+            if (exprObj.uiColorGrpName) {w.grp.tab.paramUI.param.paramcolor.grpName.editNameet.text = exprObj.uiColorGrpName};
+            if (exprObj.uiColor1Visible) {w.grp.tab.paramUI.param.paramcolor.paramcolor1.cbvisible.value =exprObj.uiColor1Visible};
+            if (exprObj.uiColor1Name) {w.grp.tab.paramUI.param.paramcolor.paramcolor1.editNameet.text=exprObj.uiColor1Name};
+            if (exprObj.uiColor2Visible) {w.grp.tab.paramUI.param.paramcolor.paramcolor2.cbvisible.value=exprObj.uiColor2Visible};
+            if (exprObj.uiColor2Name) {w.grp.tab.paramUI.param.paramcolor.paramcolor2.editNameet.text =exprObj.uiColor2Name};
+            if (exprObj.extLGrpVisible) {w.grp.tab.paramUI.param.paramextL.grpName.cbvisible.value = exprObj.extLGrpVisible};
+            if (exprObj.extLGrpName) {w.grp.tab.paramUI.param.paramextL.grpName.editNameet.text = exprObj.extLGrpName};
+            if (exprObj.description) {w.grp.tab.paramUI.descriptionGrp.description.text   = exprObj.description};
+        }
+        else {
+            alert (exprObj.error);
+        }
+    }
+    catch(e){
+        alert (e);
+        }
+
+
     }
 
 w.grp.btnGrp.saveBtn.onClick = function (){

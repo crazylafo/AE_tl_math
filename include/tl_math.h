@@ -73,7 +73,7 @@ using namespace gl33core;
 #define	MINOR_VERSION	1
 #define	BUG_VERSION		4
 #define	STAGE_VERSION	PF_Stage_ALPHA
-#define	BUILD_VERSION	4
+#define	BUILD_VERSION	5
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
