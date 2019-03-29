@@ -19,7 +19,32 @@ In math expression mode, whatever your Color Space, the expected values are betw
 
 # some exemples.
 Most of theme are based on www.shadertoy.com and wwww.glslsandbox.com. they are aivable in the demo project
-![](https://github.com/crazylafo/AE_tl_math/tree/master/demo/demo_images/defocus.gif)
+
+![Imgur Image](./demo/demo_images/Defocus.gif)
+![Imgur Image](./demo/demo_images/Engrenage.gif)
+![Imgur Image](./demo/demo_images/WTF_organic.gif)
+![Imgur Image](./demo/demo_images/neural_universe.gif)
+![Imgur Image](./demo/demo_images/volume_effect.gif)
+![Imgur Image](./demo/demo_images/neurolines.gif)
+![Imgur Image](./demo/demo_images/clouds.gif)
+![Imgur Image](./demo/demo_images/light_moke.gif)
+![Imgur Image](./demo/demo_images/dogShit.gif)
+![Imgur Image](./demo/demo_images/dithering.gif)
+![Imgur Image](./demo/demo_images/worms.gif)
+![Imgur Image](./demo/demo_images/bokeh_shape.gif)
+![Imgur Image](./demo/demo_images/bricks.gif)
+![Imgur Image](./demo/demo_images/piano_1.gif)
+![Imgur Image](./demo/demo_images/flow.gif)
+![Imgur Image](./demo/demo_images/futurGUI.gif)
+![Imgur Image](./demo/demo_images/futurGUI2_1.gif)
+![Imgur Image](./demo/demo_images/GLITCH.gif)
+![Imgur Image](./demo/demo_images/lines.gif)
+![Imgur Image](./demo/demo_images/particules_1.gif)
+![Imgur Image](./demo/demo_images/particules_2.gif)
+![Imgur Image](./demo/demo_images/sky_color.gif)
+
+
+      
 
 Verion note:
 # Alpha 05 (v 1.14)
