@@ -17,8 +17,9 @@ An After Effect plugin project.
 The user can write math expression for each pixels and by channels (RGBA) or GLSL Shaders.
 In math expression mode, whatever your Color Space, the expected values are between 0 and 1.
 
-# some exemples. Most of theme are based on www.shadertoy.com and wwww.glslsandbox.com. they are aivable in the demo project
-![](/demo/demo_images/defocus.gif)
+# some exemples.
+Most of theme are based on www.shadertoy.com and wwww.glslsandbox.com. they are aivable in the demo project
+![](https://github.com/crazylafo/AE_tl_math/tree/master/demo/demo_images/defocus.gif)
 
 Verion note:
 # Alpha 05 (v 1.14)
