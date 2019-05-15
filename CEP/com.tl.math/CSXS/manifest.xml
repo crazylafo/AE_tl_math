@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<ExtensionManifest Version="4.0" ExtensionBundleId="com.tl.Math"  ExtensionBundleVersion="1.5.0"
+		ExtensionBundleName="tl Math" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ExtensionList>
+		<Extension Id="com.tl.Math.extension1" Version="1.0" />
+	</ExtensionList>
+	<ExecutionEnvironment>
+		<HostList>
+			<Host Name="AEFT" Version="[13.0,99.9]" />
+		</HostList>
+		<LocaleList>
+			<Locale Code="All" />
+		</LocaleList>
+		<RequiredRuntimeList>
+			<RequiredRuntime Name="CSXS" Version="5.0" />
+		</RequiredRuntimeList>
+	</ExecutionEnvironment>
+    
+	<DispatchInfoList>
+		<Extension Id="com.tl.Math.extension1">
+			<DispatchInfo >
+				<Resources>
+                    <MainPath>./index.html</MainPath>
+                    <ScriptPath>./jsx/tl_Math_MainScript.jsx</ScriptPath>
+				</Resources>
+				<Lifecycle>
+					<AutoVisible>true</AutoVisible>
+				</Lifecycle>
+				<UI>
+					<Type>Panel</Type>
+					<Menu>tl Math Setup</Menu>
+					<Geometry>
+						<Size>
+							<Height>500</Height>
+							<Width>500</Width>
+						</Size>
+						<MaxSize>
+							<Height>2000</Height>
+							<Width>2000</Width>
+						</MaxSize>
+						<MinSize>
+							<Height>100</Height>
+							<Width>250</Width>
+						</MinSize>
+					</Geometry>
+				</UI>
+			</DispatchInfo>
+		</Extension>
+	</DispatchInfoList>
+</ExtensionManifest>

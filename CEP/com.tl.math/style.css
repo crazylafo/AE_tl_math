@@ -1,0 +1,81 @@
+
+body {
+overflow: hidden;
+text-align:left;
+}
+
+
+.tab button:hover {
+    background-color: #ddd;
+  }
+  
+  .tab button:active {
+    background-color: #aaa;
+  }
+
+#mainToolbar{
+    margin: 0%;
+    left: 25%;
+    right: 25%;
+
+}
+
+#gl_frag_editor{
+    position: absolute;
+    margin: 10%;
+    top: 20%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#gl_vert_editor{
+    position: absolute;
+    margin: 10%;
+    top: 20%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#gl_geo_editor{
+    position: absolute;
+    margin: 10%;
+    top: 20%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#expr_red_editor{
+    position: absolute;
+    margin: 10%;
+    top: 20%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#expr_green_editor{
+    position: absolute;
+    margin: 10%;
+    top: 20%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#expr_blue_editor{
+    position: absolute;
+    margin: 10%;
+    top: 20%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+#expr_alpha_editor{
+    position: absolute;
+    margin: 10%;
+    top: 20%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}

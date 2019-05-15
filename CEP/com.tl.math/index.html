@@ -1,0 +1,99 @@
+<!doctype html>
+<!--
+/*************************************************************************
+* tl math plugin and CEP
+*thomas laforge  Copyright 2019
+**************************************************************************/
+-->
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<script src="./ext.js"></script>
+	<script src="./lib/CSInterface.js"></script>
+	<script src="./lib/jquery-1.9.1.js"></script>
+	<script src="./lib/Vulcan.js"></script>
+	<script src="./lib/ace_min/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		$(document).ready(function () {
+
+
+			$("#btnApply").on("click", function (e) {
+				var csInterface = new CSInterface();
+				var eventTest = new CSEvent("com.adobe.cep.test", "APPLICATION");
+   				 var obj = new Object();
+   				 obj.a = "a";
+   				 obj.b = "b";
+   				 event.data = obj;
+				csInterface.dispatchEvent(eventTest);	
+				
+			});
+		});
+	</script>
+	<link rel="stylesheet" type="text/css" href="./style.css" media="screen">
+</head>
+
+<body onLoad="onLoaded()">
+		<div id="mainToolbar">
+			<button id="btnApply">Apply</button>
+			<button id="btnCancel">Cancel</button>
+			<button id="btnExport">Export Preset</button>
+			<button id="btnLoad">Load Preset</button>
+			<button id="settingsGUI" style="float:right" >GUI Settings</button>
+		</div>
+
+	<br />
+	<class="GuiText">Coding Langage</class>
+	<select id="langSelec" , onchange= "langSelecFunc()" >
+		<option   value="mExpr" >Math Expression Mode</option>
+		<option  value="GLSL">GLSL Mode</option>
+		</select>
+
+	<br />
+	<div class="tab">
+		<button class="mathGUI" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
+		<button class="mathGUI" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
+		<button class="mathGUI" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
+		<button class="mathGUI" onclick="openEditor(event, 'expr_alpha_tab', 'expr_alpha_editor')">Alpha channel expression</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl_frag_tab', 'gl_frag_editor')" >GLSL Fragment Shader</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl_vert_tab', 'gl_vert_editor')">GLSL Vertex Shader</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl_geo_tab', 'gl_geo_editor')">GLSL Geometry Shader</button>
+	</div>
+		
+	<br />
+	<div id="gl_frag_tab" class="tabEditor">
+		<h3>fragment shader code</h3>
+		<pre id="gl_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
+		</div>
+	<div id="gl_vert_tab" class="tabEditor">	
+		<h3>vertex shader code</h3>
+		<pre id="gl_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
+		</div>
+	<div id="gl_geo_tab" class="tabEditor">
+		<h3>geometry shader code</h3>	
+		<pre id="gl_geo_editor" class="textEditor">//write your Geometry shader code here</pre>
+		</div>
+
+	<div id="expr_red_tab" class="tabEditor">
+		<h3>red expression code</h3>	
+		<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>
+		</div>
+
+	<div id="expr_green_tab" class="tabEditor">
+		<h3>green expression code</h3>	
+		<pre id="expr_green_editor" class="textEditor">//write your green expresion here</pre>
+		</div>
+	
+	<div id="expr_blue_tab" class="tabEditor">
+		<h3>blue expression code</h3>	
+		<pre id="expr_blue_editor" class="textEditor">//write your blue expression here</pre>
+		</div>
+
+	<div id="expr_alpha_tab" class="tabEditor">
+		<h3>alpha expression code</h3>	
+		<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
+		</div>
+
+</body>
+
+</html>
