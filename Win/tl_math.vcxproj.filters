@@ -133,9 +133,6 @@
     <ClInclude Include="..\script\json_to_js.h">
       <Filter>script</Filter>
     </ClInclude>
-    <ClInclude Include="..\script\script_main.h">
-      <Filter>script</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp">

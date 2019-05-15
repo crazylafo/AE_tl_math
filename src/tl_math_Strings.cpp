@@ -14,6 +14,9 @@ TableString		g_strs[StrID_NUMTYPES] = {
 	StrID_NONE,						    "",
 	StrID_Name,						    "tl Maths",
 	StrID_Description,				    "Execute Math operations in the pixel world.",
+	StrID_CEP_SENDARB_Param_Name,         "send arb",
+	StrID_CEP_GETARB_Param_Name,         "get arb",
+	StrID_CEP_GETEVAL_Param_Name,       "get gl eval",
 	STR_ID_BUTTON_SETUP_Param_Name,     "SETUP",
     StrID_TOPIC_SLIDER_Param_Name,      "Variables",
     StrID_INPUTONE_Param_Name,          "variable 1",
@@ -30,6 +33,8 @@ TableString		g_strs[StrID_NUMTYPES] = {
     StrID_LAYER_ONE_Param_Name,         "Layer input",
     StrID_TOFF_ONE_Param_Name,          "Frames Offset",
     StrID_POFF_ONE_Param_Name,          "Shift Center to",
+
+
 };
 
 

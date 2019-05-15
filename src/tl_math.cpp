@@ -521,6 +521,15 @@ ParamsSetup (
 	PF_Err		err		= PF_Err_NONE;
 	PF_ParamDef	def;
 
+
+	// INVISIBLE PARAM TO EXCHANGE WITH CEP
+	PF_ADD_CHECKBOXX(STR(StrID_CEP_SENDARB_Param_Name), FALSE, 0, MATH_CEP_SEND_ARB_DATA_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_CHECKBOXX(STR(StrID_CEP_GETARB_Param_Name), FALSE, 0, MATH_CEP_GET_ARB_DATA_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_CHECKBOXX(STR(StrID_CEP_GETEVAL_Param_Name), FALSE, 0, MATH_CEP_GET_EVAL_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+
 	PF_ADD_BUTTON(STR(STR_ID_BUTTON_SETUP_Param_Name),
 				  STR(STR_ID_BUTTON_SETUP_Param_Name),
 				  0,
@@ -533,10 +542,10 @@ ParamsSetup (
                          &def.u.arb_d.dephault));
     
     
-    PF_ADD_ARBITRARY2(	"preset Name",
-                      10,
-                      10,
-                      PF_ParamFlag_SUPERVISE| PF_ParamFlag_CANNOT_TIME_VARY,
+	PF_ADD_ARBITRARY2("preset Name",
+		10,
+		10,
+		PF_ParamFlag_SUPERVISE | PF_ParamFlag_CANNOT_TIME_VARY,
                       PF_PUI_TOPIC,
                       def.u.arb_d.dephault,
                       MATH_ARB_DATA,
@@ -665,7 +674,9 @@ ParamsSetup (
     PF_END_TOPIC(MATH_TOPIC_INPUTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
-    
+
+
+
     out_data->num_params = MATH_NUM_PARAMS;
     
 
@@ -879,7 +890,8 @@ UserChangedParam(
 
 	if (which_hitP->param_index == MATH_SETUP)
 	{
-		ERR(SetupDialog(in_data, out_data, params, outputP));
+		ERR(CallCepDialog(in_data, out_data));
+		ERR(SetupDialogSend(in_data, out_data, params, outputP));
 
 	}
 
@@ -1354,8 +1366,7 @@ ExprRender( PF_OutData     *out_data,
 
 
 static PF_Err
-PreRender(
-          PF_InData                *in_data,
+PreRender(PF_InData                *in_data,
           PF_OutData                *out_data,
           PF_PreRenderExtra        *extraP)
 {

@@ -9,6 +9,9 @@
 
 
 
+
+
+
 //detect if a string has a specified char
 static PF_Boolean
 hasString(std::string str, std::string expr)
@@ -21,6 +24,76 @@ hasString(std::string str, std::string expr)
     {
         return false;
     }
+
+}
+
+static PF_Err
+GetLayerData(PF_InData     *in_data,
+			PF_OutData     *out_data,
+				A_long *compId,
+				 A_long *layerIndex,
+				A_long *effectIndex)
+{
+	PF_Err				err = PF_Err_NONE, err2 = PF_Err_NONE;
+	AEGP_LayerH        layerH;
+	AEGP_CompH        compH;
+	AEGP_ItemH      itemH;
+	AEGP_StreamRefH streamH;
+	AEGP_EffectRefH effectH;
+	AEGP_StreamRefH parentStreamH;
+	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+
+	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
+		kAEGPPFInterfaceSuite,
+		kAEGPPFInterfaceSuiteVersion1,
+		out_data);
+	AEFX_SuiteScoper<AEGP_LayerSuite8> layerSuite = AEFX_SuiteScoper<AEGP_LayerSuite8>(in_data,
+		kAEGPLayerSuite,
+		kAEGPLayerSuiteVersion8,
+		out_data);
+	AEFX_SuiteScoper<AEGP_CompSuite10> compSuite = AEFX_SuiteScoper<AEGP_CompSuite10>(in_data,
+		kAEGPCompSuite,
+		kAEGPCompSuiteVersion10,
+		out_data);
+	AEFX_SuiteScoper<AEGP_ItemSuite8> itemSuite = AEFX_SuiteScoper<AEGP_ItemSuite8>(in_data,
+		kAEGPItemSuite,
+		kAEGPItemSuiteVersion8,
+		out_data);
+
+	AEFX_SuiteScoper<AEGP_StreamSuite4> streamSuite = AEFX_SuiteScoper<AEGP_StreamSuite4>(in_data,
+		kAEGPStreamSuite,
+		kAEGPStreamSuiteVersion4,
+		out_data);
+	AEFX_SuiteScoper<AEGP_DynamicStreamSuite4> DynamicStreamSuite = AEFX_SuiteScoper<AEGP_DynamicStreamSuite4>(in_data,
+		kAEGPDynamicStreamSuite,
+		kAEGPDynamicStreamSuiteVersion4,
+		out_data);
+	AEFX_SuiteScoper<AEGP_EffectSuite4> EffectSuite = AEFX_SuiteScoper<AEGP_EffectSuite4>(in_data,
+		kAEGPEffectSuite,
+		kAEGPEffectSuiteVersion4,
+		out_data);
+
+
+	ERR(PFInterfaceSuite->AEGP_GetEffectLayer(in_data->effect_ref, &layerH));
+	ERR(PFInterfaceSuite->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &effectH));
+
+	ERR(streamSuite->AEGP_GetNewEffectStreamByIndex(globP->my_id, effectH,1, &streamH)); //get access to a stream of the effect
+
+	ERR(DynamicStreamSuite->AEGP_GetNewParentStreamRef(globP->my_id, streamH, &parentStreamH));
+
+	ERR(DynamicStreamSuite->AEGP_GetStreamIndexInParent(parentStreamH, effectIndex));
+
+
+	ERR2(layerSuite->AEGP_GetLayerParentComp(layerH, &compH));
+	ERR2(layerSuite->AEGP_GetLayerIndex(layerH, layerIndex)); //layer index
+	ERR2(compSuite->AEGP_GetItemFromComp(compH, &itemH));
+	ERR2(itemSuite->AEGP_GetItemID(itemH, compId)); //compId
+
+	if (streamH) (streamSuite->AEGP_DisposeStream(streamH));
+	if(effectH) (EffectSuite->AEGP_DisposeEffect(effectH));
+	if(parentStreamH) (streamSuite->AEGP_DisposeStream(parentStreamH));
+
+	return err;
 
 }
 
@@ -73,7 +146,15 @@ static void arbToJson (m_ArbData        *arbInP,
 {
     std::string inputName;
     std::string inputDescription;
-    std::string inputGlsl;
+
+    std::string inputGl_FragSh;
+    std::string inputGl_VertexSh;
+    std::string inputGl_GeomSh;
+
+    std::string inputGl_evalSh;
+     std::string evalExp;
+
+
     std::string inputRedS;
     std::string inputGreenS;
     std::string inputBlueS;
@@ -111,7 +192,7 @@ static void arbToJson (m_ArbData        *arbInP,
     inputGreenS.append(arbInP->greenExAcFlat);
     inputBlueS.append(arbInP->blueExAcFlat);
     inputAlphaS.append(arbInP->alphaExAcFlat);
-    inputGlsl.append(arbInP->Glsl_FragmentShFlat);
+    inputGl_FragSh.append(arbInP->Glsl_FragmentShFlat);
     inputDescription.append(arbInP->descriptionAcFlat);
 
      inputName.append(arbInP->presetNameAc);
@@ -148,10 +229,10 @@ static void arbToJson (m_ArbData        *arbInP,
     strReplace(inputBlueS, "\n", "\\n");
     strReplace(inputAlphaS, "\n", "\\n");
     strReplace(inputDescription, "\n", "\\n");
-    strReplace(inputGlsl, "\n" , "\\n");
-    if (inputGlsl == "fragSh") {
-        inputGlsl = glfrag1str;
-        strReplace(inputGlsl, "\n", "\\n");
+    strReplace(inputGl_FragSh, "\n" , "\\n");
+    if (inputGl_FragSh == "fragSh") {
+        inputGl_FragSh = glfrag1str;
+        strReplace(inputGl_FragSh, "\n", "\\n");
     }
     Jsondata["parserModeB"] = inputParserModeB;
     Jsondata["presetName"] = inputName;
@@ -160,7 +241,9 @@ static void arbToJson (m_ArbData        *arbInP,
     Jsondata["greenExpr"] = inputGreenS;
     Jsondata["blueExpr"] = inputBlueS;
     Jsondata["alphaExpr"] = inputAlphaS;
-    Jsondata["glslExpr"] = inputGlsl;
+    Jsondata["glFragExpr"] = inputGl_FragSh;
+    Jsondata["glVertExpr"] = inputGl_VertexSh;
+    Jsondata["glGeomExpr"] = inputGl_GeomSh;
     Jsondata["uiSliderGrpVisible"] = inputuiSliderGrpVisibleB;
     Jsondata["uiSliderGrpName"] = inputuiSliderGrpNameS;
     Jsondata["uiSlider1Visible"] = inputuiSlider1VisibleB;
@@ -300,6 +383,7 @@ static void jsonStrToArb (std::string resultStr,
 
     //copy to flat ARB (keeping /n and other speical char from js
 #ifdef AE_OS_WIN
+	strncpy_s(arbOutP->arbDataStr, resultStr.c_str(), resultStr.length() + 1);
     strncpy_s( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
     strncpy_s(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
     strncpy_s( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
@@ -308,6 +392,7 @@ static void jsonStrToArb (std::string resultStr,
     strncpy_s(arbOutP->Glsl_VertexShFlat, glvertstr.c_str(), glvertstr.length() + 1);
     strncpy_s( arbOutP->descriptionAcFlat, descriptionStr.c_str(), descriptionStr.length()+1);
 #else
+	strncpy(arbOutP->arbDataStr, resultStr.c_str(), resultStr.length() + 1);
     strncpy( arbOutP->redExAcFlat, redResultStr.c_str(), redResultStr.length()+1);
     strncpy(arbOutP->greenExAcFlat, greenResultStr.c_str(), greenResultStr.length()+1);
     strncpy( arbOutP->blueExAcFlat, blueResultStr.c_str(), blueResultStr.length()+1);
@@ -515,8 +600,124 @@ AEGP_SetParamStreamValue(PF_InData            *in_data,
     return err;
 }
 
+static std::string
+parseLayerDataToJsonStr(A_long compId,
+	A_long layerIndex,
+	A_long effectIndex)
+{
+	nlohmann::json  plugIdObjJson;
+	plugIdObjJson["compId"] = compId;
+	plugIdObjJson["layerIndex"] = (layerIndex + 1); //plugin indexes layers from 0 and script from 1
+	plugIdObjJson["effectIndex"] = (effectIndex + 1);
+
+
+	std::string plugIdObjJsonStr = "'''";
+	plugIdObjJsonStr.append(plugIdObjJson.dump());
+	plugIdObjJsonStr.append("'''");
+	return plugIdObjJsonStr;
+
+}
 PF_Err
-SetupDialog(
+CallCepDialog(PF_InData        *in_data,
+			PF_OutData        *out_data )
+{
+	AEGP_SuiteHandler    suites(in_data->pica_basicP);
+	PF_Err err = PF_Err_NONE;
+
+	AEGP_MemHandle     resultMemH = NULL;
+	A_char *resultAC = NULL;
+	A_char          scriptAC[15000]{ '\0' };
+	my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+
+	A_long compId, layerIndex, effectIndex;
+	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
+	std::string plugIdObjJsonStr = parseLayerDataToJsonStr(compId, layerIndex, effectIndex);
+	std::string script_callMathCEP_to_Execute;
+	AEFX_CLR_STRUCT(script_callMathCEP_to_Execute);
+	script_callMathCEP_to_Execute = script_callMathCEP;
+	//script_callMathCEP_to_Execute.append(script_jsontojs);
+
+	//slit script: first call cep
+	AEFX_CLR_STRUCT(scriptAC);
+	sprintf(scriptAC,
+		script_callMathCEP_to_Execute.c_str(),
+		plugIdObjJsonStr.c_str());
+	
+	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+	AEFX_CLR_STRUCT(resultAC);
+	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+
+	return err;
+}
+PF_Err
+SetupDialogSend(
+                  PF_InData        *in_data,
+                  PF_OutData        *out_data,
+                  PF_ParamDef        *params[],
+                  PF_LayerDef        *output)
+{
+    PF_Err err = PF_Err_NONE;
+    AEGP_SuiteHandler    suites(in_data->pica_basicP);
+    my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+
+    AEGP_MemHandle     resultMemH = NULL;
+    A_char *resultAC = NULL;
+    A_char          scriptAC[70000] { '\0' };
+    std::string Majvers = std::to_string(MAJOR_VERSION);
+    std::string MinVers = std::to_string(MINOR_VERSION);
+    std::string Bugvers = std::to_string(BUG_VERSION);
+
+    //ARB
+    PF_ParamDef arb_param;
+
+    m_ArbData        *arbInP = NULL;
+
+
+    AEFX_CLR_STRUCT(arb_param);
+    ERR(PF_CHECKOUT_PARAM(    in_data,
+                          MATH_ARB_DATA,
+                          in_data->current_time,
+                          in_data->time_step,
+                          in_data->time_scale,
+                          &arb_param));
+    nlohmann::json  jToJs;
+
+    if (!err){
+        AEFX_CLR_STRUCT(arbInP);
+        arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+        if (arbInP){
+            arbToJson (arbInP,jToJs);
+        }
+
+    }
+	A_long compId, layerIndex, effectIndex;
+	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
+    std::string resultStr;
+    std::string errReturn = "NONE";
+
+    std::string jsonDump = "'''";
+    jsonDump.append(jToJs.dump());
+    jsonDump.append("'''");
+
+	//std::string script_to_exe_callMathCEP = script_callMathCEP.append(script_getPluginId);
+	std::string script_to_exe_script_sendToMathCEP = script_sendToMathCEP;
+
+	//sceond open cep if not and send arb data
+	AEFX_CLR_STRUCT(scriptAC);
+	sprintf(scriptAC,
+		script_to_exe_script_sendToMathCEP.c_str(),
+		compId, layerIndex, effectIndex,
+		jsonDump.c_str());
+	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+	AEFX_CLR_STRUCT(resultAC);
+	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+	return err;
+}
+
+PF_Err
+SetupDialogBackup(
           PF_InData        *in_data,
           PF_OutData        *out_data,
           PF_ParamDef        *params[],
@@ -563,18 +764,14 @@ SetupDialog(
 	bool scriptLoopEvalB = true;
     std::string errReturn = "NONE";
 
-	while (scriptLoopEvalB) {
 		std::string jsonDump = "'''";
 		jsonDump.append(jToJs.dump());
 		jsonDump.append("'''");
 
 
 		sprintf(scriptAC,
-            script_ae.c_str(),
-			jsonDump.c_str(),
-			Majvers.c_str(),
-			MinVers.c_str(),
-			Bugvers.c_str());
+             script_sendToMathCEP.c_str(),
+			jsonDump.c_str());
 
 		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 		//AEGP SETSTREAMVALUR TO ARB
@@ -650,7 +847,7 @@ SetupDialog(
 				jToJs["evalmathExp"] = errReturn;
 			}
 		}
-	}
+
 		AEFX_CLR_STRUCT(arbOutP);
 		arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         jsonStrToArb (resultStr, arbOutP);
@@ -670,6 +867,7 @@ SetupDialog(
         //AEGP SETSTREAMVALUE TO ARB
         ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
         PF_UNLOCK_HANDLE(arbOutH);
+		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 
 
     ERR(PF_CHECKIN_PARAM(in_data, &arb_param));

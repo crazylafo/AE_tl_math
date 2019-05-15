@@ -393,7 +393,6 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClInclude Include="..\script\json_to_js.h" />
     <ClInclude Include="..\script\script.h" />
     <ClInclude Include="..\lib\vmath.hpp" />
-    <ClInclude Include="..\script\script_main.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEFX_SuiteHelper.c" />

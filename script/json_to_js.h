@@ -1,5 +1,5 @@
-std::string jsontojs = R"=====(
- //from  Douglas Crockford  
+std::string script_jsontojs = R"=====( 
+//from  Douglas Crockford  
 if (typeof JSON !== "object") {
     JSON = {};
 }

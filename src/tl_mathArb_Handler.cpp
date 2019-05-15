@@ -23,6 +23,8 @@ CreateDefaultArb(
 
             #ifdef AE_OS_WIN
 			#pragma warning (disable : 4305)
+                strncpy_s(arbP->arbDataStr,  "arb_data is here", 4096);
+                strncpy_s(arbP->redExAc, "in_red", 4096);
                 strncpy_s(arbP->redExAc, "in_red", 4096);
                 strncpy_s(arbP->greenExAc, "in_green", 4096);
                 strncpy_s(arbP->blueExAc, "in_blue", 4096);
@@ -55,6 +57,7 @@ CreateDefaultArb(
             
 			#pragma warning (pop)
             #else
+                strncpy(arbP->arbDataStr,  "arb_data is here", 100000);
                 strncpy(arbP->redExAc, "in_red", 4096);
                 strncpy(arbP->greenExAc, "in_green", 4096);
                 strncpy(arbP->blueExAc, "in_blue", 4096);
@@ -222,7 +225,7 @@ Arb_Compare(
 		else {
 			*resultP = PF_ArbCompare_EQUAL;
 
-
+            total_aV.emplace_back (strlen(first_arbP->arbDataStr));
 			total_aV.emplace_back (strlen(first_arbP->redExAc));
 			total_aV.emplace_back (strlen(first_arbP->greenExAc));
 			total_aV.emplace_back (strlen(first_arbP->blueExAc));
@@ -275,7 +278,8 @@ Arb_Compare(
 			total_aV.emplace_back(first_arbP->uiColorOneB );
 			total_aV.emplace_back(first_arbP->uiColorTwoB );
 			total_aV.emplace_back(first_arbP->uiExtLGrpB );
-            
+
+            total_aV.emplace_back (strlen(second_arbP->arbDataStr));
 			total_bV.emplace_back ( strlen(second_arbP->redExAc));
 			total_bV.emplace_back ( strlen(second_arbP->greenExAc));
 			total_bV.emplace_back ( strlen(second_arbP->blueExAc));

@@ -71,13 +71,13 @@ using namespace gl33core;
 
 #define	MAJOR_VERSION	1
 #define	MINOR_VERSION	1
-#define	BUG_VERSION		4
+#define	BUG_VERSION		5
 #define	STAGE_VERSION	PF_Stage_ALPHA
 #define	BUILD_VERSION	5
 
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
-
+	A_char arbDataStr[100000];
     A_char  redExAc[4096];
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
@@ -155,6 +155,9 @@ typedef struct {
 
 enum {
 	MATH_INPUT = 0,
+	MATH_CEP_SEND_ARB_DATA,
+	MATH_CEP_GET_ARB_DATA,
+	MATH_CEP_GET_EVAL,
 	MATH_SETUP,
     MATH_ARB_DATA,
     MATH_TOPIC_SLIDER,
@@ -180,7 +183,10 @@ enum {
 };
 
 enum {
-	MATH_SETUP_DISK_ID = 1,
+	MATH_CEP_SEND_ARB_DATA_DISK_ID =1,
+	MATH_CEP_GET_ARB_DATA_DISK_ID,
+	MATH_CEP_GET_EVAL_DISK_ID,
+	MATH_SETUP_DISK_ID,
 	MATH_ARB_DATA_DISK_ID,
     MATH_TOPIC_SLIDER_DISK_ID,
     uiSliderOne_VAR_DISK_ID,
@@ -405,9 +411,11 @@ LineIteration32Func(void *refconPV,
 					void *refconFlags,
                     void *refconWorld,
 					A_long yL);
-
 PF_Err
-SetupDialog(
+CallCepDialog(PF_InData        *in_data,
+			PF_OutData        *out_data);
+PF_Err
+SetupDialogSend(
           PF_InData        *in_data,
           PF_OutData        *out_data,
           PF_ParamDef        *params[],
