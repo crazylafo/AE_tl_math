@@ -15,37 +15,138 @@
 function onLoaded() {
     var csInterface = new CSInterface();
 	
-    var appName = csInterface.hostEnvironment.appName;
-    
+	var appName = csInterface.hostEnvironment.appName;
+	csInterface.setWindowTitle = "tl Math Setup"
 	loadJSX();
-
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
 	csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, onAppThemeColorChanged);
-
-	csInterface.addEventListener("setupOpeningFromPlugin", function(plugIdObj){
-		var stringifyObj =JSON.stringify(plugIdObj.data);
-		var parseObj = JSON.parse (stringifyObj);
-		var script_sendSignalToPlugin = " function sendSignalToPlugin (plugIdObj){ \r" +
-			"app.project.itemByID("+parseObj.compId+").layer("+parseObj.layerIndex+").effect("+parseObj.effectIndex+").property(1).setValue(1);} \r"+
-			"sendSignalToPlugin ()";
-		csInterface.evalScript(script_sendSignalToPlugin);
-	});
-
-	
-	
-	csInterface.addEventListener("arbSentfromPlugin", function(fromArbEvent) {
-		var script_closeSignalToPlugin = " function closeSignalToPlugin (plugIdObj){ \r" +
-		"app.project.itemByID("+parseObj.compId+").layer("+parseObj.layerIndex+").effect("+parseObj.effectIndex+").property(1).setValue(0);} \r"+
-		"closeSignalToPlugin ()";
-		csInterface. evalScript(script_closeSignalToPlugin);
-		$("#gl_frageditor").text(fromArbEvent.data.glFragExpr.toString());
-	});
-	
 	defaultVal(); //load default ddl val
+
+	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
+
+		$("#gl_frag_editor").text(fromArbEvent.data.gl_expression.gl_frag_sh.toString());
+		$("#gl_vert_editor").text(fromArbEvent.data.gl_expression.gl_vert_sh.toString());
+		$("#gl_geo_editor").text(fromArbEvent.data.gl_expression.gl_geo_sh.toString());
+
+		$("#expr_red_editor").text(fromArbEvent.data.math_expression.redExpr.toString());
+		$("#expr_green_editor").text(fromArbEvent.data.math_expression.greenExpr.toString());
+		$("#expr_blue_editor").text(fromArbEvent.data.math_expression.blueExpr.toString());
+		$("#expr_alpha_editor").text(fromArbEvent.data.math_expression.alphaExpr.toString());
+
+	});
+	
+
 	
 }
+/**
+ * clean json str 
+ * input : str
+ * return str
+ */
+function cleanJsonStr (str){
+	s = s.replace(/\\n/g, "\\n")  
+               .replace(/\\'/g, "\\'")
+               .replace(/\\"/g, '\\"')
+               .replace(/\\&/g, "\\&")
+               .replace(/\\r/g, "\\r")
+               .replace(/\\t/g, "\\t")
+               .replace(/\\b/g, "\\b")
+			   .replace(/\\f/g, "\\f");
 
+    return str;
+}
+function onClickButton(ppid) {
+	var extScript = "$._ext_" + ppid + ".run()";
+	evalScript(extScript);
+}
+
+
+function defaultVal(){
+	document.getElementById("langSelec").onchange();
+	openEditor(event, 'expr_red_tab', 'expr_red_editor');
+	}
+
+function openEditor(evt, tabName, editorName) {
+		// Declare all variables
+		var i, tabEditorList, glslGUILinks;
+
+		// Get all elements with class="tabcontent" and hide them
+		tabEditorList = document.getElementsByClassName("tabEditor");
+		for (i = 0; i < tabEditorList.length; i++) {
+			tabEditorList[i].style.display = "none";
+		}
+
+
+		// Get all elements with class="tablinks" and remove the class "active"
+		glslGUILinks = document.getElementsByClassName("glslGUI");
+		for (i = 0; i < glslGUILinks.length; i++) {
+			glslGUILinks[i].className = glslGUILinks[i].className.replace(" active", "");
+		}
+		// Show the current tab, and add an "active" class to the button that opened the tab
+		document.getElementById(tabName).style.display = "block";
+		
+		if (editorName.indexOf ('gl') != -1){
+			glslEditor(editorName);
+			}
+		else{
+			exprEditor(editorName);
+			}
+		evt.currentTarget.className += " active";
+	} 
+
+function mathGuiModeFunc(){
+		var mathGui = document.getElementsByClassName("mathGUI");
+		 var glslGui = document.getElementsByClassName("glslGUI");
+		for (var i =0; i< mathGui.length; i++){
+				$(mathGui[i]).show();
+			}
+			for (var i =0; i< glslGui.length; i++){
+				$(glslGui[i]).hide();
+			}
+
+	}
+
+function glslGuiModeFunc(){
+		var mathGui = document.getElementsByClassName("mathGUI");
+		 var glslGui = document.getElementsByClassName("glslGUI");
+		for (var i =0; i< mathGui.length; i++){
+				$(mathGui[i]).hide();
+			}
+			for (var i =0; i< glslGui.length; i++){
+				$(glslGui[i]).show();
+			}
+
+	}
+	
+function langSelecFunc() {
+
+		var langSelec = document.getElementById("langSelec").value;
+
+		if (langSelec === "mExpr"){
+			mathGuiModeFunc();
+		  }
+	  else if (langSelec ==="GLSL"){
+			glslGuiModeFunc();
+		  }
+
+	 }
+	
+function defaultModeGui(){ 
+		mathGuiModeFunc();
+	}
+
+function glslEditor(glMode){
+		var editor = ace.edit(glMode);
+		editor.setTheme("ace/theme/textemate");
+		editor.session.setMode("ace/mode/glsl");
+	}
+
+function exprEditor(exprChan){
+		var editor = ace.edit(exprChan);
+		editor.setTheme("ace/theme/textemate");
+		editor.session.setMode("ace/mode/javascript");
+	}
 
 /**
  * Update the theme with the AppSkinInfo retrieved from the host product.
@@ -183,96 +284,7 @@ function evalScript(script, callback) {
     new CSInterface().evalScript(script, callback);
 }
 
-function onClickButton(ppid) {
-	var extScript = "$._ext_" + ppid + ".run()";
-	evalScript(extScript);
-}
 
 
-function defaultVal(){
-	document.getElementById("langSelec").onchange();
-	openEditor(event, 'expr_red_tab', 'expr_red_editor');
-	}
-
-function openEditor(evt, tabName, editorName) {
-		// Declare all variables
-		var i, tabEditorList, glslGUILinks;
-
-		// Get all elements with class="tabcontent" and hide them
-		tabEditorList = document.getElementsByClassName("tabEditor");
-		for (i = 0; i < tabEditorList.length; i++) {
-			tabEditorList[i].style.display = "none";
-		}
-
-
-		// Get all elements with class="tablinks" and remove the class "active"
-		glslGUILinks = document.getElementsByClassName("glslGUI");
-		for (i = 0; i < glslGUILinks.length; i++) {
-			glslGUILinks[i].className = glslGUILinks[i].className.replace(" active", "");
-		}
-		// Show the current tab, and add an "active" class to the button that opened the tab
-		document.getElementById(tabName).style.display = "block";
-		
-		if (editorName.indexOf ('gl') != -1){
-			glslEditor(editorName);
-			}
-		else{
-			exprEditor(editorName);
-			}
-		evt.currentTarget.className += " active";
-	} 
-
-function mathGuiModeFunc(){
-		var mathGui = document.getElementsByClassName("mathGUI");
-		 var glslGui = document.getElementsByClassName("glslGUI");
-		for (var i =0; i< mathGui.length; i++){
-				$(mathGui[i]).show();
-			}
-			for (var i =0; i< glslGui.length; i++){
-				$(glslGui[i]).hide();
-			}
-
-	}
-
-function glslGuiModeFunc(){
-		var mathGui = document.getElementsByClassName("mathGUI");
-		 var glslGui = document.getElementsByClassName("glslGUI");
-		for (var i =0; i< mathGui.length; i++){
-				$(mathGui[i]).hide();
-			}
-			for (var i =0; i< glslGui.length; i++){
-				$(glslGui[i]).show();
-			}
-
-	}
-	
-function langSelecFunc() {
-
-		var langSelec = document.getElementById("langSelec").value;
-
-		if (langSelec === "mExpr"){
-			mathGuiModeFunc();
-		  }
-	  else if (langSelec ==="GLSL"){
-			glslGuiModeFunc();
-		  }
-
-	 }
-	
-function defaultModeGui(){ 
-		mathGuiModeFunc();
-	}
-
-function glslEditor(glMode){
-		var editor = ace.edit(glMode);
-		editor.setTheme("ace/theme/textemate");
-		editor.session.setMode("ace/mode/glsl");
-	}
-
-function exprEditor(exprChan){
-		var editor = ace.edit(exprChan);
-		editor.setTheme("ace/theme/textemate");
-		editor.session.setMode("ace/mode/javascript");
-	}
 
 

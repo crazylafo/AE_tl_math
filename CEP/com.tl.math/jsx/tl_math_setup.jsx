@@ -17,8 +17,6 @@ function isCompActiveItem(){
 }
 
 
-
-
 if ( ! $._ext )
 {
   $._ext = {};

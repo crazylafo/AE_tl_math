@@ -26,6 +26,9 @@
 				</Resources>
 				<Lifecycle>
 					<AutoVisible>true</AutoVisible>
+					<StartOn>
+						<Event>tlmath.setupOpeningFromPlugin</Event>   
+					</StartOn> 
 				</Lifecycle>
 				<UI>
 					<Type>Panel</Type>
