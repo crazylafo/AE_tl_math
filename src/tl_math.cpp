@@ -887,11 +887,15 @@ UserChangedParam(
 	const PF_UserChangedParamExtra	*which_hitP)
 {
 	PF_Err				err = PF_Err_NONE;
+    std::string taskId;
+    AEGP_SuiteHandler    suites(in_data->pica_basicP);
 
 	if (which_hitP->param_index == MATH_SETUP)
 	{
-		ERR(CallCepDialog(in_data, out_data));
-		ERR(SetupDialogSend(in_data, out_data, params, outputP));
+		ERR(CallCepDialog(in_data, out_data, taskId));
+        ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
+		ERR(SetupDialogSend(in_data, out_data, params,taskId, outputP));
+        //ERR(CallCepDeleteTask(in_data, out_data, taskId));
 
 	}
 

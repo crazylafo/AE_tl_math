@@ -1,5 +1,6 @@
 
 #include	"tl_math.h"
+#include    "tl_defaultArb.h"
 
 PF_Err	
 CreateDefaultArb(	
@@ -23,68 +24,11 @@ CreateDefaultArb(
 
             #ifdef AE_OS_WIN
 			#pragma warning (disable : 4305)
-                strncpy_s(arbP->arbDataStr,  "arb_data is here", 4096);
-                strncpy_s(arbP->redExAc, "in_red", 4096);
-                strncpy_s(arbP->redExAc, "in_red", 4096);
-                strncpy_s(arbP->greenExAc, "in_green", 4096);
-                strncpy_s(arbP->blueExAc, "in_blue", 4096);
-                strncpy_s(arbP->alphaExAc, "1", 4096);
-                strncpy_s(arbP->presetNameAc,"Preset Name", 32);
-                strncpy_s(arbP->descriptionAc,"Describe your preset here", 2048);
-                strncpy_s(arbP->Glsl_FragmentShAc, "fragSh", 4096);
-				strncpy_s(arbP->Glsl_VertexShAc, "vertexSh", 4096);
-				strncpy_s(arbP->uiSliderGrp_NameAC, "Slider Group", 32);
-                strncpy_s(arbP->uiSliderOne_NameAC,"variable 1", 32);
-                strncpy_s(arbP->uiSliderTwo_NameAC,"variable 2", 32);
-                strncpy_s(arbP->uiSliderThree_NameAC,"variable 3", 32);
-                strncpy_s(arbP->uiSliderFour_NameAC,"variable 4", 32);
-				strncpy_s(arbP->uiPointGrp_NameAC, "Point Group", 32);
-                strncpy_s(arbP->uiPointOne_NameAC,"Point 1", 32);
-                strncpy_s(arbP->uiPointTwo_NameAC,"Point 2", 32);
-				strncpy_s(arbP->uiColorGrp_NameAC, "Color Group", 32);
-                strncpy_s(arbP->uiColorOne_NameAC,"Color 1", 32);
-                strncpy_s(arbP->uiColorTwo_NameAC,"Color 2", 32);
-				strncpy_s(arbP->uiExtLGrp_NameAC, "external Layer", 32);
-                strncpy_s(arbP->redExAcFlat , "in_red", 4096);
-                strncpy_s(arbP->greenExAcFlat ,"in_green", 4096);
-                strncpy_s(arbP->blueExAcFlat ,"in_blue", 4096);
-                strncpy_s(arbP->alphaExAcFlat , "1", 4096);
-                strncpy_s(arbP->descriptionAcFlat,"Describe your preset here", 2048);
-                strncpy_s(arbP->Glsl_FragmentShFlat, "fragSh", 4096);
-				strncpy_s(arbP->Glsl_VertexShFlat, "vertexSh", 4096);
-
-         
-            
+                strncpy_s(arbP->arbDataStr,  defaultArb.c_str(), 100000);
 			#pragma warning (pop)
             #else
-                strncpy(arbP->arbDataStr,  "arb_data is here", 100000);
-                strncpy(arbP->redExAc, "in_red", 4096);
-                strncpy(arbP->greenExAc, "in_green", 4096);
-                strncpy(arbP->blueExAc, "in_blue", 4096);
-                strncpy(arbP->alphaExAc, "1", 4096);
-                strncpy(arbP->presetNameAc,"Preset Name", 32);
-                strncpy(arbP->descriptionAc,"Describe your preset here", 2048);
-                strncpy(arbP->Glsl_FragmentShAc, "fragSh", 4096);
-				strncpy(arbP->Glsl_VertexShAc, "vertexSh", 4096);
-				strncpy(arbP->uiSliderGrp_NameAC, "Slider Group", 32);
-                strncpy(arbP->uiSliderOne_NameAC,"variable 1", 32);
-                strncpy(arbP->uiSliderTwo_NameAC,"variable 2", 32);
-                strncpy(arbP->uiSliderThree_NameAC,"variable 3", 32);
-                strncpy(arbP->uiSliderFour_NameAC,"variable 4", 32);
-				strncpy(arbP->uiPointGrp_NameAC, "Point Group", 32);
-                strncpy(arbP->uiPointOne_NameAC,"Point 1", 32);
-                strncpy(arbP->uiPointTwo_NameAC,"Point 2", 32);
-				strncpy(arbP->uiColorGrp_NameAC, "Color Group", 32);
-                strncpy(arbP->uiColorOne_NameAC,"Color 1", 32);
-                strncpy(arbP->uiColorTwo_NameAC,"Color 2", 32);
-				strncpy(arbP->uiExtLGrp_NameAC, "external Layer", 32);
-                strncpy(arbP->redExAcFlat , "in_red", 4096);
-                strncpy(arbP->greenExAcFlat ,"in_green", 4096);
-                strncpy(arbP->blueExAcFlat ,"in_blue", 4096);
-                strncpy(arbP->alphaExAcFlat , "1", 4096);
-                strncpy(arbP->descriptionAcFlat,"Describe your preset here", 2048);
-                strncpy(arbP->Glsl_FragmentShFlat, "fragSh", 4096);
-				strncpy(arbP->Glsl_VertexShFlat, "vertexSh", 4096);
+                strncpy(arbP->arbDataStr,  defaultArb.c_str(), 100000);
+
             #endif
                 arbP->parserModeB = false;
 				PF_Boolean ShaderResetB = false;

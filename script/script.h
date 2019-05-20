@@ -7,52 +7,37 @@ std::string script_callMathCEP = R"=====(
     //  tlMath
     //
     //
-	function callCEP (){
-		var taskToExecute ="""function evtCepCall (){\r
-				var externalObjectName = "PlugPlugExternalObject"; \r
-				var csxslib = new ExternalObject( "lib:" + externalObjectName);\r
-				var str = %s;
-				var mathEventCEPCall = new CSXSEvent();\r
-				mathEventCEPCall.type="setupOpeningFromPlugin";\r
-				mathEventCEPCall.data=str;\r
-				mathEventCEPCall.dispatch();\r
-				}\r
-			evtCepCall();""";
-		app.scheduleTask(taskToExecute, 10, 1);
-			}
-		callCEP ()
-		)=====";
+	function callCEP(plugIdObj){
+        
+        var externalObjectName = "PlugPlugExternalObject";
+        var csxslib = new ExternalObject( "lib:" + externalObjectName);
+        var mathEventCEPCall = new CSXSEvent();
+        mathEventCEPCall.type="tlmath.setupOpeningFromPlugin";
+        mathEventCEPCall.data= plugIdObj;
+        mathEventCEPCall.dispatch();
+        }
+    callCEP(%s);
+    )=====";
 
 
 std::string script_sendToMathCEP = R"=====(
 	//
-    //  scipt TO OPEN CEP IF NOT YET AND SEND DATA
+    //  scipt TO  SEND DATA TO CEP
     //  tlMath
     //
     //
-	//void. send a csxsevent to call mathsetup 
-
-	//function interpret answer of the cep. Uses a global variable. if smarter solution possible it may change
-	function checkCepAnswer(compId, layerIndex, effectIndex){
-		if (app.project.itemByID(compId).layer(layerIndex).effect(effectIndex).property(1).value !=1){
-			//call CEP if not lauched	
-            app.executeCommand(app.findMenuCommandId("tl Math Setup"));	
-		}	
-	}
-    function sendToMathCEP( compId, layerIndex, effectIndex, arbData){
-		checkCepAnswer(compId, layerIndex+1, effectIndex+1); //check checkbox value and reset it
+    function sendToMathCEP(arbData){
         //send the arb value
 		var externalObjectName = "PlugPlugExternalObject"; 
 		var csxslib = new ExternalObject( "lib:" + externalObjectName);
 		var mathEventToCEPObj = new CSXSEvent();
-        mathEventToCEPObj.type="arbSentfromPlugin";
+        mathEventToCEPObj.type="tlmath.arbSentfromPlugin";
         mathEventToCEPObj.data=arbData;
         mathEventToCEPObj.dispatch();
-		
     }
-
-    sendToMathCEP( %i, %i, %i, %s);
+    sendToMathCEP(%s);
 )=====";
+
 
 
 std::string script_getBackDataFromMathCEP = R"=====(

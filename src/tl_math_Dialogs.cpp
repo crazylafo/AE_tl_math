@@ -12,6 +12,7 @@
 
 
 
+
 //detect if a string has a specified char
 static PF_Boolean
 hasString(std::string str, std::string expr)
@@ -142,6 +143,7 @@ static std::string evalMathExprStr (std::string redResultStr, std::string greenR
 
 
 static void arbToJson (m_ArbData        *arbInP,
+                       std::string     taskId,
                        nlohmann::json& Jsondata)
 {
     std::string inputName;
@@ -170,8 +172,8 @@ static void arbToJson (m_ArbData        *arbInP,
     std::string     inputuiPoint2NameS;
     std::string     inputuiColorGrpNameS;
     std::string     inputuiColor1NameS;
-    std::string inputuiColor2NameS;
-    std::string inputextLGrpNameS;
+    std::string     inputuiColor2NameS;
+    std::string     inputextLGrpNameS;
 
     PF_Boolean inputuiSliderGrpVisibleB;
     PF_Boolean inputuiSlider1VisibleB;
@@ -234,6 +236,7 @@ static void arbToJson (m_ArbData        *arbInP,
         inputGl_FragSh = glfrag1str;
         strReplace(inputGl_FragSh, "\n", "\\n");
     }
+    Jsondata["taskId"] = taskId;
     Jsondata["parserModeB"] = inputParserModeB;
     Jsondata["presetName"] = inputName;
     Jsondata["description"] = inputDescription;
@@ -619,42 +622,44 @@ parseLayerDataToJsonStr(A_long compId,
 }
 PF_Err
 CallCepDialog(PF_InData        *in_data,
-			PF_OutData        *out_data )
+			PF_OutData        *out_data,
+              std::string     &taskId)
 {
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
 	PF_Err err = PF_Err_NONE;
 
 	AEGP_MemHandle     resultMemH = NULL;
 	A_char *resultAC = NULL;
-	A_char          scriptAC[15000]{ '\0' };
+	A_char          scriptAC[1500]{ '\0' };
 	my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 
 	A_long compId, layerIndex, effectIndex;
 	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
 	std::string plugIdObjJsonStr = parseLayerDataToJsonStr(compId, layerIndex, effectIndex);
-	std::string script_callMathCEP_to_Execute;
-	AEFX_CLR_STRUCT(script_callMathCEP_to_Execute);
-	script_callMathCEP_to_Execute = script_callMathCEP;
 	//script_callMathCEP_to_Execute.append(script_jsontojs);
 
 	//slit script: first call cep
 	AEFX_CLR_STRUCT(scriptAC);
 	sprintf(scriptAC,
-		script_callMathCEP_to_Execute.c_str(),
+		 script_callMathCEP.c_str(),
 		plugIdObjJsonStr.c_str());
 	
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+    //taskId = resultAC;
 	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 
 	return err;
 }
+
+
 PF_Err
 SetupDialogSend(
                   PF_InData        *in_data,
                   PF_OutData        *out_data,
                   PF_ParamDef        *params[],
+                  std::string   taskId,
                   PF_LayerDef        *output)
 {
     PF_Err err = PF_Err_NONE;
@@ -663,17 +668,14 @@ SetupDialogSend(
 
     AEGP_MemHandle     resultMemH = NULL;
     A_char *resultAC = NULL;
-    A_char          scriptAC[70000] { '\0' };
+    A_char          scriptAC[100000] { '\0' };
     std::string Majvers = std::to_string(MAJOR_VERSION);
     std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
 
     //ARB
     PF_ParamDef arb_param;
-
     m_ArbData        *arbInP = NULL;
-
-
     AEFX_CLR_STRUCT(arb_param);
     ERR(PF_CHECKOUT_PARAM(    in_data,
                           MATH_ARB_DATA,
@@ -687,27 +689,21 @@ SetupDialogSend(
         AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (arbInP){
-            arbToJson (arbInP,jToJs);
+            arbToJson (arbInP,taskId, jToJs);
         }
 
     }
-	A_long compId, layerIndex, effectIndex;
-	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
     std::string resultStr;
     std::string errReturn = "NONE";
 
     std::string jsonDump = "'''";
-    jsonDump.append(jToJs.dump());
+    jsonDump.append(arbInP->arbDataStr);
     jsonDump.append("'''");
 
-	//std::string script_to_exe_callMathCEP = script_callMathCEP.append(script_getPluginId);
-	std::string script_to_exe_script_sendToMathCEP = script_sendToMathCEP;
 
-	//sceond open cep if not and send arb data
 	AEFX_CLR_STRUCT(scriptAC);
 	sprintf(scriptAC,
-		script_to_exe_script_sendToMathCEP.c_str(),
-		compId, layerIndex, effectIndex,
+		script_sendToMathCEP.c_str(),
 		jsonDump.c_str());
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
@@ -716,166 +712,6 @@ SetupDialogSend(
 	return err;
 }
 
-PF_Err
-SetupDialogBackup(
-          PF_InData        *in_data,
-          PF_OutData        *out_data,
-          PF_ParamDef        *params[],
-          PF_LayerDef        *output)
-{
-    PF_Err err = PF_Err_NONE;
-    AEGP_SuiteHandler    suites(in_data->pica_basicP);
-    my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-
-    AEGP_MemHandle     resultMemH = NULL;
-    A_char *resultAC = NULL;
-    A_char          scriptAC[70000] { '\0' };
-    std::string Majvers = std::to_string(MAJOR_VERSION);
-    std::string MinVers = std::to_string(MINOR_VERSION);
-    std::string Bugvers = std::to_string(BUG_VERSION);
-
-    //ARB
-    PF_ParamDef arb_param;
-
-    PF_Handle        arbOutH = NULL;
-    m_ArbData        *arbInP = NULL;
-    m_ArbData        *arbOutP= NULL;
-
-
-    AEFX_CLR_STRUCT(arb_param);
-    ERR(PF_CHECKOUT_PARAM(    in_data,
-                          MATH_ARB_DATA,
-                          in_data->current_time,
-                          in_data->time_step,
-                          in_data->time_scale,
-                          &arb_param));
-    nlohmann::json  jToJs;
-
-    if (!err){
-        AEFX_CLR_STRUCT(arbInP);
-        arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-        if (arbInP){
-            arbToJson (arbInP,jToJs);
-        }
-
-    }
-
-	std::string resultStr;
-	bool scriptLoopEvalB = true;
-    std::string errReturn = "NONE";
-
-		std::string jsonDump = "'''";
-		jsonDump.append(jToJs.dump());
-		jsonDump.append("'''");
-
-
-		sprintf(scriptAC,
-             script_sendToMathCEP.c_str(),
-			jsonDump.c_str());
-
-		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
-		//AEGP SETSTREAMVALUR TO ARB
-		AEFX_CLR_STRUCT(resultAC);
-		ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
-		if (resultAC) {
-
-			resultStr = resultAC;
-			
-		}
-		ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
-		nlohmann::json jeval = nlohmann::json::parse(resultStr);
-		bool evalB = jeval["/evalB"_json_pointer];
-		bool ParserModeB = jeval["/parserModeB"_json_pointer];
-
-		std::string glslEvalExpr = jeval["/glslExpr"_json_pointer];	
-		std::string redResultStr = jeval["/redExpr"_json_pointer];
-		std::string greenResultStr = jeval["/greenExpr"_json_pointer];
-		std::string blueResultStr = jeval["/blueExpr"_json_pointer];
-		std::string alphaResultStr = jeval["/alphaExpr"_json_pointer];
-
-
-		if (ParserModeB == true) {
-				
-			strReplace(glslEvalExpr, "\t", "    ");
-			strReplace(glslEvalExpr, "\"", " '");
-			evalFragShader(glslEvalExpr, errReturn);
-		}
-		else {
-
-			ExprtkCorrectorStr(redResultStr);
-			ExprtkCorrectorStr(greenResultStr);
-			ExprtkCorrectorStr(blueResultStr);
-			ExprtkCorrectorStr(alphaResultStr);
-
-            errReturn= evalMathExprStr (redResultStr,greenResultStr,blueResultStr,alphaResultStr);
-		}
-		if (evalB == false) {
-			
-			jToJs["glslExpr"] = glslEvalExpr;
-			jToJs["parserModeB"] = ParserModeB;
-			jToJs["redExpr"] = redResultStr;
-			jToJs["greenExpr"] = greenResultStr;
-			jToJs["blueExpr"] = blueResultStr;
-			jToJs["alphaExpr"] = alphaResultStr;
-			if (ParserModeB) {
-				jToJs["evalglslExp"] = errReturn;
-			}
-			else {
-				jToJs["evalmathExp"] = errReturn;
-			}
-			
-			
-			scriptLoopEvalB = false;
-		}
-		else {
-			strReplace(redResultStr, "\n", "\\n");
-			strReplace(greenResultStr, "\n", "\\n");
-			strReplace(blueResultStr, "\n", "\\n");
-			strReplace(alphaResultStr, "\n", "\\n");
-			strReplace(errReturn, "\n", "\\n");
-			strReplace(glslEvalExpr, "\n", "\\n");
-			jToJs["glslExpr"] = glslEvalExpr;
-			jToJs["parserModeB"] = ParserModeB;
-			jToJs["redExpr"] = redResultStr;
-			jToJs["greenExpr"] = greenResultStr;
-			jToJs["blueExpr"] = blueResultStr;
-			jToJs["alphaExpr"] = alphaResultStr;
-			if (ParserModeB) {
-				jToJs["evalglslExp"] = errReturn;
-			}
-			else {
-				jToJs["evalmathExp"] = errReturn;
-			}
-		}
-
-		AEFX_CLR_STRUCT(arbOutP);
-		arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-        jsonStrToArb (resultStr, arbOutP);
-    if (errReturn != compile_success){
-        jsonSendError (errReturn,arbOutP);
-        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-                                              errReturn.c_str());
-
-        }
-
-
-        if (std::string(arbOutP->Glsl_FragmentShFlat).compare(std::string(arbInP->Glsl_FragmentShFlat)) !=0)  {
-        arbOutP->ShaderResetB = true;
-        }
-
-        arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
-        //AEGP SETSTREAMVALUE TO ARB
-        ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
-        PF_UNLOCK_HANDLE(arbOutH);
-		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
-
-
-    ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
-    
-    out_data->out_flags |= PF_OutFlag_DISPLAY_ERROR_MESSAGE |
-    PF_OutFlag_FORCE_RERENDER;
-    return err;
-}
 
 
 

@@ -60,6 +60,7 @@ typedef float				fpshort;
 
 
 
+
 using namespace AESDK_OpenGL;
 using namespace gl33core;
 
@@ -413,7 +414,17 @@ LineIteration32Func(void *refconPV,
 					A_long yL);
 PF_Err
 CallCepDialog(PF_InData        *in_data,
-			PF_OutData        *out_data);
+			PF_OutData        *out_data,
+              std::string       &taskId);
+PF_Err
+SetupDialogSend(
+                PF_InData        *in_data,
+                PF_OutData        *out_data,
+                PF_ParamDef        *params[],
+                std::string         taskId,
+                PF_LayerDef        *output);
+
+
 PF_Err
 SetupDialogSend(
           PF_InData        *in_data,
