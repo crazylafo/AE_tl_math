@@ -34,6 +34,12 @@ std::string defaultArb = R"=====(
         "blueExpr":"in_blue",
         "alphaExpr":"1"
     },
+    "composition":{
+        "resolution":"resolution",
+        "time_sec":"time",
+        "time_frame":"timef",
+        "frame_rate":"fps",
+    }
     "gui_settings":{
         "sliderGrp":{
             "grpVisible":true,

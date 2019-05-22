@@ -79,66 +79,72 @@ using namespace gl33core;
 #define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
 typedef struct {
 	A_char arbDataStr[100000];
+
+} m_ArbData;
+typedef struct {
+    A_char      grpNameAc[32];
+    PF_Boolean  grpVisibleB;
+}paramGrp;
+
+typedef struct {
+    A_char      sliderNameAc[32];
+    PF_Boolean  sliderVisibleB;
+}paramSlider;
+
+typedef struct {
+    A_char      pointNameAc[32];
+    PF_Boolean  pointVisibleB;
+}paramPoint;
+
+typedef struct {
+    A_char      cbNameAc[32];
+    PF_Boolean  cbVisibleB;
+}paramCb;
+
+typedef struct {
+    A_char      colorNameAc[32];
+    PF_Boolean  colorVisibleB;
+}paramColor;
+
+typedef struct {
+    A_char      layerNameAc[32];
+    PF_Boolean  layerVisibleB;
+}paramLayer;
+
+typedef struct {
     A_char  redExAc[4096];
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
-	A_char  Glsl_VertexShAc[4096];
+    A_char  Glsl_VertexShAc[15000];
     A_char  Glsl_FragmentShAc[15000];
+
     A_char  descriptionAc[2048];
     A_char  presetNameAc[32];
-	A_char uiSliderGrp_NameAC[32];
-    A_char uiSliderOne_NameAC[32];
-    A_char uiSliderTwo_NameAC[32];
-    A_char uiSliderThree_NameAC[32];
-    A_char uiSliderFour_NameAC[32];
-	A_char uiPointGrp_NameAC[32];
-	A_char uiPointOne_NameAC[32];
-	A_char uiPointTwo_NameAC[32];
-	A_char uiColorGrp_NameAC[32];
-	A_char uiColorOne_NameAC[32];
-	A_char uiColorTwo_NameAC[32];
-	A_char uiExtLGrp_NameAC[32];
 
+    paramGrp    sliderGrpP;
+    paramGrp    pointGrpP;
+    paramGrp    cbGrpP;
+    paramGrp    colorGrpP;
+    paramGrp    layerGrpP;
     
-    //duplicate in order to keep the "/n" in javascript
-    A_char  redExAcFlat[4096];
-    A_char  greenExAcFlat[4096];
-    A_char  blueExAcFlat[4096];
-    A_char  alphaExAcFlat [4096];
-	A_char  Glsl_VertexShFlat[4096];
-    A_char  Glsl_FragmentShFlat[15000];
-    A_char  descriptionAcFlat [4096];
-    
+    std::vector <paramSlider> paramSliderVc;
+    std::vector <paramPoint> paramPointVc;
+    std::vector <paramCb> paramCbVc;
+    std::vector <paramColor> paramColorVc;
+    std::vector <paramLayer > paramLayerVc;
+
     //Mode
-	PF_Boolean  parserModeB;
-	//Boolean information about chars
-	PF_Boolean ShaderResetB;
-	PF_Boolean ExprResetB;
-	PF_Boolean NeedsPixelAroundB;
-	PF_Boolean PixelsCallExternalInputB;
-	PF_Boolean NeedsLumaB;
-	PF_Boolean PresetHasWideInputB;
+    PF_Boolean  parserModeB;
+    PF_Boolean ShaderResetB;
+    PF_Boolean ExprResetB;
+    PF_Boolean NeedsPixelAroundB;
+    PF_Boolean PixelsCallExternalInputB;
+    PF_Boolean NeedsLumaB;
+    PF_Boolean PresetHasWideInputB;
     PF_Boolean CallsAEGP_CompB;
     PF_Boolean CallsAEGP_layerB;
-
-	PF_Boolean  uiSliderGrpB;
-	PF_Boolean uiSliderOneB;
-	PF_Boolean uiSliderTwoB;
-	PF_Boolean uiSliderThreeB;
-	PF_Boolean uiSliderFourB;
-	PF_Boolean uiPointGrpB;
-	PF_Boolean uiPointOneB;
-	PF_Boolean uiPointTwoB;
-	PF_Boolean uiColorGrpB;
-	PF_Boolean uiColorOneB;
-	PF_Boolean uiColorTwoB;
-	PF_Boolean uiExtLGrpB;
-
-
-
-
-} m_ArbData;
+} seqData, *seqDataP, **seqDataH;
 
 
 
@@ -545,6 +551,9 @@ public:
 
     
 };
+
+
+
 
 //GLSL SCRIPTS
 static std::string glvertstr = "#version 330 \n\
