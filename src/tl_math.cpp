@@ -715,6 +715,48 @@ MakeParamCopy(
     
 }
 static PF_Err
+updateSeqData(PF_InData			*in_data,
+			  PF_OutData			*out_data,
+			  PF_ParamDef			*params[])
+{
+	PF_Err				err = PF_Err_NONE;
+	AEGP_SuiteHandler		suites(in_data->pica_basicP);
+	PF_ParamDef arb_param;
+	PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
+	m_ArbData        *arbInP = NULL;
+	std::string arbDataStr;
+	AEFX_CLR_STRUCT(arb_param);
+	ERR(PF_CHECKOUT_PARAM(in_data,
+		MATH_ARB_DATA,
+		in_data->current_time,
+		in_data->time_step,
+		in_data->time_scale,
+		&arb_param));
+
+	AEFX_CLR_STRUCT(arbInP);
+	arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+	if (!arbInP) {
+		err = PF_Err_OUT_OF_MEMORY;
+	}
+	else {
+		arbDataStr = arbInP->arbDataAc;
+	}
+	if (seq_dataH && !err) {
+		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
+		if (seqP->initializedB == false) {
+			copyFromArbToSeqData(arbDataStr, seqP);
+			seqP->initializedB = true;
+			out_data->sequence_data = seq_dataH;
+			
+		}
+		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
+	}
+	else {    // whoa, we couldn't allocate sequence data; bail!
+		err = PF_Err_OUT_OF_MEMORY;
+	}
+	return err;
+}
+static PF_Err
 UpdateParameterUI(
                   PF_InData			*in_data,
                   PF_OutData			*out_data,
@@ -726,8 +768,10 @@ UpdateParameterUI(
 	AEGP_EffectRefH			meH = NULL;
     PF_ParamDef		param_copy[MATH_NUM_PARAMS];
     ERR(MakeParamCopy(params, param_copy));
+	ERR(updateSeqData(in_data, out_data, params));
 	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-    seqDataP            seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+	seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+
 	AEGP_StreamRefH		MATH_TOPIC_SLIDER_streamH = NULL,
                         MATH_SLIDER_ONE_VAR_streamH = NULL,
                         MATH_SLIDER_TWO_VAR_streamH = NULL,
@@ -741,6 +785,7 @@ UpdateParameterUI(
                         MATH_COLOR_TWO_streamH = NULL,
                         MATH_TOPIC_INPUTS_streamH = NULL;
 
+
     if (seqP) {
 
 		strcpy(param_copy[MATH_ARB_DATA].name, seqP->presetNameAc);
@@ -748,62 +793,63 @@ UpdateParameterUI(
                                                         MATH_ARB_DATA,
                                                         &param_copy[MATH_ARB_DATA]));
 
-		strcpy(param_copy[MATH_TOPIC_SLIDER].name, seqP->sliderGrpP.grpNameAc);
+		strcpy(param_copy[MATH_TOPIC_SLIDER].name, seqP->sliderGrpNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_TOPIC_SLIDER,
 														&param_copy[MATH_TOPIC_SLIDER]));
 
-		strcpy(param_copy[MATH_SLIDER_ONE_VAR].name, seqP->paramSliderVc[0].sliderNameAc);
+		strcpy(param_copy[MATH_SLIDER_ONE_VAR].name, seqP->paramSlider01NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_SLIDER_ONE_VAR,
 														&param_copy[MATH_SLIDER_ONE_VAR]));
 
-		strcpy(param_copy[MATH_SLIDER_TWO_VAR].name, seqP->paramSliderVc[1].sliderNameAc);
+		strcpy(param_copy[MATH_SLIDER_TWO_VAR].name, seqP->paramSlider02NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_SLIDER_TWO_VAR,
 														&param_copy[MATH_SLIDER_TWO_VAR]));
 
-		strcpy(param_copy[MATH_SLIDER_THREE_VAR].name, seqP->paramSliderVc[3].sliderNameAc);
+		strcpy(param_copy[MATH_SLIDER_THREE_VAR].name, seqP->paramSlider03NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_SLIDER_THREE_VAR,
 														&param_copy[MATH_SLIDER_THREE_VAR]));
 
-		strcpy(param_copy[MATH_SLIDER_FOUR_VAR].name, seqP->paramSliderVc[4].sliderNameAc);
+		strcpy(param_copy[MATH_SLIDER_FOUR_VAR].name, seqP->paramSlider04NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_SLIDER_FOUR_VAR,
 														&param_copy[MATH_SLIDER_FOUR_VAR]));
 
 
-		strcpy(param_copy[MATH_TOPIC_POINTS].name, seqP->pointGrpP.grpNameAc);
+		strcpy(param_copy[MATH_TOPIC_POINTS].name, seqP->pointGrpNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_TOPIC_POINTS,
 														&param_copy[MATH_TOPIC_POINTS]));
-		strcpy(param_copy[MATH_POINT_ONE].name, seqP->paramPointVc[0].pointNameAc);
+		strcpy(param_copy[MATH_POINT_ONE].name, seqP->paramPoint01NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_POINT_ONE,
 														&param_copy[MATH_POINT_ONE]));
-		strcpy(param_copy[MATH_POINT_TWO].name, seqP->paramPointVc[1].pointNameAc);
+		strcpy(param_copy[MATH_POINT_TWO].name, seqP->paramPoint02NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_POINT_TWO,
 														&param_copy[MATH_POINT_TWO]));
 
 
-		strcpy(param_copy[MATH_TOPIC_COLORS].name, seqP->colorGrpP.grpNameAc);
+		strcpy(param_copy[MATH_TOPIC_COLORS].name, seqP->colorGrpNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_TOPIC_COLORS,
 														&param_copy[MATH_TOPIC_COLORS]));
-		strcpy(param_copy[MATH_COLOR_ONE].name, seqP->paramColorVc[0].colorNameAc);
+
+		strcpy(param_copy[MATH_COLOR_ONE].name, seqP->paramColor01NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_COLOR_ONE,
 														&param_copy[MATH_COLOR_ONE]));
 
-		strcpy(param_copy[MATH_COLOR_TWO].name, seqP->paramColorVc[0].colorNameAc);
+		strcpy(param_copy[MATH_COLOR_TWO].name, seqP->paramColor02NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 														MATH_COLOR_TWO,
 														&param_copy[MATH_COLOR_TWO]));
 
 
-		strcpy(param_copy[MATH_TOPIC_INPUTS].name, seqP->layerGrpP.grpNameAc);
+		strcpy(param_copy[MATH_TOPIC_INPUTS].name, seqP->layerGrpNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 													MATH_TOPIC_INPUTS,
 													&param_copy[MATH_TOPIC_INPUTS]));
@@ -822,21 +868,21 @@ UpdateParameterUI(
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TWO, &MATH_COLOR_TWO_streamH));
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_INPUTS, &MATH_TOPIC_INPUTS_streamH));
 
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_SLIDER_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->sliderGrpP.grpVisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_ONE_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSliderVc[0].sliderVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_TWO_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSliderVc[1].sliderVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_THREE_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE,!seqP->paramSliderVc[2].sliderVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_FOUR_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSliderVc[3].sliderVisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_SLIDER_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->sliderGrpVisibleB));
+        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_ONE_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider01VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_TWO_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider02VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_THREE_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE,!seqP->paramSlider03VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_FOUR_VAR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider04VisibleB));
 
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_POINTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->pointGrpP.grpVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPointVc[0].pointVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPointVc[1].pointVisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_POINTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->pointGrpVisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint01VisibleB));
+        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint02VisibleB));
 
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_COLORS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->colorGrpP.grpVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColorVc[0].colorVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColorVc[1].colorVisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_COLORS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->colorGrpVisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor01VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor02VisibleB));
 
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_INPUTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->layerGrpP.grpVisibleB));
+        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_INPUTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->layerGrpVisibleB));
 
 		if (meH) {
 			ERR2(suites.EffectSuite2()->AEGP_DisposeEffect(meH));
@@ -895,16 +941,19 @@ UserChangedParam(
 	const PF_UserChangedParamExtra	*which_hitP)
 {
 	PF_Err				err = PF_Err_NONE;
-    std::string taskId;
     AEGP_SuiteHandler    suites(in_data->pica_basicP);
 
 	if (which_hitP->param_index == MATH_SETUP)
 	{
-		ERR(CallCepDialog(in_data, out_data, taskId));
+		ERR(CallCepDialog(in_data, out_data));
         ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
-		ERR(SetupDialogSend(in_data, out_data, params,taskId, outputP));
-        //ERR(CallCepDeleteTask(in_data, out_data, taskId));
-
+		//eval shader or math expr
+		ERR(SetupDialogSend(in_data, out_data, params));
+	}
+	if (which_hitP->param_index == MATH_CEP_GET_ARB_DATA)
+	{
+		ERR(SetupGetDataBack(in_data, out_data, params));
+		//deselect checkbox
 	}
 
 	return err;
@@ -1727,13 +1776,11 @@ SmartRender(
 				alphaExprStr = seqP->alphaExAc;
 				frag1str = seqP->Glsl_FragmentShAc;
 
-				flagsP.PixelsCallExternalInputB = seqP->PixelsCallExternalInputB;
-				flagsP.PresetHasWideInput = seqP->PresetHasWideInputB;
-				flagsP.NeedsPixelAroundB = seqP->NeedsPixelAroundB;
-				flagsP.NeedsLumaB = seqP->NeedsLumaB;
-				flagsP.CallsAEGP_CompB = seqP->CallsAEGP_CompB;
-				flagsP.CallsAEGP_layerB = seqP->CallsAEGP_layerB;
-				flagsP.parserModeB = seqP->parserModeB;
+				flagsP.PixelsCallExternalInputB = seqP->pixelsCallExternalInputB;
+				flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
+				flagsP.NeedsPixelAroundB = seqP->needsPixelAroundB;
+				flagsP.NeedsLumaB = seqP->needsLumaB;
+				flagsP.parserModeB = seqP->glslModeB;
             }
 
 			ExprP.redstr = &redExprStr;
@@ -1777,7 +1824,7 @@ SmartRender(
 					format,
 					suites,
 					(void*)miP,
-					seqP->ShaderResetB,
+					seqP->resetShaderB,
 					*ExprP.vertexstr,
 					*ExprP.frag1str,
 					*ExprP.frag2str));
@@ -2032,7 +2079,7 @@ QueryDynamicFlags(
 
 	if (seqP && !err) {
 		
-		if (seqP->PresetHasWideInputB) {
+		if (seqP->presetHasWideInputB) {
 			out_data->out_flags &= ~PF_OutFlag_WIDE_TIME_INPUT;
             out_data->out_flags2  &= ~PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
 		}
@@ -2040,7 +2087,7 @@ QueryDynamicFlags(
 			out_data->out_flags &= PF_OutFlag_WIDE_TIME_INPUT;
 			out_data->out_flags2 &= PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
 		}
-        if (seqP->NeedsPixelAroundB){
+        if (seqP->needsPixelAroundB){
 			out_data->out_flags &= ~PF_OutFlag_PIX_INDEPENDENT;
 		}
 		else {
@@ -2076,17 +2123,17 @@ SequenceSetup (
                PF_InData        *in_data,
                PF_OutData        *out_data)
 {
-    PF_Err err = PF_Err_NONE;
+	PF_Err err = PF_Err_NONE;
     AEGP_SuiteHandler suites(in_data->pica_basicP);
-
     err = SequenceSetdown(in_data, out_data);
 
     if (!err){
         PF_Handle    seq_dataH =    suites.HandleSuite1()->host_new_handle(sizeof(seqData));
 
         if (seq_dataH){
-
-
+			seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
+				seqP->initializedB = false;
+				copyFromArbToSeqData(defaultArb, seqP);
                 out_data->sequence_data = seq_dataH;
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
         } else {    // whoa, we couldn't allocate sequence data; bail!

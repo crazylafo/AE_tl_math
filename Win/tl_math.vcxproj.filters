@@ -127,11 +127,14 @@
     <ClInclude Include="..\include\GL_base.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\script\script.h">
-      <Filter>script</Filter>
-    </ClInclude>
     <ClInclude Include="..\script\json_to_js.h">
       <Filter>script</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tl_defaultArb.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\script.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

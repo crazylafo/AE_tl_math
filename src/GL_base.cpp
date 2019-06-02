@@ -1,6 +1,5 @@
 
 #include "GL_base.h"
-
 #include <glbinding/callbacks.h>
 #include <glbinding/Meta.h>
 #include <glbinding/ContextInfo.h>

@@ -29,7 +29,7 @@ typedef float				fpshort;
 //#include "AE_EffectUI.h"
 #include "AEFX_ArbParseHelper.h"
 #include "entry.h"
-#include "AE_Effect.h"
+#include "AE_effect.h"
 #include "AE_EffectCB.h"
 #include "AE_Macros.h"
 #include "Param_Utils.h"
@@ -45,7 +45,7 @@ typedef float				fpshort;
 
 #include "exprtk.hpp"
 #include "json.hpp"
-
+#include    "tl_defaultArb.h"
 
 #include <cstdio>
 #include <string>
@@ -76,81 +76,149 @@ using namespace gl33core;
 #define	STAGE_VERSION	PF_Stage_ALPHA
 #define	BUILD_VERSION	5
 
-#define ARB_REFCON			(void*)0xDEADBEEFDEADBEEF
+#define ARB_REFCON            (void*)0xDEADBEEFDEADBEEF
 typedef struct {
-	A_char arbDataStr[100000];
-
+    A_char arbDataAc[100000];
 } m_ArbData;
 typedef struct {
-    A_char      grpNameAc[32];
-    PF_Boolean  grpVisibleB;
-}paramGrp;
-
-typedef struct {
-    A_char      sliderNameAc[32];
-    PF_Boolean  sliderVisibleB;
-}paramSlider;
-
-typedef struct {
-    A_char      pointNameAc[32];
-    PF_Boolean  pointVisibleB;
-}paramPoint;
-
-typedef struct {
-    A_char      cbNameAc[32];
-    PF_Boolean  cbVisibleB;
-}paramCb;
-
-typedef struct {
-    A_char      colorNameAc[32];
-    PF_Boolean  colorVisibleB;
-}paramColor;
-
-typedef struct {
-    A_char      layerNameAc[32];
-    PF_Boolean  layerVisibleB;
-}paramLayer;
-
-typedef struct {
+	bool    initializedB;
+	A_char  descriptionAc[2048];
+	A_char  presetNameAc[32];
     A_char  redExAc[4096];
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
-    A_char  Glsl_VertexShAc[15000];
-    A_char  Glsl_FragmentShAc[15000];
+    A_char  Glsl_VertexShAc[25000];
+    A_char  Glsl_FragmentShAc[25000];
+	A_char  Glsl_GeoShAc[25000];
+   
+	A_char   resolution[32];
+	A_char   time_sec[32];
+	A_char   time_frame[32];
+	A_char   frame_rate[32];
 
-    A_char  descriptionAc[2048];
-    A_char  presetNameAc[32];
+    A_char sliderGrpNameAc[32];
+    PF_Boolean sliderGrpVisibleB;
 
-    paramGrp    sliderGrpP;
-    paramGrp    pointGrpP;
-    paramGrp    cbGrpP;
-    paramGrp    colorGrpP;
-    paramGrp    layerGrpP;
-    
-    std::vector <paramSlider> paramSliderVc;
-    std::vector <paramPoint> paramPointVc;
-    std::vector <paramCb> paramCbVc;
-    std::vector <paramColor> paramColorVc;
-    std::vector <paramLayer > paramLayerVc;
+    A_char       pointGrpNameAc[32];
+    PF_Boolean   pointGrpVisibleB;
+
+    A_char       cbGrpNameAc[32];
+    PF_Boolean  cbGrpVisibleB;
+
+    A_char       colorGrpNameAc[32];
+    PF_Boolean   colorGrpVisibleB;
+
+    A_char       layerGrpNameAc[32];
+    PF_Boolean  layerGrpVisibleB;
+
+    A_char   paramSlider01NameAc[32];
+    A_char   paramSlider02NameAc[32];
+    A_char   paramSlider03NameAc[32];
+    A_char   paramSlider04NameAc[32];
+    A_char   paramSlider05NameAc[32];
+    A_char   paramSlider06NameAc[32];
+    A_char   paramSlider07NameAc[32];
+    A_char   paramSlider08NameAc[32];
+    A_char   paramSlider09NameAc[32];
+    A_char   paramSlider10NameAc[32];
+    PF_Boolean  paramSlider01VisibleB;
+    PF_Boolean  paramSlider02VisibleB;
+    PF_Boolean  paramSlider03VisibleB;
+    PF_Boolean  paramSlider04VisibleB;
+    PF_Boolean  paramSlider05VisibleB;
+    PF_Boolean  paramSlider06VisibleB;
+    PF_Boolean  paramSlider07VisibleB;
+    PF_Boolean  paramSlider08VisibleB;
+    PF_Boolean  paramSlider09VisibleB;
+    PF_Boolean  paramSlider10VisibleB;
+
+
+    A_char   paramPoint01NameAc[32];
+    A_char   paramPoint02NameAc[32];
+    A_char   paramPoint03NameAc[32];
+    A_char   paramPoint04NameAc[32];
+    A_char   paramPoint05NameAc[32];
+    A_char   paramPoint06NameAc[32];
+    A_char   paramPoint07NameAc[32];
+    A_char   paramPoint08NameAc[32];
+    A_char   paramPoint09NameAc[32];
+    A_char   paramPoint10NameAc[32];
+    PF_Boolean  paramPoint01VisibleB;
+    PF_Boolean  paramPoint02VisibleB;
+    PF_Boolean  paramPoint03VisibleB;
+    PF_Boolean  paramPoint04VisibleB;
+    PF_Boolean  paramPoint05VisibleB;
+    PF_Boolean  paramPoint06VisibleB;
+    PF_Boolean  paramPoint07VisibleB;
+    PF_Boolean  paramPoint08VisibleB;
+    PF_Boolean  paramPoint09VisibleB;
+    PF_Boolean  paramPoint10VisibleB;
+
+
+    A_char   paramCb01NameAc[32];
+    A_char   paramCb02NameAc[32];
+    A_char   paramCb03NameAc[32];
+    A_char   paramCb04NameAc[32];
+    A_char   paramCb05NameAc[32];
+    A_char   paramCb06NameAc[32];
+    A_char   paramCb07NameAc[32];
+    A_char   paramCb08NameAc[32];
+    A_char   paramCb09NameAc[32];
+    A_char   paramCb10NameAc[32];
+    PF_Boolean  paramCb01VisibleB;
+    PF_Boolean  paramCb02VisibleB;
+    PF_Boolean  paramCb03VisibleB;
+    PF_Boolean  paramCb04VisibleB;
+    PF_Boolean  paramCb05VisibleB;
+    PF_Boolean  paramCb06VisibleB;
+    PF_Boolean  paramCb07VisibleB;
+    PF_Boolean  paramCb08VisibleB;
+    PF_Boolean  paramCb09VisibleB;
+    PF_Boolean  paramCb10VisibleB;
+
+    A_char   paramColor01NameAc[32];
+    A_char   paramColor02NameAc[32];
+    A_char   paramColor03NameAc[32];
+    A_char   paramColor04NameAc[32];
+    A_char   paramColor05NameAc[32];
+    A_char   paramColor06NameAc[32];
+    A_char   paramColor07NameAc[32];
+    A_char   paramColor08NameAc[32];
+    A_char   paramColor09NameAc[32];
+    A_char   paramColor10NameAc[32];
+    PF_Boolean  paramColor01VisibleB;
+    PF_Boolean  paramColor02VisibleB;
+    PF_Boolean  paramColor03VisibleB;
+    PF_Boolean  paramColor04VisibleB;
+    PF_Boolean  paramColor05VisibleB;
+    PF_Boolean  paramColor06VisibleB;
+    PF_Boolean  paramColor07VisibleB;
+    PF_Boolean  paramColor08VisibleB;
+    PF_Boolean  paramColor09VisibleB;
+    PF_Boolean  paramColor10VisibleB;
+	A_char   paramLayer00NameAc[32];
+    A_char   paramLayer01NameAc[32];
+    PF_Boolean  paramcLayer01VisibleB;
+
 
     //Mode
-    PF_Boolean  parserModeB;
-    PF_Boolean ShaderResetB;
-    PF_Boolean ExprResetB;
-    PF_Boolean NeedsPixelAroundB;
-    PF_Boolean PixelsCallExternalInputB;
-    PF_Boolean NeedsLumaB;
-    PF_Boolean PresetHasWideInputB;
-    PF_Boolean CallsAEGP_CompB;
-    PF_Boolean CallsAEGP_layerB;
-} seqData, *seqDataP, **seqDataH;
+    PF_Boolean  glslModeB;
+	PF_Boolean  exprModeB;
+	PF_Boolean  evalModeB;
+	PF_Boolean  geoShModeB;
+    PF_Boolean needsPixelAroundB;
+    PF_Boolean pixelsCallExternalInputB;
+    PF_Boolean needsLumaB;
+    PF_Boolean presetHasWideInputB;
+	PF_Boolean resetShaderB;
 
+} seqData, *seqDataP, **seqDataH;
 
 
 /* Parameter defaults */
 
-#define	MATH_VAR_MIN		0
+#define	MATH_VAR_MIN		-1000
 #define	MATH_VAR_MAX		1000
 #define	MATH_SLIDER_MAX		100
 #define	MATH_VAR_DFLT       1
@@ -221,8 +289,6 @@ typedef struct  FlagsInfo {
         PF_Boolean PixelsCallExternalInputB;
         PF_Boolean NeedsLumaB;
         PF_Boolean PresetHasWideInput;
-        PF_Boolean CallsAEGP_CompB;
-        PF_Boolean CallsAEGP_layerB;
 		PF_Boolean parserModeB;
 }FlagsInfoP;
 
@@ -315,150 +381,6 @@ typedef struct {
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-	
-DllExport	PF_Err 
-EntryPointFunc(	
-	PF_Cmd			cmd,
-	PF_InData		*in_data,
-	PF_OutData		*out_data,
-	PF_ParamDef		*params[],
-	PF_LayerDef		*output,
-	void			*extra) ;
-
-#ifdef __cplusplus
-}
-
-
-void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn);
-
-PF_Err
-CreateDefaultArb(
-                 PF_InData			*in_data,
-                 PF_OutData			*out_data,
-                 PF_ArbitraryH		*dephault);
-
-
-PF_Err
-Arb_Copy(
-         PF_InData				*in_data,
-         PF_OutData				*out_data,
-         const PF_ArbitraryH		*srcP,
-         PF_ArbitraryH			*dstP);
-
-PF_Err
-Arb_Interpolate(
-                PF_InData				*in_data,
-                PF_OutData				*out_data,
-                double					itrp_amtF,
-                const PF_ArbitraryH		*l_arbP,
-                const PF_ArbitraryH		*r_arbP,
-                PF_ArbitraryH			*result_arbP);
-
-PF_Err
-Arb_Compare(
-            PF_InData				*in_data,
-            PF_OutData				*out_data,
-            const PF_ArbitraryH		*a_arbP,
-            const PF_ArbitraryH		*b_arbP,
-            PF_ArbCompareResult		*resultP);
-
-PF_Err
-Arb_Print_Size();
-
-PF_Err
-Arb_Print(
-          PF_InData			*in_data,
-          PF_OutData			*out_data,
-          PF_ArbPrintFlags	print_flags,
-          PF_ArbitraryH		arbH,
-          A_u_long			print_sizeLu,
-          A_char				*print_bufferPC);
-PF_Err
-Arb_Scan(
-         PF_InData			*in_data,
-         PF_OutData			*out_data,
-         void 				*refconPV,
-         const char			*bufPC,
-         unsigned long		bytes_to_scanLu,
-         PF_ArbitraryH		*arbPH);
-
-
-static std::string compile_success = "compiled successfully";
-std::string strCopyAndReplace(std::string str,
-                const std::string& oldStr,
-                  const std::string& newStr);
-PF_Boolean
-strToBoolean( std::string str);
-void
-strReplace(std::string& str,
-                const std::string& oldStr,
-                const std::string& newStr);
-
-void ExprtkCorrectorStr(std::string &str);
-
-PF_Err
-LineIteration8Func ( void *refconPV,
-                    void *refconFunc,
-					void *refconFlags,
-                    void *refconWorld,
-                    A_long yL);
-PF_Err
-LineIteration16Func ( void *refconPV,
-                      void *refconFunc,
-					  void *refconFlags,
-                      void *refconWorld,
-                      A_long yL);
-
-PF_Err
-LineIteration32Func(void *refconPV,
-					void *refconFunc,
-					void *refconFlags,
-                    void *refconWorld,
-					A_long yL);
-PF_Err
-CallCepDialog(PF_InData        *in_data,
-			PF_OutData        *out_data,
-              std::string       &taskId);
-PF_Err
-SetupDialogSend(
-                PF_InData        *in_data,
-                PF_OutData        *out_data,
-                PF_ParamDef        *params[],
-                std::string         taskId,
-                PF_LayerDef        *output);
-
-
-PF_Err
-SetupDialogSend(
-          PF_InData        *in_data,
-          PF_OutData        *out_data,
-          PF_ParamDef        *params[],
-          PF_LayerDef        *output);
-
-PF_Err
-ShiftImage32 (
-              void         *refcon,
-              A_long         xL,
-              A_long         yL,
-              PF_Pixel32     *inP,
-              PF_Pixel32     *outP);
-PF_Err
-ShiftImage16 (
-              void         *refcon,
-              A_long         xL,
-              A_long         yL,
-              PF_Pixel16     *inP,
-              PF_Pixel16     *outP);
-PF_Err
-ShiftImage8 (
-             void         *refcon,
-             A_long         xL,
-             A_long         yL,
-             PF_Pixel     *inP,
-             PF_Pixel     *outP);
 
 
 
@@ -735,5 +657,160 @@ static std::string exprErrorMessageStr ="0";
 #define CHECK(err) {PF_Err err1 = err; if (err1 != PF_Err_NONE ){ throw PF_Err(err1);}}
 
 #endif
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    DllExport    PF_Err
+    EntryPointFunc(
+                   PF_Cmd            cmd,
+                   PF_InData        *in_data,
+                   PF_OutData        *out_data,
+                   PF_ParamDef        *params[],
+                   PF_LayerDef        *output,
+                   void            *extra) ;
+
+#ifdef __cplusplus
+}
+
+
+void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn);
+
+PF_Err
+CreateDefaultArb(
+                 PF_InData            *in_data,
+                 PF_OutData            *out_data,
+                 PF_ArbitraryH        *dephault);
+
+
+PF_Err
+Arb_Copy(
+         PF_InData                *in_data,
+         PF_OutData                *out_data,
+         const PF_ArbitraryH        *srcP,
+         PF_ArbitraryH            *dstP);
+
+PF_Err
+Arb_Interpolate(
+                PF_InData                *in_data,
+                PF_OutData                *out_data,
+                double                    itrp_amtF,
+                const PF_ArbitraryH        *l_arbP,
+                const PF_ArbitraryH        *r_arbP,
+                PF_ArbitraryH            *result_arbP);
+
+PF_Err
+Arb_Compare(
+            PF_InData                *in_data,
+            PF_OutData                *out_data,
+            const PF_ArbitraryH        *a_arbP,
+            const PF_ArbitraryH        *b_arbP,
+            PF_ArbCompareResult        *resultP);
+
+PF_Err
+Arb_Print_Size();
+
+PF_Err
+Arb_Print(
+          PF_InData            *in_data,
+          PF_OutData            *out_data,
+          PF_ArbPrintFlags    print_flags,
+          PF_ArbitraryH        arbH,
+          A_u_long            print_sizeLu,
+          A_char                *print_bufferPC);
+PF_Err
+Arb_Scan(
+         PF_InData            *in_data,
+         PF_OutData            *out_data,
+         void                 *refconPV,
+         const char            *bufPC,
+         unsigned long        bytes_to_scanLu,
+         PF_ArbitraryH        *arbPH);
+
+
+static std::string compile_success = "compiled successfully";
+std::string strCopyAndReplace(std::string str,
+                              const std::string& oldStr,
+                              const std::string& newStr);
+PF_Boolean
+strToBoolean( std::string str);
+void
+strReplace(std::string& str,
+           const std::string& oldStr,
+           const std::string& newStr);
+
+void ExprtkCorrectorStr(std::string &str);
+
+PF_Err
+LineIteration8Func ( void *refconPV,
+                    void *refconFunc,
+                    void *refconFlags,
+                    void *refconWorld,
+                    A_long yL);
+PF_Err
+LineIteration16Func ( void *refconPV,
+                     void *refconFunc,
+                     void *refconFlags,
+                     void *refconWorld,
+                     A_long yL);
+
+PF_Err
+LineIteration32Func(void *refconPV,
+                    void *refconFunc,
+                    void *refconFlags,
+                    void *refconWorld,
+                    A_long yL);
+PF_Err
+CallCepDialog(PF_InData        *in_data,
+              PF_OutData        *out_data);
+PF_Err
+SetupDialogSend(
+	PF_InData        *in_data,
+	PF_OutData        *out_data,
+	PF_ParamDef        *params[]);
+
+PF_Err
+AEGP_GetParamStreamValue(PF_InData            *in_data,
+	PF_OutData            *out_data,
+	AEGP_PluginID        PlugId,
+	PF_ParamIndex        param_index,
+	PF_Handle           *ArbH);
+
+PF_Err
+SetupGetDataBack(
+                PF_InData        *in_data,
+                PF_OutData        *out_data,
+                PF_ParamDef        *params[]);
+
+PF_Err
+copyFromArbToSeqData(std::string       arbStr,
+                     seqData    *seqData);
+
+PF_Err
+ShiftImage32 (
+              void         *refcon,
+              A_long         xL,
+              A_long         yL,
+              PF_Pixel32     *inP,
+              PF_Pixel32     *outP);
+PF_Err
+ShiftImage16 (
+              void         *refcon,
+              A_long         xL,
+              A_long         yL,
+              PF_Pixel16     *inP,
+              PF_Pixel16     *outP);
+PF_Err
+ShiftImage8 (
+             void         *refcon,
+             A_long         xL,
+             A_long         yL,
+             PF_Pixel     *inP,
+             PF_Pixel     *outP);
+
+
+
 
 #endif // TLMATH

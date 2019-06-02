@@ -1,6 +1,6 @@
 
 #include	"tl_math.h"
-#include    "tl_defaultArb.h"
+
 
 PF_Err	
 CreateDefaultArb(	
@@ -24,10 +24,10 @@ CreateDefaultArb(
 
             #ifdef AE_OS_WIN
 			#pragma warning (disable : 4305)
-                strncpy_s(arbP->arbDataStr,  defaultArb.c_str(), 100000);
+                strncpy_s(arbP->arbDataAc,  defaultArb.c_str(), 100000);
 			#pragma warning (pop)
             #else
-                strncpy(arbP->arbDataStr,  defaultArb.c_str(), 100000);
+                strncpy(arbP->arbDataAc,  defaultArb.c_str(), 100000);
             #endif
 
 
@@ -146,8 +146,8 @@ Arb_Compare(
 		}
 		else {
 			*resultP = PF_ArbCompare_EQUAL;
-            total_aV.emplace_back (strlen(first_arbP->arbDataStr));
-            total_aV.emplace_back (strlen(second_arbP->arbDataStr));
+            total_aV.emplace_back (strlen(first_arbP->arbDataAc));
+            total_aV.emplace_back (strlen(second_arbP->arbDataAc));
 			total_aL = std::accumulate(total_aV.begin(), total_aV.end(), (size_t)0);
 			total_bL =std::accumulate(total_bV.begin(), total_bV.end(), (size_t)0);
 			if(total_aL > total_bL)	{

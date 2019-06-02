@@ -361,6 +361,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
   <ItemGroup>
     <ClInclude Include="..\..\..\Util\AEFX_SuiteHelper.h" />
     <ClInclude Include="..\..\..\Util\Smart_Utils.h" />
+    <ClInclude Include="..\include\tl_defaultArb.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\callbacks_private.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\glrevision.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\logging_private.h" />
