@@ -810,7 +810,28 @@ ShiftImage8 (
              PF_Pixel     *inP,
              PF_Pixel     *outP);
 
+PF_Err
+MakeParamCopy(
+	PF_ParamDef *actual[],
+	PF_ParamDef copy[]);
+PF_Err
+tlmath_updateSeqData(PF_InData			*in_data,
+	PF_OutData			*out_data,
+	PF_ParamDef			*params[]);
 
+PF_Err
+tlmath_UpdateParameterUI(
+	PF_InData			*in_data,
+	PF_OutData			*out_data,
+	PF_ParamDef			*params[],
+	PF_LayerDef			*outputP);
+PF_Err
+tlmath_UserChangedParam(
+	PF_InData						*in_data,
+	PF_OutData						*out_data,
+	PF_ParamDef						*params[],
+	PF_LayerDef						*outputP,
+	const PF_UserChangedParamExtra	*which_hitP);
 
 
 #endif // TLMATH
