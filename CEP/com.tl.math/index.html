@@ -16,8 +16,6 @@
 	<script src="./lib/ace_min/ace.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript">
 		$(document).ready(function () {
-
-
 			$("#btnApply").on("click", function (e) {
 				var csInterface = new CSInterface();
 				var eventTest = new CSEvent("com.adobe.cep.test", "APPLICATION");
@@ -39,16 +37,80 @@
 			<button id="btnCancel">Cancel</button>
 			<button id="btnExport">Export Preset</button>
 			<button id="btnLoad">Load Preset</button>
-			<button id="settingsGUI" style="float:right" >GUI Settings</button>
+			<button id="settingsGUI" style="float:right" onClick= "toggleSettings()" >GUI Settings</button>
+		</div>
+	<br />
+	<div id="settingsId">
+		<table>
+				<tr>
+					<th>Parameter</th>
+					<th>GUI Name</th> 
+					<th>Visible</th>
+					<tr class = "sliderGrp">
+						<td>Slider Group</td>
+						<td><input type="text"  value="SliderGrp" maxlength="31"></td>
+						<td><input type="checkbox" name="sliderGrpVisible" id ="grpSliderCbId" onClick= "toogleCheckbox('cbSliders', 'grpSliderCbId')" checked ></td>
+						<tr class = "sliderGrp" id = "slider01">
+							<td>Slider 01</td>
+							<td><input type="text"  value="Slider01" maxlength="31"></td>
+							<td><input type="checkbox" name="slider01Visible" class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id = "slider02">
+							<td>Slider 02</td>
+							<td><input type="text"  value="Slider02" maxlength="31"></td>
+							<td><input type="checkbox" name="slider02Visible" class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id = "slider03">
+							<td>Slider 03</td>
+							<td><input type="text"  value="Slider03" maxlength="31"></td>
+							<td><input type="checkbox"  name="slider03Visible"  class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id  = "slider04">
+							<td>Slider 04</td>
+							<td><input type="text"  value="Slider04" maxlength="31"></td>
+							<td><input type="checkbox"  name="slider04Visible"  class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id = "slider05">
+							<td>Slider 05</td>
+							<td><input type="text"  value="Slider05" maxlength="31"></td>
+							<td><input type="checkbox" name="slider05Visible" class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id  = "slider06">
+							<td>Slider 06</td>
+							<td><input type="text"  value="Slider06" maxlength="31"></td>
+							<td><input type="checkbox" name="slider06Visible"  class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id  = "slider07">
+							<td>Slider 07</td>
+							<td><input type="text"  value="Slider07" maxlength="31"></td>
+							<td><input type="checkbox" name="slider07Visible" class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id  = "slider08">
+							<td>Slider 08</td>
+							<td><input type="text"  value="Slider08" maxlength="31"></td>
+							<td><input type="checkbox" name="slider08Visible"  class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id  = "slider09">
+							<td>Slider 09</td>
+							<td><input type="text"  value="Slider09" maxlength="31"></td>
+							<td><input type="checkbox" name="slider09Visible" class="cbSliders" checked></td>
+							</tr>
+						<tr class = "sliderGrp" id  = "slider10">
+							<td>Slider 10</td>
+							<td><input type="text"  value="Slider10" maxlength="31"></td>
+							<td><input type="checkbox" name="slider10Visible" class="cbSliders" checked></td>
+							</tr>	
+						</tr>
+			</table>
 		</div>
 	<br />
 	<class="GuiText">Coding Langage</class>
-	<select id="langSelec" , onchange= "langSelecFunc()" >
+	<select id="langSelec" , onChange= "langSelecFunc()" >
 		<option   value="mExpr" >Math Expression Mode</option>
 		<option  value="GLSL">GLSL Mode</option>
 		</select>
-
 	<br />
+
 	<div class="tab">
 		<button class="mathGUI" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
 		<button class="mathGUI" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
@@ -57,44 +119,42 @@
 		<button class="glslGUI" onclick="openEditor(event, 'gl_frag_tab', 'gl_frag_editor')" >GLSL Fragment Shader</button>
 		<button class="glslGUI" onclick="openEditor(event, 'gl_vert_tab', 'gl_vert_editor')">GLSL Vertex Shader</button>
 		<button class="glslGUI" onclick="openEditor(event, 'gl_geo_tab', 'gl_geo_editor')">GLSL Geometry Shader</button>
-	</div>
+		<br/>
+		<div class="text editor">
+			<div id="gl_frag_tab" class="tabEditor">
+				<h3 id="editor_name">fragment shader code</h3>
+				<pre id="gl_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
+				</div>
+			<div id="gl_vert_tab" class="tabEditor">	
+				<h3 id="editor_name">vertex shader code</h3>
+				<pre id="gl_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
+				</div>
+			<div id="gl_geo_tab" class="tabEditor">
+				<h3 id="editor_name">geometry shader code</h3>	
+				<pre id="gl_geo_editor" class="textEditor">//write your Geometry shader code here</pre>
+				</div>
 		
-	<br />
-	<div id="gl_frag_tab" class="tabEditor">
-		<h3>fragment shader code</h3>
-		<pre id="gl_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
-		</div>
-	<div id="gl_vert_tab" class="tabEditor">	
-		<h3>vertex shader code</h3>
-		<pre id="gl_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
-		</div>
-	<div id="gl_geo_tab" class="tabEditor">
-		<h3>geometry shader code</h3>	
-		<pre id="gl_geo_editor" class="textEditor">//write your Geometry shader code here</pre>
-		</div>
-
-	<div id="expr_red_tab" class="tabEditor">
-		<h3>red expression code</h3>	
-		<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>
-		</div>
-
-	<div id="expr_green_tab" class="tabEditor">
-		<h3>green expression code</h3>	
-		<pre id="expr_green_editor" class="textEditor">//write your green expresion here</pre>
-		</div>
-	
-	<div id="expr_blue_tab" class="tabEditor">
-		<h3>blue expression code</h3>	
-		<pre id="expr_blue_editor" class="textEditor">//write your blue expression here</pre>
-		</div>	
-
-	<div id="expr_alpha_tab" class="tabEditor">
-		<h3>alpha expression code</h3>	
-		<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
-		</div>
-
-
-
+			<div id="expr_red_tab" class="tabEditor">
+				<h3 id="editor_name">red expression code</h3>	
+				<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>
+				</div>
+		
+			<div id="expr_green_tab" class="tabEditor">
+				<h3 id="editor_name">green expression code</h3>	
+				<pre id="expr_green_editor" class="textEditor">//write your green expresion here</pre>
+				</div>
+			
+			<div id="expr_blue_tab" class="tabEditor">
+				<h3 id="editor_name">blue expression code</h3>	
+				<pre id="expr_blue_editor" class="textEditor">//write your blue expression here</pre>
+				</div>	
+		
+			<div id="expr_alpha_tab" class="tabEditor">
+				<h3 id="editor_name">alpha expression code</h3>	
+				<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
+				</div>
+			</div>	
+	</div>
 </body>
 
 </html>

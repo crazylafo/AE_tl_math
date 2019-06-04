@@ -60,11 +60,36 @@ function onClickButton(ppid) {
 	var extScript = "$._ext_" + ppid + ".run()";
 	evalScript(extScript);
 }
+function toogleCheckbox(className, currId){
+	classItems = document.getElementsByClassName(className);
+	parentItem =  document.getElementById(currId);
 
+	if (parentItem.checked ==true){
+		for (var i=0; i<classItems.length; i++){
+			classItems[i].checked = true;
+		}
+	}
+	else{
+		for (var i=0; i<classItems.length; i++){
+			classItems[i].checked = false;
+		}
+	}
+}
+function defaultVal(){	
+	var langSelec = document.getElementById("langSelec");
+	langSelec.value = "GLSL";
+	langSelecFunc();
+	toggleSettings()
+	}
 
-function defaultVal(){
-	document.getElementById("langSelec").onchange();
-	openEditor(event, 'expr_red_tab', 'expr_red_editor');
+function toggleSettings(){
+	var settingsMenu = document.getElementById("settingsId");
+	if (settingsMenu.style.display === "none"){
+		settingsMenu.style.display = "block";
+		}
+	else{
+		settingsMenu.style.display = "none";
+		}
 	}
 
 function openEditor(evt, tabName, editorName) {
@@ -92,7 +117,7 @@ function openEditor(evt, tabName, editorName) {
 		else{
 			exprEditor(editorName);
 			}
-		evt.currentTarget.className += " active";
+		//evt.currentTarget.className += "active";
 	} 
 
 function mathGuiModeFunc(){
@@ -101,9 +126,10 @@ function mathGuiModeFunc(){
 		for (var i =0; i< mathGui.length; i++){
 				$(mathGui[i]).show();
 			}
-			for (var i =0; i< glslGui.length; i++){
-				$(glslGui[i]).hide();
-			}
+		for (var i =0; i< glslGui.length; i++){
+			$(glslGui[i]).hide();
+		}
+		openEditor(event, 'expr_red_tab', 'expr_red_editor');
 
 	}
 
@@ -113,12 +139,12 @@ function glslGuiModeFunc(){
 		for (var i =0; i< mathGui.length; i++){
 				$(mathGui[i]).hide();
 			}
-			for (var i =0; i< glslGui.length; i++){
-				$(glslGui[i]).show();
-			}
+		for (var i =0; i< glslGui.length; i++){
+			$(glslGui[i]).show();
+		}
+		openEditor(event, 'gl_frag_tab', 'gl_frag_editor');
 
-	}
-	
+	}	
 function langSelecFunc() {
 
 		var langSelec = document.getElementById("langSelec").value;
@@ -131,21 +157,18 @@ function langSelecFunc() {
 		  }
 
 	 }
-	
-function defaultModeGui(){ 
-		mathGuiModeFunc();
-	}
-
 function glslEditor(glMode){
 		var editor = ace.edit(glMode);
-		editor.setTheme("ace/theme/textemate");
+		editor.setTheme("ace/theme/chrome");
 		editor.session.setMode("ace/mode/glsl");
+		editor.resize();
 	}
 
 function exprEditor(exprChan){
 		var editor = ace.edit(exprChan);
-		editor.setTheme("ace/theme/textemate");
+		editor.setTheme("ace/theme/chrome");
 		editor.session.setMode("ace/mode/javascript");
+		editor.resize();
 	}
 
 /**
