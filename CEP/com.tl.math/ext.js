@@ -1,19 +1,14 @@
 /*************************************************************************
-* ADOBE CONFIDENTIAL
-* ___________________
-*
-* Copyright 2014 Adobe
-* All Rights Reserved.
-*
-* NOTICE: Adobe permits you to use, modify, and distribute this file in
-* accordance with the terms of the Adobe license agreement accompanying
-* it. If you have received this file from a source other than Adobe,
-* then your use, modification, or distribution of it requires the prior
-* written permission of Adobe. 
+* tl math plugin and CEP
+*thomas laforge  Copyright 2019
 **************************************************************************/
 
 function onLoaded() {
-    var csInterface = new CSInterface();
+	var csInterface = new CSInterface();
+
+	var arbdefaultStr = loadDefaultArb();
+	var arbData = JSON.parse(arbdefaultStr);
+	copyDataToGUI (arbData);
 	
 	var appName = csInterface.hostEnvironment.appName;
 	csInterface.setWindowTitle = "tl Math Setup"
@@ -24,17 +19,33 @@ function onLoaded() {
 	defaultVal(); //load default ddl val
 
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
-
-		$("#gl_frag_editor").text(fromArbEvent.data.gl_expression.gl_frag_sh.toString());
-		$("#gl_vert_editor").text(fromArbEvent.data.gl_expression.gl_vert_sh.toString());
-		$("#gl_geo_editor").text(fromArbEvent.data.gl_expression.gl_geo_sh.toString());
-
-		$("#expr_red_editor").text(fromArbEvent.data.math_expression.redExpr.toString());
-		$("#expr_green_editor").text(fromArbEvent.data.math_expression.greenExpr.toString());
-		$("#expr_blue_editor").text(fromArbEvent.data.math_expression.blueExpr.toString());
-		$("#expr_alpha_editor").text(fromArbEvent.data.math_expression.alphaExpr.toString());
-
+		
+		if (fromArbEvent.data.effectInfo.effectName =="tlMath"){
+			arbData = fromArbEvent.data;
+		}
+		copyDataToGUI (arbData);
+		alert (arbData.gl_expression.gl_frag_sh.toString());
 	});
+
+	$("#btnApply").on("click", function (arbData) {
+		alert (arbData.gl_expression);
+		arbData.gl_expression.gl_frag_sh= $("#gl_frag_editor").text();
+		alert ("1")
+		arbData.gl_expression.gl_vert_sh = $("#gl_vert_editor").text();
+		alert ("2")
+		arbData.gl_expression.gl_geosh= $("#gl_geo_editor").text();
+		alert ("3")
+		arbData.math_expression.redExpr= $("#expr_red_editor").text();
+		alert ("4")
+		arbData.math_expression.greenExpr =$("#expr_green_editor").text();
+		alert ("4")
+		arbData.math_expression.blueExpr =$("#expr_blue_editor").text();
+		alert ("6")
+		arbData.math_expression.alphaExpr = $("#expr_alpha_editor").text();
+		var arbDataStr = JSON.stringify(arbData);
+		alert (arbDataStr);
+		evalScript('$._ext.sendDataToPlugin('+arbDataStr+')');
+		});   
 	
 
 	
@@ -55,6 +66,30 @@ function cleanJsonStr (str){
 			   .replace(/\\f/g, "\\f");
 
     return str;
+}
+function copyDataToGUI (arbData) {
+	if (arbData.gl_expression.gl_frag_sh){
+		$("#gl_frag_editor").text(arbData.gl_expression.gl_frag_sh.toString());
+	}
+	if (arbData.gl_expression.gl_vert_sh){
+		$("#gl_vert_editor").text(arbData.gl_expression.gl_vert_sh.toString());
+	}
+	if (arbData.gl_expression.gl_geo_sh){
+		$("#gl_geo_editor").text(arbData.gl_expression.gl_geo_sh.toString());
+	}
+	if (arbData.math_expression.redExpr){
+		$("#expr_red_editor").text(arbData.math_expression.redExpr.toString());
+	}
+	if (arbData.math_expression.greenExpr){
+		$("#expr_green_editor").text(arbData.math_expression.greenExpr.toString());
+	}
+	if(arbData.math_expression.blueExpr){
+		$("#expr_blue_editor").text(arbData.math_expression.blueExpr.toString());
+	}
+	if(arbData.math_expression.alphaExpr){
+		$("#expr_alpha_editor").text(arbData.math_expression.alphaExpr.toString());
+	}
+
 }
 function onClickButton(ppid) {
 	var extScript = "$._ext_" + ppid + ".run()";
@@ -293,6 +328,17 @@ function onAppThemeColorChanged(event) {
     updateThemeWithAppSkinInfo(skinInfo);
 } 
 
+
+
+function loadDefaultArb(){
+	var csInterface = new CSInterface();
+	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/json/";
+	var defaultArbFile  =extensionRoot+ "/tl_defaultArb.JSON";
+	var result =  window.cep.fs.readFile(defaultArbFile);
+	if (result.err == 0) {
+		return  result.data;
+		}
+	}
 /**
  * Load JSX file into the scripting context of the product. All the jsx files in 
  * folder [ExtensionRoot]/jsx will be loaded. 
@@ -301,11 +347,11 @@ function loadJSX() {
     var csInterface = new CSInterface();
 	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";
 	csInterface.evalScript('$._ext.evalFiles("' + extensionRoot + '")');
-}
+	}
 
 function evalScript(script, callback) {
     new CSInterface().evalScript(script, callback);
-}
+	}
 
 
 

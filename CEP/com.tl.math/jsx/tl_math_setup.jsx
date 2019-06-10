@@ -22,6 +22,25 @@ if ( ! $._ext )
   $._ext = {};
 }
 
+$._ext = {
+  sendDataToPlugin : function(arbData)
+  {
+      alert(arbData);
+      //send data;
+      tlmathDataFromSetup = arbData;
+
+      if (app.project.activeitem instanceof compItem){
+        var listSelectedProps = app.project.activeitem.selectedProperties;
+        for (var i=0; i<listSelectedProps.length; i++){
+          alert (listSelectedProps[i].name);
+          alert (listSelectedProps[i].layer);
+        }
+      }
+
+  }
+};
+
+
 
 
 
