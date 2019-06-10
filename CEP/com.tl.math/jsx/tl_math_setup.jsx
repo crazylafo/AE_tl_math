@@ -8,7 +8,7 @@
 /*@in empty
  @return bool*/
 function isCompActiveItem(){
-    if (app.project.activeItem instanceof (compItem)){
+    if (app.project.activeItem instanceof (CompItem)){
         return true
     }
     else{ 
@@ -25,18 +25,22 @@ if ( ! $._ext )
 $._ext = {
   sendDataToPlugin : function(arbData)
   {
-      alert(arbData);
       //send data;
       tlmathDataFromSetup = arbData;
-
-      if (app.project.activeitem instanceof compItem){
-        var listSelectedProps = app.project.activeitem.selectedProperties;
+      var propIndex = null;
+      if (app.project.activeItem instanceof CompItem){
+        var listSelectedProps = app.project.activeItem.selectedProperties;
         for (var i=0; i<listSelectedProps.length; i++){
-          alert (listSelectedProps[i].name);
-          alert (listSelectedProps[i].layer);
+          if (listSelectedProps[i].name == "tl_math-BETA"){
+              propIndex = i;
+          }     
         }
       }
-
+      if (propIndex !=null){
+        app.scheduleTask("var listSelectedProps = app.project.activeItem.selectedProperties; \r"+
+                          "listSelectedProps["+propIndex+"].property('get arb').setValue(1);", 1, false);
+        return 
+      }
   }
 };
 

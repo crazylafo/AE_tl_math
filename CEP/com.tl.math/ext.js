@@ -9,7 +9,6 @@ function onLoaded() {
 	var arbdefaultStr = loadDefaultArb();
 	var arbData = JSON.parse(arbdefaultStr);
 	copyDataToGUI (arbData);
-	
 	var appName = csInterface.hostEnvironment.appName;
 	csInterface.setWindowTitle = "tl Math Setup"
 	loadJSX();
@@ -27,23 +26,15 @@ function onLoaded() {
 		alert (arbData.gl_expression.gl_frag_sh.toString());
 	});
 
-	$("#btnApply").on("click", function (arbData) {
-		alert (arbData.gl_expression);
+	$("#btnApply").on("click", function () {
 		arbData.gl_expression.gl_frag_sh= $("#gl_frag_editor").text();
-		alert ("1")
 		arbData.gl_expression.gl_vert_sh = $("#gl_vert_editor").text();
-		alert ("2")
 		arbData.gl_expression.gl_geosh= $("#gl_geo_editor").text();
-		alert ("3")
 		arbData.math_expression.redExpr= $("#expr_red_editor").text();
-		alert ("4")
 		arbData.math_expression.greenExpr =$("#expr_green_editor").text();
-		alert ("4")
 		arbData.math_expression.blueExpr =$("#expr_blue_editor").text();
-		alert ("6")
 		arbData.math_expression.alphaExpr = $("#expr_alpha_editor").text();
 		var arbDataStr = JSON.stringify(arbData);
-		alert (arbDataStr);
 		evalScript('$._ext.sendDataToPlugin('+arbDataStr+')');
 		});   
 	
