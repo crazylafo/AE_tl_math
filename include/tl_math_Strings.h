@@ -5,9 +5,6 @@ typedef enum {
 	StrID_NONE, 
 	StrID_Name,
 	StrID_Description,
-	StrID_CEP_SENDARB_Param_Name,
-	StrID_CEP_GETARB_Param_Name,
-	StrID_CEP_GETEVAL_Param_Name,
 	STR_ID_BUTTON_SETUP_Param_Name,
     StrID_TOPIC_SLIDER_Param_Name,
 	StrID_INPUTONE_Param_Name,
@@ -24,6 +21,7 @@ typedef enum {
     StrID_LAYER_ONE_Param_Name,
     StrID_TOFF_ONE_Param_Name,
     StrID_POFF_ONE_Param_Name,
+	StrID_CEP_GETARB_Param_Name,
 	StrID_NUMTYPES
 } StrIDType;
 

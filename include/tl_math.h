@@ -199,7 +199,7 @@ typedef struct {
     PF_Boolean  paramColor10VisibleB;
 	A_char   paramLayer00NameAc[32];
     A_char   paramLayer01NameAc[32];
-    PF_Boolean  paramcLayer01VisibleB;
+    PF_Boolean  paramLayer01VisibleB;
 
 
     //Mode
@@ -219,6 +219,7 @@ typedef struct {
 /* Parameter defaults */
 
 #define	MATH_VAR_MIN		-1000
+#define	MATH_SLIDER_MIN  	0
 #define	MATH_VAR_MAX		1000
 #define	MATH_SLIDER_MAX		100
 #define	MATH_VAR_DFLT       1
@@ -230,9 +231,6 @@ typedef struct {
 
 enum {
 	MATH_INPUT = 0,
-	MATH_CEP_SEND_ARB_DATA,
-	MATH_CEP_GET_ARB_DATA,
-	MATH_CEP_GET_EVAL,
 	MATH_SETUP,
     MATH_ARB_DATA,
     MATH_TOPIC_SLIDER,
@@ -254,14 +252,12 @@ enum {
     MATH_INP_TOFF_ONE,
     MATH_INP_POFF_ONE,
     MATH_END_TOPIC_INPUTS,
+	MATH_CEP_GET_ARB_DATA,
 	MATH_NUM_PARAMS
 };
 
 enum {
-	MATH_CEP_SEND_ARB_DATA_DISK_ID =1,
-	MATH_CEP_GET_ARB_DATA_DISK_ID,
-	MATH_CEP_GET_EVAL_DISK_ID,
-	MATH_SETUP_DISK_ID,
+	MATH_SETUP_DISK_ID =1,
 	MATH_ARB_DATA_DISK_ID,
     MATH_TOPIC_SLIDER_DISK_ID,
     uiSliderOne_VAR_DISK_ID,
@@ -282,6 +278,7 @@ enum {
     MATH_INP_TOFF_ONE_DISK_ID,
     MATH_INP_POFF_ONE_DISK_ID,
     MATH_END_TOPIC_INPUTS_DISK_ID,
+	MATH_CEP_GET_ARB_DATA_DISK_ID
 };
 
 typedef struct  FlagsInfo {

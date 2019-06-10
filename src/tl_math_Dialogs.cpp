@@ -559,6 +559,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	bool color_10VisibleB = (arbDataJS["/gui_settings/colorGrp/color_10/visibleB"_json_pointer]);
 	std::string color_10Name = (arbDataJS["/gui_settings/colorGrp/color_10/name"_json_pointer]);	
 	std::string layer_currLayerName= (arbDataJS["/gui_settings/layerGrp/current_layer/name"_json_pointer]);
+	std::string layerGrpName = (arbDataJS["/gui_settings/layerGrp/extLGrpName"_json_pointer]);
 	bool layer_extGrpVisibleB= (arbDataJS["/gui_settings/layerGrp/extLGrpVisible"_json_pointer]);
 	bool layer_01VisibleB = (arbDataJS["/gui_settings/layerGrp/extLayer_1/visibleB"_json_pointer]);
 	std::string layer_01Name = (arbDataJS["/gui_settings/layerGrp/extLayer_1/name"_json_pointer]);
@@ -633,7 +634,8 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->paramColor08NameAc, color_08Name.c_str(), color_08Name.length() + 1);
 	strncpy_s(seqDataP->paramColor09NameAc, color_09Name.c_str(), color_09Name.length() + 1);
 	strncpy_s(seqDataP->paramColor10NameAc , color_10Name.c_str(), color_10Name.length() + 1);
-	strncpy_s(seqDataP->paramLayer00NameAc  ,layer_currLayerName.c_str(), layer_currLayerName.length() + 1);
+	strncpy_s(seqDataP->paramLayer00NameAc, layer_currLayerName.c_str(), layer_currLayerName.length() + 1);
+	strncpy_s(seqDataP->layerGrpNameAc,layerGrpName.c_str(), layerGrpName.length() + 1);
 	strncpy_s(seqDataP->paramLayer01NameAc, layer_01Name.c_str(), layer_01Name.length() + 1);
 #else
 	strncpy(seqDataP->presetNameAc, effect_presetName.c_str(), effect_presetName.length() + 1);
@@ -693,6 +695,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramColor08NameAc, color_08Name.c_str(), color_08Name.length() + 1);
 	strncpy(seqDataP->paramColor09NameAc, color_09Name.c_str(), color_09Name.length() + 1);
 	strncpy(seqDataP->paramColor10NameAc, color_10Name.c_str(), color_10Name.length() + 1);
+	strncpy(seqDataP->layerGrpNameAc, layerGrpName.c_str(), layerGrpName.length() + 1);
 	strncpy(seqDataP->paramLayer00NameAc, layer_currLayerName.c_str(), layer_currLayerName.length() + 1);
 	strncpy(seqDataP->paramLayer01NameAc, layer_01Name.c_str(), layer_01Name.length() + 1);
 #endif
@@ -758,7 +761,7 @@ copyFromArbToSeqData( std::string       arbStr,
 
 
 	seqDataP->layerGrpVisibleB = layer_extGrpVisibleB;
-	seqDataP->paramcLayer01VisibleB = layer_01VisibleB;
+	seqDataP->paramLayer01VisibleB = layer_01VisibleB;
 
 
     return err;

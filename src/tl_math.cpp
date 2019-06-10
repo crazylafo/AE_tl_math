@@ -522,14 +522,7 @@ ParamsSetup (
 	PF_ParamDef	def;
 
 
-	// INVISIBLE PARAM TO EXCHANGE WITH CEP
-	PF_ADD_CHECKBOXX(STR(StrID_CEP_SENDARB_Param_Name), FALSE, 0, MATH_CEP_SEND_ARB_DATA_DISK_ID);
 	AEFX_CLR_STRUCT(def);
-	PF_ADD_CHECKBOXX(STR(StrID_CEP_GETARB_Param_Name), FALSE, 0, MATH_CEP_GET_ARB_DATA_DISK_ID);
-	AEFX_CLR_STRUCT(def);
-	PF_ADD_CHECKBOXX(STR(StrID_CEP_GETEVAL_Param_Name), FALSE, 0, MATH_CEP_GET_EVAL_DISK_ID);
-	AEFX_CLR_STRUCT(def);
-
 	PF_ADD_BUTTON(STR(STR_ID_BUTTON_SETUP_Param_Name),
 				  STR(STR_ID_BUTTON_SETUP_Param_Name),
 				  0,
@@ -577,7 +570,7 @@ ParamsSetup (
     PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTONE_Param_Name),
 							MATH_VAR_MIN,
 							MATH_VAR_MAX,
-							MATH_VAR_MIN,
+							MATH_SLIDER_MIN,
 							MATH_SLIDER_MAX,
 							MATH_VAR_DFLT,
 							PF_Precision_THOUSANDTHS,
@@ -590,7 +583,7 @@ ParamsSetup (
     PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTTWO_Param_Name),
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
-                         MATH_VAR_MIN,
+						 MATH_SLIDER_MIN,
                          MATH_SLIDER_MAX,
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
@@ -603,7 +596,7 @@ ParamsSetup (
     PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTTHREE_Param_Name),
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
-                         MATH_VAR_MIN,
+						 MATH_SLIDER_MIN,
                          MATH_SLIDER_MAX,
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
@@ -616,7 +609,7 @@ ParamsSetup (
     PF_ADD_FLOAT_SLIDERX(STR( StrID_INPUTFOUR_Param_Name),
                          MATH_VAR_MIN,
                          MATH_VAR_MAX,
-                         MATH_VAR_MIN,
+						 MATH_SLIDER_MIN,
                          MATH_SLIDER_MAX,
                          MATH_VAR_DFLT,
                          PF_Precision_THOUSANDTHS,
@@ -660,7 +653,7 @@ ParamsSetup (
     PF_ADD_FLOAT_SLIDERX(STR( StrID_TOFF_ONE_Param_Name),
                          TIMEOFFSET_MIN,
                          TIMEOFFSET_MAX,
-                         MATH_VAR_MIN,
+						 MATH_SLIDER_MIN,
                          MATH_SLIDER_MAX,
                          TIMEOFFSET_DFLT,
                          PF_Precision_INTEGER,
@@ -674,8 +667,9 @@ ParamsSetup (
     PF_END_TOPIC(MATH_TOPIC_INPUTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
-
-
+	// INVISIBLE PARAM TO EXCHANGE WITH CEP
+	PF_ADD_CHECKBOXX(STR(StrID_CEP_GETARB_Param_Name), FALSE, PF_ParamFlag_SUPERVISE, MATH_CEP_GET_ARB_DATA_DISK_ID);
+	AEFX_CLR_STRUCT(def);
 
     out_data->num_params = MATH_NUM_PARAMS;
     

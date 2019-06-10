@@ -49,6 +49,7 @@ std::string script_getDataBackFromMathCEP = R"=====(
 
 //get variable string from cep
 function getDataFromCEP(){
+    alert (tlmathDataFromSetup);
 	if (tlmathDataFromSetup){
 	var result = tlmathDataFromSetup;
 	alert ("plugin gets data from cep"); //alert hey we've got it

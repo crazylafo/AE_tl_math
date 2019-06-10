@@ -1,27 +1,5 @@
 #include "tl_math.h"
 
-PF_Err
-MakeParamCopy(
-	PF_ParamDef *actual[],
-	PF_ParamDef copy[]);
-PF_Err
-tlmath_updateSeqData(PF_InData			*in_data,
-	PF_OutData			*out_data,
-	PF_ParamDef			*params[]);
-
-PF_Err
-tlmath_UpdateParameterUI(
-	PF_InData			*in_data,
-	PF_OutData			*out_data,
-	PF_ParamDef			*params[],
-	PF_LayerDef			*outputP);
-PF_Err
-tlmath_UserChangedParam(
-	PF_InData						*in_data,
-	PF_OutData						*out_data,
-	PF_ParamDef						*params[],
-	PF_LayerDef						*outputP,
-	const PF_UserChangedParamExtra	*which_hitP);
 
 PF_Err
 MakeParamCopy(
@@ -48,7 +26,7 @@ MakeParamCopy(
 	copy[MATH_INP_LAYER_ONE] = *actual[MATH_INP_LAYER_ONE];
 	copy[MATH_INP_TOFF_ONE] = *actual[MATH_INP_TOFF_ONE];
 	copy[MATH_INP_POFF_ONE] = *actual[MATH_INP_POFF_ONE];
-
+	copy[MATH_CEP_GET_ARB_DATA] = *actual[MATH_CEP_GET_ARB_DATA];
 
 	return PF_Err_NONE;
 
@@ -291,13 +269,15 @@ tlmath_UserChangedParam(
 	}
 	if (which_hitP->param_index == MATH_CEP_GET_ARB_DATA)
 	{
-		ERR(SetupGetDataBack(in_data, out_data, params));
+		if (params[MATH_CEP_GET_ARB_DATA]->u.bd.value == TRUE) {
+			ERR(SetupGetDataBack(in_data, out_data, params));
+			//deselect checkbox
+			params[MATH_CEP_GET_ARB_DATA]->u.bd.value = FALSE;
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CEP_GET_ARB_DATA,
+				params[MATH_CEP_GET_ARB_DATA]));
+		}
 
-		//deselect checkbox
-		params[MATH_CEP_GET_ARB_DATA]->u.bd.value = FALSE;
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_CEP_GET_ARB_DATA,
-			params[MATH_CEP_GET_ARB_DATA]));
 	}
 
 	return err;
