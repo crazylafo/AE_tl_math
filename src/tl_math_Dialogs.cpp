@@ -401,6 +401,7 @@ SetupGetDataBack(
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+	resultStr = resultAC;
 	jsonStrToArb(resultStr, arbOutP);
 	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 	
@@ -657,7 +658,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramSlider03NameAc, slider_03Name.c_str(), slider_03Name.length() + 1);
 	strncpy(seqDataP->paramSlider04NameAc, slider_04Name.c_str(), slider_04Name.length() + 1);
 	strncpy(seqDataP->paramSlider05NameAc, slider_05Name.c_str(), slider_05Name.length() + 1);
-	strncpy(seqDataP->paramSlider02NameAc, slider_02Name.c_str(), slider_02Name.length() + 1);
+	strncpy(seqDataP->paramSlider06NameAc, slider_06Name.c_str(), slider_02Name.length() + 1);
 	strncpy(seqDataP->paramSlider07NameAc, slider_07Name.c_str(), slider_07Name.length() + 1);
 	strncpy(seqDataP->paramSlider08NameAc, slider_08Name.c_str(), slider_08Name.length() + 1);
 	strncpy(seqDataP->paramSlider09NameAc, slider_09Name.c_str(), slider_09Name.length() + 1);
@@ -668,7 +669,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramPoint03NameAc, point_03Name.c_str(), point_03Name.length() + 1);
 	strncpy(seqDataP->paramPoint04NameAc, point_04Name.c_str(), point_04Name.length() + 1);
 	strncpy(seqDataP->paramPoint05NameAc, point_05Name.c_str(), point_05Name.length() + 1);
-	strncpy(seqDataP->paramPoint02NameAc, point_02Name.c_str(), point_02Name.length() + 1);
+	strncpy(seqDataP->paramPoint02NameAc, point_06Name.c_str(), point_06Name.length() + 1);
 	strncpy(seqDataP->paramPoint07NameAc, point_07Name.c_str(), point_07Name.length() + 1);
 	strncpy(seqDataP->paramPoint08NameAc, point_08Name.c_str(), point_08Name.length() + 1);
 	strncpy(seqDataP->paramPoint09NameAc, point_09Name.c_str(), point_09Name.length() + 1);
@@ -679,7 +680,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramCb03NameAc, cbox_03Name.c_str(), cbox_03Name.length() + 1);
 	strncpy(seqDataP->paramCb04NameAc, cbox_04Name.c_str(), cbox_04Name.length() + 1);
 	strncpy(seqDataP->paramCb05NameAc, cbox_05Name.c_str(), cbox_05Name.length() + 1);
-	strncpy(seqDataP->paramCb02NameAc, cbox_02Name.c_str(), cbox_02Name.length() + 1);
+	strncpy(seqDataP->paramCb02NameAc, cbox_06Name.c_str(), cbox_06Name.length() + 1);
 	strncpy(seqDataP->paramCb07NameAc, cbox_07Name.c_str(), cbox_07Name.length() + 1);
 	strncpy(seqDataP->paramCb08NameAc, cbox_08Name.c_str(), cbox_08Name.length() + 1);
 	strncpy(seqDataP->paramCb09NameAc, cbox_09Name.c_str(), cbox_09Name.length() + 1);
@@ -690,7 +691,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramColor03NameAc, color_03Name.c_str(), color_03Name.length() + 1);
 	strncpy(seqDataP->paramColor04NameAc, color_04Name.c_str(), color_04Name.length() + 1);
 	strncpy(seqDataP->paramColor05NameAc, color_05Name.c_str(), color_05Name.length() + 1);
-	strncpy(seqDataP->paramColor02NameAc, color_02Name.c_str(), color_02Name.length() + 1);
+	strncpy(seqDataP->paramColor02NameAc, color_06Name.c_str(), color_06Name.length() + 1);
 	strncpy(seqDataP->paramColor07NameAc, color_07Name.c_str(), color_07Name.length() + 1);
 	strncpy(seqDataP->paramColor08NameAc, color_08Name.c_str(), color_08Name.length() + 1);
 	strncpy(seqDataP->paramColor09NameAc, color_09Name.c_str(), color_09Name.length() + 1);
@@ -717,7 +718,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	seqDataP->paramSlider03VisibleB = slider_03VisibleB;
 	seqDataP->paramSlider04VisibleB = slider_04VisibleB;
 	seqDataP->paramSlider05VisibleB = slider_05VisibleB;
-	seqDataP->paramSlider02VisibleB = slider_02VisibleB;
+	seqDataP->paramSlider06VisibleB = slider_06VisibleB;
 	seqDataP->paramSlider07VisibleB = slider_07VisibleB;
 	seqDataP->paramSlider08VisibleB = slider_08VisibleB;
 	seqDataP->paramSlider09VisibleB = slider_09VisibleB;
@@ -729,7 +730,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	seqDataP->paramPoint03VisibleB = point_03VisibleB;
 	seqDataP->paramPoint04VisibleB = point_04VisibleB;
 	seqDataP->paramPoint05VisibleB = point_05VisibleB;
-	seqDataP->paramPoint02VisibleB = point_02VisibleB;
+	seqDataP->paramPoint06VisibleB = point_06VisibleB;
 	seqDataP->paramPoint07VisibleB = point_07VisibleB;
 	seqDataP->paramPoint08VisibleB = point_08VisibleB;
 	seqDataP->paramPoint09VisibleB = point_09VisibleB;
@@ -741,7 +742,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	seqDataP->paramCb03VisibleB = cbox_03VisibleB;
 	seqDataP->paramCb04VisibleB = cbox_04VisibleB;
 	seqDataP->paramCb05VisibleB = cbox_05VisibleB;
-	seqDataP->paramCb02VisibleB = cbox_02VisibleB;
+	seqDataP->paramCb06VisibleB = cbox_06VisibleB;
 	seqDataP->paramCb07VisibleB = cbox_07VisibleB;
 	seqDataP->paramCb08VisibleB = cbox_08VisibleB;
 	seqDataP->paramCb09VisibleB = cbox_09VisibleB;
@@ -753,7 +754,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	seqDataP->paramColor03VisibleB = color_03VisibleB;
 	seqDataP->paramColor04VisibleB = color_04VisibleB;
 	seqDataP->paramColor05VisibleB = color_05VisibleB;
-	seqDataP->paramColor02VisibleB = color_02VisibleB;
+	seqDataP->paramColor06VisibleB = color_06VisibleB;
 	seqDataP->paramColor07VisibleB = color_07VisibleB;
 	seqDataP->paramColor08VisibleB = color_08VisibleB;
 	seqDataP->paramColor09VisibleB = color_09VisibleB;

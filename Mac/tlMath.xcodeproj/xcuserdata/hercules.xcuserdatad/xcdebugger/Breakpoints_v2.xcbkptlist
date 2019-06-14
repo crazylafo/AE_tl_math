@@ -79,7 +79,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "916"
             endingLineNumber = "916"
-            landmarkName = "evalFragShader(std::string inFragmentShaderStr, std::string&amp; errReturn)"
+            landmarkName = "ExtLayerInput(void *refcon, PF_InData *in_data, PF_EffectWorld *inputP, PF_EffectWorld *extLP, PF_EffectWorld *extLW, AEGP_SuiteHandler &amp;suites, PF_PixelFormat format)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -95,7 +95,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "290"
             endingLineNumber = "290"
-            landmarkName = "MathInfo"
+            landmarkName = "FlagsInfo"
             landmarkType = "14">
          </BreakpointContent>
       </BreakpointProxy>
@@ -111,7 +111,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "670"
             endingLineNumber = "670"
-            landmarkName = "SetupDialogSend( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], std::string taskId, PF_LayerDef *output)"
+            landmarkName = "copyFromArbToSeqData( std::string arbStr, seqData *seqDataP)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -127,7 +127,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "668"
             endingLineNumber = "668"
-            landmarkName = "SetupDialogSend( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], std::string taskId, PF_LayerDef *output)"
+            landmarkName = "copyFromArbToSeqData( std::string arbStr, seqData *seqDataP)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

@@ -40,7 +40,7 @@ std::string script_sendToMathCEP = R"=====(
 
 
 
-std::string script_getDataBackFromMathCEP = R"=====(
+std::string script_getDataBackFromMathCEP  =R"=====(
 //
 //  scipt TO CALL IN AEGP
 //  tlMath
@@ -49,17 +49,14 @@ std::string script_getDataBackFromMathCEP = R"=====(
 
 //get variable string from cep
 function getDataFromCEP(){
-    alert (tlmathDataFromSetup);
 	if (tlmathDataFromSetup){
 	var result = tlmathDataFromSetup;
-	alert ("plugin gets data from cep"); //alert hey we've got it
-	tlmathDataFromSetup.delete;//delte the variable to free the memory (poor AE memory)
-    alert(result);
+        tlmathDataFromSetup = {};//delte the variable to free the memory (poor AE memory)
 	alert(tlmathDataFromSetup);
 	return result;
 	}
-getDataFromCEP();
 }
+getDataFromCEP();
 
 
 )=====";

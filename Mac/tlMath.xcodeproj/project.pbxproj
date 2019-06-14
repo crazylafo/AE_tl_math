@@ -10,6 +10,7 @@
 		040A7FDF222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */; };
 		040A7FE0222FFC8A00E7E6D2 /* tl_math_Dialogs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 040A7FDD222FFC8A00E7E6D2 /* tl_math_Dialogs.cpp */; };
 		040A7FE1222FFC8A00E7E6D2 /* tl_math_iterators.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 040A7FDE222FFC8A00E7E6D2 /* tl_math_iterators.cpp */; };
+		04B1B38622B3912E00D7B7D5 /* tl_mathParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */; };
 		7ECB51A715DB18A300C5BAD5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ECB51A615DB18A300C5BAD5 /* Cocoa.framework */; };
 		8F2D54CC0C3DC8BC000535F4 /* tl_math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D54C90C3DC8BC000535F4 /* tl_math.cpp */; };
 		8F2D54D10C3DC8FE000535F4 /* tl_mathPiPL.r in Rez */ = {isa = PBXBuildFile; fileRef = 8F2D54D00C3DC8FD000535F4 /* tl_mathPiPL.r */; };
@@ -54,6 +55,7 @@
 		040A7FDD222FFC8A00E7E6D2 /* tl_math_Dialogs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_Dialogs.cpp; path = ../src/tl_math_Dialogs.cpp; sourceTree = SOURCE_ROOT; };
 		040A7FDE222FFC8A00E7E6D2 /* tl_math_iterators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_iterators.cpp; path = ../src/tl_math_iterators.cpp; sourceTree = SOURCE_ROOT; };
 		0434630B2292DA4F00AE77BD /* tl_defaultArb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tl_defaultArb.h; sourceTree = "<group>"; };
+		04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathParams.cpp; sourceTree = "<group>"; };
 		04F4617A223BA625003E0F9F /* script.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = script.h; path = ../script/script.h; sourceTree = "<group>"; };
 		04F4617C223BA625003E0F9F /* json_to_js.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = json_to_js.h; path = ../script/json_to_js.h; sourceTree = "<group>"; };
 		7EB428A80FBA1B62003C7DD1 /* tl_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math.h; path = ../include/tl_math.h; sourceTree = SOURCE_ROOT; };
@@ -100,6 +102,7 @@
 				8F463EB60C3DCDBB0040C945 /* GL_base.cpp */,
 				040A7FDD222FFC8A00E7E6D2 /* tl_math_Dialogs.cpp */,
 				040A7FDE222FFC8A00E7E6D2 /* tl_math_iterators.cpp */,
+				04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */,
 				040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */,
 			);
 			name = src;
@@ -279,6 +282,7 @@
 			files = (
 				D7DCC5A01B239204007E769E /* AEFX_SuiteHelper.c in Sources */,
 				D0FE579D0993C5E500139A60 /* AEGP_SuiteHandler.cpp in Sources */,
+				04B1B38622B3912E00D7B7D5 /* tl_mathParams.cpp in Sources */,
 				D0FE579E0993C5E500139A60 /* MissingSuiteError.cpp in Sources */,
 				8F2D54CC0C3DC8BC000535F4 /* tl_math.cpp in Sources */,
 				D7DCC59C1B2391F6007E769E /* Smart_Utils.cpp in Sources */,

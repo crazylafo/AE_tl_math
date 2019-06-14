@@ -136,6 +136,9 @@
     <ClInclude Include="..\script\script.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\SDKPlugPlug.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp">
@@ -244,6 +247,12 @@
       <Filter>GL\glbinding</Filter>
     </ClCompile>
     <ClCompile Include="..\src\GL_base.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\tl_params.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SDKPlugPlug.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
