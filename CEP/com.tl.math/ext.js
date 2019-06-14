@@ -35,7 +35,7 @@ function onLoaded() {
 		arbData.math_expression.blueExpr =$("#expr_blue_editor").text();
 		arbData.math_expression.alphaExpr = $("#expr_alpha_editor").text();
 		var arbDataStr = JSON.stringify(arbData);
-		evalScript('$._ext.sendDataToPlugin('+arbDataStr+')');
+		evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 		});   
 	
 

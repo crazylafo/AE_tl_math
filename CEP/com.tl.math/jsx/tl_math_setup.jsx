@@ -17,6 +17,7 @@ function isCompActiveItem(){
 }
 
 
+
 if ( ! $._ext )
 {
   $._ext = {};
@@ -25,24 +26,27 @@ if ( ! $._ext )
 $._ext = {
   sendDataToPlugin : function(arbData)
   {
-      //send data;
-      tlmathDataFromSetup = arbData;
-      var propIndex = null;
-      if (app.project.activeItem instanceof CompItem){
-        var listSelectedProps = app.project.activeItem.selectedProperties;
-        for (var i=0; i<listSelectedProps.length; i++){
-          if (listSelectedProps[i].name == "tl_math-BETA"){
-              propIndex = i;
-          }     
-        }
+    //send data;
+    tlmathDataFromSetup = JSON.stringify(arbData);
+    alert (tlmathDataFromSetup)
+    var propIndex = null;
+    if (app.project.activeItem instanceof CompItem){
+      var listSelectedProps = app.project.activeItem.selectedProperties;
+      for (var i=0; i<listSelectedProps.length; i++){
+        if (listSelectedProps[i].name == "tl_math-BETA"){
+            propIndex = i;
+            break;
+        }     
       }
-      if (propIndex !=null){
-        app.scheduleTask("var listSelectedProps = app.project.activeItem.selectedProperties; \r"+
-                          "listSelectedProps["+propIndex+"].property('get arb').setValue(1);", 1, false);
-        return 
-      }
+    }
+    var scriptToExe = "var listSelectedProps = null; try{ listSelectedProps = app.project.activeItem.selectedProperties} catch(e){listSelectedProps = null}; if (listSelectedProps !=null){ listSelectedProps["+propIndex+"].property('get arb').setValue(1)} else {alert ('select a tl Math Effect')}; ";
+    return app.scheduleTask(scriptToExe, 200, false);
+
   }
 };
+
+
+
 
 
 
