@@ -125,3 +125,67 @@ text-align:left;
     color: #B9B9B9;
     margin: 1%;
 }
+
+#gl_frag_console{
+    background: black;
+    color: #ddd;
+    margin: 1%;
+    top: 0%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}
+#gl_vert_console{
+    background: black;
+    color: #ddd;
+    margin: 1%;
+    top: 0%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}
+#gl_geo_console{
+    background: black;
+    color: #ddd;
+    margin: 1%;
+    top: 0%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}
+#math_expr_red_console{
+    background: black;
+    color: #ddd;
+    margin: 1%;
+    top: 0%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}
+#math_expr_green_console{
+    background: black;
+    color: #ddd;
+    margin: 1%;
+    top: 0%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}
+#math_expr_blue_console{
+    background: black;
+    color: #ddd;
+    margin: 1%;
+    top: 0%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}
+#math_expr_alpha_console{
+    background: black;
+    color: #ddd;
+    margin: 1%;
+    top: 0%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}

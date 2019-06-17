@@ -6,9 +6,7 @@
 function onLoaded() {
 	var csInterface = new CSInterface();
 
-	var arbdefaultStr = loadDefaultArb();
-	var arbData = JSON.parse(arbdefaultStr);
-	copyDataToGUI (arbData);
+	
 	var appName = csInterface.hostEnvironment.appName;
 	csInterface.setWindowTitle = "tl Math Setup"
 	loadJSX();
@@ -16,17 +14,23 @@ function onLoaded() {
 	// Update the color of the panel when the theme color of the product changed.
 	csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, onAppThemeColorChanged);
 	defaultVal(); //load default ddl val
+	var editors = setEditors();
+	//laod default arb
+	var arbdefaultStr = loadDefaultArb();
+	var arbData = JSON.parse(arbdefaultStr);
+	copyDataToGUI (arbData, editors);
 
+	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
 		
 		if (fromArbEvent.data.effectInfo.effectName =="tlMath"){
 			arbData = fromArbEvent.data;
+			copyDataToGUI (arbData, editors);
 		}
-		copyDataToGUI (arbData);
-		alert (arbData.gl_expression.gl_frag_sh.toString());
 	});
 
 	$("#btnApply").on("click", function () {
+		
 		arbData.gl_expression.gl_frag_sh= $("#gl_frag_editor").text();
 		arbData.gl_expression.gl_vert_sh = $("#gl_vert_editor").text();
 		arbData.gl_expression.gl_geosh= $("#gl_geo_editor").text();
@@ -58,29 +62,49 @@ function cleanJsonStr (str){
 
     return str;
 }
-function copyDataToGUI (arbData) {
+function copyDataToGUI (arbData, editors) {
 	if (arbData.gl_expression.gl_frag_sh){
-		$("#gl_frag_editor").text(arbData.gl_expression.gl_frag_sh.toString());
+		editors.gl_frag_editor.setValue(arbData.gl_expression.gl_frag_sh.toString(), -1);
 	}
 	if (arbData.gl_expression.gl_vert_sh){
-		$("#gl_vert_editor").text(arbData.gl_expression.gl_vert_sh.toString());
+		editors.gl_vert_editor.setValue(arbData.gl_expression.gl_vert_sh.toString(), -1);
 	}
 	if (arbData.gl_expression.gl_geo_sh){
-		$("#gl_geo_editor").text(arbData.gl_expression.gl_geo_sh.toString());
+		editors.gl_geo_editor.setValue(arbData.gl_expression.gl_geo_sh.toString(), -1);
 	}
 	if (arbData.math_expression.redExpr){
-		$("#expr_red_editor").text(arbData.math_expression.redExpr.toString());
+		editors.expr_red_editor.setValue(arbData.math_expression.redExpr.toString(), -1);
 	}
 	if (arbData.math_expression.greenExpr){
-		$("#expr_green_editor").text(arbData.math_expression.greenExpr.toString());
+		editors.expr_green_editor.setValue(arbData.math_expression.greenExpr.toString(), -1);
 	}
 	if(arbData.math_expression.blueExpr){
-		$("#expr_blue_editor").text(arbData.math_expression.blueExpr.toString());
+		editors.expr_blue_editor.setValue(arbData.math_expression.blueExpr.toString(), -1);
 	}
 	if(arbData.math_expression.alphaExpr){
-		$("#expr_alpha_editor").text(arbData.math_expression.alphaExpr.toString());
+		editors.expr_alpha_editor.setValue(arbData.math_expression.alphaExpr.toString(), -1);
 	}
-
+	if (arbData.gl_expression.gl_frag_error){
+		$("#gl_frag_console").text(arbData.gl_expression.gl_frag_error.toString());
+	};
+	if (arbData.gl_expression.gl_vert_error){
+		$("#gl_vert_console").text(arbData.gl_expression.gl_vert_error.toString());
+	};
+	if (arbData.gl_expression.gl_geo_error){
+		$("#gl_geo_console").text(arbData.gl_expression.gl_geo_error.toString());
+	};
+	if(arbData.math_expression.red_error){
+		$("#math_expr_red_console").text(arbData.math_expression.red_error.toString());
+	};
+	if(arbData.math_expression.green_error){
+		$("#math_expr_green_console").text(arbData.math_expression.green_error.toString());
+	};
+	if(arbData.math_expression.blue_error){
+		$("#math_expr_blue_console").text(arbData.math_expression.blue_error.toString());
+	};
+	if(arbData.math_expression.alpha_error){
+		$("#math_expr_alpha_console").text(arbData.math_expression.alpha_error.toString());
+	};
 }
 function onClickButton(ppid) {
 	var extScript = "$._ext_" + ppid + ".run()";
@@ -101,7 +125,18 @@ function toogleCheckbox(className, currId){
 		}
 	}
 }
-function defaultVal(){	
+function setEditors(){
+	var editors = {};
+	editors.gl_frag_editor = glslEditor("gl_frag_editor");
+	editors.gl_vert_editor= glslEditor("gl_vert_editor");
+	editors.gl_geo_editor= glslEditor("gl_geo_editor");
+	editors.expr_red_editor = exprEditor("expr_red_editor");
+	editors.expr_green_editor = exprEditor("expr_green_editor");
+	editors.expr_blue_editor = exprEditor("expr_blue_editor");
+	editors.expr_alpha_editor  = exprEditor ("expr_alpha_editor");
+	return editors;
+}
+function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
 	langSelec.value = "GLSL";
 	langSelecFunc();
@@ -117,8 +152,7 @@ function toggleSettings(){
 		settingsMenu.style.display = "none";
 		}
 	}
-
-function openEditor(evt, tabName, editorName) {
+function openEditor(evt, tabName) {
 		// Declare all variables
 		var i, tabEditorList, glslGUILinks;
 
@@ -127,8 +161,6 @@ function openEditor(evt, tabName, editorName) {
 		for (i = 0; i < tabEditorList.length; i++) {
 			tabEditorList[i].style.display = "none";
 		}
-
-
 		// Get all elements with class="tablinks" and remove the class "active"
 		glslGUILinks = document.getElementsByClassName("glslGUI");
 		for (i = 0; i < glslGUILinks.length; i++) {
@@ -136,16 +168,19 @@ function openEditor(evt, tabName, editorName) {
 		}
 		// Show the current tab, and add an "active" class to the button that opened the tab
 		document.getElementById(tabName).style.display = "block";
+		showConsole (tabName);
+	}
+function showConsole (tabName){
+	var consoleList = document.getElementsByClassName("console");
+	for (i = 0; i < consoleList.length; i++) {
 		
-		if (editorName.indexOf ('gl') != -1){
-			glslEditor(editorName);
+		if (consoleList[i].id.indexOf (tabName)!=-1){
+			document.getElementById(consoleList[i].id).style.display = "block";
+		}else{
+			consoleList[i].style.display = "none";
 			}
-		else{
-			exprEditor(editorName);
-			}
-		//evt.currentTarget.className += "active";
-	} 
-
+		}
+	}
 function mathGuiModeFunc(){
 		var mathGui = document.getElementsByClassName("mathGUI");
 		 var glslGui = document.getElementsByClassName("glslGUI");
@@ -155,10 +190,9 @@ function mathGuiModeFunc(){
 		for (var i =0; i< glslGui.length; i++){
 			$(glslGui[i]).hide();
 		}
-		openEditor(event, 'expr_red_tab', 'expr_red_editor');
+		openEditor(event, 'expr_red_tab');
 
 	}
-
 function glslGuiModeFunc(){
 		var mathGui = document.getElementsByClassName("mathGUI");
 		 var glslGui = document.getElementsByClassName("glslGUI");
@@ -168,7 +202,7 @@ function glslGuiModeFunc(){
 		for (var i =0; i< glslGui.length; i++){
 			$(glslGui[i]).show();
 		}
-		openEditor(event, 'gl_frag_tab', 'gl_frag_editor');
+		openEditor(event, 'gl_frag_tab');
 
 	}	
 function langSelecFunc() {
@@ -188,15 +222,15 @@ function glslEditor(glMode){
 		editor.setTheme("ace/theme/chrome");
 		editor.session.setMode("ace/mode/glsl");
 		editor.resize();
+		return editor;
 	}
-
 function exprEditor(exprChan){
 		var editor = ace.edit(exprChan);
 		editor.setTheme("ace/theme/chrome");
 		editor.session.setMode("ace/mode/javascript");
 		editor.resize();
+		return editor;
 	}
-
 /**
  * Update the theme with the AppSkinInfo retrieved from the host product.
  */
@@ -281,7 +315,6 @@ function addRule(stylesheetId, selector, rule) {
     }
 }
 
-
 function reverseColor(color, delta) {
     return toHex({red:Math.abs(255-color.red), green:Math.abs(255-color.green), blue:Math.abs(255-color.blue)}, delta);
 }
@@ -318,9 +351,6 @@ function onAppThemeColorChanged(event) {
     // and redraw all UI controls of your extension according to the style info.
     updateThemeWithAppSkinInfo(skinInfo);
 } 
-
-
-
 function loadDefaultArb(){
 	var csInterface = new CSInterface();
 	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/json/";
@@ -339,7 +369,6 @@ function loadJSX() {
 	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/jsx/";
 	csInterface.evalScript('$._ext.evalFiles("' + extensionRoot + '")');
 	}
-
 function evalScript(script, callback) {
     new CSInterface().evalScript(script, callback);
 	}
