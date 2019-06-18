@@ -105,6 +105,38 @@ function copyDataToGUI (arbData, editors) {
 	if(arbData.math_expression.alpha_error){
 		$("#math_expr_alpha_console").text(arbData.math_expression.alpha_error.toString());
 	};
+	
+	if(arbData.effectInfo.presetName){
+		$("presetName").text(arbData.effectInfo.presetName.toString());
+	}
+	if(arbData.effectInfo.description){
+		$("descriptionText").text(arbData.effectInfo.description.toString());
+	}
+	
+	if(arbData.effectMode.gl_modeB && arbData.effectMode.gl_mode.value ==1){
+		langSelec.value = "GLSL"; 
+	}
+	if(arbData.effectMode.expr_modeB &&arbData.effectMode.expr_modeB.value == 1){
+		langSelec.value = "mExpr";
+	}
+	if(arbData.effectMode.geoshMode){
+		geoShB.value = arbData.effectMode.geoshMode;
+	}
+
+	/*
+	if(arbData.composition.resolution){}
+	if(arbData.composition.time_sec){}
+	if(arbData.composition.time_frame){}
+	if(arbData.composition.frame_rate){}
+	if(arbData.composition.camera_position){}
+	if(arbData.composition.camera_target){}
+
+	
+	arbData.sliderGrp.grpVisibleB
+	arbData.sliderGrp.grpName
+	arbData.sliderGrp.slider_1.visibleB
+	arbData.sliderGrp.slider_1.name*/
+
 }
 function onClickButton(ppid) {
 	var extScript = "$._ext_" + ppid + ".run()";
@@ -140,9 +172,9 @@ function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
 	langSelec.value = "GLSL";
 	langSelecFunc();
-	toggleSettings()
+	toggleSettings();
+	toggleDescription();
 	}
-
 function toggleSettings(){
 	var settingsMenu = document.getElementById("settingsId");
 	if (settingsMenu.style.display === "none"){
@@ -150,6 +182,15 @@ function toggleSettings(){
 		}
 	else{
 		settingsMenu.style.display = "none";
+		}
+	}
+function toggleDescription(){
+	var descrMenu = document.getElementById("descriptionId");
+	if (descrMenu.style.display === "none"){
+		descrMenu.style.display = "block";
+		}
+	else{
+		descrMenu.style.display = "none";
 		}
 	}
 function openEditor(evt, tabName) {

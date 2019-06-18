@@ -14,19 +14,27 @@
 	<script src="./lib/jquery-1.9.1.js"></script>
 	<script src="./lib/Vulcan.js"></script>
 	<script src="./lib/ace_min/ace.js" type="text/javascript" charset="utf-8"></script>
-	<link rel="stylesheet" type="text/css" href="./style.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="./css/main_style.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="./css/editor_style.css" media="screen">
 </head>
 
 <body onLoad="onLoaded()">
 		<div id="mainToolbar">
 			<button id="btnApply">Apply</button>
 			<button id="btnCancel">Cancel</button>
-			<button id="btnExport">Export Preset</button>
-			<button id="btnLoad">Load Preset</button>
+			<td id="presetName"><input type="text"  value="preset_Name" maxlength="31"></td>
+			<button id="btnExport">Export</button>
+			<button id="btnLoad">Load File</button>
 			<button id="settingsGUI" style="float:right" onClick= "toggleSettings()" >GUI Settings</button>
+			<button id="descriptionGUI" style="float:right" onClick= "toggleDescription()">Description</button>
+			<button id="presetGUI" style="float:right" >Presets</button>
 		</div>
 	<br />
+	<div id="descriptionId">Description </br>
+		<textarea  rows = "6" cols = "42" maxlength="256" id="descriptionText">describe here</textarea>
+	</div>	
 	<div id="settingsId">
+		<br />
 		<table id="group of tables">
 				<td>
 						<table>
@@ -46,16 +54,8 @@
 										<td><input type="text"  value="time_frame" maxlength="31"></td>
 										</tr>
 									<tr class = "settingsGrp" id  = "fpsName">
-										<td>frame Rate</td>
+										<td>Frame Rate</td>
 										<td><input type="text"  value="fps" maxlength="31"></td>
-										</tr>
-									<tr class = "settingsGrp" id  = "camera_POS">
-										<td>camera position</td>
-										<td><input type="text"  value="camera_Pos" maxlength="31"></td>
-										</tr>
-									<tr class = "settingsGrp" id  = "camera_TARG">
-										<td>camera target</td>
-										<td><input type="text"  value="camera_Targ" maxlength="31"></td>
 										</tr>
 							</table>
 						</td>
@@ -313,59 +313,64 @@
 			</td>
 			</table>
 		</div>
+	
+	<div id = langSelecGrp>
 	<br />
-	<class="GuiText">Coding Langage</class>
-	<select id="langSelec" , onChange= "langSelecFunc()" >
-		<option   value="mExpr" >Math Expression Mode</option>
-		<option  value="GLSL">GLSL Mode</option>
-		</select>
-	<br />
-
+	<td>Coding Langage</td>
+		<select id="langSelec" , onChange= "langSelecFunc()" >
+			<option   value="mExpr" >Math Expression Mode</option>
+			<option  value="GLSL">GLSL Mode</option>
+			</select>
+		</div>
+	<br/>
+	<br/>
 	<div class="tab">
-		<button class="mathGUI" onclick="openEditor(event, 'expr_red_tab')">Red channel expression</button>
-		<button class="mathGUI" onclick="openEditor(event, 'expr_green_tab')" >Green channel expression</button>
-		<button class="mathGUI" onclick="openEditor(event, 'expr_blue_tab')" >Blue channel expression</button>
-		<button class="mathGUI" onclick="openEditor(event, 'expr_alpha_tab')">Alpha channel expression</button>
-		<button class="glslGUI" onclick="openEditor(event, 'gl_frag_tab')" >GLSL Fragment Shader</button>
-		<button class="glslGUI" onclick="openEditor(event, 'gl_vert_tab')">GLSL Vertex Shader</button>
-		<button class="glslGUI" onclick="openEditor(event, 'gl_geo_tab')">GLSL Geometry Shader</button>
+		<button class="mathGUI" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
+		<button class="mathGUI" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
+		<button class="mathGUI" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
+		<button class="mathGUI" onclick="openEditor(event, 'expr_alpha_tab', 'expr_alpha_editor')">Alpha channel expression</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl_frag_tab', 'gl_frag_editor')" >GLSL Fragment Shader</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl_vert_tab', 'gl_vert_editor')">GLSL Vertex Shader</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl_geo_tab', 'gl_geo_editor')">GLSL Geometry Shader</button>
+		<br/>
+		<br/>
+		<div id="editor_glsl_settings" class="glslGUI">
+			<td id="geoShB"> Enable Geometry Shaders<input type="checkbox" name="geoShEnable" ></td>
+			</div>
 		<br/>
 		<div class="text editor">
 			<div id="gl_frag_tab" class="tabEditor">
 				<h3 id="editor_name">fragment shader code</h3>
-				<div id="gl_frag_editor"></div>
+				<pre id="gl_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
 				</div>
-			<div id ="gl_frag_tab_console" class ="console"></div>
 			<div id="gl_vert_tab" class="tabEditor">	
 				<h3 id="editor_name">vertex shader code</h3>
-				<div id="gl_vert_editor"></div>
+				<pre id="gl_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
 				</div>
-			<div id ="gl_vert_tab_console" class ="console"></div>
 			<div id="gl_geo_tab" class="tabEditor">
 				<h3 id="editor_name">geometry shader code</h3>	
-				<div id="gl_geo_editor"></div>
+				<pre id="gl_geo_editor" class="textEditor">//write your Geometry shader code here</pre>
 				</div>
-			<div id ="gl_geo_tab_console" class ="console"></div>
+		
 			<div id="expr_red_tab" class="tabEditor">
-				<h3 id="editor_name">red exdivssion code</h3>	
-				<div id="expr_red_editor"></div>
+				<h3 id="editor_name">red expression code</h3>	
+				<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>
 				</div>
-			<div id ="math_expr_red_tab_console" class ="console"></div>
+		
 			<div id="expr_green_tab" class="tabEditor">
-				<h3 id="editor_name">green exdivssion code</h3>	
-				<div id="expr_green_editor"></div>
+				<h3 id="editor_name">green expression code</h3>	
+				<pre id="expr_green_editor" class="textEditor">//write your green expresion here</pre>
 				</div>
-			<div id ="math_expr_green_tab_console" class ="console"></div>
+			
 			<div id="expr_blue_tab" class="tabEditor">
-				<h3 id="editor_name">blue exdivssion code</h3>	
-				<div id="expr_blue_editor"></div>
+				<h3 id="editor_name">blue expression code</h3>	
+				<pre id="expr_blue_editor" class="textEditor">//write your blue expression here</pre>
 				</div>	
-			<div id ="math_expr_blue_tab_console" class ="console"></div>
+		
 			<div id="expr_alpha_tab" class="tabEditor">
-				<h3 id="editor_name">alpha exdivssion code</h3>	
-				<div id="expr_alpha_editor"></div>
+				<h3 id="editor_name">alpha expression code</h3>	
+				<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
 				</div>
-			<div id ="math_expr_alpha_tab_console" class ="console"></div>
 			</div>	
 	</div>
 </body>

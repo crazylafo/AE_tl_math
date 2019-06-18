@@ -4,9 +4,9 @@
         "effectName":"tlMath",
         "pluginVesion":"1.15",
         "minimalPluginVersion":"1.15",
-        "category":"default",
+        "tags":"default",
         "presetName":"default_preset",
-        "description":"simple default effect"
+        "description":"simple skeleton effect"
     },
     "effectMode":{
         "gl_modeB":true,
