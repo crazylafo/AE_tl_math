@@ -20,7 +20,8 @@
         "gl_geo_sh":"//write here your geometry shader",
 		"gl_frag_error" : "fragment shader\\n compiled",
 		"gl_vert_error" : "vertex shader\\n compiled",
-        "gl_geo_error"  : "geometry shader\\n  not used"
+        "gl_geo_error"  : "geometry shader\\n  not used",
+        "fragColorOutName":"gl_FragColorOut"
     },
     "math_expression":{
         "redExpr":"in_red",

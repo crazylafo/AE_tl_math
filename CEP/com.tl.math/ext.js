@@ -123,19 +123,33 @@ function copyDataToGUI (arbData, editors) {
 		geoShB.value = arbData.effectMode.geoshMode;
 	}
 
-	/*
-	if(arbData.composition.resolution){}
-	if(arbData.composition.time_sec){}
-	if(arbData.composition.time_frame){}
-	if(arbData.composition.frame_rate){}
-	if(arbData.composition.camera_position){}
-	if(arbData.composition.camera_target){}
+	if (arbData.gl_expression.fragColorOutName){
+		$("descriptionText").text(arbData.gl_expression.fragColorOutName.toString());
+	}
+	if(arbData.composition.resolution){
+		$("resolutionName").text(arbData.composition.resolution.toString());
+	}
+	if(arbData.composition.time_sec){
+		$("tsecName").text(arbData.composition.time_sec.toString());
+	}
+	if(arbData.composition.time_frame){
+		$("tframeName").text(arbData.composition.time_frame.toString());
+	}
+	if(arbData.composition.frame_rate){
+		$("fpsName").text(arbData.composition.frame_rate.toString());
+	}
+	if(arbData.composition.camera_position){
+		$("camera_pos").text(arbData.composition.camera_position.toString());
+	}
+	if(arbData.composition.camera_target){
+		$("camera_targ").text(arbData.composition.camera_target.toString());
+	}
 
 	
-	arbData.sliderGrp.grpVisibleB
-	arbData.sliderGrp.grpName
-	arbData.sliderGrp.slider_1.visibleB
-	arbData.sliderGrp.slider_1.name*/
+	arbData.gui_settings.sliderGrp.grpVisibleB
+	arbData.gui_settings.sliderGrp.grpName
+	arbData.gui_settings.sliderGrp.slider_1.visibleB
+	arbData.gui_settings.sliderGrp.slider_1.name
 
 }
 function onClickButton(ppid) {
