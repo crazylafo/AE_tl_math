@@ -5,7 +5,7 @@
         "pluginVesion":"1.15",
         "minimalPluginVersion":"1.15",
         "tags":"default",
-        "presetName":"default_preset",
+        "presetName":"default_preset test",
         "description":"simple skeleton effect"
     },
     "effectMode":{
@@ -21,7 +21,7 @@
 		"gl_frag_error" : "fragment shader\\n compiled",
 		"gl_vert_error" : "vertex shader\\n compiled",
         "gl_geo_error"  : "geometry shader\\n  not used",
-        "fragColorOutName":"gl_FragColorOut"
+        "fragColorOutName":"gl_FragColor"
     },
     "math_expression":{
         "redExpr":"in_red",
@@ -40,56 +40,56 @@
         "presetHasWideInputB":false
     },
     "composition":{
-        "resolution":"resolution",
-        "time_sec":"time",
-        "time_frame":"timef",
-        "frame_rate":"fps",
-        "camera_position":"camera_pos",
-        "camera_target":"camera_target"
+        "resolution":"resolution_",
+        "time_sec":"time__",
+        "time_frame":"timef___",
+        "frame_rate":"fps_",
+        "camera_position":"camera_pos__",
+        "camera_target":"camera_target___"
     },
     "gui_settings":{
         "sliderGrp":{
-            "grpVisibleB":true,
-            "grpName":"Slider Group",
+            "grpVisibleB":false,
+            "grpName":"Slider Groupy",
             "slider_1":{
-                "visibleB":true,
-                "name":"slider_1"
+                "visibleB":false,
+                "name":"slider_1_"
             },
             "slider_2":{
                 "visibleB":true,
-                "name":"slider_2"
+                "name":"slider_2__"
             },
             "slider_3":{
                 "visibleB":true,
-                "name":"slider_3"
+                "name":"slider_3___"
             },
             "slider_4":{
                 "visibleB":true,
-                "name":"slider_4"
+                "name":"slider_4_____"
             },
             "slider_5":{
                 "visibleB":true,
-                "name":"slider_5"
+                "name":"slider_5__"
             },
             "slider_6":{
-                "visibleB":true,
-                "name":"slider_6"
+                "visibleB":false,
+                "name":"slider_6___"
             },
             "slider_7":{
                 "visibleB":true,
-                "name":"slider_7"
+                "name":"slider_7_____"
             },
             "slider_8":{
-                "visibleB":true,
-                "name":"slider_8"
+                "visibleB":false,
+                "name":"slider_8___"
             },
             "slider_9":{
                 "visibleB":true,
-                "name":"slider_9"
+                "name":"slider_9___"
             },
             "slider_10":{
-                "visibleB":true,
-                "name":"slider_10"
+                "visibleB":false,
+                "name":"slider_10______"
             }
         },
         "pointGrp":{
@@ -225,10 +225,9 @@
             }
         },
         "layerGrp":{
-            "extLGrpVisible":true,
-            "extLGrpName":"Layer Group",
+            "grpVisible":true,
+            "grpName":"Layer Group",
             "current_layer":{
-                "visibleB":true,
                 "name":"texture0"
             },
             "extLayer_1":{

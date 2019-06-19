@@ -31,14 +31,8 @@ function onLoaded() {
 
 	$("#btnApply").on("click", function () {
 		
-		arbData.gl_expression.gl_frag_sh= $("#gl_frag_editor").text();
-		arbData.gl_expression.gl_vert_sh = $("#gl_vert_editor").text();
-		arbData.gl_expression.gl_geosh= $("#gl_geo_editor").text();
-		arbData.math_expression.redExpr= $("#expr_red_editor").text();
-		arbData.math_expression.greenExpr =$("#expr_green_editor").text();
-		arbData.math_expression.blueExpr =$("#expr_blue_editor").text();
-		arbData.math_expression.alphaExpr = $("#expr_alpha_editor").text();
-		var arbDataStr = JSON.stringify(arbData);
+		var arbDataToSend = sendDataToPlugin(editors, arbData);
+		var arbDataStr = JSON.stringify(arbDataToSend);
 		evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 		});   
 	
@@ -51,7 +45,7 @@ function onLoaded() {
  * return str
  */
 function cleanJsonStr (str){
-	s = s.replace(/\\n/g, "\\n")  
+	str = str.replace(/\\n/g, "\\n")  
                .replace(/\\'/g, "\\'")
                .replace(/\\"/g, '\\"')
                .replace(/\\&/g, "\\&")
@@ -62,7 +56,141 @@ function cleanJsonStr (str){
 
     return str;
 }
+function sendDataToPlugin(editors, arbData) {
+	arbData.gl_expression.gl_frag_sh = cleanJsonStr (editors.gl_frag_editor.getValue());
+	arbData.gl_expression.gl_vert_sh =cleanJsonStr ( editors.gl_vert_editor.getValue());
+	arbData.gl_expression.gl_geo_sh = cleanJsonStr (editors.gl_geo_editor.getValue());
+	arbData.math_expression.redExpr= cleanJsonStr (editors.expr_red_editor.getValue());
+	arbData.math_expression.greenExpr =cleanJsonStr ( editors.expr_green_editor.getValue());
+	arbData.math_expression.blueExpr = cleanJsonStr (editors.expr_blue_editor.getValue());
+	arbData.math_expression.alphaExpr =cleanJsonStr ( editors.expr_alpha_editor.getValue());
+	arbData.effectInfo.presetName = $("#presetName").val();
+	arbData.effectInfo.description = $("#descriptionText").val;
+
+	arbData.effectMode.gl_modeB =$("#langSelec").val("GLSL");
+	arbData.effectMode.expr_modeB =$("#langSelec").val("mExpr");
+	arbData.gl_expression.fragColorOutName =$("#fragColorOutName").text();
+	arbData.composition.resolution = $("#resolutionName").text();
+	arbData.composition.time_sec = $("#tsecName").text();
+	arbData.composition.time_frame = $("#tframeName").text();
+	arbData.composition.frame_rate = $("#fpsName").text();
+	arbData.composition.camera_position = $("#camera_pos").text();
+	arbData.composition.camera_target = $("#camera_targ").text();
+
+	/*
+
+	$("#sliderGrpName").val(arbData.gui_settings.sliderGrp.grpName.toString());
+	$("#input[name=sliderGrpVisible]").prop('checked', arbData.gui_settings.sliderGrp.grpVisibleB);
+	$("#slider01_name").val(arbData.gui_settings.sliderGrp.slider_1.name.toString());
+	$("input[name=slider01Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_1.visibleB);
+	$("#slider02_name").val(arbData.gui_settings.sliderGrp.slider_2.name.toString());
+	$("input[name=slider02Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_2.visibleB);
+	$("#slider03_name").val(arbData.gui_settings.sliderGrp.slider_3.name.toString());
+	$("input[name=slider03Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_3.visibleB);
+	$("#slider04_name").val(arbData.gui_settings.sliderGrp.slider_4.name.toString());
+	$("input[name=slider04Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_4.visibleB);
+	$("#slider05_name").val(arbData.gui_settings.sliderGrp.slider_5.name.toString());
+	$("input[name=slider05Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_5.visibleB);
+	$("#slider06_name").val(arbData.gui_settings.sliderGrp.slider_6.name.toString());
+	$("input[name=slider06Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_6.visibleB);
+	$("#slider07_name").val(arbData.gui_settings.sliderGrp.slider_7.name.toString());
+	$("input[name=slider07Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_7.visibleB);
+	$("#slider08_name").val(arbData.gui_settings.sliderGrp.slider_8.name.toString());
+	$("input[name=slider08Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_8.visibleB);
+	$("#slider09_name").val(arbData.gui_settings.sliderGrp.slider_9.name.toString());
+	$("input[name=slider09Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_9.visibleB);
+	$("#slider10_name").val(arbData.gui_settings.sliderGrp.slider_10.name.toString());
+	$("input[name=slider10Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_10.visibleB);
+
+	$("#pointGrpName").val(arbData.gui_settings.pointGrp.grpName.toString());
+	$("#input[name=pointGrpVisible]").prop('checked', arbData.gui_settings.pointGrp.grpVisibleB);
+	$("#point01_name").val(arbData.gui_settings.pointGrp.point_1.name.toString());
+	$("input[name=point01Visible]").prop('checked', arbData.gui_settings.pointGrp.point_1.visibleB);
+	$("#point02_name").val(arbData.gui_settings.pointGrp.point_2.name.toString());
+	$("input[name=point02Visible]").prop('checked', arbData.gui_settings.pointGrp.point_2.visibleB);
+	$("#point03_name").val(arbData.gui_settings.pointGrp.point_3.name.toString());
+	$("input[name=point03Visible]").prop('checked', arbData.gui_settings.pointGrp.point_3.visibleB);
+	$("#point04_name").val(arbData.gui_settings.pointGrp.point_4.name.toString());
+	$("input[name=point04Visible]").prop('checked', arbData.gui_settings.pointGrp.point_4.visibleB);
+	$("#point05_name").val(arbData.gui_settings.pointGrp.point_5.name.toString());
+	$("input[name=point05Visible]").prop('checked', arbData.gui_settings.pointGrp.point_5.visibleB);
+	$("#point06_name").val(arbData.gui_settings.pointGrp.point_6.name.toString());
+	$("input[name=point06Visible]").prop('checked', arbData.gui_settings.pointGrp.point_6.visibleB);
+	$("#point07_name").val(arbData.gui_settings.pointGrp.point_7.name.toString());
+	$("input[name=point07Visible]").prop('checked', arbData.gui_settings.pointGrp.point_7.visibleB);
+	$("#point08_name").val(arbData.gui_settings.pointGrp.point_8.name.toString());
+	$("input[name=point08Visible]").prop('checked', arbData.gui_settings.pointGrp.point_8.visibleB);
+	$("#point09_name").val(arbData.gui_settings.pointGrp.point_9.name.toString());
+	$("input[name=point09Visible]").prop('checked', arbData.gui_settings.pointGrp.point_9.visibleB);
+	$("#point10_name").val(arbData.gui_settings.pointGrp.point_10.name.toString());
+	$("input[name=point10Visible]").prop('checked', arbData.gui_settings.pointGrp.point_10.visibleB);
+	
+	$("#cboxGrpName").val(arbData.gui_settings.cboxGrp.grpName.toString());
+	$("#input[name=cboxGrpVisible]").prop('checked', arbData.gui_settings.cboxGrp.grpVisibleB);
+	$("#cbox01_name").val(arbData.gui_settings.cboxGrp.cbox_1.name.toString());
+	$("input[name=cbox01Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_1.visibleB);
+	$("#cbox02_name").val(arbData.gui_settings.cboxGrp.cbox_2.name.toString());
+	$("input[name=cbox02Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_2.visibleB);
+	$("#cbox03_name").val(arbData.gui_settings.cboxGrp.cbox_3.name.toString());
+	$("input[name=cbox03Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_3.visibleB);
+	$("#cbox04_name").val(arbData.gui_settings.cboxGrp.cbox_4.name.toString());
+	$("input[name=cbox04Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_4.visibleB);
+	$("#cbox05_name").val(arbData.gui_settings.cboxGrp.cbox_5.name.toString());
+	$("input[name=cbox05Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_5.visibleB);
+	$("#cbox06_name").val(arbData.gui_settings.cboxGrp.cbox_6.name.toString());
+	$("input[name=cbox06Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_6.visibleB);
+	$("#cbox07_name").val(arbData.gui_settings.cboxGrp.cbox_7.name.toString());
+	$("input[name=cbox07Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_7.visibleB);
+	$("#cbox08_name").val(arbData.gui_settings.cboxGrp.cbox_8.name.toString());
+	$("input[name=cbox08Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_8.visibleB);
+	$("#cbox09_name").val(arbData.gui_settings.cboxGrp.cbox_9.name.toString());
+	$("input[name=cbox09Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_9.visibleB);
+	$("#cbox10_name").val(arbData.gui_settings.cboxGrp.cbox_10.name.toString());
+	$("input[name=cbox10Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_10.visibleB);
+	
+	$("#colorGrpName").val(arbData.gui_settings.colorGrp.grpName.toString());
+	$("#input[name=colorGrpVisible]").prop('checked', arbData.gui_settings.colorGrp.grpVisibleB);
+	$("#color01_name").val(arbData.gui_settings.colorGrp.color_1.name.toString());
+	$("input[name=color01Visible]").prop('checked', arbData.gui_settings.colorGrp.color_1.visibleB);
+	$("#color02_name").val(arbData.gui_settings.colorGrp.color_2.name.toString());
+	$("input[name=color02Visible]").prop('checked', arbData.gui_settings.colorGrp.color_2.visibleB);
+	$("#color03_name").val(arbData.gui_settings.colorGrp.color_3.name.toString());
+	$("input[name=color03Visible]").prop('checked', arbData.gui_settings.colorGrp.color_3.visibleB);
+	$("#color04_name").val(arbData.gui_settings.colorGrp.color_4.name.toString());
+	$("input[name=color04Visible]").prop('checked', arbData.gui_settings.colorGrp.color_4.visibleB);
+	$("#color05_name").val(arbData.gui_settings.colorGrp.color_5.name.toString());
+	$("input[name=color05Visible]").prop('checked', arbData.gui_settings.colorGrp.color_5.visibleB);
+	$("#color06_name").val(arbData.gui_settings.colorGrp.color_6.name.toString());
+	$("input[name=color06Visible]").prop('checked', arbData.gui_settings.colorGrp.color_6.visibleB);
+	$("#color07_name").val(arbData.gui_settings.colorGrp.color_7.name.toString());
+	$("input[name=color07Visible]").prop('checked', arbData.gui_settings.colorGrp.color_7.visibleB);
+	$("#color08_name").val(arbData.gui_settings.colorGrp.color_8.name.toString());
+	$("input[name=color08Visible]").prop('checked', arbData.gui_settings.colorGrp.color_8.visibleB);
+	$("#color09_name").val(arbData.gui_settings.colorGrp.color_9.name.toString());
+	$("input[name=color09Visible]").prop('checked', arbData.gui_settings.colorGrp.color_9.visibleB);
+	$("#color10_name").val(arbData.gui_settings.colorGrp.color_10.name.toString());
+	$("input[name=color10Visible]").prop('checked', arbData.gui_settings.colorGrp.color_10.visibleB);
+	
+	$("#layerGrpName").val(arbData.gui_settings.layerGrp.grpName.toString());
+	$("#input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
+	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
+	$("#layer01_name").val(arbData.gui_settings.layerGrp.extLayer_1.name.toString());
+	$("input[name=layer01Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_1.visibleB);*/
+	alert ("test before send");
+	return arbData;
+
+}
 function copyDataToGUI (arbData, editors) {
+
+	/*
+	$("#gl_frag_console").val(arbData.gl_expression.gl_frag_error.toString());
+	$("#gl_vert_console").val(arbData.gl_expression.gl_vert_error.toString());
+	$("#math_expr_red_console").val(arbData.math_expression.red_error.toString());
+	$("#math_expr_green_console").val(arbData.math_expression.green_error.toString());
+	$("#math_expr_blue_console").val(arbData.math_expression.blue_error.toString());
+	$("#math_expr_alpha_console").val(arbData.math_expression.alpha_error.toString());
+	*/
+
 	if (arbData.gl_expression.gl_frag_sh){
 		editors.gl_frag_editor.setValue(arbData.gl_expression.gl_frag_sh.toString(), -1);
 	}
@@ -84,73 +212,127 @@ function copyDataToGUI (arbData, editors) {
 	if(arbData.math_expression.alphaExpr){
 		editors.expr_alpha_editor.setValue(arbData.math_expression.alphaExpr.toString(), -1);
 	}
-	if (arbData.gl_expression.gl_frag_error){
-		$("#gl_frag_console").text(arbData.gl_expression.gl_frag_error.toString());
-	};
-	if (arbData.gl_expression.gl_vert_error){
-		$("#gl_vert_console").text(arbData.gl_expression.gl_vert_error.toString());
-	};
-	if (arbData.gl_expression.gl_geo_error){
-		$("#gl_geo_console").text(arbData.gl_expression.gl_geo_error.toString());
-	};
-	if(arbData.math_expression.red_error){
-		$("#math_expr_red_console").text(arbData.math_expression.red_error.toString());
-	};
-	if(arbData.math_expression.green_error){
-		$("#math_expr_green_console").text(arbData.math_expression.green_error.toString());
-	};
-	if(arbData.math_expression.blue_error){
-		$("#math_expr_blue_console").text(arbData.math_expression.blue_error.toString());
-	};
-	if(arbData.math_expression.alpha_error){
-		$("#math_expr_alpha_console").text(arbData.math_expression.alpha_error.toString());
-	};
+
+	$("#presetName").val( arbData.effectInfo.presetName.toString());
+	$("#descriptionText").val(arbData.effectInfo.description.toString());
 	
-	if(arbData.effectInfo.presetName){
-		$("presetName").text(arbData.effectInfo.presetName.toString());
+
+	if(arbData.effectMode.gl_modeB){
+		$("#langSelec").val("GLSL"); 
 	}
-	if(arbData.effectInfo.description){
-		$("descriptionText").text(arbData.effectInfo.description.toString());
-	}
-	
-	if(arbData.effectMode.gl_modeB && arbData.effectMode.gl_mode.value ==1){
-		langSelec.value = "GLSL"; 
-	}
-	if(arbData.effectMode.expr_modeB &&arbData.effectMode.expr_modeB.value == 1){
-		langSelec.value = "mExpr";
+	if(arbData.effectMode.expr_modeB){
+		$("#langSelec").val("mExpr");
 	}
 	if(arbData.effectMode.geoshMode){
-		geoShB.value = arbData.effectMode.geoshMode;
+		$("#geoShB").val(arbData.effectMode.geoshMode);
 	}
+	$("#fragColorOutName").text(arbData.gl_expression.fragColorOutName.toString());
+	$("#resolutionName").text(arbData.composition.resolution.toString());
+	$("#tsecName").text(arbData.composition.time_sec.toString());
+	$("#tframeName").text(arbData.composition.time_frame.toString());
+	$("#fpsName").text(arbData.composition.frame_rate.toString());
+	$("#camera_pos").text(arbData.composition.camera_position.toString());
+	$("#camera_targ").text(arbData.composition.camera_target.toString());
 
-	if (arbData.gl_expression.fragColorOutName){
-		$("descriptionText").text(arbData.gl_expression.fragColorOutName.toString());
-	}
-	if(arbData.composition.resolution){
-		$("resolutionName").text(arbData.composition.resolution.toString());
-	}
-	if(arbData.composition.time_sec){
-		$("tsecName").text(arbData.composition.time_sec.toString());
-	}
-	if(arbData.composition.time_frame){
-		$("tframeName").text(arbData.composition.time_frame.toString());
-	}
-	if(arbData.composition.frame_rate){
-		$("fpsName").text(arbData.composition.frame_rate.toString());
-	}
-	if(arbData.composition.camera_position){
-		$("camera_pos").text(arbData.composition.camera_position.toString());
-	}
-	if(arbData.composition.camera_target){
-		$("camera_targ").text(arbData.composition.camera_target.toString());
-	}
+	$("#sliderGrpName").val(arbData.gui_settings.sliderGrp.grpName.toString());
+	$("#input[name=sliderGrpVisible]").prop('checked', arbData.gui_settings.sliderGrp.grpVisibleB);
+	$("#slider01_name").val(arbData.gui_settings.sliderGrp.slider_1.name.toString());
+	$("input[name=slider01Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_1.visibleB);
+	$("#slider02_name").val(arbData.gui_settings.sliderGrp.slider_2.name.toString());
+	$("input[name=slider02Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_2.visibleB);
+	$("#slider03_name").val(arbData.gui_settings.sliderGrp.slider_3.name.toString());
+	$("input[name=slider03Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_3.visibleB);
+	$("#slider04_name").val(arbData.gui_settings.sliderGrp.slider_4.name.toString());
+	$("input[name=slider04Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_4.visibleB);
+	$("#slider05_name").val(arbData.gui_settings.sliderGrp.slider_5.name.toString());
+	$("input[name=slider05Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_5.visibleB);
+	$("#slider06_name").val(arbData.gui_settings.sliderGrp.slider_6.name.toString());
+	$("input[name=slider06Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_6.visibleB);
+	$("#slider07_name").val(arbData.gui_settings.sliderGrp.slider_7.name.toString());
+	$("input[name=slider07Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_7.visibleB);
+	$("#slider08_name").val(arbData.gui_settings.sliderGrp.slider_8.name.toString());
+	$("input[name=slider08Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_8.visibleB);
+	$("#slider09_name").val(arbData.gui_settings.sliderGrp.slider_9.name.toString());
+	$("input[name=slider09Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_9.visibleB);
+	$("#slider10_name").val(arbData.gui_settings.sliderGrp.slider_10.name.toString());
+	$("input[name=slider10Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_10.visibleB);
 
+	$("#pointGrpName").val(arbData.gui_settings.pointGrp.grpName.toString());
+	$("#input[name=pointGrpVisible]").prop('checked', arbData.gui_settings.pointGrp.grpVisibleB);
+	$("#point01_name").val(arbData.gui_settings.pointGrp.point_1.name.toString());
+	$("input[name=point01Visible]").prop('checked', arbData.gui_settings.pointGrp.point_1.visibleB);
+	$("#point02_name").val(arbData.gui_settings.pointGrp.point_2.name.toString());
+	$("input[name=point02Visible]").prop('checked', arbData.gui_settings.pointGrp.point_2.visibleB);
+	$("#point03_name").val(arbData.gui_settings.pointGrp.point_3.name.toString());
+	$("input[name=point03Visible]").prop('checked', arbData.gui_settings.pointGrp.point_3.visibleB);
+	$("#point04_name").val(arbData.gui_settings.pointGrp.point_4.name.toString());
+	$("input[name=point04Visible]").prop('checked', arbData.gui_settings.pointGrp.point_4.visibleB);
+	$("#point05_name").val(arbData.gui_settings.pointGrp.point_5.name.toString());
+	$("input[name=point05Visible]").prop('checked', arbData.gui_settings.pointGrp.point_5.visibleB);
+	$("#point06_name").val(arbData.gui_settings.pointGrp.point_6.name.toString());
+	$("input[name=point06Visible]").prop('checked', arbData.gui_settings.pointGrp.point_6.visibleB);
+	$("#point07_name").val(arbData.gui_settings.pointGrp.point_7.name.toString());
+	$("input[name=point07Visible]").prop('checked', arbData.gui_settings.pointGrp.point_7.visibleB);
+	$("#point08_name").val(arbData.gui_settings.pointGrp.point_8.name.toString());
+	$("input[name=point08Visible]").prop('checked', arbData.gui_settings.pointGrp.point_8.visibleB);
+	$("#point09_name").val(arbData.gui_settings.pointGrp.point_9.name.toString());
+	$("input[name=point09Visible]").prop('checked', arbData.gui_settings.pointGrp.point_9.visibleB);
+	$("#point10_name").val(arbData.gui_settings.pointGrp.point_10.name.toString());
+	$("input[name=point10Visible]").prop('checked', arbData.gui_settings.pointGrp.point_10.visibleB);
 	
-	arbData.gui_settings.sliderGrp.grpVisibleB
-	arbData.gui_settings.sliderGrp.grpName
-	arbData.gui_settings.sliderGrp.slider_1.visibleB
-	arbData.gui_settings.sliderGrp.slider_1.name
-
+	$("#cboxGrpName").val(arbData.gui_settings.cboxGrp.grpName.toString());
+	$("#input[name=cboxGrpVisible]").prop('checked', arbData.gui_settings.cboxGrp.grpVisibleB);
+	$("#cbox01_name").val(arbData.gui_settings.cboxGrp.cbox_1.name.toString());
+	$("input[name=cbox01Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_1.visibleB);
+	$("#cbox02_name").val(arbData.gui_settings.cboxGrp.cbox_2.name.toString());
+	$("input[name=cbox02Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_2.visibleB);
+	$("#cbox03_name").val(arbData.gui_settings.cboxGrp.cbox_3.name.toString());
+	$("input[name=cbox03Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_3.visibleB);
+	$("#cbox04_name").val(arbData.gui_settings.cboxGrp.cbox_4.name.toString());
+	$("input[name=cbox04Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_4.visibleB);
+	$("#cbox05_name").val(arbData.gui_settings.cboxGrp.cbox_5.name.toString());
+	$("input[name=cbox05Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_5.visibleB);
+	$("#cbox06_name").val(arbData.gui_settings.cboxGrp.cbox_6.name.toString());
+	$("input[name=cbox06Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_6.visibleB);
+	$("#cbox07_name").val(arbData.gui_settings.cboxGrp.cbox_7.name.toString());
+	$("input[name=cbox07Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_7.visibleB);
+	$("#cbox08_name").val(arbData.gui_settings.cboxGrp.cbox_8.name.toString());
+	$("input[name=cbox08Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_8.visibleB);
+	$("#cbox09_name").val(arbData.gui_settings.cboxGrp.cbox_9.name.toString());
+	$("input[name=cbox09Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_9.visibleB);
+	$("#cbox10_name").val(arbData.gui_settings.cboxGrp.cbox_10.name.toString());
+	$("input[name=cbox10Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_10.visibleB);
+	
+	$("#colorGrpName").val(arbData.gui_settings.colorGrp.grpName.toString());
+	$("#input[name=colorGrpVisible]").prop('checked', arbData.gui_settings.colorGrp.grpVisibleB);
+	$("#color01_name").val(arbData.gui_settings.colorGrp.color_1.name.toString());
+	$("input[name=color01Visible]").prop('checked', arbData.gui_settings.colorGrp.color_1.visibleB);
+	$("#color02_name").val(arbData.gui_settings.colorGrp.color_2.name.toString());
+	$("input[name=color02Visible]").prop('checked', arbData.gui_settings.colorGrp.color_2.visibleB);
+	$("#color03_name").val(arbData.gui_settings.colorGrp.color_3.name.toString());
+	$("input[name=color03Visible]").prop('checked', arbData.gui_settings.colorGrp.color_3.visibleB);
+	$("#color04_name").val(arbData.gui_settings.colorGrp.color_4.name.toString());
+	$("input[name=color04Visible]").prop('checked', arbData.gui_settings.colorGrp.color_4.visibleB);
+	$("#color05_name").val(arbData.gui_settings.colorGrp.color_5.name.toString());
+	$("input[name=color05Visible]").prop('checked', arbData.gui_settings.colorGrp.color_5.visibleB);
+	$("#color06_name").val(arbData.gui_settings.colorGrp.color_6.name.toString());
+	$("input[name=color06Visible]").prop('checked', arbData.gui_settings.colorGrp.color_6.visibleB);
+	$("#color07_name").val(arbData.gui_settings.colorGrp.color_7.name.toString());
+	$("input[name=color07Visible]").prop('checked', arbData.gui_settings.colorGrp.color_7.visibleB);
+	$("#color08_name").val(arbData.gui_settings.colorGrp.color_8.name.toString());
+	$("input[name=color08Visible]").prop('checked', arbData.gui_settings.colorGrp.color_8.visibleB);
+	$("#color09_name").val(arbData.gui_settings.colorGrp.color_9.name.toString());
+	$("input[name=color09Visible]").prop('checked', arbData.gui_settings.colorGrp.color_9.visibleB);
+	$("#color10_name").val(arbData.gui_settings.colorGrp.color_10.name.toString());
+	$("input[name=color10Visible]").prop('checked', arbData.gui_settings.colorGrp.color_10.visibleB);
+	
+	$("#layerGrpName").val(arbData.gui_settings.layerGrp.grpName.toString());
+	$("#input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
+	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
+	$("#layer01_name").val(arbData.gui_settings.layerGrp.extLayer_1.name.toString());
+	$("input[name=layer01Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_1.visibleB);
+	
+	alert ($("#descriptionText"));
 }
 function onClickButton(ppid) {
 	var extScript = "$._ext_" + ppid + ".run()";
