@@ -32,8 +32,10 @@ function onLoaded() {
 	$("#btnApply").on("click", function () {
 		
 		var arbDataToSend = sendDataToPlugin(editors, arbData);
-		var arbDataStr = JSON.stringify(arbDataToSend);
-		evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+		if (arbDataToSend ){
+			var arbDataStr = JSON.stringify(arbDataToSend);
+			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+			}
 		});   
 	
 
@@ -45,7 +47,7 @@ function onLoaded() {
  * return str
  */
 function cleanJsonStr (str){
-	str = str.replace(/\\n/g, "\\n")  
+	str = str.replace(/\\n/g, "\\n")
                .replace(/\\'/g, "\\'")
                .replace(/\\"/g, '\\"')
                .replace(/\\&/g, "\\&")
@@ -57,15 +59,19 @@ function cleanJsonStr (str){
     return str;
 }
 function sendDataToPlugin(editors, arbData) {
-	arbData.gl_expression.gl_frag_sh = cleanJsonStr (editors.gl_frag_editor.getValue());
-	arbData.gl_expression.gl_vert_sh =cleanJsonStr ( editors.gl_vert_editor.getValue());
-	arbData.gl_expression.gl_geo_sh = cleanJsonStr (editors.gl_geo_editor.getValue());
-	arbData.math_expression.redExpr= cleanJsonStr (editors.expr_red_editor.getValue());
-	arbData.math_expression.greenExpr =cleanJsonStr ( editors.expr_green_editor.getValue());
-	arbData.math_expression.blueExpr = cleanJsonStr (editors.expr_blue_editor.getValue());
-	arbData.math_expression.alphaExpr =cleanJsonStr ( editors.expr_alpha_editor.getValue());
-	arbData.effectInfo.presetName = $("#presetName").val();
-	arbData.effectInfo.description = $("#descriptionText").val;
+	/*
+	arbData.gl_expression.gl_frag_sh =cleanJsonStr(editors.gl_frag_editor.getValue());
+	
+	arbData.gl_expression.gl_frag_sh =(editors.gl_frag_editor.getValue()).toString();
+	arbData.gl_expression.gl_vert_sh = ( editors.gl_vert_editor.getValue()).toString();
+	arbData.gl_expression.gl_geo_sh = (editors.gl_geo_editor.getValue()).toString();
+	arbData.math_expression.redExpr= (editors.expr_red_editor.getValue()).toString();
+	arbData.math_expression.greenExpr =( editors.expr_green_editor.getValue()).toString();
+	arbData.math_expression.blueExpr =  (editors.expr_blue_editor.getValue()).toString();
+	arbData.math_expression.alphaExpr = ( editors.expr_alpha_editor.getValue()).toString();
+	
+	arbData.effectInfo.presetName = $("#presetName").text();
+	arbData.effectInfo.description = $("#descriptionText").text();
 
 	arbData.effectMode.gl_modeB =$("#langSelec").val("GLSL");
 	arbData.effectMode.expr_modeB =$("#langSelec").val("mExpr");
@@ -77,7 +83,7 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.composition.camera_position = $("#camera_pos").text();
 	arbData.composition.camera_target = $("#camera_targ").text();
 
-	/*
+
 
 	$("#sliderGrpName").val(arbData.gui_settings.sliderGrp.grpName.toString());
 	$("#input[name=sliderGrpVisible]").prop('checked', arbData.gui_settings.sliderGrp.grpVisibleB);
@@ -331,8 +337,6 @@ function copyDataToGUI (arbData, editors) {
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
 	$("#layer01_name").val(arbData.gui_settings.layerGrp.extLayer_1.name.toString());
 	$("input[name=layer01Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_1.visibleB);
-	
-	alert ($("#descriptionText"));
 }
 function onClickButton(ppid) {
 	var extScript = "$._ext_" + ppid + ".run()";

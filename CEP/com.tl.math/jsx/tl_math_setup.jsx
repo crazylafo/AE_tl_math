@@ -26,9 +26,13 @@ if ( ! $._ext )
 $._ext = {
   sendDataToPlugin : function(arbData)
   {
+    if (!arbData){return};
     //send data;
     tlmathDataFromSetup = JSON.stringify(arbData);
-    alert (tlmathDataFromSetup)
+    var JFile = new File("/Users/hercules/Desktop/TextDecoderStream.json");
+    JFile .open("w");
+    JFile.write(tlmathDataFromSetup);  
+    JFile.close();    
     var propIndex = null;
     if (app.project.activeItem instanceof CompItem){
       var listSelectedProps = app.project.activeItem.selectedProperties;
@@ -39,7 +43,7 @@ $._ext = {
         }     
       }
     }
-    var scriptToExe = "var listSelectedProps = null; try{ listSelectedProps = app.project.activeItem.selectedProperties} catch(e){listSelectedProps = null}; if (listSelectedProps !=null){ listSelectedProps["+propIndex+"].property('get arb').setValue(1)} else {alert ('select a tl Math Effect')}; ";
+    var scriptToExe = "var listSelectedProps = null; try{ listSelectedProps = app.project.activeItem.selectedProperties; if (listSelectedProps !=null){ listSelectedProps["+propIndex+"].property('get arb').setValue(1)}  } catch(e){listSelectedProps = null; alert ('select a tl Math Effect')}; ; ";
     return app.scheduleTask(scriptToExe, 200, false);
 
   }
