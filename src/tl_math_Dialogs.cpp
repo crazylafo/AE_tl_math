@@ -383,7 +383,6 @@ SetupGetDataBack(
     PF_ParamDef arb_param;
 	AEGP_MemHandle     resultMemH = NULL;
 	A_char *resultAC = NULL;
-	A_char          scriptAC[100000]{ '\0' };
 	std::string resultStr;
     m_ArbData *arbOutP= NULL;
 
@@ -395,16 +394,15 @@ SetupGetDataBack(
 		in_data->time_scale,
 		&arb_param));
 	arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-	AEFX_CLR_STRUCT(scriptAC);
-	sprintf(scriptAC,
-		script_getDataBackFromMathCEP.c_str());
-	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, script_getDataBackFromMathCEP.c_str(), FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
-	resultStr = resultAC;
-	jsonStrToArb(resultStr, arbOutP);
-	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
-	
+    ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+    if (resultAC){
+        resultStr = resultAC;
+        jsonStrToArb(resultStr, arbOutP);
+    }
+
 	arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
     //AEGP SETSTREAMVALUE TO ARB
     ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
@@ -413,7 +411,7 @@ SetupGetDataBack(
 
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-		copyFromArbToSeqData(resultStr, seqP);
+		ERR(copyFromArbToSeqData(resultStr, seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
 	}
@@ -431,9 +429,6 @@ copyFromArbToSeqData( std::string       arbStr,
 {
     PF_Err err = PF_Err_NONE;
     nlohmann::json  arbDataJS = nlohmann::json::parse(arbStr);
-	
-
-
 	std::string effect_name = arbDataJS["/effectInfo/effectName"_json_pointer];
 	std::string effect_pluginVersion = arbDataJS["/effectInfo/pluginVesion"_json_pointer];
 	std::string effect_minimalPluginversion = arbDataJS["/effectInfo/minimalPluginVersion"_json_pointer];
