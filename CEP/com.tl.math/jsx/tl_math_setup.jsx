@@ -29,10 +29,7 @@ $._ext = {
     if (!arbData){return};
     //send data;
     tlmathDataFromSetup = JSON.stringify(arbData);
-    var JFile = new File("/Users/hercules/Desktop/TextDecoderStream.json");
-    JFile .open("w");
-    JFile.write(tlmathDataFromSetup);  
-    JFile.close();    
+
     var propIndex = null;
     if (app.project.activeItem instanceof CompItem){
       var listSelectedProps = app.project.activeItem.selectedProperties;
