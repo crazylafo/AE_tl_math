@@ -398,7 +398,7 @@ SetupGetDataBack(
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
     ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
-    if (resultAC){
+    if (resultAC){  
         resultStr = resultAC;
         jsonStrToArb(resultStr, arbOutP);
     }
@@ -432,7 +432,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	std::string effect_name = arbDataJS["/effectInfo/effectName"_json_pointer];
 	std::string effect_pluginVersion = arbDataJS["/effectInfo/pluginVesion"_json_pointer];
 	std::string effect_minimalPluginversion = arbDataJS["/effectInfo/minimalPluginVersion"_json_pointer];
-	std::string effect_category=(arbDataJS["/effectInfo/category"_json_pointer]);
+	//std::string effect_tags=(arbDataJS["/effectInfo/tags"_json_pointer]);
 	std::string effect_presetName=(arbDataJS["/effectInfo/presetName"_json_pointer]);
 	std::string effect_description=(arbDataJS["/effectInfo/description"_json_pointer]);
 		
@@ -553,10 +553,11 @@ copyFromArbToSeqData( std::string       arbStr,
 	bool color_09VisibleB = (arbDataJS["/gui_settings/colorGrp/color_9/visibleB"_json_pointer]);
 	std::string color_09Name = (arbDataJS["/gui_settings/colorGrp/color_9/name"_json_pointer]);
 	bool color_10VisibleB = (arbDataJS["/gui_settings/colorGrp/color_10/visibleB"_json_pointer]);
-	std::string color_10Name = (arbDataJS["/gui_settings/colorGrp/color_10/name"_json_pointer]);	
+	std::string color_10Name = (arbDataJS["/gui_settings/colorGrp/color_10/name"_json_pointer]);
+    bool layer_grpVisibleB= (arbDataJS["/gui_settings/layerGrp/grpVisibleB"_json_pointer]);
+    std::string layerGrpName = (arbDataJS["/gui_settings/layerGrp/grpName"_json_pointer]);
 	std::string layer_currLayerName= (arbDataJS["/gui_settings/layerGrp/current_layer/name"_json_pointer]);
-	std::string layerGrpName = (arbDataJS["/gui_settings/layerGrp/extLGrpName"_json_pointer]);
-	bool layer_extGrpVisibleB= (arbDataJS["/gui_settings/layerGrp/extLGrpVisible"_json_pointer]);
+
 	bool layer_01VisibleB = (arbDataJS["/gui_settings/layerGrp/extLayer_1/visibleB"_json_pointer]);
 	std::string layer_01Name = (arbDataJS["/gui_settings/layerGrp/extLayer_1/name"_json_pointer]);
 	
@@ -577,7 +578,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->descriptionAc, effect_description.c_str(), effect_description.length() + 1);
 	strncpy_s(seqDataP->Glsl_FragmentShAc, gl_fragsh.c_str(), gl_fragsh.length() + 1);
 	strncpy_s(seqDataP->Glsl_VertexShAc , gl_vertsh.c_str(), gl_vertsh.length() + 1);
-	strncpy_s(seqDataP->Glsl_VertexShAc, gl_geosh.c_str(), gl_geosh.length() + 1);
+	strncpy_s(seqDataP->Glsl_GeoShAc, gl_geosh.c_str(), gl_geosh.length() + 1);
 	strncpy_s(seqDataP->redExAc, expr_red.c_str(), expr_red.length() + 1);
 	strncpy_s(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy_s(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
@@ -603,7 +604,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->paramPoint03NameAc, point_03Name.c_str(), point_03Name.length() + 1);
 	strncpy_s(seqDataP->paramPoint04NameAc, point_04Name.c_str(), point_04Name.length() + 1);
 	strncpy_s(seqDataP->paramPoint05NameAc, point_05Name.c_str(), point_05Name.length() + 1);
-	strncpy_s(seqDataP->paramPoint02NameAc, point_02Name.c_str(), point_02Name.length() + 1);
+	strncpy_s(seqDataP->paramPoint06NameAc, point_06Name.c_str(), point_06Name.length() + 1);
 	strncpy_s(seqDataP->paramPoint07NameAc, point_07Name.c_str(), point_07Name.length() + 1);
 	strncpy_s(seqDataP->paramPoint08NameAc, point_08Name.c_str(), point_08Name.length() + 1);
 	strncpy_s(seqDataP->paramPoint09NameAc, point_09Name.c_str(), point_09Name.length() + 1);
@@ -614,7 +615,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->paramCb03NameAc, cbox_03Name.c_str(), cbox_03Name.length() + 1);
 	strncpy_s(seqDataP->paramCb04NameAc, cbox_04Name.c_str(), cbox_04Name.length() + 1);
 	strncpy_s(seqDataP->paramCb05NameAc, cbox_05Name.c_str(), cbox_05Name.length() + 1);
-	strncpy_s(seqDataP->paramCb02NameAc, cbox_02Name.c_str(), cbox_02Name.length() + 1);
+	strncpy_s(seqDataP->paramCb06NameAc, cbox_06Name.c_str(), cbox_06Name.length() + 1);
 	strncpy_s(seqDataP->paramCb07NameAc, cbox_07Name.c_str(), cbox_07Name.length() + 1);
 	strncpy_s(seqDataP->paramCb08NameAc, cbox_08Name.c_str(), cbox_08Name.length() + 1);
 	strncpy_s(seqDataP->paramCb09NameAc, cbox_09Name.c_str(), cbox_09Name.length() + 1);
@@ -625,7 +626,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->paramColor03NameAc, color_03Name.c_str(), color_03Name.length() + 1);
 	strncpy_s(seqDataP->paramColor04NameAc, color_04Name.c_str(), color_04Name.length() + 1);
 	strncpy_s(seqDataP->paramColor05NameAc, color_05Name.c_str(), color_05Name.length() + 1);
-	strncpy_s(seqDataP->paramColor02NameAc, color_02Name.c_str(), color_02Name.length() + 1);
+	strncpy_s(seqDataP->paramColor06NameAc, color_06Name.c_str(), color_06Name.length() + 1);
 	strncpy_s(seqDataP->paramColor07NameAc, color_07Name.c_str(), color_07Name.length() + 1);
 	strncpy_s(seqDataP->paramColor08NameAc, color_08Name.c_str(), color_08Name.length() + 1);
 	strncpy_s(seqDataP->paramColor09NameAc, color_09Name.c_str(), color_09Name.length() + 1);
@@ -638,7 +639,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->descriptionAc, effect_description.c_str(), effect_description.length() + 1);
 	strncpy(seqDataP->Glsl_FragmentShAc, gl_fragsh.c_str(), gl_fragsh.length() + 1);
 	strncpy(seqDataP->Glsl_VertexShAc, gl_vertsh.c_str(), gl_vertsh.length() + 1);
-	strncpy(seqDataP->Glsl_VertexShAc, gl_geosh.c_str(), gl_geosh.length() + 1);
+    strncpy(seqDataP->Glsl_GeoShAc, gl_geosh.c_str(), gl_geosh.length() + 1);
 	strncpy(seqDataP->redExAc, expr_red.c_str(), expr_red.length() + 1);
 	strncpy(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
@@ -664,7 +665,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramPoint03NameAc, point_03Name.c_str(), point_03Name.length() + 1);
 	strncpy(seqDataP->paramPoint04NameAc, point_04Name.c_str(), point_04Name.length() + 1);
 	strncpy(seqDataP->paramPoint05NameAc, point_05Name.c_str(), point_05Name.length() + 1);
-	strncpy(seqDataP->paramPoint02NameAc, point_06Name.c_str(), point_06Name.length() + 1);
+	strncpy(seqDataP->paramPoint06NameAc, point_06Name.c_str(), point_06Name.length() + 1);
 	strncpy(seqDataP->paramPoint07NameAc, point_07Name.c_str(), point_07Name.length() + 1);
 	strncpy(seqDataP->paramPoint08NameAc, point_08Name.c_str(), point_08Name.length() + 1);
 	strncpy(seqDataP->paramPoint09NameAc, point_09Name.c_str(), point_09Name.length() + 1);
@@ -675,7 +676,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramCb03NameAc, cbox_03Name.c_str(), cbox_03Name.length() + 1);
 	strncpy(seqDataP->paramCb04NameAc, cbox_04Name.c_str(), cbox_04Name.length() + 1);
 	strncpy(seqDataP->paramCb05NameAc, cbox_05Name.c_str(), cbox_05Name.length() + 1);
-	strncpy(seqDataP->paramCb02NameAc, cbox_06Name.c_str(), cbox_06Name.length() + 1);
+	strncpy(seqDataP->paramCb06NameAc, cbox_06Name.c_str(), cbox_06Name.length() + 1);
 	strncpy(seqDataP->paramCb07NameAc, cbox_07Name.c_str(), cbox_07Name.length() + 1);
 	strncpy(seqDataP->paramCb08NameAc, cbox_08Name.c_str(), cbox_08Name.length() + 1);
 	strncpy(seqDataP->paramCb09NameAc, cbox_09Name.c_str(), cbox_09Name.length() + 1);
@@ -686,7 +687,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramColor03NameAc, color_03Name.c_str(), color_03Name.length() + 1);
 	strncpy(seqDataP->paramColor04NameAc, color_04Name.c_str(), color_04Name.length() + 1);
 	strncpy(seqDataP->paramColor05NameAc, color_05Name.c_str(), color_05Name.length() + 1);
-	strncpy(seqDataP->paramColor02NameAc, color_06Name.c_str(), color_06Name.length() + 1);
+	strncpy(seqDataP->paramColor06NameAc, color_06Name.c_str(), color_06Name.length() + 1);
 	strncpy(seqDataP->paramColor07NameAc, color_07Name.c_str(), color_07Name.length() + 1);
 	strncpy(seqDataP->paramColor08NameAc, color_08Name.c_str(), color_08Name.length() + 1);
 	strncpy(seqDataP->paramColor09NameAc, color_09Name.c_str(), color_09Name.length() + 1);
@@ -756,7 +757,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	seqDataP->paramColor10VisibleB = color_10VisibleB;
 
 
-	seqDataP->layerGrpVisibleB = layer_extGrpVisibleB;
+	seqDataP->layerGrpVisibleB = layer_grpVisibleB;
 	seqDataP->paramLayer01VisibleB = layer_01VisibleB;
 
 
