@@ -50,56 +50,56 @@ static std::string defaultArb = R"=====(
         "presetHasWideInputB":false
     },
     "composition":{
-        "resolution":"resolution_",
+        "resolution":"resolution",
         "time_sec":"time__",
-        "time_frame":"timef___",
-        "frame_rate":"fps_",
-        "camera_position":"camera_pos__",
-        "camera_target":"camera_target___"
+        "time_frame":"timef",
+        "frame_rate":"fps",
+        "camera_position":"camera_pos",
+        "camera_target":"camera_target"
     },
     "gui_settings":{
         "sliderGrp":{
-            "grpVisibleB":false,
-            "grpName":"Slider Groupy",
+            "grpVisibleB":true,
+            "grpName":"Slider Group",
             "slider_1":{
                 "visibleB":false,
-                "name":"slider_1_"
+                "name":"slider_1"
             },
             "slider_2":{
                 "visibleB":true,
-                "name":"slider_2__"
+                "name":"slider_2"
             },
             "slider_3":{
                 "visibleB":true,
-                "name":"slider_3___"
+                "name":"slider_3"
             },
             "slider_4":{
                 "visibleB":true,
-                "name":"slider_4_____"
+                "name":"slider_4"
             },
             "slider_5":{
                 "visibleB":true,
-                "name":"slider_5__"
+                "name":"slider_5"
             },
             "slider_6":{
                 "visibleB":false,
-                "name":"slider_6___"
+                "name":"slider_6"
             },
             "slider_7":{
                 "visibleB":true,
-                "name":"slider_7_____"
+                "name":"slider_7"
             },
             "slider_8":{
                 "visibleB":false,
-                "name":"slider_8___"
+                "name":"slider_8"
             },
             "slider_9":{
                 "visibleB":true,
-                "name":"slider_9___"
+                "name":"slider_9"
             },
             "slider_10":{
-                "visibleB":false,
-                "name":"slider_10______"
+                "visibleB":true,
+                "name":"slider_10_"
             }
         },
         "pointGrp":{

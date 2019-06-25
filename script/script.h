@@ -49,13 +49,10 @@ std::string script_getDataBackFromMathCEP  =R"=====(
 
 //get variable string from cep
 function getDataFromCEP(){
-	if (tlmathDataFromSetup){
-        var result = tlmathDataFromSetup.toString();
-        tlmathDataFromSetup = {};//delte the variable to free the memory (poor AE memory)
-        alert (result)
+    if (!tlmathDataFromSetup){ return}
+    var result = tlmathDataFromSetup.toString();
+    tlmathDataFromSetup = {};//delte the variable to free the memory (poor AE memory)
 	return result;
-	}
-    return;
 }
 getDataFromCEP();
 

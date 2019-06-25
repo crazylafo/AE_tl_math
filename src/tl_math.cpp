@@ -511,175 +511,6 @@ GlobalSetup (
 }
 
 
-static PF_Err 
-ParamsSetup (	
-	PF_InData		*in_data,
-	PF_OutData		*out_data,
-	PF_ParamDef		*params[],
-	PF_LayerDef		*output )
-{
-	PF_Err		err		= PF_Err_NONE;
-	PF_ParamDef	def;
-
-
-	AEFX_CLR_STRUCT(def);
-	PF_ADD_BUTTON(STR(STR_ID_BUTTON_SETUP_Param_Name),
-				  STR(STR_ID_BUTTON_SETUP_Param_Name),
-				  0,
-				  PF_ParamFlag_SUPERVISE,
-			      MATH_SETUP_DISK_ID);
-
-    AEFX_CLR_STRUCT(def);
-    ERR(CreateDefaultArb(in_data,
-                         out_data,
-                         &def.u.arb_d.dephault));
-    
-    
-	PF_ADD_ARBITRARY2("preset Name",
-		10,
-		10,
-		PF_ParamFlag_SUPERVISE | PF_ParamFlag_CANNOT_TIME_VARY,
-                      PF_PUI_TOPIC,
-                      def.u.arb_d.dephault,
-                      MATH_ARB_DATA,
-                      ARB_REFCON);
-    
-    if (!err) {
-        PF_CustomUIInfo			ci;
-        
-        ci.events				= PF_CustomEFlag_EFFECT;
-        
-        ci.comp_ui_width		= ci.comp_ui_height = 0;
-        ci.comp_ui_alignment	= PF_UIAlignment_NONE;
-        
-        ci.layer_ui_width		=
-        ci.layer_ui_height		= 0;
-        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
-        
-        ci.preview_ui_width		=
-        ci.preview_ui_height	= 0;
-        ci.layer_ui_alignment	= PF_UIAlignment_NONE;
-        
-        err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
-    }
-    AEFX_CLR_STRUCT(def);
-	def.flags= PF_ParamFlag_SUPERVISE;
-    PF_ADD_TOPIC(STR( StrID_TOPIC_SLIDER_Param_Name),  MATH_TOPIC_SLIDER_DISK_ID);
-    
-    AEFX_CLR_STRUCT(def);
-    PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTONE_Param_Name),
-							MATH_VAR_MIN,
-							MATH_VAR_MAX,
-							MATH_SLIDER_MIN,
-							MATH_SLIDER_MAX,
-							MATH_VAR_DFLT,
-							PF_Precision_THOUSANDTHS,
-							0,
-							PF_ParamFlag_SUPERVISE,
-							uiSliderOne_VAR_DISK_ID);
-
-	AEFX_CLR_STRUCT(def);
-    
-    PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTTWO_Param_Name),
-                         MATH_VAR_MIN,
-                         MATH_VAR_MAX,
-						 MATH_SLIDER_MIN,
-                         MATH_SLIDER_MAX,
-                         MATH_VAR_DFLT,
-                         PF_Precision_THOUSANDTHS,
-                         0,
-						PF_ParamFlag_SUPERVISE,
-                         MATH_SLIDER_TWO_VAR_DISK_ID);
-    
-    AEFX_CLR_STRUCT(def);
-    
-    PF_ADD_FLOAT_SLIDERX(	STR(StrID_INPUTTHREE_Param_Name),
-                         MATH_VAR_MIN,
-                         MATH_VAR_MAX,
-						 MATH_SLIDER_MIN,
-                         MATH_SLIDER_MAX,
-                         MATH_VAR_DFLT,
-                         PF_Precision_THOUSANDTHS,
-                         0,
-		   				PF_ParamFlag_SUPERVISE,
-                         MATH_SLIDER_THREE_VAR_DISK_ID);
-    
-    AEFX_CLR_STRUCT(def);
-    
-    PF_ADD_FLOAT_SLIDERX(STR( StrID_INPUTFOUR_Param_Name),
-                         MATH_VAR_MIN,
-                         MATH_VAR_MAX,
-						 MATH_SLIDER_MIN,
-                         MATH_SLIDER_MAX,
-                         MATH_VAR_DFLT,
-                         PF_Precision_THOUSANDTHS,
-                         0,
-						 PF_ParamFlag_SUPERVISE,
-                         MATH_SLIDER_FOUR_VAR_DISK_ID);
-    
-    AEFX_CLR_STRUCT(def);
-    PF_END_TOPIC( MATH_TOPIC_SLIDER_DISK_ID);
-
-    AEFX_CLR_STRUCT(def);
-    
-	def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_TOPIC(STR( StrID_TOPIC_POINTS_Param_Name), MATH_TOPIC_POINTS_DISK_ID);
-	AEFX_CLR_STRUCT(def);
-	 def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_POINT(STR (strID_INPUTPOINTONE_Param_Name), 50, 50, FALSE, MATH_POINT_ONE_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-	def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_POINT(STR(strID_INPUTPOINTTWO_Param_Name), 50, 50, FALSE, MATH_POINT_TWO_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-    PF_END_TOPIC(MATH_TOPIC_POINTS_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-	def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_TOPIC(STR( StrID_TOPIC_COLORS_Param_Name), MATH_TOPIC_COLORS_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-	def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_COLOR(STR(strID_INPUTCOLORONE_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8, MATH_COLOR_ONE_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-	def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_COLOR(STR(strID_INPUTCOLORTWO_Param_Name), PF_MAX_CHAN8, PF_MAX_CHAN8, PF_MAX_CHAN8,MATH_COLOR_TWO_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-    PF_END_TOPIC (MATH_TOPIC_COLORS_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-	def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name), MATH_TOPIC_INPUTS_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-	def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_LAYER(STR(StrID_LAYER_ONE_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_ONE_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-    PF_ADD_FLOAT_SLIDERX(STR( StrID_TOFF_ONE_Param_Name),
-                         TIMEOFFSET_MIN,
-                         TIMEOFFSET_MAX,
-						 MATH_SLIDER_MIN,
-                         MATH_SLIDER_MAX,
-                         TIMEOFFSET_DFLT,
-                         PF_Precision_INTEGER,
-                         0,
-                         PF_ParamFlag_SUPERVISE ,
-                         MATH_INP_TOFF_ONE_DISK_ID);
-    
-    PF_ADD_POINT(STR(StrID_POFF_ONE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_ONE_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-
-    PF_END_TOPIC(MATH_TOPIC_INPUTS_DISK_ID);
-    AEFX_CLR_STRUCT(def);
-
-	// INVISIBLE PARAM TO EXCHANGE WITH CEP
-	PF_ADD_CHECKBOXX(STR(StrID_CEP_GETARB_Param_Name), FALSE, PF_ParamFlag_SUPERVISE, MATH_CEP_GET_ARB_DATA_DISK_ID);
-	AEFX_CLR_STRUCT(def);
-
-    out_data->num_params = MATH_NUM_PARAMS;
-    
-
-
-	return err;
-}
-
-
-
 void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
 {
     // always restore back AE's own OGL context
@@ -1355,14 +1186,14 @@ SmartRender(
             //CHECKOUT PARAMS
             PF_ParamDef  setup_param,
 						arb_param,
-						var1_param,
-						var2_param,
-						var3_param,
-						var4_param,
-						point1_param,
-						point2_param,
-						color1_param,
-                        color2_param;
+						slider_param[10],
+						point_param[10],
+                        cb_param[10],
+                        color_param[10],
+                        extlayer01_param,
+                        extlayer01_toff_param,
+                        extlayer01_poff_param,
+                        cb_getarb_param;
 
 
             AEFX_CLR_STRUCT(setup_param);
@@ -1381,73 +1212,340 @@ SmartRender(
                                   in_data->time_scale,
                                   &arb_param));
 
-            AEFX_CLR_STRUCT(var1_param);
+            AEFX_CLR_STRUCT(slider_param[0]);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_SLIDER_ONE_VAR,
+                                  MATH_SLIDER_ONE,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &var1_param));
+                                  &slider_param[0]));
 
-            AEFX_CLR_STRUCT(var2_param);
+            AEFX_CLR_STRUCT(slider_param[1]);
             ERR(PF_CHECKOUT_PARAM(in_data,
-                                  MATH_SLIDER_TWO_VAR,
+                                  MATH_SLIDER_TWO,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &var2_param));
+                                  &slider_param[1]));
 
-            AEFX_CLR_STRUCT(var3_param);
+            AEFX_CLR_STRUCT(slider_param[2]);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_SLIDER_THREE_VAR,
+                                  MATH_SLIDER_THREE,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &var3_param));
+                                  &slider_param[2]));
 
-            AEFX_CLR_STRUCT(var4_param);
+            AEFX_CLR_STRUCT(slider_param[3]);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-                                  MATH_SLIDER_FOUR_VAR,
+                                  MATH_SLIDER_FOUR,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &var4_param));
+                                  &slider_param[3]));
 
-
-            AEFX_CLR_STRUCT(point1_param);
+            AEFX_CLR_STRUCT(slider_param[4]);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-								  MATH_POINT_ONE,
+                                  MATH_SLIDER_FIVE,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &point1_param));
+                                  &slider_param[4]));
 
-            AEFX_CLR_STRUCT(point2_param);
+            AEFX_CLR_STRUCT(slider_param[5]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_SLIDER_SIX,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &slider_param[5]));
+
+            AEFX_CLR_STRUCT(slider_param[6]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_SLIDER_SEVEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &slider_param[6]));
+
+            AEFX_CLR_STRUCT(slider_param[7]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_SLIDER_HEIGHT,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &slider_param[7]));
+
+            AEFX_CLR_STRUCT(slider_param[8]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_SLIDER_NINE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &slider_param[8]));
+
+            AEFX_CLR_STRUCT(slider_param[9]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_SLIDER_TEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &slider_param[9]));
+
+
+
+
+            AEFX_CLR_STRUCT(point_param[0]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_ONE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &point_param[0]));
+
+            AEFX_CLR_STRUCT(point_param[1]);
             ERR(PF_CHECKOUT_PARAM(in_data,
-								  MATH_POINT_TWO,
+                                  MATH_POINT_TWO,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &point2_param));
+                                  &point_param[1]));
 
-
-
-
-            AEFX_CLR_STRUCT(color1_param);
+            AEFX_CLR_STRUCT(point_param[2]);
             ERR(PF_CHECKOUT_PARAM(  in_data,
-								  MATH_COLOR_ONE,
+                                  MATH_POINT_THREE,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &color1_param));
+                                  &point_param[2]));
 
-            AEFX_CLR_STRUCT(color2_param);
-            ERR(PF_CHECKOUT_PARAM(in_data,
-								  MATH_COLOR_TWO,
+            AEFX_CLR_STRUCT(point_param[3]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_FOUR,
                                   in_data->current_time,
                                   in_data->time_step,
                                   in_data->time_scale,
-                                  &color2_param));
+                                  &point_param[3]));
+
+            AEFX_CLR_STRUCT(point_param[4]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_FIVE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &point_param[4]));
+
+            AEFX_CLR_STRUCT(point_param[5]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_SIX,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &point_param[5]));
+
+            AEFX_CLR_STRUCT(point_param[6]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_SEVEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &point_param[6]));
+
+            AEFX_CLR_STRUCT(point_param[7]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_HEIGHT,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &point_param[7]));
+
+            AEFX_CLR_STRUCT(point_param[8]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_NINE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &point_param[8]));
+
+            AEFX_CLR_STRUCT(point_param[9]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_POINT_TEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &point_param[9]));
+
+
+
+            AEFX_CLR_STRUCT(cb_param[0]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_ONE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[0]));
+
+            AEFX_CLR_STRUCT(cb_param[1]);
+            ERR(PF_CHECKOUT_PARAM(in_data,
+                                  MATH_CB_TWO,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[1]));
+
+            AEFX_CLR_STRUCT(cb_param[2]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_THREE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[2]));
+
+            AEFX_CLR_STRUCT(cb_param[3]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_FOUR,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[3]));
+
+            AEFX_CLR_STRUCT(cb_param[4]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_FIVE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[4]));
+
+            AEFX_CLR_STRUCT(cb_param[5]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_SIX,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[5]));
+
+            AEFX_CLR_STRUCT(cb_param[6]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_SEVEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[6]));
+
+            AEFX_CLR_STRUCT(cb_param[7]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_HEIGHT,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[7]));
+
+            AEFX_CLR_STRUCT(cb_param[8]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_NINE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[8]));
+
+            AEFX_CLR_STRUCT(cb_param[9]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_CB_TEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_param[9]));
+
+
+            AEFX_CLR_STRUCT(color_param[0]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_ONE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[0]));
+
+            AEFX_CLR_STRUCT(color_param[1]);
+            ERR(PF_CHECKOUT_PARAM(in_data,
+                                  MATH_COLOR_TWO,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[1]));
+
+            AEFX_CLR_STRUCT(color_param[2]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_THREE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[2]));
+
+            AEFX_CLR_STRUCT(color_param[3]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_FOUR,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[3]));
+
+            AEFX_CLR_STRUCT(color_param[4]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_FIVE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[4]));
+
+            AEFX_CLR_STRUCT(color_param[5]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_SIX,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[5]));
+
+            AEFX_CLR_STRUCT(color_param[6]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_SEVEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[6]));
+
+            AEFX_CLR_STRUCT(color_param[7]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_HEIGHT,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[7]));
+
+            AEFX_CLR_STRUCT(color_param[8]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_NINE,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[8]));
+
+            AEFX_CLR_STRUCT(color_param[9]);
+            ERR(PF_CHECKOUT_PARAM(  in_data,
+                                  MATH_COLOR_TEN,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &color_param[9]));
+
+
+            AEFX_CLR_STRUCT(cb_getarb_param);
+            ERR(PF_CHECKOUT_PARAM(in_data,
+                                  MATH_CEP_GET_ARB_DATA,
+                                  in_data->current_time,
+                                  in_data->time_step,
+                                  in_data->time_scale,
+                                  &cb_getarb_param));
 
 
             //layer size
@@ -1459,16 +1557,16 @@ SmartRender(
             miP->layerTime_Sec = PF_FpShort(in_data->current_time)/PF_FpShort(in_data->time_scale);
             miP->layerTime_Frame = PF_FpShort(in_data->current_time/ (float)in_data->time_step);
             miP->layerDuration =PF_FpShort( in_data->total_time / in_data->time_scale);
-            miP->inOneF    = var1_param.u.fs_d.value;
-            miP->inTwoF    = var2_param.u.fs_d.value;
-            miP->inThreeF= var3_param.u.fs_d.value;
-            miP->inFourF    =  var4_param.u.fs_d.value;
+            miP->inOneF    = slider_param[0].u.fs_d.value;
+            miP->inTwoF    = slider_param[1].u.fs_d.value;
+            miP->inThreeF= slider_param[2].u.fs_d.value;
+            miP->inFourF    =  slider_param[3].u.fs_d.value;
 
             //user param points
-            miP->pointOneX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point1_param.u.td.x_value)));
-            miP->pointOneY =static_cast<PF_FpShort>(round(FIX_2_FLOAT(point1_param.u.td.y_value)));
-            miP->pointTwoX = static_cast<PF_FpShort>(round(FIX_2_FLOAT( point2_param.u.td.x_value)));
-            miP->pointTwoY =static_cast<PF_FpShort>(round(FIX_2_FLOAT( point2_param.u.td.y_value)));
+            miP->pointOneX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[0].u.td.x_value)));
+            miP->pointOneY =static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[0].u.td.y_value)));
+            miP->pointTwoX = static_cast<PF_FpShort>(round(FIX_2_FLOAT( point_param[1].u.td.x_value)));
+            miP->pointTwoY =static_cast<PF_FpShort>(round(FIX_2_FLOAT( point_param[1].u.td.y_value)));
 
 
             miP->xLF = 0;
@@ -1476,8 +1574,8 @@ SmartRender(
 
             //CONVERT COLOR PARAMS TO FLOAT BYSMART WAY
             PF_PixelFloat tempFloat1, tempFloat2;
-            ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, & color1_param, &tempFloat1));
-            ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, & color2_param, &tempFloat2));
+            ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, & color_param[0], &tempFloat1));
+            ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, & color_param[0], &tempFloat2));
 
             //user param color
             miP->colorOne[0] = tempFloat1.red;
@@ -1555,14 +1653,55 @@ SmartRender(
 			PF_UNLOCK_HANDLE(arbH);
             ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &var1_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &var2_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &var3_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &var4_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &point1_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &point2_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &color1_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &color2_param));
+            for (int i=0; i<10;i++){
+                ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[0]));
+                ERR2(PF_CHECKIN_PARAM(in_data, &point_param[0]));
+                ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[0]));
+                 ERR2(PF_CHECKIN_PARAM(in_data, &color_param[0]));
+            }
+
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_getarb_param));
+            /*
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[0]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[1]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[2]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[3]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[4]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[5]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[6]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[8]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[9]));
+
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[0]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[1]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[2]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[3]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[4]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[5]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[6]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[8]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &point_param[9]));
+
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[0]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[1]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[2]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[3]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[4]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[5]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[6]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[8]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[9]));
+
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[0]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[1]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[2]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[3]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[4]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[5]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[6]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[8]));
+            ERR2(PF_CHECKIN_PARAM(in_data, &color_param[9]));*/
+
 			if (extLW.data) {
 				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extLW));
 			}
@@ -1903,7 +2042,7 @@ EntryPointFunc (
                 
             case PF_Cmd_PARAMS_SETUP:
                 
-                err = ParamsSetup(	in_data,
+                err =tlmath_ParamsSetup (	in_data,
                                   out_data,
                                   params,
                                   output);

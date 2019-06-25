@@ -397,12 +397,12 @@ SetupGetDataBack(
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, script_getDataBackFromMathCEP.c_str(), FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
-    ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+    
     if (resultAC){  
         resultStr = resultAC;
         jsonStrToArb(resultStr, arbOutP);
     }
-
+	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 	arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
     //AEGP SETSTREAMVALUE TO ARB
     ERR (AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
@@ -593,7 +593,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->paramSlider03NameAc, slider_03Name.c_str(), slider_03Name.length() + 1);
 	strncpy_s(seqDataP->paramSlider04NameAc, slider_04Name.c_str(), slider_04Name.length() + 1);
 	strncpy_s(seqDataP->paramSlider05NameAc, slider_05Name.c_str(), slider_05Name.length() + 1);
-	strncpy_s(seqDataP->paramSlider02NameAc, slider_02Name.c_str(), slider_02Name.length() + 1);
+	strncpy_s(seqDataP->paramSlider06NameAc, slider_06Name.c_str(), slider_06Name.length() + 1);
 	strncpy_s(seqDataP->paramSlider07NameAc, slider_07Name.c_str(), slider_07Name.length() + 1);
 	strncpy_s(seqDataP->paramSlider08NameAc, slider_08Name.c_str(), slider_08Name.length() + 1);
 	strncpy_s(seqDataP->paramSlider09NameAc, slider_09Name.c_str(), slider_09Name.length() + 1);
@@ -654,7 +654,7 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->paramSlider03NameAc, slider_03Name.c_str(), slider_03Name.length() + 1);
 	strncpy(seqDataP->paramSlider04NameAc, slider_04Name.c_str(), slider_04Name.length() + 1);
 	strncpy(seqDataP->paramSlider05NameAc, slider_05Name.c_str(), slider_05Name.length() + 1);
-	strncpy(seqDataP->paramSlider06NameAc, slider_06Name.c_str(), slider_02Name.length() + 1);
+	strncpy(seqDataP->paramSlider06NameAc, slider_06Name.c_str(), slider_06Name.length() + 1);
 	strncpy(seqDataP->paramSlider07NameAc, slider_07Name.c_str(), slider_07Name.length() + 1);
 	strncpy(seqDataP->paramSlider08NameAc, slider_08Name.c_str(), slider_08Name.length() + 1);
 	strncpy(seqDataP->paramSlider09NameAc, slider_09Name.c_str(), slider_09Name.length() + 1);
