@@ -20,7 +20,7 @@ In math expression mode, whatever your Color Space, the expected values are betw
 # some exemples.
 Most of theme are based on www.shadertoy.com and wwww.glslsandbox.com. they are aivable in the demo project
 
-![Alt Text](https://github.com/crazylafo/AE_tl_math/tree/1.14/demo/demo_images/34_fire.gif)
+![Imgur Image](https://github.com/crazylafo/AE_tl_math/tree/1.14/demo/demo_images/34_fire.gif)
 ![Imgur Image](./demo/demo_images/Defocus.gif)
 ![Imgur Image](./demo/demo_images/Engrenage.gif)
 ![Imgur Image](./demo/demo_images/WTF_organic.gif)
