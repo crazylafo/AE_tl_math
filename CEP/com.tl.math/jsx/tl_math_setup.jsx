@@ -17,7 +17,9 @@ function isCompActiveItem(){
 }
 
 
-
+function alertSelecEffect(){
+  alert ('select a tl Math Effect');
+}
 if ( ! $._ext )
 {
   $._ext = {};
@@ -29,20 +31,18 @@ $._ext = {
     if (!arbData){return};
     //send data;
     tlmathDataFromSetup = JSON.stringify(arbData);
-
     var propIndex = null;
-    if (app.project.activeItem instanceof CompItem){
-      var listSelectedProps = app.project.activeItem.selectedProperties;
-      for (var i=0; i<listSelectedProps.length; i++){
-        if (listSelectedProps[i].name == "tl_math-BETA"){
-            propIndex = i;
-            break;
-        }     
-      }
+    if (!app.project.activeItem instanceof CompItem){alertSelecEffect(); return }
+    var listSelectedProps = app.project.activeItem.selectedProperties;
+    if (!listSelectedProps[0]){alertSelecEffect(); return }
+    for (var i=0; i<listSelectedProps.length; i++){
+      if (listSelectedProps[i].name == "tl_math-BETA"){
+          propIndex = i;
+          listSelectedProps[propIndex].property(56).setValue(1);//property 56 = get arb. can't find it by name because hidden
+          break;
+      }     
     }
-    var scriptToExe = "var listSelectedProps = null; try{ listSelectedProps = app.project.activeItem.selectedProperties; if (listSelectedProps !=null){ listSelectedProps["+propIndex+"].property('get arb').setValue(1)}  } catch(e){listSelectedProps = null; alert ('select a tl Math Effect')}; ; ";
-    return app.scheduleTask(scriptToExe, 200, false);
-
+    
   }
 };
 
