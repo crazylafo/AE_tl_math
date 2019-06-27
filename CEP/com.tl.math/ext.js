@@ -80,7 +80,6 @@ function sendDataToPlugin(editors, arbData) {
 	//copy  expressions
 	arbData.gl_expression.gl_frag_sh = cleanJsonToArbStr((editors.gl_frag_editor.getValue()).toString());
 	arbData.gl_expression.gl_vert_sh = cleanJsonToArbStr(( editors.gl_vert_editor.getValue()).toString());
-	arbData.gl_expression.gl_geo_sh = cleanJsonToArbStr((editors.gl_geo_editor.getValue()).toString());
 	arbData.math_expression.redExpr= cleanJsonToArbStr((editors.expr_red_editor.getValue()).toString());
 	arbData.math_expression.greenExpr =cleanJsonToArbStr(( editors.expr_green_editor.getValue()).toString())
 	arbData.math_expression.blueExpr =  cleanJsonToArbStr((editors.expr_blue_editor.getValue()).toString());
@@ -224,9 +223,6 @@ function copyDataToGUI (arbData, editors) {
 	}
 	if (arbData.gl_expression.gl_vert_sh){
 		editors.gl_vert_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl_vert_sh.toString()), -1);
-	}
-	if (arbData.gl_expression.gl_geo_sh){
-		editors.gl_geo_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl_geo_sh.toString(), -1));
 	}
 	if (arbData.math_expression.redExpr){
 		editors.expr_red_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.redExpr.toString(), -1));
@@ -383,7 +379,6 @@ function setEditors(){
 	var editors = {};
 	editors.gl_frag_editor = glslEditor("gl_frag_editor");
 	editors.gl_vert_editor= glslEditor("gl_vert_editor");
-	editors.gl_geo_editor= glslEditor("gl_geo_editor");
 	editors.expr_red_editor = exprEditor("expr_red_editor");
 	editors.expr_green_editor = exprEditor("expr_green_editor");
 	editors.expr_blue_editor = exprEditor("expr_blue_editor");
