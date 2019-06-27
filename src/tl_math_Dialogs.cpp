@@ -439,11 +439,9 @@ copyFromArbToSeqData( std::string       arbStr,
     bool mode_glB		 = arbDataJS["/effectMode/gl_modeB"_json_pointer];
 	bool mode_exprB	 = arbDataJS["/effectMode/expr_modeB"_json_pointer];
 	bool mode_evalB	 = arbDataJS["/effectMode/evalModeB"_json_pointer];
-	bool mode_geoshB = arbDataJS["/effectMode/geoshModeB"_json_pointer];
 	
 	std::string gl_fragsh =  (arbDataJS["/gl_expression/gl_frag_sh"_json_pointer]);
 	std::string gl_vertsh = (arbDataJS["/gl_expression/gl_vert_sh"_json_pointer]);
-	std::string gl_geosh = arbDataJS["/gl_expression/gl_geo_sh"_json_pointer];
 					
 	std::string expr_red = (arbDataJS["/math_expression/redExpr"_json_pointer]);
 	std::string expr_green = (arbDataJS["/math_expression/greenExpr"_json_pointer]);
@@ -563,9 +561,8 @@ copyFromArbToSeqData( std::string       arbStr,
 	
 	std::string curr_fragSh = seqDataP->Glsl_FragmentShAc;
 	std::string curr_vertSh = seqDataP->Glsl_VertexShAc;
-	std::string curr_geoSh = seqDataP->Glsl_GeoShAc;
 
-	if (curr_fragSh.compare(gl_fragsh) != 0 || curr_vertSh.compare(gl_vertsh) != 0 || curr_geoSh.compare(gl_geosh) != 0)
+	if (curr_fragSh.compare(gl_fragsh) != 0 || curr_vertSh.compare(gl_vertsh) != 0 )
 	{
 		seqDataP->resetShaderB = true;
 	}
@@ -578,7 +575,6 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->descriptionAc, effect_description.c_str(), effect_description.length() + 1);
 	strncpy_s(seqDataP->Glsl_FragmentShAc, gl_fragsh.c_str(), gl_fragsh.length() + 1);
 	strncpy_s(seqDataP->Glsl_VertexShAc , gl_vertsh.c_str(), gl_vertsh.length() + 1);
-	strncpy_s(seqDataP->Glsl_GeoShAc, gl_geosh.c_str(), gl_geosh.length() + 1);
 	strncpy_s(seqDataP->redExAc, expr_red.c_str(), expr_red.length() + 1);
 	strncpy_s(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy_s(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
@@ -639,7 +635,6 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->descriptionAc, effect_description.c_str(), effect_description.length() + 1);
 	strncpy(seqDataP->Glsl_FragmentShAc, gl_fragsh.c_str(), gl_fragsh.length() + 1);
 	strncpy(seqDataP->Glsl_VertexShAc, gl_vertsh.c_str(), gl_vertsh.length() + 1);
-    strncpy(seqDataP->Glsl_GeoShAc, gl_geosh.c_str(), gl_geosh.length() + 1);
 	strncpy(seqDataP->redExAc, expr_red.c_str(), expr_red.length() + 1);
 	strncpy(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
@@ -703,7 +698,6 @@ copyFromArbToSeqData( std::string       arbStr,
 	seqDataP->glslModeB = mode_glB;
 	seqDataP->exprModeB =  mode_exprB;
 	seqDataP->evalModeB = mode_evalB;
-	seqDataP->geoShModeB = mode_geoshB;
 	seqDataP->needsPixelAroundB =param_pixelAroundB;
 	seqDataP->pixelsCallExternalInputB = param_ExternalInputB;
 	seqDataP->needsLumaB = param_lumaB;

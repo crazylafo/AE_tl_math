@@ -19,18 +19,15 @@ static std::string defaultArb = R"=====(
         "description":"simple skeleton effect"
     },
     "effectMode":{
-        "gl_modeB":true,
-        "expr_modeB":false,
-        "evalModeB":false,
-        "geoshModeB":false
+        "gl_modeB":false,
+        "expr_modeB":true,
+        "evalModeB":false
     },
     "gl_expression":{
         "gl_frag_sh":"#version 330 // glsls version for opengl 3.3\\nuniform sampler2D layerTex; //call the layer source\\nuniform float var1;// call somes variables from the ui\\nuniform float var2;\\nuniform float var3;\\nuniform float var4;\\nuniform vec3 cl1; // call the color param number 1\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec4 textureIn = texture( tex2d, uv.xy);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n\\nvoid main(void)\\n{\\n    fragColorOut= loadTextureFromAE(layerTex, out_uvs.xy);\\n    fragColorOut.r *=var1*cl1.r; //have fun to mix the color from layer/ slider intensity and color param\\n    fragColorOut.g *= var2*cl1.g;\\n    fragColorOut.b *= var3*cl1.b;\\n    fragColorOut.a *= var4;\\n}",
         "gl_vert_sh":"#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}",
-        "gl_geo_sh":"//write here your geometry shader",
         "gl_frag_error" : "fragment shader\\n compiled",
         "gl_vert_error" : "vertex shader\\n compiled",
-        "gl_geo_error"  : "geometry shader\\n  not used",
         "fragColorOutName":"gl_FragColor"
     },
     "math_expression":{
@@ -99,7 +96,7 @@ static std::string defaultArb = R"=====(
             },
             "slider_10":{
                 "visibleB":true,
-                "name":"slider_10_"
+                "name":"slider_10"
             }
         },
         "pointGrp":{

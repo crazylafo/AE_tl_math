@@ -361,7 +361,6 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
   <ItemGroup>
     <ClInclude Include="..\..\..\Util\AEFX_SuiteHelper.h" />
     <ClInclude Include="..\..\..\Util\Smart_Utils.h" />
-    <ClInclude Include="..\include\SDKPlugPlug.h" />
     <ClInclude Include="..\include\tl_defaultArb.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\callbacks_private.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\glrevision.h" />
@@ -400,7 +399,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClCompile Include="..\..\..\Util\AEFX_SuiteHelper.c" />
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp" />
     <ClCompile Include="..\..\..\Util\Smart_Utils.cpp" />
-    <ClCompile Include="..\src\SDKPlugPlug.cpp" />
+    <ClCompile Include="..\src\tl_mathParams.cpp" />
     <ClCompile Include="..\src\tl_math_Dialogs.cpp" />
     <ClCompile Include="..\src\tl_math_iterators.cpp" />
     <ClCompile Include="..\src\tl_math_Strings.cpp" />
@@ -436,7 +435,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClCompile Include="..\src\GL_base.cpp" />
     <ClCompile Include="..\..\..\Util\MissingSuiteError.cpp" />
     <ClCompile Include="..\src\tl_math.cpp" />
-    <ClCompile Include="..\src\tl_params.cpp" />
+    <ClCompile Include="tl_mathRender.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

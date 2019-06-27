@@ -89,8 +89,7 @@ typedef struct {
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
     A_char  Glsl_VertexShAc[25000];
-    A_char  Glsl_FragmentShAc[25000];
-	A_char  Glsl_GeoShAc[25000];
+    A_char  Glsl_FragmentShAc[50000];
    
 	A_char   resolution[32];
 	A_char   time_sec[32];
@@ -206,7 +205,6 @@ typedef struct {
     PF_Boolean  glslModeB;
 	PF_Boolean  exprModeB;
 	PF_Boolean  evalModeB;
-	PF_Boolean  geoShModeB;
     PF_Boolean needsPixelAroundB;
     PF_Boolean pixelsCallExternalInputB;
     PF_Boolean needsLumaB;
@@ -904,6 +902,31 @@ tlmath_ParamsSetup (
              PF_OutData        *out_data,
              PF_ParamDef        *params[],
               PF_LayerDef        *output );
+
+PF_Err
+tl_math_SmartRender(
+	PF_InData                *in_data,
+	PF_OutData                *out_data,
+	PF_SmartRenderExtra        *extraP);
+
+PF_Err
+tl_math_PreRender(PF_InData                *in_data,
+	PF_OutData                *out_data,
+	PF_PreRenderExtra        *extraP);
+
+PF_Err
+Render_GLSL(PF_InData                *in_data,
+	PF_OutData               *out_data,
+	PF_EffectWorld           *inputP,
+	PF_EffectWorld           *outputP,
+	PF_EffectWorld           *extLW,
+	PF_PixelFormat           format,
+	AEGP_SuiteHandler        &suites,
+	void                    *refcon,
+	PF_Boolean              ShaderResetB,
+	const std::string&		vertexShstr,
+	const std::string&		fragSh1str,
+	const std::string&		fragSh2str);
 
 
 #endif // TLMATH
