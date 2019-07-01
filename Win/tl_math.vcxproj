@@ -400,6 +400,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClCompile Include="..\..\..\Util\AEGP_SuiteHandler.cpp" />
     <ClCompile Include="..\..\..\Util\Smart_Utils.cpp" />
     <ClCompile Include="..\src\tl_mathParams.cpp" />
+    <ClCompile Include="..\src\tl_mathRender.cpp" />
     <ClCompile Include="..\src\tl_math_Dialogs.cpp" />
     <ClCompile Include="..\src\tl_math_iterators.cpp" />
     <ClCompile Include="..\src\tl_math_Strings.cpp" />
@@ -435,7 +436,6 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClCompile Include="..\src\GL_base.cpp" />
     <ClCompile Include="..\..\..\Util\MissingSuiteError.cpp" />
     <ClCompile Include="..\src\tl_math.cpp" />
-    <ClCompile Include="tl_mathRender.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -249,7 +249,7 @@
     <ClCompile Include="..\src\tl_mathParams.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="tl_mathRender.cpp">
+    <ClCompile Include="..\src\tl_mathRender.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
