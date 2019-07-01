@@ -96,49 +96,6 @@ GetLayerData(PF_InData     *in_data,
 
 }
 
-static std::string evalMathExprStr (std::string redResultStr, std::string greenResultStr, std::string blueResultStr, std::string alphaResultStr)
-{
-    PF_Boolean returnExprErrB = false;
-    std::string errReturn = "Error \n";
-    MathInfoP miP;
-    funcTransfertInfoP fiP;
-    fiP.redExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, redResultStr);
-    if (fiP.hasErrorB)
-    {
-        fiP.channelErrorstr = "red channel expression";
-        returnExprErrB = true;
-        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-
-    }
-    fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, greenResultStr);
-    if (fiP.hasErrorB)
-    {
-        fiP.channelErrorstr = "green channel expression";
-        returnExprErrB = true;
-        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-
-    }
-    fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, blueResultStr);
-    if (fiP.hasErrorB)
-    {
-        fiP.channelErrorstr = "blue channel expression";
-        returnExprErrB = true;
-        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-
-    }
-    fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, alphaResultStr);
-    if (fiP.hasErrorB)
-    {
-        fiP.channelErrorstr = "alpha channel expression";
-        returnExprErrB = true;
-        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-    }
-    if (!returnExprErrB) {
-        errReturn = compile_success;
-    }
-    return errReturn;
-}
-
 
 static void jsonStrToArb (std::string resultStr,
                           m_ArbData    *arbOutP)
@@ -216,7 +173,6 @@ AEGP_SetParamStreamValue(PF_InData            *in_data,
 }
 
 
-
 //fast copy/find/replace all method
 std::string strCopyAndReplace(std::string str,
                               const std::string& oldStr,
@@ -267,7 +223,6 @@ strToBoolean( std::string str)
     }
 }
 
-
 static std::string
 parseLayerDataToJsonStr(A_long compId,
 	A_long layerIndex,
@@ -285,6 +240,8 @@ parseLayerDataToJsonStr(A_long compId,
 	return plugIdObjJsonStr;
 
 }
+
+
 
 PF_Err
 CallCepDialog(PF_InData        *in_data,
@@ -317,9 +274,6 @@ CallCepDialog(PF_InData        *in_data,
 	return err;
 }
 
-
-
-
 PF_Err
 SetupDialogSend( PF_InData        *in_data,
                   PF_OutData        *out_data,
@@ -328,7 +282,7 @@ SetupDialogSend( PF_InData        *in_data,
     PF_Err err = PF_Err_NONE;
     AEGP_SuiteHandler    suites(in_data->pica_basicP);
     my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-
+    seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
     AEGP_MemHandle     resultMemH = NULL;
     A_char *resultAC = NULL;
     A_char          scriptAC[100000] { '\0' };
@@ -346,21 +300,28 @@ SetupDialogSend( PF_InData        *in_data,
                           in_data->time_step,
                           in_data->time_scale,
                           &arb_param));
-
         AEFX_CLR_STRUCT(arbInP);
         arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (!arbInP){
             err = PF_Err_OUT_OF_MEMORY;
         }
+    nlohmann::json  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
+    arbDataJS["gl_frag_error"] =  seqP->Glsl_fragError;
+    arbDataJS["gl_vert_error"] =  seqP-> Glsl_VertError;
+
+    arbDataJS["redExpr"] =  seqP->redError;
+    arbDataJS["greenExpr"] =  seqP->greenError;
+    arbDataJS["blueExpr"] =  seqP->blueError;
+    arbDataJS["alphaExpr"] =  seqP->alphaError;
     std::string resultStr;
-    std::string errReturn = "NONE";
-    std::string jsonDump = "'''";
-    jsonDump.append(arbInP->arbDataAc);
-    jsonDump.append("'''");
+    std::string jsonDump =arbDataJS.dump();
+   // std::string jsonDump = "'''";
+   // jsonDump.append(arbInP->arbDataAc);
+    //jsonDump.append("'''");
 
 
 	AEFX_CLR_STRUCT(scriptAC);
-	sprintf(scriptAC,
+        sprintf(scriptAC,
 		script_sendToMathCEP.c_str(),
 		jsonDump.c_str());
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
@@ -422,7 +383,6 @@ SetupGetDataBack(
     return err;
 
 }
-
 PF_Err
 copyFromArbToSeqData( std::string       arbStr,
                       seqData    *seqDataP)
@@ -447,6 +407,16 @@ copyFromArbToSeqData( std::string       arbStr,
 	std::string expr_green = (arbDataJS["/math_expression/greenExpr"_json_pointer]);
 	std::string expr_blue= (arbDataJS["/math_expression/blueExpr"_json_pointer]);
 	std::string expr_alpha = (arbDataJS["/math_expression/alphaExpr"_json_pointer]);
+
+
+
+    strReplace( gl_fragsh, "\\n","\n");
+    strReplace( gl_vertsh, "\\n","\n");
+    strReplace( expr_red, "\\n","\n");
+    strReplace( expr_green, "\\n","\n");
+    strReplace( expr_blue, "\\n","\n");
+    strReplace( expr_alpha, "\\n","\n");
+
 
 	bool  param_pixelAroundB= (arbDataJS["/flags/needsPixelAroundB"_json_pointer]);
 	bool param_ExternalInputB = (arbDataJS["/flags/pixelsCallExternalInputB"_json_pointer]);
@@ -569,6 +539,45 @@ copyFromArbToSeqData( std::string       arbStr,
 	else {
 		seqDataP->resetShaderB = false;
 	}
+    std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh;
+
+    evalRedExpr = evalMathExprStr (expr_red);
+    if (evalRedExpr != compile_success){
+        expr_red = safeExpr;
+    }
+
+    evalGreenExpr = evalMathExprStr (expr_green);
+    if (evalGreenExpr != compile_success){
+        expr_green = safeExpr;
+    }
+
+    evalBlueExpr = evalMathExprStr (expr_blue);
+    if (evalBlueExpr != compile_success){
+        expr_blue= safeExpr;
+    }
+
+    evalAlphaExpr = evalMathExprStr (expr_alpha);
+    if ( evalAlphaExpr != compile_success){
+        expr_alpha = safeExpr;
+    }
+
+
+    evalVertShader (gl_vertsh, evalVertSh);
+    if (evalVertSh != compile_success){
+        gl_vertsh = glvertstr;
+    }
+
+
+    evalFragShader (gl_fragsh, evalFragSh);
+    if (evalFragSh != compile_success){
+        evalFragSh = glErrorMessageStr;
+        std::string setting_resolutionName = "resolution";
+    }
+
+
+    
+
+
 	//copy str to A_char
 #ifdef AE_OS_WIN
 	strncpy_s(seqDataP->presetNameAc, effect_presetName.c_str(), effect_presetName.length() + 1);
@@ -578,7 +587,14 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->redExAc, expr_red.c_str(), expr_red.length() + 1);
 	strncpy_s(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy_s(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
-	strncpy_s(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);		
+	strncpy_s(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
+    strncpy(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
+    strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
+    strncpy(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
+    strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
+    strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+    strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+
 	strncpy_s(seqDataP->resolution,  setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
 	strncpy_s(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
 	strncpy_s(seqDataP->time_frame, setting_timeFrameName.c_str(), setting_timeFrameName.length() + 1);
@@ -639,6 +655,16 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
 	strncpy(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
+
+
+    strncpy(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
+    strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
+    strncpy(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
+    strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
+    strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+    strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+
+
 	strncpy(seqDataP->resolution, setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
 	strncpy(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
 	strncpy(seqDataP->time_frame, setting_timeFrameName.c_str(), setting_timeFrameName.length() + 1);

@@ -239,9 +239,7 @@ namespace {
 		glBindVertexArray(renderContext->vao);
 		RenderQuad(renderContext->quad);
   		glBindVertexArray(0);
-
 		glUseProgram(0);
-
 		glFlush();
 	}
 
@@ -511,8 +509,68 @@ GlobalSetup (
 }
 
 
-void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
+std::string
+evalMathExprStr (std::string expr)
 {
+    PF_Boolean returnExprErrB = false;
+    std::string errReturn = "Error \n";
+    MathInfoP miP;
+    funcTransfertInfoP fiP;
+    fiP.evalExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expr);
+    if (fiP.hasErrorB)
+    {
+        fiP.channelErrorstr = "red channel expression";
+        returnExprErrB = true;
+        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+    }
+    else {
+        errReturn = compile_success;
+        
+    }
+    return errReturn;
+}
+
+void
+evalVertShader(std::string inVertShaderStr, std::string& errReturn)
+{
+
+     // always restore back AE's own OGL context
+     SaveRestoreOGLContext oSavedContext;
+
+     // our render specific context (one per thread)
+     AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr renderContext = GetCurrentRenderContext();
+
+     if (!renderContext->mInitialized) {
+     //Now comes the OpenGL part - OS specific loading to start with
+     AESDK_OpenGL_Startup(*renderContext.get(), S_GLator_EffectCommonData.get());
+     renderContext->mInitialized = true;
+     }
+
+     renderContext->mProgramObjSu = 0;
+     renderContext->SetPluginContext();
+
+    GLint fragCompiledB =0;
+    const char *vertShaderStringsP = (const GLchar *) inVertShaderStr.c_str();
+    GLuint vertShaderSu = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(vertShaderSu, 1, &vertShaderStringsP, NULL);
+    glCompileShader(vertShaderSu);
+    glGetShaderiv(vertShaderSu, GL_COMPILE_STATUS, &fragCompiledB);
+    if (!fragCompiledB) {
+        char str[4096];
+        glGetShaderInfoLog(vertShaderSu, sizeof(str), NULL, str);
+        errReturn = str;
+    }
+    else {
+        errReturn = compile_success;
+    }
+    glDeleteShader(vertShaderSu);
+    glFlush();
+}
+
+void
+evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
+{
+
     // always restore back AE's own OGL context
     SaveRestoreOGLContext oSavedContext;
 
@@ -545,6 +603,7 @@ void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
         errReturn = compile_success;
     }
     glDeleteShader(fragmentShaderSu);
+    glFlush();
 }
 PF_Err
 Render_GLSL(PF_InData                *in_data,
@@ -656,9 +715,6 @@ Render_GLSL(PF_InData                *in_data,
 	return  err;
 }
 
-
-
-
 static PF_Err
 GlobalSetdown(
 	PF_InData		*in_data,
@@ -703,8 +759,6 @@ GlobalSetdown(
     
     return PF_Err_NONE;
 }
-
-
 
 static PF_Err
 HandleArbitrary(
@@ -865,19 +919,8 @@ QueryDynamicFlags(
 {
     seqDataP            seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
 	AEGP_SuiteHandler	suites(in_data->pica_basicP);
-	PF_Err 	err  = PF_Err_NONE,
-            err2  = PF_Err_NONE;
-    
-    PF_ParamDef arb_param;
-    AEFX_CLR_STRUCT(arb_param);
-    ERR(PF_CHECKOUT_PARAM(    in_data,
-                          MATH_ARB_DATA,
-                          in_data->current_time,
-                          in_data->time_step,
-                          in_data->time_scale,
-                          &arb_param));
-    
-	
+    PF_Err 	err  = PF_Err_NONE;
+           //err2  = PF_Err_NONE;
 
 	if (seqP && !err) {
 		
@@ -900,11 +943,10 @@ QueryDynamicFlags(
 
 	}
 
-    ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
+
 
 	return err;
 }
-
 
 static PF_Err
 SequenceSetdown (

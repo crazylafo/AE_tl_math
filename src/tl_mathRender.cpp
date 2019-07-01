@@ -321,8 +321,6 @@ ExprRender(PF_OutData     *out_data,
 	return err;
 }
 
-
-
 PF_Err
 tl_math_PreRender(PF_InData                *in_data,
 	PF_OutData                *out_data,
@@ -341,6 +339,9 @@ tl_math_PreRender(PF_InData                *in_data,
 	MathInfo        * miP = NULL;
 
 	if (infoH) {
+
+
+
 		miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(infoH));
 		if (miP) {
 			extraP->output->pre_render_data = infoH;
@@ -353,6 +354,7 @@ tl_math_PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&arb_param));
+
 
 			PF_ParamDef extlayer_toff_param;
 			AEFX_CLR_STRUCT(extlayer_toff_param);
@@ -370,6 +372,19 @@ tl_math_PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_poff_param));
+
+            PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
+
+            if (seq_dataH) {
+                seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
+                if (seqP->initializedB == false){
+                    m_ArbData *arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+                    ERR(copyFromArbToSeqData( arbOutP->arbDataAc , seqP));
+                    seqP->initializedB = true;
+                    out_data->sequence_data = seq_dataH;
+                }
+                suites.HandleSuite1()->host_unlock_handle(seq_dataH);
+            }
 
 
 			AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
@@ -500,7 +515,7 @@ tl_math_SmartRender(
 		kPFWorldSuiteVersion2,
 		out_data);
 
-	if (!err) {
+	if (!err && seqP) {
 
 		MathInfo *miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data)));
 		//flagInfo
@@ -534,9 +549,6 @@ tl_math_SmartRender(
 				point_param[10],
 				cb_param[10],
 				color_param[10],
-				extlayer01_param,
-				extlayer01_toff_param,
-				extlayer01_poff_param,
 				cb_getarb_param;
 
 
@@ -944,7 +956,7 @@ tl_math_SmartRender(
 				flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
 				flagsP.NeedsPixelAroundB = seqP->needsPixelAroundB;
 				flagsP.NeedsLumaB = seqP->needsLumaB;
-				flagsP.parserModeB = seqP->glslModeB;
+				flagsP.parserModeB = seqP->exprModeB;
 			}
 
 			ExprP.redstr = &redExprStr;
@@ -971,7 +983,7 @@ tl_math_SmartRender(
 			}
 
 			//CALL PARSER MODE
-			if (!err && flagsP.parserModeB == false) {
+			if (!err && flagsP.parserModeB == true) {
 				ERR(ExprRender(out_data, format, inputP, outputP, &extLW, suites,
 					(void*)miP,
 					(void*)&flagsP,

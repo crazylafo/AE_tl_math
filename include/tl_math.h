@@ -90,7 +90,16 @@ typedef struct {
     A_char  alphaExAc[4096];
     A_char  Glsl_VertexShAc[25000];
     A_char  Glsl_FragmentShAc[50000];
-   
+
+    A_char redError[2048];
+    A_char greenError[2048];
+    A_char blueError[2048];
+    A_char alphaError[2048];
+
+    A_char Glsl_VertError[2048];
+    A_char Glsl_fragError[2048];
+
+
 	A_char   resolution[32];
 	A_char   time_sec[32];
 	A_char   time_frame[32];
@@ -371,6 +380,7 @@ typedef struct funcTransfertInfo {
 	std::function<PF_FpShort()> greenExpr;
 	std::function<PF_FpShort()> blueExpr;
 	std::function<PF_FpShort()> alphaExpr;
+    std::function<PF_FpShort()> evalExpr;
 	PF_Boolean      hasErrorB;
 	std::string     channelErrorstr;
 	std::string     errorstr;
@@ -554,36 +564,7 @@ void main(void)\n\
 	out_uvs = UVs;\n\
 }";
 
-static std::string glfrag1str = R"=====(
-#version 330 // glsls version for opengl 3.3
-uniform sampler2D layerTex; //call the layer source
-uniform float var1;// call somes variables from the ui
-uniform float var2;
-uniform float var3;
-uniform float var4;
-uniform vec3 cl1; // call the color param number 1
-uniform float multiplier16bit; //proper to AE 16 bits depth.
-in vec4 out_pos;
-in vec2 out_uvs;
-out vec4 fragColorOut;
-// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs
-vec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)
-{
-    vec4 textureIn = texture( tex2d, uv.xy);
-    textureIn =  textureIn * multiplier16bit;
-    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);
-    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);
-    return  textureIn ;
-}
 
-void main(void)
-{
-    fragColorOut= loadTextureFromAE(layerTex, out_uvs.xy);
-    fragColorOut.r *=var1*cl1.r; //have fun to mix the color from layer/ slider intensity and color param
-    fragColorOut.g *= var2*cl1.g;
-    fragColorOut.b *= var3*cl1.b;
-    fragColorOut.a *= var4;
-})=====";
 
 static std::string glfrag2str = "#version 330\n\
 uniform sampler2D layerTex;\n\
@@ -615,7 +596,6 @@ static std::string glErrorMessageStr = R"=====(
 
     out vec4 fragColorOut;
     vec2 uv;
-    uniform float time;
     uniform vec2 resolution;
 
     const vec2 ch_size  = vec2(1.0, 2.0) * 0.6;              // character size (X,Y)
@@ -684,14 +664,11 @@ static std::string glErrorMessageStr = R"=====(
     vec3 hsv2rgb_smooth( in vec3 c )
     {
         vec3 rgb = clamp( abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),6.0)-3.0)-1.0, 0.0, 1.0 );
-
         rgb = rgb*rgb*(3.0-2.0*rgb); // cubic smoothing
-
         return c.z * mix( vec3(1.0), rgb, c.y);
     }
     void main( void )
     {
-
         vec2 aspect = resolution.xy / resolution.y;
         vec2 fragCoord = gl_FragCoord.xy;
         fragCoord.y =  resolution.y -gl_FragCoord.y;
@@ -699,17 +676,10 @@ static std::string glErrorMessageStr = R"=====(
         float _d =  1.0-length(uv);
         uv *= 18.0 ;
         uv.y -= 3.;
-        //uv *= rotate(time+uv.x*0.05);
-
-        vec3 ch_color = hsv2rgb_smooth(vec3(time*-.04+uv.y*0.1,0.5,1.0));
-
+        vec3 ch_color = hsv2rgb_smooth(vec3(1*-.04+uv.y*0.1,0.5,1.0));
         vec3 bg_color = vec3(_d*0.4, _d*0.2, _d*0.1);
-
         ch_pos = ch_start;
-
         nl1  S H A D E R _ E R R O R
-
-
         vec3 color = mix(ch_color, bg_color, 1.0- (0.08 / d*2.0));  // shading
         fragColorOut = vec4(1.-pow(length(color)-0.25, 4.)*vec3(.5,.5,.5), 1.0);
     }
@@ -738,8 +708,9 @@ extern "C" {
 #ifdef __cplusplus
 }
 
-
+std::string evalMathExprStr (std::string expr);
 void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn);
+void evalVertShader(std::string inVertShaderStr, std::string& errReturn);
 
 PF_Err
 CreateDefaultArb(
@@ -794,6 +765,8 @@ Arb_Scan(
 
 
 static std::string compile_success = "compiled successfully";
+static std::string safeExpr ="0";
+
 std::string strCopyAndReplace(std::string str,
                               const std::string& oldStr,
                               const std::string& newStr);
