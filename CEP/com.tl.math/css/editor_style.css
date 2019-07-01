@@ -1,48 +1,22 @@
 
 
-#gl_frag_tab{
+#gl_frag_tab, #gl_vert_tab{
     width:90%;
     height: 600px;
     display:inline-block;
     position:relative
 }
-#gl_vert_tab{
+
+
+#expr_red_tab, #expr_green_tab,#expr_blue_tab, #expr_alpha_tab{
     width:90%;
     height: 600px;
     display:inline-block;
     position:relative
 }
-#gl_geo_tab{
-    width:90%;
-    height: 600px;
-    display:inline-block;
-    position:relative
-}
-#expr_red_tab{
-    width:90%;
-    height: 600px;
-    display:inline-block;
-    position:relative
-}
-#expr_green_tab{
-    width:90%;
-    height: 600px;
-    display:inline-block;
-    position:relative
-}
-#expr_blue_tab{
-    width:90%;
-    height: 600px;
-    display:inline-block;
-    position:relative
-}
-#expr_alpha_tab{
-    width:90%;
-    height: 600px;
-    display:inline-block;
-    position:relative
-}
-#gl_frag_editor{
+
+
+#gl_frag_editor, #gl_vert_editor{
     position: absolute;
     margin: 1%;
     top: 5%;
@@ -51,7 +25,10 @@
     right: 0;
 }
 
-#gl_vert_editor{
+
+
+
+#expr_red_editor, #expr_green_editor, #expr_blue_editor, #expr_alpha_editor{
     position: absolute;
     margin: 1%;
     top: 5%;
@@ -60,54 +37,15 @@
     right: 0;
 }
 
-#gl_geo_editor{
-    position: absolute;
-    margin: 1%;
-    top: 5%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
 
-#expr_red_editor{
-    position: absolute;
-    margin: 1%;
-    top: 5%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-#expr_green_editor{
-    position: absolute;
-    margin: 1%;
-    top: 5%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-#expr_blue_editor{
-    position: absolute;
-    margin: 1%;
-    top: 5%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-#expr_alpha_editor{
-    position: absolute;
-    margin: 1%;
-    top: 5%;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
 
 #editor_name{
     color: #ddd;
     margin: 1%;
 }
 
-#gl_frag_console{
+#gl_frag_console, #gl_vert_console{
+    position: absolute;
     background: black;
     color: #ddd;
     margin: 1%;
@@ -116,24 +54,8 @@
     left: 25%;
     right: 25%;
 }
-#gl_vert_console{
-    background: black;
-    color: #ddd;
-    margin: 1%;
-    top: 0%;
-    bottom: 0;
-    left: 25%;
-    right: 25%;
-}
-#gl_geo_console{
-    background: black;
-    color: #ddd;
-    margin: 1%;
-    top: 0%;
-    bottom: 0;
-    left: 25%;
-    right: 25%;
-}
+
+
 #math_expr_red_console{
     background: black;
     color: #ddd;

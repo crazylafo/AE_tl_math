@@ -383,19 +383,20 @@
 		<br/>
 		<br/>
 		<div id="editor_glsl_settings" class="glslGUI">
-			<td id="geoShB"> Enable Geometry Shaders<input type="checkbox" name="geoShEnable" ></td>
+			<button class="glslEval" onclick="openEval(event, 'expr_red_tab', 'expr_red_editor')">Evaluate shaders</button>
 			</div>
 		<br/>
 		<div class="text editor">
 			<div id="gl_frag_tab" class="tabEditor">
 				<h3 id="editor_name">fragment shader code</h3>
 				<pre id="gl_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
-				</div>
+				<td id="gl_frag_console" class="consoleError">console</td>
+				</div>	
 			<div id="gl_vert_tab" class="tabEditor">	
 				<h3 id="editor_name">vertex shader code</h3>
 				<pre id="gl_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
+				<td id="gl_vert_console" class="consoleError">console</td>
 				</div>
-		
 			<div id="expr_red_tab" class="tabEditor">
 				<h3 id="editor_name">red expression code</h3>	
 				<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>

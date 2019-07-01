@@ -209,14 +209,14 @@ function sendDataToPlugin(editors, arbData) {
 }
 function copyDataToGUI (arbData, editors) {
 
-	/*
+
 	$("#gl_frag_console").val(arbData.gl_expression.gl_frag_error.toString());
 	$("#gl_vert_console").val(arbData.gl_expression.gl_vert_error.toString());
 	$("#math_expr_red_console").val(arbData.math_expression.red_error.toString());
 	$("#math_expr_green_console").val(arbData.math_expression.green_error.toString());
 	$("#math_expr_blue_console").val(arbData.math_expression.blue_error.toString());
 	$("#math_expr_alpha_console").val(arbData.math_expression.alpha_error.toString());
-	*/
+
 
 	if (arbData.gl_expression.gl_frag_sh){
 		editors.gl_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl_frag_sh.toString()), -1);
