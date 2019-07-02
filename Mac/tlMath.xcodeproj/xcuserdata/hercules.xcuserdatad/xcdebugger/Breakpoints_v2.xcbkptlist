@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_math.cpp"
-            timestampString = "583692981.668527"
+            timestampString = "583780156.373587"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "801"
-            endingLineNumber = "801"
+            startingLineNumber = "805"
+            endingLineNumber = "805"
             landmarkName = "HandleArbitrary( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output, PF_ArbParamsExtra *extra)"
             landmarkType = "9">
          </BreakpointContent>
@@ -90,7 +90,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../include/tl_math.h"
-            timestampString = "583692981.668993"
+            timestampString = "583780156.3736629"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "367"
@@ -106,26 +106,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_math.cpp"
-            timestampString = "583692981.6690609"
+            timestampString = "583780156.373727"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1107"
-            endingLineNumber = "1107">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/tl_math_Dialogs.cpp"
-            timestampString = "583692981.669365"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "749"
-            endingLineNumber = "749"
-            landmarkName = "copyFromArbToSeqData( std::string arbStr, seqData *seqDataP)"
+            startingLineNumber = "1111"
+            endingLineNumber = "1111"
+            landmarkName = "EntryPointFunc ( PF_Cmd cmd, PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output, void *extra)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -135,12 +121,28 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../src/tl_mathRender.cpp"
-            timestampString = "583692981.6694289"
+            filePath = "../src/tl_math_Dialogs.cpp"
+            timestampString = "583780156.373794"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "378"
-            endingLineNumber = "378"
+            startingLineNumber = "681"
+            endingLineNumber = "681"
+            landmarkName = "copyFromArbToSeqData( std::string arbStr, seqData *seqDataP)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathRender.cpp"
+            timestampString = "583780156.373861"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
             landmarkName = "tl_math_PreRender(PF_InData *in_data, PF_OutData *out_data, PF_PreRenderExtra *extraP)"
             landmarkType = "9">
          </BreakpointContent>
@@ -152,12 +154,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathRender.cpp"
-            timestampString = "583692981.669489"
+            timestampString = "583780156.374236"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "959"
-            endingLineNumber = "959"
+            startingLineNumber = "965"
+            endingLineNumber = "965"
             landmarkName = "tl_math_SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_math_Dialogs.cpp"
+            timestampString = "583780156.374545"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "736"
+            endingLineNumber = "736"
+            landmarkName = "evalScripts (seqData *seqDataP)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

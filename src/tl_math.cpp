@@ -250,13 +250,18 @@ namespace {
 	}
 
 	void RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
-		A_long widthL, A_long heightL,
-		gl::GLuint		inputFrameTexture,
-		gl::GLuint	inputExtFrameTexture,
-		void			*refcon,
-		float			multiplier16bit)
+            PF_InData    *in_data,
+            PF_OutData    *out_data,
+            A_long widthL,
+            A_long heightL,
+            gl::GLuint		inputFrameTexture,
+            gl::GLuint	inputExtFrameTexture,
+            void			*refcon,
+            float			multiplier16bit)
 	{
 		MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
+
+        seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
 		// - make sure we blend correctly inside the framebuffer
 		// - even though we just cleared it, another effect may want to first
 		// draw some kind of background to blend with
@@ -275,14 +280,14 @@ namespace {
 		// program uniforms
 		GLint location = glGetUniformLocation(renderContext->mProgramObjSu, "ModelviewProjection");
 		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "var1");
-		glUniform1f(location, miP->inOneF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "var2");
-		glUniform1f(location, miP->inTwoF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "var3");
-		glUniform1f(location, miP->inThreeF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "var4");
-		glUniform1f(location, miP->inFourF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu,  seqP->paramSlider01NameAc );
+		glUniform1f(location, miP->inSliderF[0]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu,seqP->paramSlider02NameAc );
+		glUniform1f(location, miP->inSliderF[1]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider03NameAc);
+		glUniform1f(location, miP->inSliderF[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider04NameAc);
+		glUniform1f(location, miP->inSliderF[3]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt1");
 		glUniform2f(location, miP->pointOneX, convertYCoordAEToGL(miP->pointOneY, heightL));
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "mouse");
@@ -510,16 +515,17 @@ GlobalSetup (
 
 
 std::string
-evalMathExprStr (std::string expr)
+evalMathExprStr (std::string expr,
+                 seqDataP   *seqP)
 {
     PF_Boolean returnExprErrB = false;
     std::string errReturn = "Error \n";
     MathInfoP miP;
     funcTransfertInfoP fiP;
-    fiP.evalExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expr);
+    fiP.evalExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expr, *seqP);
     if (fiP.hasErrorB)
     {
-        fiP.channelErrorstr = "red channel expression";
+        fiP.channelErrorstr = " expression error";
         returnExprErrB = true;
         errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
     }
@@ -678,7 +684,7 @@ Render_GLSL(PF_InData                *in_data,
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// - simply blend the texture inside the frame buffer
-		RenderGL(renderContext, widthL, heightL, inputFrameTexture, inputExtFrameTexture,(void*)miP, multiplier16bit);
+		RenderGL(renderContext, in_data, out_data, widthL, heightL, inputFrameTexture, inputExtFrameTexture,(void*)miP, multiplier16bit);
 
 		// - we toggle PBO textures (we use the PBO we just created as an input)
 		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);

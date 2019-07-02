@@ -8,24 +8,6 @@
 #include "script.h"
 
 
-
-
-
-//detect if a string has a specified char
-static PF_Boolean
-hasString(std::string str, std::string expr)
-{
-    std::string::size_type pos = 0u;
-    if ((pos = str.find(expr, pos)) != std::string::npos) {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-
-}
-
 static PF_Err
 GetLayerData(PF_InData     *in_data,
 			PF_OutData     *out_data,
@@ -373,8 +355,10 @@ SetupGetDataBack(
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		ERR(copyFromArbToSeqData(resultStr, seqP));
+        ERR(evalScripts  (seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
+
 	}
 	else {    // whoa, we couldn't allocate sequence data; bail!
 		err = PF_Err_OUT_OF_MEMORY;
@@ -383,6 +367,7 @@ SetupGetDataBack(
     return err;
 
 }
+
 PF_Err
 copyFromArbToSeqData( std::string       arbStr,
                       seqData    *seqDataP)
@@ -539,44 +524,6 @@ copyFromArbToSeqData( std::string       arbStr,
 	else {
 		seqDataP->resetShaderB = false;
 	}
-    std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh;
-
-    evalRedExpr = evalMathExprStr (expr_red);
-    if (evalRedExpr != compile_success){
-        expr_red = safeExpr;
-    }
-
-    evalGreenExpr = evalMathExprStr (expr_green);
-    if (evalGreenExpr != compile_success){
-        expr_green = safeExpr;
-    }
-
-    evalBlueExpr = evalMathExprStr (expr_blue);
-    if (evalBlueExpr != compile_success){
-        expr_blue= safeExpr;
-    }
-
-    evalAlphaExpr = evalMathExprStr (expr_alpha);
-    if ( evalAlphaExpr != compile_success){
-        expr_alpha = safeExpr;
-    }
-
-
-    evalVertShader (gl_vertsh, evalVertSh);
-    if (evalVertSh != compile_success){
-        gl_vertsh = glvertstr;
-    }
-
-
-    evalFragShader (gl_fragsh, evalFragSh);
-    if (evalFragSh != compile_success){
-        evalFragSh = glErrorMessageStr;
-        std::string setting_resolutionName = "resolution";
-    }
-
-
-    
-
 
 	//copy str to A_char
 #ifdef AE_OS_WIN
@@ -588,12 +535,6 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy_s(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
 	strncpy_s(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
-    strncpy(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
-    strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
-    strncpy(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
-    strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
-    strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-    strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
 
 	strncpy_s(seqDataP->resolution,  setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
 	strncpy_s(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
@@ -655,15 +596,6 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
 	strncpy(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
-
-
-    strncpy(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
-    strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
-    strncpy(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
-    strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
-    strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-    strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
-
 
 	strncpy(seqDataP->resolution, setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
 	strncpy(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
@@ -783,4 +715,89 @@ copyFromArbToSeqData( std::string       arbStr,
 
     return err;
 }
+
+PF_Err
+evalScripts  (seqData  *seqDataP)
+{
+    PF_Err err = PF_Err_NONE;
+    std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh;
+
+    evalRedExpr = evalMathExprStr (seqDataP->redExAc, &seqDataP);
+    if (evalRedExpr != compile_success){
+        #ifdef AE_OS_WIN
+         strncpy_s(seqDataP->redExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #else
+         strncpy(seqDataP->redExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #endif
+
+    }
+
+    evalGreenExpr = evalMathExprStr (seqDataP->greenExAc, &seqDataP);
+    if (evalGreenExpr != compile_success){
+        #ifdef AE_OS_WIN
+                strncpy_s(seqDataP->greenExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #else
+                strncpy(seqDataP->greenExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #endif
+    }
+
+    evalBlueExpr = evalMathExprStr (seqDataP->blueExAc, &seqDataP);
+    if (evalBlueExpr != compile_success){
+        #ifdef AE_OS_WIN
+                strncpy_s(seqDataP->blueExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #else
+                strncpy(seqDataP->blueExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #endif
+    }
+
+    evalAlphaExpr = evalMathExprStr (seqDataP->alphaExAc, &seqDataP);
+    if ( evalAlphaExpr != compile_success){
+        #ifdef AE_OS_WIN
+                strncpy_s(seqDataP->alphaExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #else
+                strncpy(seqDataP->alphaExAc, safeExpr.c_str(),  safeExpr.length() + 1);
+        #endif
+    }
+
+    evalVertShader (seqDataP->Glsl_VertexShAc, evalVertSh);
+    if (evalVertSh != compile_success){
+        #ifdef AE_OS_WIN
+                strncpy_s(seqDataP->Glsl_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+        #else
+                strncpy(seqDataP->Glsl_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+        #endif
+    }
+
+    evalFragShader (seqDataP->Glsl_FragmentShAc, evalFragSh);
+    if (evalFragSh != compile_success){
+        std::string setting_resolutionName = "resolution";
+        #ifdef AE_OS_WIN
+                 strncpy_s(seqDataP->resolution, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
+                 strncpy_s(seqDataP->Glsl_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+        #else
+                strncpy(seqDataP->resolution, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
+                strncpy(seqDataP->Glsl_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+        #endif
+
+    }
+     #ifdef AE_OS_WIN
+        strncpy_s(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+        strncpy_s(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+        strncpy_s(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
+        strncpy_s(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
+        strncpy_s(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
+        strncpy_s(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
+     #else
+        strncpy(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
+        strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
+        strncpy(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
+        strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
+        strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+        strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+     #endif
+
+
+    return err;
+}
+
 

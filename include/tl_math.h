@@ -404,10 +404,7 @@ typedef struct MathInfo{
     PF_FpShort      extL_green;
     PF_FpShort      extL_blue;
     PF_FpShort      extL_alpha;
-	PF_FpShort      inOneF;
-    PF_FpShort      inTwoF;
-    PF_FpShort      inThreeF;
-    PF_FpShort      inFourF;
+	PF_FpShort      inSliderF[10];
     PF_FpShort      scale_x;
     PF_FpShort      scale_y;
     PF_FpShort      layerWidthF;
@@ -424,10 +421,8 @@ typedef struct MathInfo{
 	PF_FpShort      compWidthF;
 	PF_FpShort      compHeightF;
 	PF_FpShort      compFpsF;
-    PF_FpShort      pointOneX;
-    PF_FpShort      pointOneY;
-    PF_FpShort      pointTwoX;
-    PF_FpShort      pointTwoY;
+	std::map<int, point_3d>   points;
+
     PF_FpShort      colorOne[3];
     PF_FpShort      colorTwo[3];
 	PF_FpShort      m9P_red[9];
@@ -454,6 +449,9 @@ typedef struct {
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
 
+struct point_3d {
+	PF_FpShort points[3];
+};
 
 
 
@@ -463,9 +461,10 @@ private:
     exprtk::expression<T> expression;
     exprtk::symbol_table<T> symbol_table;
 public:
-    parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr) {
+    parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr,seqDataP seqP) {
         MathInfo	*miP	= reinterpret_cast<MathInfo*>(mathRefcon);
 		funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
+
         std::string  expression_string_Safe = "1";
         if (!parser){
             parser = std::make_shared<exprtk::parser<T>>();
@@ -485,20 +484,33 @@ public:
         symbol_table.add_vector("blue_off", miP->m9P_blue);
         symbol_table.add_vector("alpha_off", miP->m9P_alpha);
 
+		symbol_table.add_vector(seqP->paramPoint01NameAC, miP->points[0]);
+		symbol_table.add_vector(seqP->paramPoint02NameAC, miP->points[1]);
+		symbol_table.add_vector(seqP->paramPoint03NameAC, miP->points[2]);
+		symbol_table.add_vector(seqP->paramPoint04NameAC, miP->points[3]);
+		symbol_table.add_vector(seqP->paramPoint05NameAC, miP->points[4]);
+		symbol_table.add_vector(seqP->paramPoint06NameAC, miP->points[5]);
+		symbol_table.add_vector(seqP->paramPoint07NameAC, miP->points[6]);
+		symbol_table.add_vector(seqP->paramPoint08NameAC, miP->points[7]);
+		symbol_table.add_vector(seqP->paramPoint09NameAC, miP->points[8]);
+		symbol_table.add_vector(seqP->paramPoint10NameAC, miP->points[9]);
+
         symbol_table.add_variable("extL_red", miP->extL_red);
         symbol_table.add_variable("extL_green", miP->extL_green);
         symbol_table.add_variable("extL_blue", miP->extL_blue);
         symbol_table.add_variable("extL_alpha", miP->extL_alpha);
         
         symbol_table.add_constants();
-        symbol_table.add_constant("var1",miP->inOneF);
-        symbol_table.add_constant("var2",miP->inTwoF);
-        symbol_table.add_constant("var3",miP->inThreeF);
-        symbol_table.add_constant("var4",miP->inFourF);
-        symbol_table.add_constant ("pt1_x",miP->pointOneX);
-        symbol_table.add_constant ("pt1_y",miP->pointOneY);
-        symbol_table.add_constant ("pt2_x",miP->pointTwoX);
-        symbol_table.add_constant ("pt2_y",miP->pointTwoY);
+        symbol_table.add_constant(seqP->paramSlider01NameAc, miP->inSliderF[0]);
+        symbol_table.add_constant(seqP->paramSlider02NameAc, miP->inSliderF[1]);
+        symbol_table.add_constant(seqP->paramSlider03NameAc,miP->inSliderF[2]);
+        symbol_table.add_constant(seqP->paramSlider04NameAc,miP->inSliderF[3]);
+		symbol_table.add_constant(seqP->paramSlider05NameAc, miP->inSliderF[4]);
+		symbol_table.add_constant(seqP->paramSlider06NameAc, miP->inSliderF[5]);
+		symbol_table.add_constant(seqP->paramSlider07NameAc, miP->inSliderF[6]);
+		symbol_table.add_constant(seqP->paramSlider08NameAc, miP->inSliderF[7]);
+		symbol_table.add_constant(seqP->paramSlider09NameAc, miP->inSliderF[8]);
+		symbol_table.add_constant(seqP->paramSlider10NameAc, miP->inSliderF[9]);
         symbol_table.add_constant ("cl1_red",miP->colorOne[0]);
         symbol_table.add_constant ("cl1_green", miP->colorOne[1]);
         symbol_table.add_constant ("cl1_blue",miP->colorOne[2]);
@@ -708,7 +720,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 
-std::string evalMathExprStr (std::string expr);
+std::string evalMathExprStr(std::string expr, seqDataP    *seqP);
 void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn);
 void evalVertShader(std::string inVertShaderStr, std::string& errReturn);
 
@@ -823,7 +835,8 @@ SetupGetDataBack(
 PF_Err
 copyFromArbToSeqData(std::string       arbStr,
                      seqData    *seqData);
-
+PF_Err
+evalScripts  (seqData  *seqDataP);
 PF_Err
 ShiftImage32 (
               void         *refcon,

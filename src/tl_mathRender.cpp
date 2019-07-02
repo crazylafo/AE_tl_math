@@ -185,7 +185,7 @@ ExprRender(PF_OutData     *out_data,
 	ExprInfoP          *exprP = reinterpret_cast<ExprInfoP*>(refconExpr);
 	funcTransfertInfo fiP;
 	AEFX_CLR_STRUCT(fiP);
-
+	seqDataP            seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
 
 
 	WorldTransfertInfo   wtiP;
@@ -201,7 +201,7 @@ ExprRender(PF_OutData     *out_data,
 	std::string exprErrStr = "Error \n";
 	PF_Boolean returnExprErrB = false;
 
-	fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->redstr);
+	fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->redstr, seqP);
 	if (fiP.hasErrorB)
 	{
 		fiP.channelErrorstr = "red channel expression";
@@ -209,7 +209,7 @@ ExprRender(PF_OutData     *out_data,
 		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
 
 	}
-	fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->greenstr);
+	fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->greenstr, seqP);
 	if (fiP.hasErrorB)
 	{
 		fiP.channelErrorstr = "green channel expression";
@@ -217,7 +217,7 @@ ExprRender(PF_OutData     *out_data,
 		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
 
 	}
-	fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->bluestr);
+	fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->bluestr, seqP);
 	if (fiP.hasErrorB)
 	{
 		fiP.channelErrorstr = "blue channel expression";
@@ -225,7 +225,7 @@ ExprRender(PF_OutData     *out_data,
 		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
 
 	}
-	fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->alphastr);
+	fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->alphastr, seqP);
 	if (fiP.hasErrorB)
 	{
 		fiP.channelErrorstr = "alpha channel expression";
@@ -374,16 +374,22 @@ tl_math_PreRender(PF_InData                *in_data,
 				&extlayer_poff_param));
 
             PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
+            PF_Boolean   initB = true;
 
             if (seq_dataH) {
                 seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
                 if (seqP->initializedB == false){
+                    initB = false;
                     m_ArbData *arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
                     ERR(copyFromArbToSeqData( arbOutP->arbDataAc , seqP));
                     seqP->initializedB = true;
                     out_data->sequence_data = seq_dataH;
                 }
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
+                if (!initB){
+                      ERR(evalScripts  (seqP));
+                }
+
             }
 
 
@@ -913,13 +919,13 @@ tl_math_SmartRender(
 			miP->layerTime_Sec = PF_FpShort(in_data->current_time) / PF_FpShort(in_data->time_scale);
 			miP->layerTime_Frame = PF_FpShort(in_data->current_time / (float)in_data->time_step);
 			miP->layerDuration = PF_FpShort(in_data->total_time / in_data->time_scale);
-			miP->inOneF = slider_param[0].u.fs_d.value;
-			miP->inTwoF = slider_param[1].u.fs_d.value;
-			miP->inThreeF = slider_param[2].u.fs_d.value;
-			miP->inFourF = slider_param[3].u.fs_d.value;
+			miP->inSliderF[0] = slider_param[0].u.fs_d.value;
+			miP->inSliderF[1] = slider_param[1].u.fs_d.value;
+			miP->inSliderF[2] = slider_param[2].u.fs_d.value;
+			miP->inSliderF[3] = slider_param[3].u.fs_d.value;
 
 			//user param points
-			miP->pointOneX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[0].u.td.x_value)));
+			miP->points.insert( {static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[0].u.td.x_value))),0);
 			miP->pointOneY = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[0].u.td.y_value)));
 			miP->pointTwoX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[1].u.td.x_value)));
 			miP->pointTwoY = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[1].u.td.y_value)));
