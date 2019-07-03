@@ -629,13 +629,13 @@ evalVertShader(std::string inVertShaderStr, std::string& errReturn)
      renderContext->mProgramObjSu = 0;
      renderContext->SetPluginContext();
 
-    GLint fragCompiledB =0;
+    GLint vertCompiledB =0;
     const char *vertShaderStringsP = (const GLchar *) inVertShaderStr.c_str();
-    GLuint vertShaderSu = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint vertShaderSu = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertShaderSu, 1, &vertShaderStringsP, NULL);
     glCompileShader(vertShaderSu);
-    glGetShaderiv(vertShaderSu, GL_COMPILE_STATUS, &fragCompiledB);
-    if (!fragCompiledB) {
+    glGetShaderiv(vertShaderSu, GL_COMPILE_STATUS, &vertCompiledB);
+    if (!vertCompiledB) {
         char str[4096];
         glGetShaderInfoLog(vertShaderSu, sizeof(str), NULL, str);
         errReturn = str;

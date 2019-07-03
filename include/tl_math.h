@@ -96,8 +96,8 @@ typedef struct {
     A_char blueError[2048];
     A_char alphaError[2048];
 
-    A_char Glsl_VertError[2048];
-    A_char Glsl_fragError[2048];
+    A_char Glsl_VertError[4096];
+    A_char Glsl_fragError[4096];
 
 
 	A_char   resolution[32];

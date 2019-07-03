@@ -295,24 +295,24 @@ SetupDialogSend( PF_InData        *in_data,
                     greenErr = seqP->greenError,
                     blueErr = seqP->blueError,
                     alphaErr =seqP->alphaError;
-/*
+
     strReplace(  fragErr, "\n","\\n");
     strReplace( vertErr, "\n","\\n");
     strReplace( redErr, "\n","\\n");
     strReplace( greenErr, "\n","\\n");
     strReplace(  blueErr, "\n","\\n");
-    strReplace( alphaErr, "\n","\\n");*/
+    strReplace( alphaErr, "\n","\\n");
 
-    arbDataJS["gl_frag_error"] =  fragErr;
-    arbDataJS["gl_vert_error"] =  vertErr;
+    arbDataJS["gl_expression"]["gl_frag_error"] =  fragErr;
+    arbDataJS["gl_expression"]["gl_vert_error"] =  vertErr;
 
-    arbDataJS["redExpr"] =      redErr;
-    arbDataJS["greenExpr"] =    greenErr;
-    arbDataJS["blueExpr"] =     blueErr;
-    arbDataJS["alphaExpr"] =    alphaErr;
+    arbDataJS["math_expression"]["red_error"] =      redErr;
+    arbDataJS["math_expression"]["green_error"] =    greenErr;
+    arbDataJS["math_expression"]["blue_error"] =     blueErr;
+    arbDataJS["math_expression"]["alpha_error"] =    alphaErr;
     std::string resultStr;
    std::string jsonDump = "'''";
-   jsonDump.append(arbDataJS.dump(4));
+   jsonDump.append(arbDataJS.dump());
    jsonDump.append("'''");
 
 
@@ -731,7 +731,7 @@ copyFromArbToSeqData( std::string       arbStr,
 }
 
 PF_Err
-evalScripts  (seqData  *seqDataP)
+evalScripts(seqData  *seqDataP)
 {
     PF_Err err = PF_Err_NONE;
     std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh;
