@@ -25,9 +25,6 @@
     right: 0;
 }
 
-
-
-
 #expr_red_editor, #expr_green_editor, #expr_blue_editor, #expr_alpha_editor{
     position: absolute;
     margin: 1%;
@@ -44,50 +41,23 @@
     margin: 1%;
 }
 
-#gl_frag_console, #gl_vert_console{
-    position: absolute;
+#gl_frag_tab_console, #gl_vert_tab_console{
     background: black;
     color: #ddd;
+    width:50%;
     margin: 1%;
-    top: 0%;
+    top: 5%;
     bottom: 0;
-    left: 25%;
-    right: 25%;
+    left: 0;
+    right: 0;
 }
 
-
-#math_expr_red_console{
+#expr_red_tab_console, #expr_green_tab_console, #expr_blue_tab_console, #expr_alpha_tab_console{
     background: black;
     color: #ddd;
+    width:50%;
     margin: 1%;
-    top: 0%;
-    bottom: 0;
-    left: 25%;
-    right: 25%;
-}
-#math_expr_green_console{
-    background: black;
-    color: #ddd;
-    margin: 1%;
-    top: 0%;
-    bottom: 0;
-    left: 25%;
-    right: 25%;
-}
-#math_expr_blue_console{
-    background: black;
-    color: #ddd;
-    margin: 1%;
-    top: 0%;
-    bottom: 0;
-    left: 25%;
-    right: 25%;
-}
-#math_expr_alpha_console{
-    background: black;
-    color: #ddd;
-    margin: 1%;
-    top: 0%;
+    top: 5%;
     bottom: 0;
     left: 25%;
     right: 25%;

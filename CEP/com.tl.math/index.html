@@ -382,21 +382,16 @@
 		<button class="glslGUI" onclick="openEditor(event, 'gl_vert_tab', 'gl_vert_editor')">GLSL Vertex Shader</button>
 		<br/>
 		<br/>
-		<div id="editor_glsl_settings" class="glslGUI">
-			<button class="glslEval" onclick="openEval(event, 'expr_red_tab', 'expr_red_editor')">Evaluate shaders</button>
-			</div>
-		<br/>
 		<div class="text editor">
 			<div id="gl_frag_tab" class="tabEditor">
 				<h3 id="editor_name">fragment shader code</h3>
 				<pre id="gl_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
-				<td id="gl_frag_console" class="consoleError">console</td>
-				</div>	
+				</div>
 			<div id="gl_vert_tab" class="tabEditor">	
 				<h3 id="editor_name">vertex shader code</h3>
 				<pre id="gl_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
-				<td id="gl_vert_console" class="consoleError">console</td>
 				</div>
+		
 			<div id="expr_red_tab" class="tabEditor">
 				<h3 id="editor_name">red expression code</h3>	
 				<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>
@@ -416,7 +411,13 @@
 				<h3 id="editor_name">alpha expression code</h3>	
 				<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
 				</div>
-			</div>	
+			</div>
+			<div id="gl_frag_tab_console" class="console" > glsl frag console</div>
+			<div id="gl_vert_tab_console"class="console" > glsl vert console</div>
+			<div id="expr_red_tab_console"class="console"> math red channel console</div>
+			<div id="expr_green_tab_console"class="console"> math green channel console</div>
+			<div id="expr_blue_tab_console"class="console"> math blue channel console</div>
+			<div id="expr_alpha_tab_console"class="console"> math alpha channel console</div>
 	</div>
 </body>
 

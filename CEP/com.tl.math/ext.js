@@ -207,14 +207,12 @@ function sendDataToPlugin(editors, arbData) {
 
 }
 function copyDataToGUI (arbData, editors) {
-
-/*
-	$("#gl_frag_console").val(arbData.gl_expression.gl_frag_error.toString());
-	$("#gl_vert_console").val(arbData.gl_expression.gl_vert_error.toString());
-	$("#math_expr_red_console").val(arbData.math_expression.red_error.toString());
-	$("#math_expr_green_console").val(arbData.math_expression.green_error.toString());
-	$("#math_expr_blue_console").val(arbData.math_expression.blue_error.toString());
-		$("#math_expr_alpha_console").val(arbData.math_expression.alpha_error.toString());*/	
+	$("#gl_frag_tab_console").html(arbData.gl_expression.gl_frag_error.toString().replace("\\n", "<br/>"));
+	$("#gl_vert_tab_console").html(arbData.gl_expression.gl_vert_error.toString().replace("\\n", "<br/>"));
+	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
+	$("#expr_green_tab_console").html(arbData.math_expression.green_error.toString().replace("\\n", "<br/>"));
+	$("#expr_blue_tab_console").html(arbData.math_expression.blue_error.toString().replace("\\n", "<br/>"));
+	$("#expr_alpha_tab_console").html(arbData.math_expression.alpha_error.toString().replace("\\n", "<br/>"));
 
 
 	if (arbData.gl_expression.gl_frag_sh){
@@ -411,7 +409,7 @@ function toggleDescription(){
 	}
 function openEditor(evt, tabName) {
 		// Declare all variables
-		var i, tabEditorList, glslGUILinks;
+		var i, tabEditorList, glslGUILinks, consoleList;
 
 		// Get all elements with class="tabcontent" and hide them
 		tabEditorList = document.getElementsByClassName("tabEditor");
@@ -425,19 +423,18 @@ function openEditor(evt, tabName) {
 		}
 		// Show the current tab, and add an "active" class to the button that opened the tab
 		document.getElementById(tabName).style.display = "block";
-		showConsole (tabName);
-	}
-function showConsole (tabName){
-	var consoleList = document.getElementsByClassName("console");
-	for (i = 0; i < consoleList.length; i++) {
-		
-		if (consoleList[i].id.indexOf (tabName)!=-1){
-			document.getElementById(consoleList[i].id).style.display = "block";
-		}else{
-			consoleList[i].style.display = "none";
+
+		//get all console items and hide unsed
+		consoleList = document.getElementsByClassName("console");
+		for (i = 0; i < consoleList.length; i++) {
+			if (consoleList[i].id.indexOf (tabName) !=-1){
+				consoleList[i].style.display = "block";
+			}else{
+				consoleList[i].style.display = "none";
 			}
-		}
+		}	
 	}
+
 function mathGuiModeFunc(){
 		var mathGui = document.getElementsByClassName("mathGUI");
 		 var glslGui = document.getElementsByClassName("glslGUI");
