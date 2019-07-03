@@ -392,43 +392,37 @@ typedef struct WorldTransfertInfo {
     PF_EffectWorld  extLW;
 }WorldTransfertInfoP;
 
+struct point_3d {
+    PF_FpShort point[3];
+};
+struct color_3d {
+    PF_FpShort color[3];
+};
+
 
 typedef struct MathInfo{
-    PF_FpShort		inRedF;
-    PF_FpShort		inGreenF;
-    PF_FpShort		inBlueF;
-    PF_FpShort		inAlphaF;
-    PF_FpShort		xLF;
-    PF_FpShort		yLF;
-    PF_FpShort      extL_red;
-    PF_FpShort      extL_green;
-    PF_FpShort      extL_blue;
-    PF_FpShort      extL_alpha;
-	PF_FpShort      inSliderF[10];
     PF_FpShort      scale_x;
     PF_FpShort      scale_y;
-    PF_FpShort      layerWidthF;
-    PF_FpShort      layerHeightF;
+    PF_FpShort 		inColorF[4];
+    PF_FpShort      extLayerColorF[4];
+    PF_FpShort      pixF[2];
+    PF_FpShort      layerSizeF[2];
+    PF_FpShort      compSizeF[2];
     PF_FpShort		layerTime_Sec;
     PF_FpShort		layerTime_Frame;
     PF_FpShort		layerDuration;
-	PF_FpShort		layerPos_X;
-	PF_FpShort		layerPos_Y;
-	PF_FpShort		layerPos_Z;
-	PF_FpShort		layerScale_X;
-	PF_FpShort		layerScale_Y;
-	PF_FpShort		layerScale_Z;
-	PF_FpShort      compWidthF;
-	PF_FpShort      compHeightF;
 	PF_FpShort      compFpsF;
-	std::map<int, point_3d>   points;
+    PF_FpShort      layerPos[3];
+    PF_FpShort      layerScale[3];
+    PF_FpShort      inSliderF[10];
+	point_3d        inPoints[10];
+    PF_FpShort      inCboxF[10];
+    color_3d        inColors[10];
+    PF_FpShort      m9P_red[9];
+    PF_FpShort      m9P_green[9];
+    PF_FpShort      m9P_blue[9];
+    PF_FpShort m9P_alpha[9];
 
-    PF_FpShort      colorOne[3];
-    PF_FpShort      colorTwo[3];
-	PF_FpShort      m9P_red[9];
-	PF_FpShort		m9P_green[9];
-	PF_FpShort		m9P_blue[9];
-	PF_FpShort      m9P_alpha[9];
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP;
     PF_Fixed    x_offFi;
@@ -449,9 +443,7 @@ typedef struct {
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
 
-struct point_3d {
-	PF_FpShort points[3];
-};
+
 
 
 
@@ -472,33 +464,47 @@ public:
         fiP->hasErrorB = FALSE;
         symbol_table.clear();
 		
-        symbol_table.add_variable("xL",  miP->xLF);
-        symbol_table.add_variable("yL",  miP->yLF);
-        symbol_table.add_variable("in_red", miP->inRedF);
-        symbol_table.add_variable("in_green", miP->inGreenF);
-        symbol_table.add_variable("in_blue", miP->inBlueF);
-        symbol_table.add_variable("in_alpha", miP->inAlphaF);
+
         symbol_table.add_variable("in_luma", miP->luma);
+
+        symbol_table.add_vector("pix",  miP->pixF);
+        symbol_table.add_vector(seqP->paramLayer00NameAc, miP->inColorF);
+        symbol_table.add_vector(seqP->paramLayer01NameAc,  miP->extLayerColorF);
         symbol_table.add_vector("red_off", miP->m9P_red);
         symbol_table.add_vector("green_off",miP->m9P_green);
         symbol_table.add_vector("blue_off", miP->m9P_blue);
         symbol_table.add_vector("alpha_off", miP->m9P_alpha);
 
-		symbol_table.add_vector(seqP->paramPoint01NameAC, miP->points[0]);
-		symbol_table.add_vector(seqP->paramPoint02NameAC, miP->points[1]);
-		symbol_table.add_vector(seqP->paramPoint03NameAC, miP->points[2]);
-		symbol_table.add_vector(seqP->paramPoint04NameAC, miP->points[3]);
-		symbol_table.add_vector(seqP->paramPoint05NameAC, miP->points[4]);
-		symbol_table.add_vector(seqP->paramPoint06NameAC, miP->points[5]);
-		symbol_table.add_vector(seqP->paramPoint07NameAC, miP->points[6]);
-		symbol_table.add_vector(seqP->paramPoint08NameAC, miP->points[7]);
-		symbol_table.add_vector(seqP->paramPoint09NameAC, miP->points[8]);
-		symbol_table.add_vector(seqP->paramPoint10NameAC, miP->points[9]);
+        symbol_table.add_vector(seqP->resolution ,miP->layerSizeF);
 
-        symbol_table.add_variable("extL_red", miP->extL_red);
-        symbol_table.add_variable("extL_green", miP->extL_green);
-        symbol_table.add_variable("extL_blue", miP->extL_blue);
-        symbol_table.add_variable("extL_alpha", miP->extL_alpha);
+          symbol_table.add_vector("compSize", miP->compSizeF);
+
+
+        symbol_table.add_vector(seqP->paramPoint01NameAc, miP->inPoints[0].point);
+        symbol_table.add_vector(seqP->paramPoint02NameAc, miP->inPoints[1].point);
+		symbol_table.add_vector(seqP->paramPoint03NameAc, miP->inPoints[2].point);
+		symbol_table.add_vector(seqP->paramPoint04NameAc, miP->inPoints[3].point);
+		symbol_table.add_vector(seqP->paramPoint05NameAc, miP->inPoints[4].point);
+		symbol_table.add_vector(seqP->paramPoint06NameAc, miP->inPoints[5].point);
+		symbol_table.add_vector(seqP->paramPoint07NameAc, miP->inPoints[6].point);
+		symbol_table.add_vector(seqP->paramPoint08NameAc, miP->inPoints[7].point);
+		symbol_table.add_vector(seqP->paramPoint09NameAc, miP->inPoints[8].point);
+		symbol_table.add_vector(seqP->paramPoint10NameAc, miP->inPoints[9].point);
+
+        symbol_table.add_vector(seqP->paramColor01NameAc, miP->inColors[0].color);
+        symbol_table.add_vector(seqP->paramColor02NameAc, miP->inColors[1].color);
+        symbol_table.add_vector(seqP->paramColor03NameAc, miP->inColors[2].color);
+        symbol_table.add_vector(seqP->paramColor04NameAc, miP->inColors[3].color);
+        symbol_table.add_vector(seqP->paramColor05NameAc, miP->inColors[4].color);
+        symbol_table.add_vector(seqP->paramColor06NameAc, miP->inColors[5].color);
+        symbol_table.add_vector(seqP->paramColor07NameAc, miP->inColors[6].color);
+        symbol_table.add_vector(seqP->paramColor08NameAc, miP->inColors[7].color);
+        symbol_table.add_vector(seqP->paramColor09NameAc, miP->inColors[8].color);
+        symbol_table.add_vector(seqP->paramColor10NameAc, miP->inColors[9].color);
+
+        symbol_table.add_vector("layerPosition", miP->layerPos);
+        symbol_table.add_vector("layerScale", miP->layerScale);
+
         
         symbol_table.add_constants();
         symbol_table.add_constant(seqP->paramSlider01NameAc, miP->inSliderF[0]);
@@ -511,26 +517,20 @@ public:
 		symbol_table.add_constant(seqP->paramSlider08NameAc, miP->inSliderF[7]);
 		symbol_table.add_constant(seqP->paramSlider09NameAc, miP->inSliderF[8]);
 		symbol_table.add_constant(seqP->paramSlider10NameAc, miP->inSliderF[9]);
-        symbol_table.add_constant ("cl1_red",miP->colorOne[0]);
-        symbol_table.add_constant ("cl1_green", miP->colorOne[1]);
-        symbol_table.add_constant ("cl1_blue",miP->colorOne[2]);
-        symbol_table.add_constant ("cl2_red",miP->colorTwo[0]);
-        symbol_table.add_constant ("cl2_green",miP->colorTwo[1]);
-        symbol_table.add_constant ("cl2_blue",miP->colorTwo[2]);
-        symbol_table.add_constant("layerWidth",miP->layerWidthF);
-        symbol_table.add_constant("layerHeight",miP->layerHeightF);
-        symbol_table.add_constant("layerTime_sec",miP->layerTime_Sec);
-        symbol_table.add_constant("layerTime_frame",miP->layerTime_Frame);
-        symbol_table.add_constant("layerDuration",miP->layerDuration);
-        symbol_table.add_constant("layerPosition_x", miP->layerPos_X);
-        symbol_table.add_constant("layerPosition_y", miP->layerPos_Y);
-        symbol_table.add_constant("layerPosition_z", miP->layerPos_Z);
-        symbol_table.add_constant("layerScale_x", miP->layerScale_X);
-        symbol_table.add_constant("layerScale_y", miP->layerScale_Y);
-        symbol_table.add_constant("layerScale_z", miP->layerScale_Z);
-        symbol_table.add_constant("compWidth", miP->compWidthF);
-        symbol_table.add_constant("compHeight", miP->compHeightF);
-        symbol_table.add_constant("compFps", miP->compFpsF);
+
+        symbol_table.add_constant(seqP->paramCb01NameAc, miP->inCboxF[0]);
+        symbol_table.add_constant(seqP->paramCb02NameAc, miP->inCboxF[1]);
+        symbol_table.add_constant(seqP->paramCb03NameAc, miP->inCboxF[2]);
+        symbol_table.add_constant(seqP->paramCb04NameAc, miP->inCboxF[3]);
+        symbol_table.add_constant(seqP->paramCb05NameAc, miP->inCboxF[4]);
+        symbol_table.add_constant(seqP->paramCb06NameAc, miP->inCboxF[5]);
+        symbol_table.add_constant(seqP->paramCb07NameAc, miP->inCboxF[6]);
+        symbol_table.add_constant(seqP->paramCb08NameAc, miP->inCboxF[7]);
+        symbol_table.add_constant(seqP->paramCb09NameAc, miP->inCboxF[8]);
+        symbol_table.add_constant(seqP->paramCb10NameAc, miP->inCboxF[9]);
+        symbol_table.add_constant(seqP->time_sec ,miP->layerTime_Sec);
+        symbol_table.add_constant(seqP->time_frame,miP->layerTime_Frame);
+        symbol_table.add_constant(seqP->frame_rate, miP->compFpsF);
         expression.register_symbol_table(symbol_table);
         parser->compile(exprstr,expression);
         if (!parser->compile(exprstr,expression))

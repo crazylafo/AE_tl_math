@@ -1,5 +1,18 @@
 #include "tl_math.h"
 
+static  void
+copyPointsParam(PF_ParamDef  point_param,
+                point_3d     *pt)
+{
+
+    //user param points
+    pt->point[0] =  static_cast<PF_FpShort>(point_param.u.point3d_d.x_value);
+    pt->point[1] =   static_cast<PF_FpShort>(point_param.u.point3d_d.y_value);
+    pt->point[2] =  static_cast<PF_FpShort>(point_param.u.point3d_d.z_value);
+
+
+
+}
 static PF_Err
 ExtLayerInput(void *refcon,
 	PF_InData       *in_data,
@@ -427,25 +440,25 @@ tl_math_PreRender(PF_InData                *in_data,
 			AEFX_CLR_STRUCT(width);
 			AEFX_CLR_STRUCT(height);
 			itemSuite->AEGP_GetItemDimensions(itemH, &width, &height);
-			miP->compWidthF = PF_FpLong(width);
-			miP->compHeightF = PF_FpLong(height);
+			miP->compSizeF[0] = PF_FpLong(width);
+			miP->compSizeF[1] = PF_FpLong(height);
 			AEGP_DownsampleFactor dsp;
 			compSuite->AEGP_GetCompDownsampleFactor(compH, &dsp);
-			miP->compWidthF *= dsp.xS;
-			miP->compHeightF *= dsp.yS;
+			miP->compSizeF[0] *= dsp.xS;
+			miP->compSizeF[1] *= dsp.yS;
 			PF_FpLong fpsF;
 			compSuite->AEGP_GetCompFramerate(compH, &fpsF);
 			miP->compFpsF = static_cast<float>(fpsF);
 
 			layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currTime);
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_POSITION, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValP, &strTypeP);
-			miP->layerPos_X = strValP.three_d.x;
-			miP->layerPos_Y = strValP.three_d.y;
-			miP->layerPos_Z = strValP.three_d.z;
+			miP->layerPos[0] = strValP.three_d.x;
+			miP->layerPos[1] = strValP.three_d.y;
+			miP->layerPos[2] = strValP.three_d.z;
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
-			miP->layerScale_X = strValSP.three_d.x;
-			miP->layerScale_Y = strValSP.three_d.z;
-			miP->layerScale_Z = strValSP.three_d.z;
+			miP->layerScale[0] = strValSP.three_d.x;
+			miP->layerScale[1] = strValSP.three_d.z;
+			miP->layerScale[2] = strValSP.three_d.z;
 
 
 			AEFX_CLR_STRUCT(in_result);
@@ -913,41 +926,34 @@ tl_math_SmartRender(
 			//layer size
 			miP->scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num / (float)in_data->downsample_x.den;
 			miP->scale_y = in_data->downsample_y.num*in_data->pixel_aspect_ratio.den / (float)in_data->downsample_y.den;
-			miP->layerWidthF = PF_FpShort(in_data->width*miP->scale_x);
-			miP->layerHeightF = PF_FpShort(in_data->height* miP->scale_y);
+			miP->layerSizeF[0]= PF_FpShort(in_data->width*miP->scale_x);
+			miP->layerSizeF[1] = PF_FpShort(in_data->height* miP->scale_y);
 			//time params
 			miP->layerTime_Sec = PF_FpShort(in_data->current_time) / PF_FpShort(in_data->time_scale);
 			miP->layerTime_Frame = PF_FpShort(in_data->current_time / (float)in_data->time_step);
 			miP->layerDuration = PF_FpShort(in_data->total_time / in_data->time_scale);
-			miP->inSliderF[0] = slider_param[0].u.fs_d.value;
-			miP->inSliderF[1] = slider_param[1].u.fs_d.value;
-			miP->inSliderF[2] = slider_param[2].u.fs_d.value;
-			miP->inSliderF[3] = slider_param[3].u.fs_d.value;
-
-			//user param points
-			miP->points.insert( {static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[0].u.td.x_value))),0);
-			miP->pointOneY = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[0].u.td.y_value)));
-			miP->pointTwoX = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[1].u.td.x_value)));
-			miP->pointTwoY = static_cast<PF_FpShort>(round(FIX_2_FLOAT(point_param[1].u.td.y_value)));
-
-
-			miP->xLF = 0;
-			miP->yLF = 0;
-
+            for (int i =0; i<10; i++){
+                miP->inSliderF[i] = slider_param[i].u.fs_d.value;
+                }
+            //user param points
+            for (int i =0; i<10; i++){
+                copyPointsParam(point_param[i], &miP->inPoints[i]);
+                }
+             for (int i =0; i<10; i++){
+                 miP->inCboxF[i] = PF_FpShort (cb_param[i].u.bd.value);
+                }
 			//CONVERT COLOR PARAMS TO FLOAT BYSMART WAY
-			PF_PixelFloat tempFloat1, tempFloat2;
-			ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, &color_param[0], &tempFloat1));
-			ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, &color_param[0], &tempFloat2));
-
-			//user param color
-			miP->colorOne[0] = tempFloat1.red;
-			miP->colorOne[1] = tempFloat1.green;
-			miP->colorOne[2] = tempFloat1.blue;
-
-			miP->colorTwo[0] = tempFloat2.red;
-			miP->colorTwo[1] = tempFloat2.green;
-			miP->colorTwo[2] = tempFloat2.blue;
-
+             PF_PixelFloat tempFloat;
+             for (int i =0; i<10; i++){
+                 AEFX_CLR_STRUCT(tempFloat)
+                 ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, &color_param[i], &tempFloat));
+                 //user param color
+                 miP->inColors[i].color[0] =tempFloat.red;
+                 miP->inColors[i].color[1] =tempFloat.green;
+                 miP->inColors[i].color[2] =tempFloat.blue;
+                }
+            miP->pixF[0] = 0;
+            miP->pixF[1] = 0;
 			//CALL SEQP
 			std::string redExprStr, greenExprStr, blueExprStr, alphaExprStr, frag1Str, vertStr;
 			if (seqP && !err) {

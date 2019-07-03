@@ -39,7 +39,6 @@ std::string script_sendToMathCEP = R"=====(
 )=====";
 
 
-
 std::string script_getDataBackFromMathCEP  =R"=====(
 //
 //  scipt TO CALL IN AEGP

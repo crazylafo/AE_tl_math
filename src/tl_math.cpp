@@ -280,55 +280,129 @@ namespace {
 		// program uniforms
 		GLint location = glGetUniformLocation(renderContext->mProgramObjSu, "ModelviewProjection");
 		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
-		location = glGetUniformLocation(renderContext->mProgramObjSu,  seqP->paramSlider01NameAc );
+		location = glGetUniformLocation(renderContext->mProgramObjSu,  seqP->paramSlider01NameAc);
 		glUniform1f(location, miP->inSliderF[0]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu,seqP->paramSlider02NameAc );
+		location = glGetUniformLocation(renderContext->mProgramObjSu,seqP->paramSlider02NameAc);
 		glUniform1f(location, miP->inSliderF[1]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider03NameAc);
 		glUniform1f(location, miP->inSliderF[2]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider04NameAc);
 		glUniform1f(location, miP->inSliderF[3]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt1");
-		glUniform2f(location, miP->pointOneX, convertYCoordAEToGL(miP->pointOneY, heightL));
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "mouse");
-		glUniform2f(location, miP->pointOneX, convertYCoordAEToGL(miP->pointOneY, heightL));
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "iMouse");
-		glUniform2f(location, miP->pointOneX, convertYCoordAEToGL(miP->pointOneY, heightL));
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "pt2");
-		glUniform2f(location, miP->pointTwoX, convertYCoordAEToGL(miP->pointOneY, heightL));
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "cl1");
-		glUniform3f(location, miP->colorOne[0], miP->colorOne[1], miP->colorOne[2]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "cl2");
-		glUniform3f(location, miP->colorTwo[0], miP->colorTwo[1], miP->colorTwo[2]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "time");
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider05NameAc);
+        glUniform1f(location, miP->inSliderF[4]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider06NameAc);
+        glUniform1f(location, miP->inSliderF[5]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider07NameAc);
+        glUniform1f(location, miP->inSliderF[6]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider08NameAc);
+        glUniform1f(location, miP->inSliderF[7]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider09NameAc);
+        glUniform1f(location, miP->inSliderF[8]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider10NameAc);
+        glUniform1f(location, miP->inSliderF[9]);
+
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint01NameAc);
+        glUniform3f(location, miP->inPoints[0].point[0], convertYCoordAEToGL( miP->inPoints[0].point[1], heightL), miP->inPoints[0].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint02NameAc);
+        glUniform3f(location, miP->inPoints[1].point[0], convertYCoordAEToGL( miP->inPoints[1].point[1], heightL), miP->inPoints[1].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint03NameAc);
+        glUniform3f(location, miP->inPoints[2].point[0], convertYCoordAEToGL( miP->inPoints[2].point[1], heightL), miP->inPoints[2].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint04NameAc);
+        glUniform3f(location, miP->inPoints[3].point[0], convertYCoordAEToGL( miP->inPoints[3].point[1], heightL), miP->inPoints[3].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint05NameAc);
+        glUniform3f(location, miP->inPoints[4].point[0], convertYCoordAEToGL( miP->inPoints[4].point[1], heightL), miP->inPoints[4].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint06NameAc);
+        glUniform3f(location, miP->inPoints[5].point[0], convertYCoordAEToGL( miP->inPoints[5].point[1], heightL), miP->inPoints[5].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint07NameAc);
+        glUniform3f(location, miP->inPoints[6].point[0], convertYCoordAEToGL( miP->inPoints[6].point[1], heightL), miP->inPoints[6].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint08NameAc);
+        glUniform3f(location, miP->inPoints[7].point[0], convertYCoordAEToGL( miP->inPoints[7].point[1], heightL), miP->inPoints[7].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint09NameAc);
+        glUniform3f(location, miP->inPoints[8].point[0], convertYCoordAEToGL( miP->inPoints[8].point[1], heightL), miP->inPoints[8].point[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint10NameAc);
+        glUniform3f(location, miP->inPoints[9].point[0], convertYCoordAEToGL( miP->inPoints[9].point[1], heightL), miP->inPoints[9].point[2]);
+
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb01NameAc);
+        glUniform1f(location, miP->inCboxF[0]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb02NameAc);
+        glUniform1f(location, miP->inCboxF[1]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb03NameAc);
+        glUniform1f(location, miP->inCboxF[2]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb04NameAc);
+        glUniform1f(location, miP->inCboxF[3]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb05NameAc);
+        glUniform1f(location, miP->inCboxF[4]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb06NameAc);
+        glUniform1f(location, miP->inCboxF[5]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb07NameAc);
+        glUniform1f(location, miP->inCboxF[6]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb08NameAc);
+        glUniform1f(location, miP->inCboxF[7]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb09NameAc);
+        glUniform1f(location, miP->inCboxF[8]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb10NameAc);
+        glUniform1f(location, miP->inCboxF[9]);
+
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor01NameAc);
+        glUniform3f(location, miP->inColors[0].color[0],  miP->inColors[0].color[1],  miP->inColors[0].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor02NameAc);
+        glUniform3f(location, miP->inColors[1].color[0],  miP->inColors[1].color[1],  miP->inColors[1].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor03NameAc);
+        glUniform3f(location, miP->inColors[2].color[0],  miP->inColors[2].color[1],  miP->inColors[2].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor04NameAc);
+        glUniform3f(location, miP->inColors[3].color[0],  miP->inColors[3].color[1],  miP->inColors[3].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor05NameAc);
+        glUniform3f(location, miP->inColors[4].color[0],  miP->inColors[4].color[1],  miP->inColors[4].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor06NameAc);
+        glUniform3f(location, miP->inColors[5].color[0],  miP->inColors[5].color[1],  miP->inColors[5].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor07NameAc);
+        glUniform3f(location, miP->inColors[6].color[0],  miP->inColors[6].color[1],  miP->inColors[6].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor08NameAc);
+        glUniform3f(location, miP->inColors[7].color[0],  miP->inColors[7].color[1],  miP->inColors[7].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor09NameAc);
+        glUniform3f(location, miP->inColors[8].color[0],  miP->inColors[8].color[1],  miP->inColors[8].color[2]);
+
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor10NameAc);
+        glUniform3f(location, miP->inColors[9].color[0],  miP->inColors[9].color[1],  miP->inColors[9].color[2]);
+
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_sec);
 		glUniform1f(location, miP->layerTime_Sec);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "iTime");
-		glUniform1f(location, miP->layerTime_Sec);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "layertime_sec");
-		glUniform1f(location, miP->layerTime_Sec);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerTime_frame");
+
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_frame);
 		glUniform1f(location, miP->layerTime_Frame);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerDuration");
-		glUniform1f(location, miP->layerDuration);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "resolution");
-		glUniform2f(location, miP->layerWidthF, miP->layerHeightF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "iResolution");
-		glUniform2f(location, miP->layerWidthF, miP->layerHeightF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu,  seqP->resolution);
+		glUniform2f(location, miP->layerSizeF[0], miP->layerSizeF[1]);
+        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->frame_rate);
+        glUniform1f(location, miP->compFpsF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerPosition");
-		glUniform3f(location, miP->layerPos_X, convertYCoordAEToGL(miP->pointOneY, heightL), miP->layerPos_Z);
+		glUniform3f(location, miP->layerPos[0], convertYCoordAEToGL( miP->layerPos[1], heightL), miP->layerPos[2]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerScale");
-		glUniform3f(location, miP->layerScale_X, convertYCoordAEToGL(miP->pointOneY, heightL), miP->layerScale_Z);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "compWidth");
-		glUniform1f(location, miP->compWidthF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "compHeight");
-		glUniform1f(location, miP->compHeightF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "compFps");
-		glUniform1f(location, miP->compFpsF);
+		glUniform3f(location, miP->layerScale[0], convertYCoordAEToGL( miP->layerPos[1], heightL), miP->layerScale[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "compResolution");
+		glUniform2f(location, miP->compSizeF[0], miP->compSizeF[1]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
 		// Identify the texture to use and bind it to texture unit 0
-		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObjSu, inputFrameTexture, std::string("layerTex"));
-		AESDK_OpenGL_BindTexture1ToTarget(renderContext->mProgramObjSu, inputExtFrameTexture, std::string("extLayerTex"));
+		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObjSu, inputFrameTexture, seqP->paramLayer00NameAc);
+		AESDK_OpenGL_BindTexture1ToTarget(renderContext->mProgramObjSu, inputExtFrameTexture, seqP->paramLayer01NameAc);
 		// render
 		glBindVertexArray(renderContext->vao);
 		RenderQuad(renderContext->quad);
@@ -651,8 +725,8 @@ Render_GLSL(PF_InData                *in_data,
 		// - Example of using a OpenGL extension
 		//bool hasGremedy = renderContext->mExtensions.find(gl::GLextension::GL_GREMEDY_frame_terminator) != renderContext->mExtensions.end();
 
-		A_long				widthL = miP->layerWidthF; // inputP->width;
-		A_long				heightL = miP->layerHeightF;  //inputP->height;
+		A_long	widthL = miP->layerSizeF[0]; // inputP->width;
+		A_long	heightL = miP->layerSizeF[1]; //inputP->height;
 
 
 		//loading OpenGL resources

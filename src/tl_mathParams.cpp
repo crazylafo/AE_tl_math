@@ -1052,11 +1052,16 @@ tlmath_UserChangedParam(
 		if (params[MATH_CEP_GET_ARB_DATA]->u.bd.value == TRUE) {
 
 			ERR(SetupGetDataBack(in_data, out_data, params));
+
 			//deselect checkbox
             params[MATH_CEP_GET_ARB_DATA]->u.bd.value = FALSE;
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
                                                                 MATH_CEP_GET_ARB_DATA,
                                                                 params[MATH_CEP_GET_ARB_DATA]));
+            seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+            if (seqP->evalModeB){
+                ERR(SetupDialogSend(in_data, out_data, params));
+            }
 		}
 
 	}

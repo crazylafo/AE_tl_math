@@ -287,19 +287,33 @@ SetupDialogSend( PF_InData        *in_data,
         if (!arbInP){
             err = PF_Err_OUT_OF_MEMORY;
         }
-    nlohmann::json  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
-    arbDataJS["gl_frag_error"] =  seqP->Glsl_fragError;
-    arbDataJS["gl_vert_error"] =  seqP-> Glsl_VertError;
+    auto  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
 
-    arbDataJS["redExpr"] =  seqP->redError;
-    arbDataJS["greenExpr"] =  seqP->greenError;
-    arbDataJS["blueExpr"] =  seqP->blueError;
-    arbDataJS["alphaExpr"] =  seqP->alphaError;
+    std::string     fragErr = seqP->Glsl_fragError,
+                    vertErr = seqP-> Glsl_VertError,
+                    redErr = seqP->redError,
+                    greenErr = seqP->greenError,
+                    blueErr = seqP->blueError,
+                    alphaErr =seqP->alphaError;
+/*
+    strReplace(  fragErr, "\n","\\n");
+    strReplace( vertErr, "\n","\\n");
+    strReplace( redErr, "\n","\\n");
+    strReplace( greenErr, "\n","\\n");
+    strReplace(  blueErr, "\n","\\n");
+    strReplace( alphaErr, "\n","\\n");*/
+
+    arbDataJS["gl_frag_error"] =  fragErr;
+    arbDataJS["gl_vert_error"] =  vertErr;
+
+    arbDataJS["redExpr"] =      redErr;
+    arbDataJS["greenExpr"] =    greenErr;
+    arbDataJS["blueExpr"] =     blueErr;
+    arbDataJS["alphaExpr"] =    alphaErr;
     std::string resultStr;
-    std::string jsonDump =arbDataJS.dump();
-   // std::string jsonDump = "'''";
-   // jsonDump.append(arbInP->arbDataAc);
-    //jsonDump.append("'''");
+   std::string jsonDump = "'''";
+   jsonDump.append(arbDataJS.dump(4));
+   jsonDump.append("'''");
 
 
 	AEFX_CLR_STRUCT(scriptAC);

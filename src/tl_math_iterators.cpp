@@ -119,8 +119,8 @@ LineIteration8Func ( void *refconPV,
     PF_FpShort  red_result, green_result, blue_result, alpha_result;
     PF_Pixel8 *bop_outP = reinterpret_cast<PF_Pixel8*>(outW.data)+ (outW.rowbytes* yL / sizeof(PF_Pixel)),
                *bop_inP = reinterpret_cast<PF_Pixel8*>(inW.data)+ (inW.rowbytes* yL / sizeof(PF_Pixel));
-    AEFX_CLR_STRUCT(miP->yLF);
-    miP->yLF = PF_FpShort(yL);
+    AEFX_CLR_STRUCT(miP->pixF[1]);
+    miP->pixF[1] = PF_FpShort(yL);
 
     for ( A_long xL =0; xL < inW.width; xL++) {
         if (flagsP->NeedsPixelAroundB) {
@@ -210,31 +210,31 @@ LineIteration8Func ( void *refconPV,
                 }
             }
         }
-        AEFX_CLR_STRUCT(miP->xLF);
-        miP->xLF = PF_FpShort(xL);
-        AEFX_CLR_STRUCT(miP->inAlphaF);
-        miP->inAlphaF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN8;
+        AEFX_CLR_STRUCT(miP->pixF[0]);
+        miP->pixF[0] = PF_FpShort(xL);
+        AEFX_CLR_STRUCT(miP->inColorF[3]);
+        miP->inColorF[3] = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN8;
 
-        if (miP->inAlphaF != 0) {
+        if (miP->inColorF[3] != 0) {
             if (flagsP->NeedsLumaB) {
                 AEFX_CLR_STRUCT(miP->luma);
                 miP->luma = (0.2126*bop_inP->red + 0.7152*bop_inP->green + 0.0722*bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN8;
             }
-            AEFX_CLR_STRUCT(miP->inRedF);
-            miP->inRedF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
-            AEFX_CLR_STRUCT(miP->inGreenF);
-            miP->inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
-            AEFX_CLR_STRUCT(miP->inBlueF);
-            miP->inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(miP->inColorF[0]);
+            miP->inColorF[0] = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(miP->inColorF[1]);
+            miP->inColorF[1] = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
+            AEFX_CLR_STRUCT(miP->inColorF[2]);
+            miP->inColorF[2] = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
             if (flagsP->PixelsCallExternalInputB) {
-                AEFX_CLR_STRUCT(miP->extL_red);
-                miP->extL_red = (PF_FpShort)bop_extP->red / PF_MAX_CHAN8;
-                AEFX_CLR_STRUCT(miP->extL_green);
-                miP->extL_green = (PF_FpShort)bop_extP->green / PF_MAX_CHAN8;
-                AEFX_CLR_STRUCT(miP->extL_blue);
-                miP->extL_blue = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN8;
-                AEFX_CLR_STRUCT(miP->extL_alpha);
-                miP->extL_alpha = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[0]);
+                miP->extLayerColorF[0] = (PF_FpShort)bop_extP->red / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[1]);
+                miP->extLayerColorF[1] = (PF_FpShort)bop_extP->green / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[2]);
+                miP->extLayerColorF[2] = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN8;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[3]);
+                miP->extLayerColorF[3] = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN8;
 
             }
 
@@ -290,8 +290,8 @@ LineIteration16Func(void *refconPV,
     PF_FpShort  red_result, green_result, blue_result, alpha_result;
     PF_Pixel16 *bop_outP = reinterpret_cast<PF_Pixel16*>(outW.data) + (outW.rowbytes* yL / sizeof(PF_Pixel16)),
     *bop_inP = reinterpret_cast<PF_Pixel16*>(inW.data) +  (inW.rowbytes* yL / sizeof(PF_Pixel16));
-    AEFX_CLR_STRUCT(miP->yLF);
-    miP->yLF = PF_FpShort(yL);
+    AEFX_CLR_STRUCT(miP->pixF[1]);
+    miP->pixF[1] = PF_FpShort(yL);
     for (A_long xL = 0; xL < inW.width; xL++) {
         if (flagsP->NeedsPixelAroundB) {
             PF_Pixel16 *in00;
@@ -382,34 +382,34 @@ LineIteration16Func(void *refconPV,
             }
         }
 
-        AEFX_CLR_STRUCT(miP->xLF);
-        miP->xLF = PF_FpShort(xL);
+        AEFX_CLR_STRUCT(miP->pixF[0]);
+        miP->pixF[0] = PF_FpShort(xL);
 
-        AEFX_CLR_STRUCT(miP->inAlphaF);
-        miP->inAlphaF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN16;
+        AEFX_CLR_STRUCT(miP->inColorF[3]);
+        miP->inColorF[3] = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN16;
 
 
-        if (miP->inAlphaF != 0) {
+        if (miP->inColorF[3] != 0) {
             if (flagsP->NeedsLumaB) {
                 AEFX_CLR_STRUCT(miP->luma);
                 miP->luma = (0.2126*bop_inP->red + 0.7152*bop_inP->green + 0.0722*bop_inP->blue) / (PF_FpShort)PF_MAX_CHAN16;
             }
 
-            AEFX_CLR_STRUCT(miP->inRedF);
-            miP->inRedF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN16;
-            AEFX_CLR_STRUCT(miP->inGreenF);
-            miP->inGreenF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN16;
-            AEFX_CLR_STRUCT(miP->inBlueF);
-            miP->inBlueF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN16;
+            AEFX_CLR_STRUCT(miP->inColorF[0]);
+            miP->inColorF[0] = (PF_FpShort)bop_inP->red / PF_MAX_CHAN16;
+            AEFX_CLR_STRUCT(miP->inColorF[1]);
+            miP->inColorF[1] = (PF_FpShort)bop_inP->green / PF_MAX_CHAN16;
+            AEFX_CLR_STRUCT(miP->inColorF[2]);
+            miP->inColorF[2] = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN16;
             if (flagsP->PixelsCallExternalInputB) {
-                AEFX_CLR_STRUCT(miP->extL_alpha);
-                miP->extL_alpha = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN16;
-                AEFX_CLR_STRUCT(miP->extL_red);
-                miP->extL_red = (PF_FpShort)bop_extP->red / PF_MAX_CHAN16;
-                AEFX_CLR_STRUCT(miP->extL_green);
-                miP->extL_green = (PF_FpShort)bop_extP->green / PF_MAX_CHAN16;
-                AEFX_CLR_STRUCT(miP->extL_blue);
-                miP->extL_blue = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN16;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[3]);
+                miP->extLayerColorF[3] = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN16;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[0]);
+                miP->extLayerColorF[0] = (PF_FpShort)bop_extP->red / PF_MAX_CHAN16;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[1]);
+                miP->extLayerColorF[1] = (PF_FpShort)bop_extP->green / PF_MAX_CHAN16;
+                AEFX_CLR_STRUCT(miP->extLayerColorF[2]);
+                miP->extLayerColorF[2] = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN16;
             }
             AEFX_CLR_STRUCT(red_result);
             red_result = MIN(fiP->redExpr(), 1);
@@ -465,8 +465,8 @@ LineIteration32Func(void *refconPV,
 	PF_FpShort  red_result, green_result, blue_result, alpha_result;
 	PF_PixelFloat *bop_outP = reinterpret_cast<PF_PixelFloat*>(outW.data) + (outW.rowbytes* yL / sizeof(PF_PixelFloat)),
                   *bop_inP = reinterpret_cast<PF_PixelFloat*>(inW.data) + (inW.rowbytes* yL / sizeof(PF_PixelFloat));
-	AEFX_CLR_STRUCT(miP->yLF);
-	miP->yLF = PF_FpShort(yL);
+	AEFX_CLR_STRUCT(miP->pixF[1]);
+	miP->pixF[1] = PF_FpShort(yL);
 	for (A_long xL = 0; xL < inW.width; xL++) {
 		if (flagsP->NeedsPixelAroundB) {
 			PF_PixelFloat *in00;
@@ -558,34 +558,34 @@ LineIteration32Func(void *refconPV,
 			}
 		}
 
-		AEFX_CLR_STRUCT(miP->xLF);
-		miP->xLF = PF_FpShort(xL);
+		AEFX_CLR_STRUCT(miP->pixF[0]);
+		miP->pixF[0] = PF_FpShort(xL);
 
-		AEFX_CLR_STRUCT(miP->inAlphaF);
-		miP->inAlphaF = (PF_FpShort)bop_inP->alpha;
+		AEFX_CLR_STRUCT(miP->inColorF[3]);
+		miP->inColorF[3] = (PF_FpShort)bop_inP->alpha;
 
 
-		if (miP->inAlphaF != 0) {
+		if (miP->inColorF[3] != 0) {
 			if (flagsP->NeedsLumaB) {
 				AEFX_CLR_STRUCT(miP->luma);
 				miP->luma = (0.2126*bop_inP->red + 0.7152*bop_inP->green + 0.0722*bop_inP->blue);
 			}
 
-			AEFX_CLR_STRUCT(miP->inRedF);
-			miP->inRedF = (PF_FpShort)bop_inP->red;
-			AEFX_CLR_STRUCT(miP->inGreenF);
-			miP->inGreenF = (PF_FpShort)bop_inP->green;
-			AEFX_CLR_STRUCT(miP->inBlueF);
-			miP->inBlueF = (PF_FpShort)bop_inP->blue;
+			AEFX_CLR_STRUCT(miP->inColorF[0]);
+			miP->inColorF[0] = (PF_FpShort)bop_inP->red;
+			AEFX_CLR_STRUCT(miP->inColorF[1]);
+			miP->inColorF[1] = (PF_FpShort)bop_inP->green;
+			AEFX_CLR_STRUCT(miP->inColorF[2]);
+			miP->inColorF[2] = (PF_FpShort)bop_inP->blue;
 			if (flagsP->PixelsCallExternalInputB) {
-				AEFX_CLR_STRUCT(miP->extL_alpha);
-				miP->extL_alpha = (PF_FpShort)bop_extP->alpha;
-				AEFX_CLR_STRUCT(miP->extL_red);
-				miP->extL_red = (PF_FpShort)bop_extP->red;
-				AEFX_CLR_STRUCT(miP->extL_green);
-				miP->extL_green = (PF_FpShort)bop_extP->green;
-				AEFX_CLR_STRUCT(miP->extL_blue);
-				miP->extL_blue = (PF_FpShort)bop_extP->blue;
+				AEFX_CLR_STRUCT(miP->extLayerColorF[3]);
+				miP->extLayerColorF[3] = (PF_FpShort)bop_extP->alpha;
+				AEFX_CLR_STRUCT(miP->extLayerColorF[0]);
+				miP->extLayerColorF[0] = (PF_FpShort)bop_extP->red;
+				AEFX_CLR_STRUCT(miP->extLayerColorF[1]);
+				miP->extLayerColorF[1] = (PF_FpShort)bop_extP->green;
+				AEFX_CLR_STRUCT(miP->extLayerColorF[2]);
+				miP->extLayerColorF[2] = (PF_FpShort)bop_extP->blue;
 			}
 			AEFX_CLR_STRUCT(red_result);
 			red_result = MIN(fiP->redExpr(), 1);
