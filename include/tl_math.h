@@ -789,7 +789,7 @@ strReplace(std::string& str,
            const std::string& oldStr,
            const std::string& newStr);
 
-void ExprtkCorrectorStr(std::string &str);
+
 
 PF_Err
 LineIteration8Func ( void *refconPV,

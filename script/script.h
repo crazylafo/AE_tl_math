@@ -27,6 +27,7 @@ std::string script_sendToMathCEP = R"=====(
     //
     //
     function sendToMathCEP(arbData){
+		alert (arbData);
         //send the arb value
 		var externalObjectName = "PlugPlugExternalObject"; 
 		var csxslib = new ExternalObject( "lib:" + externalObjectName);

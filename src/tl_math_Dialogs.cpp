@@ -182,7 +182,7 @@ void strReplace(std::string& str,
     }
 }
 
-void ExprtkCorrectorStr(std::string &str)
+static void ExprtkCorrectorStr(std::string &str)
 {
 	//convert some AE javascript operator to exprtk operators
 	strReplace(str, "&&", "&");
@@ -193,7 +193,24 @@ void ExprtkCorrectorStr(std::string &str)
 	strReplace(str, "\t", "    ");
 	strReplace(str, "\"", " '");
 }
+static void jsonCorrectorStr(std::string &str)
+{
+	strReplace(str, "\n", "\\n");
+	strReplace(str, "\b", "\\b");
+	strReplace(str, "\f", "\\f");
+	strReplace(str, "\r", "\\r");
+	strReplace(str, "\t", "\\t");
+	strReplace(str, "\'", "\\'");
 
+}
+//before execution
+static void scriptCorrectorStr(std::string &str)
+{
+	strReplace(str, "\\n", "\n");
+	strReplace(str, "\\r", "\r");
+	strReplace(str, "\\t", "  ");
+	strReplace(str, "\\'", "\'");
+}
 PF_Boolean
 strToBoolean( std::string str)
 {
@@ -267,7 +284,7 @@ SetupDialogSend( PF_InData        *in_data,
     seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
     AEGP_MemHandle     resultMemH = NULL;
     A_char *resultAC = NULL;
-    A_char          scriptAC[100000] { '\0' };
+    A_char          scriptAC[120000] { '\0' };
     std::string Majvers = std::to_string(MAJOR_VERSION);
     std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
@@ -296,12 +313,12 @@ SetupDialogSend( PF_InData        *in_data,
                     blueErr = seqP->blueError,
                     alphaErr =seqP->alphaError;
 
-    strReplace(  fragErr, "\n","\\n");
-    strReplace( vertErr, "\n","\\n");
-    strReplace( redErr, "\n","\\n");
-    strReplace( greenErr, "\n","\\n");
-    strReplace(  blueErr, "\n","\\n");
-    strReplace( alphaErr, "\n","\\n");
+    jsonCorrectorStr(fragErr);
+    jsonCorrectorStr(vertErr);
+    jsonCorrectorStr(redErr);
+    jsonCorrectorStr(greenErr);
+    jsonCorrectorStr(blueErr);
+    jsonCorrectorStr(alphaErr);
 
     arbDataJS["gl_expression"]["gl_frag_error"] =  fragErr;
     arbDataJS["gl_expression"]["gl_vert_error"] =  vertErr;
@@ -409,12 +426,12 @@ copyFromArbToSeqData( std::string       arbStr,
 
 
 
-    strReplace( gl_fragsh, "\\n","\n");
-    strReplace( gl_vertsh, "\\n","\n");
-    strReplace( expr_red, "\\n","\n");
-    strReplace( expr_green, "\\n","\n");
-    strReplace( expr_blue, "\\n","\n");
-    strReplace( expr_alpha, "\\n","\n");
+	scriptCorrectorStr(gl_fragsh);
+	scriptCorrectorStr(gl_vertsh);
+	scriptCorrectorStr(expr_red);
+	scriptCorrectorStr(expr_green);
+	scriptCorrectorStr(expr_blue);
+	scriptCorrectorStr(expr_alpha);
 
 
 	bool  param_pixelAroundB= (arbDataJS["/flags/needsPixelAroundB"_json_pointer]);
