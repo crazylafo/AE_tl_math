@@ -20,12 +20,14 @@ function isCompActiveItem(){
 function alertSelecEffect(){
   alert ('select a tl Math Effect');
 }
+
 if ( ! $._ext )
 {
   $._ext = {};
 }
 
 $._ext = {
+
   sendDataToPlugin : function(arbData)
   {
     if (!arbData){return};
@@ -42,8 +44,40 @@ $._ext = {
           break;
       }     
     }
-    
+  },
+
+  loadJSONFile : function()
+  {
+    var newFile = null;
+    var newJSON = null;
+    var loadFile =File.openDialog('Select the file to load');
+    if (loadFile && loadFile.open('r')){
+        loadFile.encoding ='UTF-8';
+        newFile = loadFile.read();
+         newJSON = newFile.toString();
+         loadFile.close();
+    }
+    if (newJSON != null){
+      var externalObjectName = "PlugPlugExternalObject"; 
+      var csxslib = new ExternalObject( "lib:" + externalObjectName);
+      var mathEventToCEPObj = new CSXSEvent();
+          mathEventToCEPObj.type="tlmath.arbSentfromPlugin";
+          mathEventToCEPObj.data=newJSON;
+          mathEventToCEPObj.dispatch();
+    }
+  },
+
+  savePresetFile : function(dataStr)
+  {
+    var presetFile =File.saveDialog('save your preset as a json');
+    if (presetFile && presetFile.open('w')){
+        presetFile.encoding ='UTF-8';
+        presetFile.write(JSON.stringify(dataStr,undefined, '\r\n'));
+        presetFile.close();
+    }
+
   }
+
 };
 
 

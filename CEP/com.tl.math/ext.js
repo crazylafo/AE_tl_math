@@ -5,10 +5,8 @@
 
 function onLoaded() {
 	var csInterface = new CSInterface();
-
-	
 	var appName = csInterface.hostEnvironment.appName;
-	csInterface.setWindowTitle = "tl Math Setup"
+	csInterface.setWindowTitle = "tl Math Setup";
 	loadJSX();
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
@@ -27,35 +25,44 @@ function onLoaded() {
 			copyDataToGUI (arbData, editors);
 		}
 	});
-
-	$("#btnApply").on("click", function () {
-		
+	$("#btnLoad").on("click", function() {		
+		loadPresetJSON();
+		});
+	$("#btnExport").on("click", function() {
+		var arbDataToSend = sendDataToPlugin(editors, arbData);		
+		savePresetAsJSON(arbDataToSend);
+		});
+	$("#btnApply").on("click", function() {
 		var arbDataToSend = sendDataToPlugin(editors, arbData);
 		if (arbDataToSend ){
 			var arbDataStr = JSON.stringify(arbDataToSend);
 			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 			}
-		});   
-	
-
-	
+		});
+}
+function loadPresetJSON(){
+	var newDataStr = evalScript("$._ext.loadJSONFile()");
+	alert (newDataStr)
+	var newData = JSON.parse(newDataStr);
+	if (newData.effectInfo.effectName =="tlMath"){
+		copyDataToGUI (newData, editors);
+	}
 }
 
-/*
-    var JFile = new File("/Users/hercules/Desktop/TextDecoderStream.json");
-    JFile .open("w");
-    JFile.write(tlmathDataFromSetup);  
-    JFile.close();    
-*/
-
+function savePresetAsJSON(arbDataToSend){
+	if (arbDataToSend){
+		var arbDataStr = JSON.stringify(arbDataToSend);
+		evalScript("$._ext.savePresetFile("+arbDataStr+")");
+		}
+}
 /**
- * clean json str 
+ * clean json str  replace \ by double \
  * input : str
  * return str
  */
 function cleanJsonToArbStr (str){
 	str = str.replace(/\n/g, "\\n")
-               .replace(/\'/g, "\\'")
+               .replace(/\'/g, "\\' ")
                .replace(/\"/g, '\\"')
                .replace(/\&/g, "\\&")
                .replace(/\r/g, "\\r")
@@ -64,6 +71,11 @@ function cleanJsonToArbStr (str){
 
     return str;
 }
+/**
+ * clean json str  replace double\ by  \
+ * input : str
+ * return str
+ */
 function cleanJsonFromArbStr (str){
 	str = str.replace(/\\n/g, "\n")
                .replace(/\\'/g, "\'")
@@ -86,11 +98,7 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.effectInfo.presetName = $("#presetName").val().toString();
 	arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
 	//detect if flags are active or not
-	/*
-	arbData.effectInfo.needsPixelAroundB":false,
-	arbData.effectInfo.pixelsCallExternalInputB":false,
-	arbData.effectInfo.needsLumaB":false,
-	arbData.effectInfo.presetHasWideInputB":false*/
+
 	//copy  mode settings
 	($("#langSelec").val() ==("GLSL") ? arbData.effectMode.gl_modeB=true : arbData.effectMode.gl_modeB=false);
 	($("#langSelec").val() ==("mExpr")? arbData.effectMode.expr_modeB=true : arbData.effectMode.expr_modeB = false);
@@ -202,6 +210,12 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
 	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
 
+
+		/*
+	arbData.effectInfo.needsPixelAroundB":false,
+	arbData.effectInfo.pixelsCallExternalInputB":false,
+	arbData.effectInfo.needsLumaB":false,
+	arbData.effectInfo.presetHasWideInputB":false*/
 
 	return arbData;
 
