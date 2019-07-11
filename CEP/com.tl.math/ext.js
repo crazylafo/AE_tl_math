@@ -4,9 +4,13 @@
 **************************************************************************/
 
 function onLoaded() {
+	var pluginName = "tlMath";
+	var pluginVersion =1.15;
 	var csInterface = new CSInterface();
 	var appName = csInterface.hostEnvironment.appName;
 	csInterface.setWindowTitle = "tl Math Setup";
+	var err_PresetFile = "Error: the tlMath Preset is not recognized";
+	var err_pluginVersion ="Error: the plugin Version is not compatible with this preset";
 	loadJSX();
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
@@ -20,11 +24,19 @@ function onLoaded() {
 
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
-		if (fromArbEvent.data.effectInfo.effectName =="tlMath"){
+		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err_PresetFile); return};
 			arbData = fromArbEvent.data;
+			evalScript("$._ext.sendMessageToPlugin("+arbData.layerInfo.layerIndex+","+arbData.layerInfo.effectIndex+")");
+			pluginVersion = parseFloat (arbData.effectInfo.pluginVersion).toFixed(2);
 			copyDataToGUI (arbData, editors);
-		}
 	});
+	csInterface.addEventListener("tlmath.arbSentfromPreset", function(fromArbEvent){
+		alert (pluginVersion);
+		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err_PresetFile); return};
+		if (parseFloat(pluginVersion)<parseFloat(fromArbEvent.data.effectInfo.minimalPluginVersion)) {alert (err_pluginVersion); return}
+			arbData = fromArbEvent.data; 
+			copyDataToGUI (arbData, editors);
+		});
 	$("#btnLoad").on("click", function() {		
 		loadPresetJSON();
 		});
@@ -41,12 +53,7 @@ function onLoaded() {
 		});
 }
 function loadPresetJSON(){
-	var newDataStr = evalScript("$._ext.loadJSONFile()");
-	alert (newDataStr)
-	var newData = JSON.parse(newDataStr);
-	if (newData.effectInfo.effectName =="tlMath"){
-		copyDataToGUI (newData, editors);
-	}
+	 evalScript("$._ext.loadJSONFile()");
 }
 
 function savePresetAsJSON(arbDataToSend){
@@ -88,6 +95,7 @@ function cleanJsonFromArbStr (str){
     return str;
 }
 function sendDataToPlugin(editors, arbData) {
+	
 	//copy  expressions
 	arbData.gl_expression.gl_frag_sh = cleanJsonToArbStr((editors.gl_frag_editor.getValue()).toString());
 	arbData.gl_expression.gl_vert_sh = cleanJsonToArbStr(( editors.gl_vert_editor.getValue()).toString());
@@ -98,18 +106,29 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.effectInfo.presetName = $("#presetName").val().toString();
 	arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
 	//detect if flags are active or not
-
+	
 	//copy  mode settings
 	($("#langSelec").val() ==("GLSL") ? arbData.effectMode.gl_modeB=true : arbData.effectMode.gl_modeB=false);
 	($("#langSelec").val() ==("mExpr")? arbData.effectMode.expr_modeB=true : arbData.effectMode.expr_modeB = false);
-	//copy compo settings
-	arbData.gl_expression.fragColorOutName =$("#fragColorOutName").val().toString();
+	//copy compo settings	
 	arbData.composition.resolution = $("#resolutionName").val().toString();
+
+	arbData.composition.layerPosition= $("#layerPositionName").val().toString();
+	arbData.composition.layerScale= $("#layerScaleName").val().toString();
+	arbData.composition.compResolution = $("#compResolutionName").val().toString();
 	arbData.composition.time_sec = $("#tsecName").val().toString();
 	arbData.composition.time_frame = $("#tframeName").val().toString();
 	arbData.composition.frame_rate = $("#fpsName").val().toString();
 	arbData.composition.camera_position = $("#camera_pos").val().toString();
 	arbData.composition.camera_target = $("#camera_targ").val().toString();
+	//copy settings for expr
+	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
+	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
+	arbData.math_expression.expr_red_off =$("#expr_red_offName").val().toString();
+	arbData.math_expression.expr_green_off =$("#expr_green_offName").val().toString();
+	arbData.math_expression.expr_blue_off =$("#expr_blue_offName").val().toString();
+	arbData.math_expression.expr_alpha_off=$("#expr_alpha_offName").val().toString();
+
 	//copy sliders settings
 	arbData.gui_settings.sliderGrp.grpName =$("#sliderGrpName").val().toString();	
 	arbData.gui_settings.sliderGrp.grpVisibleB =$("#sliderGrpVisible").is(':checked');
@@ -210,7 +229,6 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
 	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
 
-
 		/*
 	arbData.effectInfo.needsPixelAroundB":false,
 	arbData.effectInfo.pixelsCallExternalInputB":false,
@@ -261,13 +279,22 @@ function copyDataToGUI (arbData, editors) {
 	if(arbData.effectMode.geoshMode){
 		$("#geoShB").val(arbData.effectMode.geoshMode);
 	}
-	$("#fragColorOutName").text(arbData.gl_expression.fragColorOutName.toString());
 	$("#resolutionName").text(arbData.composition.resolution.toString());
+	$("layerPositionName").text(arbData.composition.layerPosition.toString());
+	$("layerScaleName").text(arbData.composition.layerScale.toString());
+	$("compResolutionName").text(arbData.composition.compResolution.toString());
 	$("#tsecName").text(arbData.composition.time_sec.toString());
 	$("#tframeName").text(arbData.composition.time_frame.toString());
 	$("#fpsName").text(arbData.composition.frame_rate.toString());
 	$("#camera_pos").text(arbData.composition.camera_position.toString());
 	$("#camera_targ").text(arbData.composition.camera_target.toString());
+
+	$("#expr_pixName").text(arbData.math_expression.expr_pix.toString());
+	$("#expr_lumaName").text(arbData.math_expression.expr_luma.toString());
+	$("#expr_red_offName").text(arbData.math_expression.expr_red_off.toString());
+	$("#expr_green_offName").text(arbData.math_expression.expr_green_off.toString());
+	$("#expr_blue_offName").text(arbData.math_expression.expr_blue_off.toString());
+	$("#expr_alpha_offName").text(arbData.math_expression.expr_alpha_off.toString());
 
 	$("#sliderGrpName").val(arbData.gui_settings.sliderGrp.grpName.toString());
 	$("#input[name=sliderGrpVisible]").prop('checked', arbData.gui_settings.sliderGrp.grpVisibleB);
@@ -293,7 +320,7 @@ function copyDataToGUI (arbData, editors) {
 	$("input[name=slider10Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_10.visibleB);
 
 	$("#pointGrpName").val(arbData.gui_settings.pointGrp.grpName.toString());
-	$("#input[name=pointGrpVisible]").prop('checked', arbData.gui_settings.pointGrp.grpVisibleB);
+	$("input[name=pointGrpVisible]").prop('checked', arbData.gui_settings.pointGrp.grpVisibleB);
 	$("#point01_name").val(arbData.gui_settings.pointGrp.point_1.name.toString());
 	$("input[name=point01Visible]").prop('checked', arbData.gui_settings.pointGrp.point_1.visibleB);
 	$("#point02_name").val(arbData.gui_settings.pointGrp.point_2.name.toString());
@@ -316,7 +343,7 @@ function copyDataToGUI (arbData, editors) {
 	$("input[name=point10Visible]").prop('checked', arbData.gui_settings.pointGrp.point_10.visibleB);
 	
 	$("#cboxGrpName").val(arbData.gui_settings.cboxGrp.grpName.toString());
-	$("#input[name=cboxGrpVisible]").prop('checked', arbData.gui_settings.cboxGrp.grpVisibleB);
+	$("input[name=cboxGrpVisible]").prop('checked', arbData.gui_settings.cboxGrp.grpVisibleB);
 	$("#cbox01_name").val(arbData.gui_settings.cboxGrp.cbox_1.name.toString());
 	$("input[name=cbox01Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_1.visibleB);
 	$("#cbox02_name").val(arbData.gui_settings.cboxGrp.cbox_2.name.toString());
@@ -339,7 +366,7 @@ function copyDataToGUI (arbData, editors) {
 	$("input[name=cbox10Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_10.visibleB);
 	
 	$("#colorGrpName").val(arbData.gui_settings.colorGrp.grpName.toString());
-	$("#input[name=colorGrpVisible]").prop('checked', arbData.gui_settings.colorGrp.grpVisibleB);
+	$("input[name=colorGrpVisible]").prop('checked', arbData.gui_settings.colorGrp.grpVisibleB);
 	$("#color01_name").val(arbData.gui_settings.colorGrp.color_1.name.toString());
 	$("input[name=color01Visible]").prop('checked', arbData.gui_settings.colorGrp.color_1.visibleB);
 	$("#color02_name").val(arbData.gui_settings.colorGrp.color_2.name.toString());
@@ -362,7 +389,7 @@ function copyDataToGUI (arbData, editors) {
 	$("input[name=color10Visible]").prop('checked', arbData.gui_settings.colorGrp.color_10.visibleB);
 	
 	$("#layerGrpName").val(arbData.gui_settings.layerGrp.grpName.toString());
-	$("#input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
+	$("input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
 	$("#layer01_name").val(arbData.gui_settings.layerGrp.extLayer_1.name.toString());
 	$("input[name=layer01Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_1.visibleB);

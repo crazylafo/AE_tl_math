@@ -27,7 +27,13 @@ if ( ! $._ext )
 }
 
 $._ext = {
+  sendMessageToPlugin : function(layerIndex, effectIndex)
+  {
+    alert (app.project.activeItem.layer(layerIndex).effect(effectIndex).property(57).name)
+    app.project.activeItem.layer(layerIndex).effect(effectIndex).property(57).setValue(1);//property 56 = send message to ARB
+    alert ("stoped")
 
+  },
   sendDataToPlugin : function(arbData)
   {
     if (!arbData){return};
@@ -61,7 +67,7 @@ $._ext = {
       var externalObjectName = "PlugPlugExternalObject"; 
       var csxslib = new ExternalObject( "lib:" + externalObjectName);
       var mathEventToCEPObj = new CSXSEvent();
-          mathEventToCEPObj.type="tlmath.arbSentfromPlugin";
+          mathEventToCEPObj.type="tlmath.arbSentfromPreset";
           mathEventToCEPObj.data=newJSON;
           mathEventToCEPObj.dispatch();
     }

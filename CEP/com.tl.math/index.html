@@ -31,7 +31,7 @@
 	<br />
 	<div id="descriptionId">Description </br>
 		<textarea  rows = "6" cols = "42" maxlength="256" id="descriptionText">describe here</textarea>
-	</div>
+		</div>
 	
 	<div id="settingsId">
 		<br />
@@ -42,36 +42,101 @@
 						<th>Parameter</th>
 						<th>GUI Name</th>
 						<tr class = "settingsGrp">
-							<td>Fragment Shader out</td>
-							<td><input type="text" id = "fragColorOutName" value="gl_FragColorOut" maxlength="31"></td>
-							</tr>
-						<tr class = "settingsGrp">
-							<td>resolution</td>
-							<td><input type="text" id = "resolutionName"  value="resolution" maxlength="31"></td>
-							</tr>
-						<tr class = "settingsGrp">
 							<td>time in seconds</td>
-							<td ><input type="text" id = "tsecName"  value="time" maxlength="31"></td>
+							<td ><input type="text" id ="tsecName"  value="time" maxlength="31"></td>
 							</tr>
 						<tr class = "settingsGrp">
 							<td>time in frames</td>
-							<td><input type="text" id = "tframeName"  value="time_frame" maxlength="31"></td>
+							<td><input type="text" id ="tframeName"  value="time_frame" maxlength="31"></td>
 							</tr>
 						<tr class = "settingsGrp">
 							<td>Frame Rate</td>
-							<td><input type="text" id = "fpsName" value="fps" maxlength="31"></td>
+							<td><input type="text" id ="fpsName" value="fps" maxlength="31"></td>
 							</tr>
+						<tr class = "settingsGrp">
+							<td>resolution</td>
+							<td><input type="text" id ="resolutionName"  value="resolution" maxlength="31"></td>
+							</tr>
+						<tr class = "settingsGrp">
+							<td>layerPosition</td>
+							<td><input type="text" id ="layerPositionName"  value="layerPosition" maxlength="31"></td>
+							</tr>
+						<tr class = "settingsGrp">
+							<td>layerScale</td>
+							<td><input type="text" id ="layerScaleName"  value="layerScale" maxlength="31"></td>
+							</tr>
+						<tr class = "settingsGrp">
+								<td>compResolution</td>
+								<td><input type="text" id ="compResolutionName"  value="compResolution" maxlength="31"></td>
+								</tr>
 							<tr class = "settingsGrp">
 								<td>camera position</td>
-								<td><input type="text" id = "camera_pos"  value="camera_position" maxlength="31"></td>
+								<td><input type="text" id ="camera_pos"  value="camera_position" maxlength="31"></td>
 								</tr>
 							<tr class = "settingsGrp">
 								<td>camera target</td>
-								<td><input type="text" id = "camera_targ" value="camera_target" maxlength="31"></td>
+								<td><input type="text" id ="camera_targ" value="camera_target" maxlength="31"></td>
 								</tr>
 							</tr>
+					</table>
+				</td>
+				<td>
+					<table>
+						<tr class = "exprSettingsGrp">
+							<th>Parameter</th>
+							<th>GUI Name</th>
+							<tr class = "exprSettingsGrp">
+								<td>Pixel Coordonates</td>
+								<td><input type="text" id = "expr_pixName" value="pix" maxlength="31"></td>
+								</tr>
+							<tr class = "exprSettingsGrp">
+									<td>Luma</td>
+									<td><input type="text" id = "expr_lumaName" value="luma" maxlength="31"></td>
+									</tr>
+							<tr class = "exprSettingsGrp">
+								<td>Pixel off-red chl</td>
+								<td><input type="text" id = "expr_red_offName" value="red_off" maxlength="31"></td>
+								</tr>
+							<tr class = "exprSettingsGrp">
+								<td>Pixel off-green ch</td>
+								<td><input type="text" id = "expr_green_offName" value="green_off" maxlength="31"></td>
+								</tr>
+							<tr class = "exprSettingsGrp">
+									<td>Pixel off-blue ch</td>
+									<td><input type="text" id = "expr_blue_offName" value="blue_off" maxlength="31"></td>
+									</tr>	
+							<tr class = "exprSettingsGrp">
+								<td>Pixel off-alpha ch</td>
+								<td><input type="text" id = "expr_alpha_offName" value="alpha_off" maxlength="31"></td>
+								</tr>
+								</tr>
 						</table>
 					</td>
+
+			<td>
+				<table>
+					<tr>
+						<th>Parameter</th>
+						<th>GUI Name</th> 
+						<th>Visible</th>
+						<tr class = "LayerGrp">
+							<tr>
+								<td>layer Group</td>
+								<td><input type="text"   id="layerGrpName" value="layerGrp" maxlength="31"></td>
+								<td><input type="checkbox" name="layerGrpVisible" id="layerGrpVisible" onClick= "toogleCheckbox('cblayers', 'layerGrpVisible')" checked ></td>
+								</tr>
+							<tr>
+								<td>current layer</td>
+								<td><input type="text" id = "layer00_name" value="current layer" maxlength="31"></td>
+								</tr>
+							<tr>
+								<td>layer 01</td>
+								<td><input type="text" id = "layer01_name" value="layer01" maxlength="31"></td>
+								<td><input type="checkbox" id = "layer01_visible" name="layer01Visible" class="cblayers" checked></td>
+								</tr>
+						</tr>
+					</table>
+				</td>
 				<td>
 					<table>
 						<tr>
@@ -336,30 +401,6 @@
 							</tr>
 						</table>
 					</td>
-					<td>
-						<table>
-							<tr>
-								<th>Parameter</th>
-								<th>GUI Name</th> 
-								<th>Visible</th>
-								<tr class = "LayerGrp">
-									<tr>
-										<td>layer Group</td>
-										<td><input type="text"   id="layerGrpName" value="layerGrp" maxlength="31"></td>
-										<td><input type="checkbox" name="layerGrpVisible" id="layerGrpVisible" onClick= "toogleCheckbox('cblayers', 'layerGrpVisible')" checked ></td>
-										</tr>
-									<tr>
-										<td>current layer</td>
-										<td><input type="text" id = "layer00_name" value="current layer" maxlength="31"></td>
-										</tr>
-									<tr>
-										<td>layer 01</td>
-										<td><input type="text" id = "layer01_name" value="layer01" maxlength="31"></td>
-										<td><input type="checkbox" id = "layer01_visible" name="layer01Visible" class="cblayers" checked></td>
-										</tr>
-								</tr>
-							</table>
-						</td>
 			</table>
 		</div>
 	
