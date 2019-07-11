@@ -240,8 +240,6 @@ parseLayerDataToJsonStr(A_long compId,
 
 }
 
-
-
 PF_Err
 CallCepDialog(PF_InData        *in_data,
 			PF_OutData        *out_data)
@@ -289,6 +287,11 @@ SetupDialogSend( PF_InData        *in_data,
     std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
 
+    std::string plugVersionStr =Majvers.append(".")
+                                .append(MinVers)
+                                .append(Bugvers);
+    float plugVersionF = std::atof( plugVersionStr.c_str());
+
     //ARB
     PF_ParamDef arb_param;
     m_ArbData        *arbInP = NULL;
@@ -320,6 +323,14 @@ SetupDialogSend( PF_InData        *in_data,
     jsonCorrectorStr(blueErr);
     jsonCorrectorStr(alphaErr);
 
+    A_long compId,layerIndex, effectIndex;
+    ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
+
+    arbDataJS["layerInfo"]["compId"] = compId;
+    arbDataJS["layerInfo"]["layerIndex"] =layerIndex +1; // +1 because plugin starts index at 0 and script at 1
+    arbDataJS["layerInfo"]["effectIndex"] =effectIndex+1;
+
+    arbDataJS["effectInfo"]["pluginVersion"] =plugVersionF;
     arbDataJS["gl_expression"]["gl_frag_error"] =  fragErr;
     arbDataJS["gl_expression"]["gl_vert_error"] =  vertErr;
 
@@ -385,7 +396,7 @@ SetupGetDataBack(
 
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-		ERR(copyFromArbToSeqData(resultStr, seqP));
+		ERR(copyFromArbToSeqData(in_data, out_data,resultStr, seqP ));
         ERR(evalScripts  (seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
@@ -400,15 +411,27 @@ SetupGetDataBack(
 }
 
 PF_Err
-copyFromArbToSeqData( std::string       arbStr,
-                      seqData    *seqDataP)
+copyFromArbToSeqData(PF_InData        *in_data,
+                     PF_OutData        *out_data,
+                     std::string       arbStr,
+                      seqData           *seqDataP)
 {
-    PF_Err err = PF_Err_NONE;
-    nlohmann::json  arbDataJS = nlohmann::json::parse(arbStr);
-	std::string effect_name = arbDataJS["/effectInfo/effectName"_json_pointer];
-	std::string effect_pluginVersion = arbDataJS["/effectInfo/pluginVesion"_json_pointer];
-	std::string effect_minimalPluginversion = arbDataJS["/effectInfo/minimalPluginVersion"_json_pointer];
-	//std::string effect_tags=(arbDataJS["/effectInfo/tags"_json_pointer]);
+        PF_Err err = PF_Err_NONE;
+    nlohmann::json arbDataJS;
+    try{
+        arbDataJS = nlohmann::json::parse(arbStr);
+    }
+    catch ( nlohmann::json::exception& e)
+    {
+        std::string errMess =  e.what();
+        //int errId =  e.id;
+        AEGP_SuiteHandler    suites(in_data->pica_basicP);
+        suites.ANSICallbacksSuite1()->sprintf(    out_data->return_msg,
+                                                    errMess.c_str());
+        return PF_Err_INTERNAL_STRUCT_DAMAGED;
+        
+    }
+    std::string effect_name = arbDataJS["/effectInfo/effectName"_json_pointer];
 	std::string effect_presetName=(arbDataJS["/effectInfo/presetName"_json_pointer]);
 	std::string effect_description=(arbDataJS["/effectInfo/description"_json_pointer]);
 		
@@ -423,15 +446,20 @@ copyFromArbToSeqData( std::string       arbStr,
 	std::string expr_green = (arbDataJS["/math_expression/greenExpr"_json_pointer]);
 	std::string expr_blue= (arbDataJS["/math_expression/blueExpr"_json_pointer]);
 	std::string expr_alpha = (arbDataJS["/math_expression/alphaExpr"_json_pointer]);
-
-
-
 	scriptCorrectorStr(gl_fragsh);
 	scriptCorrectorStr(gl_vertsh);
-	scriptCorrectorStr(expr_red);
-	scriptCorrectorStr(expr_green);
-	scriptCorrectorStr(expr_blue);
-	scriptCorrectorStr(expr_alpha);
+	ExprtkCorrectorStr(expr_red);
+	ExprtkCorrectorStr(expr_green);
+	ExprtkCorrectorStr(expr_blue);
+	ExprtkCorrectorStr(expr_alpha);
+
+	std::string expr_pix = (arbDataJS["/math_expression/expr_pix"_json_pointer]);
+	std::string expr_luma = (arbDataJS["/math_expression/expr_luma"_json_pointer]);
+	std::string expr_red_off = (arbDataJS["/math_expression/expr_red_off"_json_pointer]);
+	std::string expr_green_off = (arbDataJS["/math_expression/expr_green_off"_json_pointer]);
+	std::string expr_blue_off = (arbDataJS["/math_expression/expr_blue_off"_json_pointer]);
+	std::string expr_alpha_off = (arbDataJS["/math_expression/expr_alpha_off"_json_pointer]);
+
 
 
 	bool  param_pixelAroundB= (arbDataJS["/flags/needsPixelAroundB"_json_pointer]);
@@ -440,6 +468,9 @@ copyFromArbToSeqData( std::string       arbStr,
 	bool paramWideeInputB= (arbDataJS["/flags/presetHasWideInputB"_json_pointer]);
 
 	std::string setting_resolutionName = (arbDataJS["/composition/resolution"_json_pointer]);
+	std::string setting_layerPosition = (arbDataJS["/composition/layerPosition"_json_pointer]);
+	std::string setting_layerScale = (arbDataJS["/composition/layerScale"_json_pointer]);
+	std::string setting_compResolution = (arbDataJS["/composition/compResolution"_json_pointer]);
 	std::string setting_timeSecName= (arbDataJS["/composition/time_sec"_json_pointer]);
 	std::string setting_timeFrameName= (arbDataJS["/composition/time_frame"_json_pointer]);
 	std::string setting_frameRateName= (arbDataJS["/composition/frame_rate"_json_pointer]);
@@ -567,7 +598,17 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy_s(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
 	strncpy_s(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
 
+	strncpy_s(seqDataP->expr_pixNameAc,expr_pix.c_str(),expr_pix.length() + 1);
+	strncpy_s(seqDataP->expr_lumaNameAc ,expr_luma.c_str(),expr_luma.length() + 1);
+	strncpy_s(seqDataP->expr_red_offNameAc,expr_red_off.c_str(),expr_red_off.length() + 1);
+	strncpy_s(seqDataP->expr_green_offNameAc,expr_green_off.c_str(),expr_green_off.length() + 1);
+	strncpy_s(seqDataP->expr_blue_offNameAc,expr_blue_off.c_str(),expr_blue_off.length() + 1);
+	strncpy_s(seqDataP->expr_alpha_offNameAc,expr_alpha_off.c_str(),expr_alpha_off.length() + 1);
+
 	strncpy_s(seqDataP->resolution,  setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
+	strncpy_s(seqDataP->layerPosition, setting_layerPosition.c_str(), setting_layerPosition.length()+1);
+	strncpy_s(seqDataP->layerScale, setting_layerScale.c_str(), setting_layerScale.length() + 1);
+	strncpy_s(seqDataP->compResolution, setting_compResolution.c_str(), setting_compResolution.length() + 1);
 	strncpy_s(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
 	strncpy_s(seqDataP->time_frame, setting_timeFrameName.c_str(), setting_timeFrameName.length() + 1);
 	strncpy_s(seqDataP->frame_rate, setting_frameRateName.c_str(), setting_frameRateName.length() + 1);
@@ -627,8 +668,16 @@ copyFromArbToSeqData( std::string       arbStr,
 	strncpy(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
 	strncpy(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
-
+	strncpy(seqDataP->expr_pixNameAc, expr_pix.c_str(), expr_pix.length() + 1);
+	strncpy(seqDataP->expr_lumaNameAc, expr_luma.c_str(), expr_luma.length() + 1);
+	strncpy(seqDataP->expr_red_offNameAc, expr_red_off.c_str(), expr_red_off.length() + 1);
+	strncpy(seqDataP->expr_green_offNameAc, expr_green_off.c_str(), expr_green_off.length() + 1);
+	strncpy(seqDataP->expr_blue_offNameAc, expr_blue_off.c_str(), expr_blue_off.length() + 1);
+	strncpy(seqDataP->expr_alpha_offNameAc, expr_alpha_off.c_str(), expr_alpha_off.length() + 1);
 	strncpy(seqDataP->resolution, setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
+	strncpy(seqDataP->layerPosition, setting_layerPosition.c_str(), setting_layerPosition.length() + 1);
+	strncpy(seqDataP->layerScale, setting_layerScale.c_str(), setting_layerScale.length() + 1);
+	strncpy(seqDataP->compResolution, setting_compResolution.c_str(), setting_compResolution.length() + 1);
 	strncpy(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
 	strncpy(seqDataP->time_frame, setting_timeFrameName.c_str(), setting_timeFrameName.length() + 1);
 	strncpy(seqDataP->frame_rate, setting_frameRateName.c_str(), setting_frameRateName.length() + 1);

@@ -69,7 +69,6 @@ using namespace gl33core;
 
 
 /* Versioning information */
-
 #define	MAJOR_VERSION	1
 #define	MINOR_VERSION	1
 #define	BUG_VERSION		5
@@ -90,20 +89,26 @@ typedef struct {
     A_char  alphaExAc[4096];
     A_char  Glsl_VertexShAc[25000];
     A_char  Glsl_FragmentShAc[50000];
-
     A_char redError[2048];
     A_char greenError[2048];
     A_char blueError[2048];
     A_char alphaError[2048];
-
     A_char Glsl_VertError[4096];
     A_char Glsl_fragError[4096];
-
-
 	A_char   resolution[32];
+	A_char   layerPosition[32];
+	A_char   layerScale[32];
+	A_char   compResolution[32];
 	A_char   time_sec[32];
 	A_char   time_frame[32];
 	A_char   frame_rate[32];
+
+	A_char	expr_pixNameAc[32];
+	A_char expr_lumaNameAc[32];
+	A_char expr_red_offNameAc[32];
+	A_char expr_green_offNameAc[32];
+	A_char expr_blue_offNameAc[32];
+	A_char expr_alpha_offNameAc[32];
 
     A_char sliderGrpNameAc[32];
     PF_Boolean sliderGrpVisibleB;
@@ -294,6 +299,7 @@ enum {
     MATH_INP_POFF_ONE,
     MATH_END_TOPIC_INPUTS,
 	MATH_CEP_GET_ARB_DATA,
+    MATH_CEP_RETURN_MESSAGE,
 	MATH_NUM_PARAMS
 };
 
@@ -353,7 +359,8 @@ enum {
     MATH_INP_TOFF_ONE_DISK_ID,
     MATH_INP_POFF_ONE_DISK_ID,
     MATH_END_TOPIC_INPUTS_DISK_ID,
-	MATH_CEP_GET_ARB_DATA_DISK_ID
+    MATH_CEP_GET_ARB_DATA_DISK_ID,
+    MATH_CEP_RETURN_MESSAGE_DISK_ID
 };
 
 typedef struct  FlagsInfo {
@@ -443,10 +450,6 @@ typedef struct {
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
 
-
-
-
-
 template <typename T=PF_FpShort> class parseExpr {
 private:
     std::shared_ptr<exprtk::parser<T>> parser;
@@ -463,23 +466,16 @@ public:
         }
         fiP->hasErrorB = FALSE;
         symbol_table.clear();
-		
-
-        symbol_table.add_variable("in_luma", miP->luma);
-
-        symbol_table.add_vector("pix",  miP->pixF);
+        symbol_table.add_variable(seqP->expr_lumaNameAc, miP->luma);
+        symbol_table.add_vector(seqP->expr_pixNameAc,  miP->pixF);
         symbol_table.add_vector(seqP->paramLayer00NameAc, miP->inColorF);
         symbol_table.add_vector(seqP->paramLayer01NameAc,  miP->extLayerColorF);
-        symbol_table.add_vector("red_off", miP->m9P_red);
-        symbol_table.add_vector("green_off",miP->m9P_green);
-        symbol_table.add_vector("blue_off", miP->m9P_blue);
-        symbol_table.add_vector("alpha_off", miP->m9P_alpha);
-
+        symbol_table.add_vector(seqP->expr_red_offNameAc, miP->m9P_red);
+        symbol_table.add_vector(seqP->expr_green_offNameAc,miP->m9P_green);
+        symbol_table.add_vector(seqP->expr_blue_offNameAc, miP->m9P_blue);
+        symbol_table.add_vector(seqP->expr_alpha_offNameAc, miP->m9P_alpha);
         symbol_table.add_vector(seqP->resolution ,miP->layerSizeF);
-
-          symbol_table.add_vector("compSize", miP->compSizeF);
-
-
+        symbol_table.add_vector(seqP->compResolution, miP->compSizeF);
         symbol_table.add_vector(seqP->paramPoint01NameAc, miP->inPoints[0].point);
         symbol_table.add_vector(seqP->paramPoint02NameAc, miP->inPoints[1].point);
 		symbol_table.add_vector(seqP->paramPoint03NameAc, miP->inPoints[2].point);
@@ -490,7 +486,6 @@ public:
 		symbol_table.add_vector(seqP->paramPoint08NameAc, miP->inPoints[7].point);
 		symbol_table.add_vector(seqP->paramPoint09NameAc, miP->inPoints[8].point);
 		symbol_table.add_vector(seqP->paramPoint10NameAc, miP->inPoints[9].point);
-
         symbol_table.add_vector(seqP->paramColor01NameAc, miP->inColors[0].color);
         symbol_table.add_vector(seqP->paramColor02NameAc, miP->inColors[1].color);
         symbol_table.add_vector(seqP->paramColor03NameAc, miP->inColors[2].color);
@@ -501,9 +496,8 @@ public:
         symbol_table.add_vector(seqP->paramColor08NameAc, miP->inColors[7].color);
         symbol_table.add_vector(seqP->paramColor09NameAc, miP->inColors[8].color);
         symbol_table.add_vector(seqP->paramColor10NameAc, miP->inColors[9].color);
-
-        symbol_table.add_vector("layerPosition", miP->layerPos);
-        symbol_table.add_vector("layerScale", miP->layerScale);
+        symbol_table.add_vector(seqP->layerPosition, miP->layerPos);
+        symbol_table.add_vector(seqP->layerScale, miP->layerScale);
 
         
         symbol_table.add_constants();
@@ -833,8 +827,10 @@ SetupGetDataBack(
                 PF_ParamDef        *params[]);
 
 PF_Err
-copyFromArbToSeqData(std::string       arbStr,
-                     seqData    *seqData);
+copyFromArbToSeqData(PF_InData        *in_data,
+                     PF_OutData        *out_data,
+                     std::string       arbStr,
+                     seqData    *seqDataP);
 PF_Err
 evalScripts  (seqData  *seqDataP);
 PF_Err

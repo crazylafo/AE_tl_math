@@ -347,9 +347,16 @@ tlmath_ParamsSetup  (
                     0,
                     MATH_CEP_GET_ARB_DATA_DISK_ID);
 
-    // PF_ADD_CHECKBOXX(STR(StrID_CEP_GETARB_Param_Name), FALSE, PF_ParamFlag_SUPERVISE | PF_ParamFlag_CANNOT_TIME_VARY, MATH_CEP_GET_ARB_DATA_DISK_ID);
     AEFX_CLR_STRUCT(def);
+    def.flags        |=    PF_ParamFlag_SUPERVISE |
+    PF_ParamFlag_CANNOT_TIME_VARY;
 
+    def.ui_flags    = PF_PUI_STD_CONTROL_ONLY|PF_PUI_INVISIBLE |PF_PUI_NO_ECW_UI;
+    PF_ADD_CHECKBOX(STR(StrID_CEP_REturnMessage_Param_Name),
+                    STR(StrID_CEP_REturnMessage_Param_Name),
+                    FALSE,
+                    0,
+                    MATH_CEP_RETURN_MESSAGE_DISK_ID);
     out_data->num_params = MATH_NUM_PARAMS;
     return err;
 }
@@ -416,7 +423,9 @@ MakeParamCopy(
 	copy[MATH_INP_LAYER_ONE] = *actual[MATH_INP_LAYER_ONE];
 	copy[MATH_INP_TOFF_ONE] = *actual[MATH_INP_TOFF_ONE];
 	copy[MATH_INP_POFF_ONE] = *actual[MATH_INP_POFF_ONE];
+
 	copy[MATH_CEP_GET_ARB_DATA] = *actual[MATH_CEP_GET_ARB_DATA];
+    copy[ MATH_CEP_RETURN_MESSAGE] = *actual[MATH_CEP_RETURN_MESSAGE];
 
 	return PF_Err_NONE;
 
@@ -451,7 +460,7 @@ tlmath_updateSeqData(PF_InData			*in_data,
 	if (seq_dataH && !err) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		if (seqP->initializedB == false) {
-			copyFromArbToSeqData(arbDataStr, seqP);
+			copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
 			seqP->initializedB = true;
 			out_data->sequence_data = seq_dataH;
 
@@ -1044,21 +1053,31 @@ tlmath_UserChangedParam(
 	{
 		ERR(CallCepDialog(in_data, out_data));
 		ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
-		//eval shader or math expr
-		ERR(SetupDialogSend(in_data, out_data, params));
+        int i =0;
+        while (i <10 ){ // if the CEP doesn't answer:  send data. (loop limited to 10 loading)
+            ERR(SetupDialogSend(in_data, out_data, params));
+            if (params[MATH_CEP_RETURN_MESSAGE]->u.bd.value == TRUE) {break;}
+            i++;
+
+        }
+
+        params[MATH_CEP_RETURN_MESSAGE]->u.bd.value = FALSE;
+        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+                                                        MATH_CEP_RETURN_MESSAGE,
+                                                        params[MATH_CEP_RETURN_MESSAGE]));
+
+
 	}
 	if (which_hitP->param_index == MATH_CEP_GET_ARB_DATA)
 	{
 		if (params[MATH_CEP_GET_ARB_DATA]->u.bd.value == TRUE) {
 
 			ERR(SetupGetDataBack(in_data, out_data, params));
-
 			//deselect checkbox
             params[MATH_CEP_GET_ARB_DATA]->u.bd.value = FALSE;
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
                                                                 MATH_CEP_GET_ARB_DATA,
                                                                 params[MATH_CEP_GET_ARB_DATA]));
-            seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
 			ERR(SetupDialogSend(in_data, out_data, params));
 		}
 

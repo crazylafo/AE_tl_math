@@ -64,6 +64,9 @@ TableString		g_strs[StrID_NUMTYPES] = {
     StrID_TOFF_ONE_Param_Name,          "Frames Offset",
     StrID_POFF_ONE_Param_Name,          "Shift Center to",
 	StrID_CEP_GETARB_Param_Name,         "get arb",
+    StrID_CEP_REturnMessage_Param_Name,  "arb received",
+    StrID_VersionError,                 "Error : your plugin version is lower than the preset",
+    StrID_JSONError,                   "Error: error in JSON data reading"
 
 
 };

@@ -27,7 +27,6 @@ std::string script_sendToMathCEP = R"=====(
     //
     //
     function sendToMathCEP(arbData){
-		alert (arbData);
         //send the arb value
 		var externalObjectName = "PlugPlugExternalObject"; 
 		var csxslib = new ExternalObject( "lib:" + externalObjectName);
@@ -49,9 +48,9 @@ std::string script_getDataBackFromMathCEP  =R"=====(
 
 //get variable string from cep
 function getDataFromCEP(){
-    if (!tlmathDataFromSetup){ return}
+    if (!tlmathDataFromSetup){return}
     var result = tlmathDataFromSetup.toString();
-    tlmathDataFromSetup = {};//delte the variable to free the memory (poor AE memory)
+    tlmathDataFromSetup = null;//delte the variable to free the memory (poor AE memory)
 	return result;
 }
 getDataFromCEP();

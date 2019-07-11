@@ -392,11 +392,11 @@ namespace {
 		glUniform2f(location, miP->layerSizeF[0], miP->layerSizeF[1]);
         location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->frame_rate);
         glUniform1f(location, miP->compFpsF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerPosition");
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerPosition);
 		glUniform3f(location, miP->layerPos[0], convertYCoordAEToGL( miP->layerPos[1], heightL), miP->layerPos[2]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "layerScale");
-		glUniform3f(location, miP->layerScale[0], convertYCoordAEToGL( miP->layerPos[1], heightL), miP->layerScale[2]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "compResolution");
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerScale);
+		glUniform3f(location, miP->layerScale[0], convertYCoordAEToGL( miP->layerScale[1], heightL), miP->layerScale[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->compResolution);
 		glUniform2f(location, miP->compSizeF[0], miP->compSizeF[1]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
@@ -1057,7 +1057,7 @@ SequenceSetup (
         if (seq_dataH){
 			seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 				seqP->initializedB = false;
-				copyFromArbToSeqData(defaultArb, seqP);
+				copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
                 out_data->sequence_data = seq_dataH;
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
         } else {    // whoa, we couldn't allocate sequence data; bail!
@@ -1069,7 +1069,7 @@ SequenceSetup (
 
 DllExport	
 PF_Err 
-EntryPointFunc (
+    EntryPointFunc (
 	PF_Cmd			cmd,
 	PF_InData		*in_data,
 	PF_OutData		*out_data,

@@ -10,10 +10,11 @@
 
 static std::string defaultArb = R"=====(
 {
+  
     "effectInfo":{
         "effectName":"tlMath",
-        "pluginVesion":"1.15",
-        "minimalPluginVersion":"1.15",
+        "pluginVesion":1.15,
+        "minimalPluginVersion":1.15,
         "tags":"default",
         "presetName":"default_preset test",
         "description":"simple skeleton effect"
@@ -27,8 +28,7 @@ static std::string defaultArb = R"=====(
         "gl_frag_sh":"#version 330 // glsls version for opengl 3.3\\nuniform sampler2D texture0; //call the layer source\\nuniform float slider_1;// call somes variables from the ui\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec4 textureIn = texture( tex2d, uv.xy);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n\\nvoid main(void)\\n{\\n    fragColorOut= loadTextureFromAE(texture0, out_uvs.xy);\\n    fragColorOut.r *=slider_1/100; \\n}",
         "gl_vert_sh":"#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}",
         "gl_frag_error" : "fragment shader\\n compiled",
-        "gl_vert_error" : "vertex shader\\n compiled",
-        "fragColorOutName":"gl_FragColor"
+        "gl_vert_error" : "vertex shader\\n compiled"
     },
     "math_expression":{
         "redExpr":"texture0[0]",
@@ -38,7 +38,13 @@ static std::string defaultArb = R"=====(
         "red_error": "red channel expression \\n compiled",
         "green_error" : "green channel expression \\n compiled",
         "blue_error" : "blue channel expression \\n compiled",
-        "alpha_error" : "alpha channel expression \\n compiled"
+        "alpha_error" : "alpha channel expression \\n compiled",	
+		"expr_pix":"pix",
+		"expr_luma":"luma",
+		"expr_red_off":"red_off",
+		"expr_green_off":"green_off",
+		"expr_blue_off":"blue_off",
+		"expr_alpha_off":"alpha_off"
     },
     "flags":{
         "needsPixelAroundB":false,
@@ -48,7 +54,10 @@ static std::string defaultArb = R"=====(
     },
     "composition":{
         "resolution":"resolution",
-        "time_sec":"time__",
+		"layerPosition": "layerPosition",
+	    "layerScale":"layerScale",
+	    "compResolution": "compResolution", 
+        "time_sec":"time",
         "time_frame":"timef",
         "frame_rate":"fps",
         "camera_position":"camera_pos",
