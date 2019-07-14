@@ -12,6 +12,7 @@ function onLoaded() {
 	var err_PresetFile = "Error: the tlMath Preset is not recognized";
 	var err_pluginVersion ="Error: the plugin Version is not compatible with this preset";
 	loadJSX();
+	sendMessageToPlugin()
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
 	csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, onAppThemeColorChanged);
@@ -24,14 +25,13 @@ function onLoaded() {
 
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
+		alert (fromArbEvent.data.effectInfo.pluginVersion)
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err_PresetFile); return};
 			arbData = fromArbEvent.data;
-			evalScript("$._ext.sendMessageToPlugin("+arbData.layerInfo.layerIndex+","+arbData.layerInfo.effectIndex+")");
 			pluginVersion = parseFloat (arbData.effectInfo.pluginVersion).toFixed(2);
 			copyDataToGUI (arbData, editors);
 	});
 	csInterface.addEventListener("tlmath.arbSentfromPreset", function(fromArbEvent){
-		alert (pluginVersion);
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err_PresetFile); return};
 		if (parseFloat(pluginVersion)<parseFloat(fromArbEvent.data.effectInfo.minimalPluginVersion)) {alert (err_pluginVersion); return}
 			arbData = fromArbEvent.data; 
@@ -51,6 +51,9 @@ function onLoaded() {
 			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 			}
 		});
+}
+function sendMessageToPlugin(){
+	evalScript("$._ext.sendMessageToPlugin()");
 }
 function loadPresetJSON(){
 	 evalScript("$._ext.loadJSONFile()");
@@ -102,10 +105,11 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.math_expression.redExpr= cleanJsonToArbStr((editors.expr_red_editor.getValue()).toString());
 	arbData.math_expression.greenExpr =cleanJsonToArbStr(( editors.expr_green_editor.getValue()).toString())
 	arbData.math_expression.blueExpr =  cleanJsonToArbStr((editors.expr_blue_editor.getValue()).toString());
+	arbData.math_expression.rgbExpr =  cleanJsonToArbStr((editors.expr_rgb_editor.getValue()).toString());
 	arbData.math_expression.alphaExpr = cleanJsonToArbStr(( editors.expr_alpha_editor.getValue()).toString());
 	arbData.effectInfo.presetName = $("#presetName").val().toString();
 	arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
-	//detect if flags are active or not
+	//detect if flags are active or not    
 	
 	//copy  mode settings
 	($("#langSelec").val() ==("GLSL") ? arbData.effectMode.gl_modeB=true : arbData.effectMode.gl_modeB=false);
@@ -122,6 +126,8 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.composition.camera_position = $("#camera_pos").val().toString();
 	arbData.composition.camera_target = $("#camera_targ").val().toString();
 	//copy settings for expr
+	arbData.math_expression.exprRGBModeB = $("rgbmodeB").is(':checked');
+	arbData.math_expression.expr_current_channel = $("#expr_current_channelName").val().toString();
 	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
 	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
 	arbData.math_expression.expr_red_off =$("#expr_red_offName").val().toString();
@@ -234,16 +240,18 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.effectInfo.pixelsCallExternalInputB":false,
 	arbData.effectInfo.needsLumaB":false,
 	arbData.effectInfo.presetHasWideInputB":false*/
-
 	return arbData;
 
 }
 function copyDataToGUI (arbData, editors) {
+	alert ("test input")
+	alert (arbData.math_expression.rgb_error);
 	$("#gl_frag_tab_console").html(arbData.gl_expression.gl_frag_error.toString().replace("\\n", "<br/>"));
 	$("#gl_vert_tab_console").html(arbData.gl_expression.gl_vert_error.toString().replace("\\n", "<br/>"));
 	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
 	$("#expr_green_tab_console").html(arbData.math_expression.green_error.toString().replace("\\n", "<br/>"));
 	$("#expr_blue_tab_console").html(arbData.math_expression.blue_error.toString().replace("\\n", "<br/>"));
+	$("#expr_rgb_tab_console").html(arbData.math_expression.rgb_error.toString().replace("\\n", "<br/>"));
 	$("#expr_alpha_tab_console").html(arbData.math_expression.alpha_error.toString().replace("\\n", "<br/>"));
 
 
@@ -262,6 +270,9 @@ function copyDataToGUI (arbData, editors) {
 	if(arbData.math_expression.blueExpr){
 		editors.expr_blue_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.blueExpr.toString(), -1));
 	}
+	if(arbData.math_expression.rgbExpr){
+		editors.expr_rgb_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.rgbExpr.toString(), -1));
+	}
 	if(arbData.math_expression.alphaExpr){
 		editors.expr_alpha_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.alphaExpr.toString(), -1));
 	}
@@ -275,10 +286,8 @@ function copyDataToGUI (arbData, editors) {
 	}
 	if(arbData.effectMode.expr_modeB){
 		$("#langSelec").val("mExpr");
-	}
-	if(arbData.effectMode.geoshMode){
-		$("#geoShB").val(arbData.effectMode.geoshMode);
-	}
+	} 
+	$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
 	$("#resolutionName").text(arbData.composition.resolution.toString());
 	$("layerPositionName").text(arbData.composition.layerPosition.toString());
 	$("layerScaleName").text(arbData.composition.layerScale.toString());
@@ -288,7 +297,9 @@ function copyDataToGUI (arbData, editors) {
 	$("#fpsName").text(arbData.composition.frame_rate.toString());
 	$("#camera_pos").text(arbData.composition.camera_position.toString());
 	$("#camera_targ").text(arbData.composition.camera_target.toString());
-
+	alert(arbData.math_expression.expr_current_channel)
+	$("#expr_current_channelName").text(arbData.math_expression.expr_current_channel.toString());
+	alert("get")
 	$("#expr_pixName").text(arbData.math_expression.expr_pix.toString());
 	$("#expr_lumaName").text(arbData.math_expression.expr_luma.toString());
 	$("#expr_red_offName").text(arbData.math_expression.expr_red_off.toString());
@@ -420,12 +431,13 @@ function setEditors(){
 	editors.expr_red_editor = exprEditor("expr_red_editor");
 	editors.expr_green_editor = exprEditor("expr_green_editor");
 	editors.expr_blue_editor = exprEditor("expr_blue_editor");
+	editors.expr_rgb_editor = exprEditor("expr_rgb_editor");
 	editors.expr_alpha_editor  = exprEditor ("expr_alpha_editor");
 	return editors;
 }
 function defaultVal(){
-	var langSelec = document.getElementById("langSelec");
-	langSelec.value = "GLSL";
+	//var langSelec = document.getElementById("langSelec");
+	//langSelec.value = "GLSL";
 	langSelecFunc();
 	toggleSettings();
 	toggleDescription();
@@ -475,19 +487,37 @@ function openEditor(evt, tabName) {
 			}
 		}	
 	}
-
 function mathGuiModeFunc(){
-		var mathGui = document.getElementsByClassName("mathGUI");
-		 var glslGui = document.getElementsByClassName("glslGUI");
-		for (var i =0; i< mathGui.length; i++){
-				$(mathGui[i]).show();
-			}
-		for (var i =0; i< glslGui.length; i++){
-			$(glslGui[i]).hide();
-		}
-		openEditor(event, 'expr_red_tab');
-
+	var mathGui = document.getElementsByClassName("mathGUI");
+		var glslGui = document.getElementsByClassName("glslGUI");
+		
+	for (var i =0; i< mathGui.length; i++){
+		$(mathGui[i]).show();
 	}
+	
+	for (var i =0; i< glslGui.length; i++){
+		$(glslGui[i]).hide();
+	}
+	mathGUIRgbModeFunc();
+	
+
+}
+function mathGUIRgbModeFunc(){
+	if ($("#rgbmodeB").is(':checked')){
+		$("#rgbExpBtn").show();
+		$("#redExpBtn").hide();
+		$("#greenExpBtn").hide();
+		$("#blueExpBtn").hide();
+		openEditor(event, 'expr_rgb_tab');
+	}else{
+		$("#rgbExpBtn").hide();
+		$("#redExpBtn").show();
+		$("#greenExpBtn").show();
+		$("#blueExpBtn").show();
+		openEditor(event, 'expr_alpha_tab');
+	}
+
+}
 function glslGuiModeFunc(){
 		var mathGui = document.getElementsByClassName("mathGUI");
 		 var glslGui = document.getElementsByClassName("glslGUI");

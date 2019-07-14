@@ -32,7 +32,7 @@ background-color: #aaa;
     color : #aaa; 
 }
 
-#editor_glsl_settings{
+#editor_glsl_settings, #expr_editor_settings{
     color : #aaa; 
 }
 

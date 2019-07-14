@@ -27,12 +27,12 @@ if ( ! $._ext )
 }
 
 $._ext = {
-  sendMessageToPlugin : function(layerIndex, effectIndex)
+  sendMessageToPlugin : function()
   {
-    alert (app.project.activeItem.layer(layerIndex).effect(effectIndex).property(57).name)
-    app.project.activeItem.layer(layerIndex).effect(effectIndex).property(57).setValue(1);//property 56 = send message to ARB
-    alert ("stoped")
-
+    try{ pluginId} catch(e){return};
+    if (!pluginId || pluginId ==null){return};
+    app.project.activeItem.layer(pluginId[0]).effect(pluginId[1]).property(57).setValue(1);//property 567= send message to ARB
+    pluginId = undefined;
   },
   sendDataToPlugin : function(arbData)
   {
