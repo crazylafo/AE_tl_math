@@ -87,12 +87,14 @@ typedef struct {
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
+	A_char  rgbExprExAc[4096];
     A_char  Glsl_VertexShAc[25000];
     A_char  Glsl_FragmentShAc[50000];
     A_char redError[2048];
     A_char greenError[2048];
     A_char blueError[2048];
     A_char alphaError[2048];
+	A_char rgbError[2048];
     A_char Glsl_VertError[4096];
     A_char Glsl_fragError[4096];
 	A_char   resolution[32];
@@ -103,6 +105,7 @@ typedef struct {
 	A_char   time_frame[32];
 	A_char   frame_rate[32];
 
+    A_char expr_ColorChNameAc[32];
 	A_char	expr_pixNameAc[32];
 	A_char expr_lumaNameAc[32];
 	A_char expr_red_offNameAc[32];
@@ -214,8 +217,8 @@ typedef struct {
     A_char   paramLayer01NameAc[32];
     PF_Boolean  paramLayer01VisibleB;
 
-
     //Mode
+    PF_Boolean  exprRGBModeB;
     PF_Boolean  glslModeB;
 	PF_Boolean  exprModeB;
 	PF_Boolean  evalModeB;
@@ -369,6 +372,7 @@ typedef struct  FlagsInfo {
         PF_Boolean NeedsLumaB;
         PF_Boolean PresetHasWideInput;
 		PF_Boolean parserModeB;
+        PF_Boolean exprRGBModeB; //for expression mode only
 }FlagsInfoP;
 
 typedef struct {
@@ -376,6 +380,7 @@ typedef struct {
 	std::string  *greenstr;
 	std::string  *bluestr;
 	std::string  *alphastr;
+    std::string   *rgbstr;
 	std::string  *frag1str;
 	std::string  *frag2str;
 	std::string  *vertexstr;
@@ -386,6 +391,7 @@ typedef struct funcTransfertInfo {
 	std::function<PF_FpShort()> redExpr;
 	std::function<PF_FpShort()> greenExpr;
 	std::function<PF_FpShort()> blueExpr;
+    std::function<PF_FpShort()> rgbExpr;
 	std::function<PF_FpShort()> alphaExpr;
     std::function<PF_FpShort()> evalExpr;
 	PF_Boolean      hasErrorB;
@@ -411,6 +417,7 @@ typedef struct MathInfo{
     PF_FpShort      scale_x;
     PF_FpShort      scale_y;
     PF_FpShort 		inColorF[4];
+    PF_FpShort      inColorChF;
     PF_FpShort      extLayerColorF[4];
     PF_FpShort      pixF[2];
     PF_FpShort      layerSizeF[2];
@@ -467,6 +474,7 @@ public:
         fiP->hasErrorB = FALSE;
         symbol_table.clear();
         symbol_table.add_variable(seqP->expr_lumaNameAc, miP->luma);
+        symbol_table.add_variable(seqP->expr_ColorChNameAc, miP->inColorChF);
         symbol_table.add_vector(seqP->expr_pixNameAc,  miP->pixF);
         symbol_table.add_vector(seqP->paramLayer00NameAc, miP->inColorF);
         symbol_table.add_vector(seqP->paramLayer01NameAc,  miP->extLayerColorF);

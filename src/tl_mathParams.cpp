@@ -1048,25 +1048,21 @@ tlmath_UserChangedParam(
 {
 	PF_Err				err = PF_Err_NONE;
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
-
-	if (which_hitP->param_index == MATH_SETUP)
-	{
-		ERR(CallCepDialog(in_data, out_data));
-		ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
-        int i =0;
-        while (i <10 ){ // if the CEP doesn't answer:  send data. (loop limited to 10 loading)
-            ERR(SetupDialogSend(in_data, out_data, params));
-            if (params[MATH_CEP_RETURN_MESSAGE]->u.bd.value == TRUE) {break;}
-            i++;
-
-        }
-
+    if(which_hitP->param_index == MATH_CEP_RETURN_MESSAGE &&
+       params[MATH_CEP_RETURN_MESSAGE]->u.bd.value == TRUE){
+        ERR(SetupDialogSend(in_data, out_data, params));
         params[MATH_CEP_RETURN_MESSAGE]->u.bd.value = FALSE;
         ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
                                                         MATH_CEP_RETURN_MESSAGE,
                                                         params[MATH_CEP_RETURN_MESSAGE]));
 
 
+    }
+	if (which_hitP->param_index == MATH_SETUP)
+	{
+		ERR(CallCepDialog(in_data, out_data));
+		ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
+        ERR(SetupDialogSend(in_data, out_data, params));
 	}
 	if (which_hitP->param_index == MATH_CEP_GET_ARB_DATA)
 	{

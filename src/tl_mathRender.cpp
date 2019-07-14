@@ -214,39 +214,49 @@ ExprRender(PF_OutData     *out_data,
 	std::string exprErrStr = "Error \n";
 	PF_Boolean returnExprErrB = false;
 
-	fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->redstr, seqP);
-	if (fiP.hasErrorB)
-	{
-		fiP.channelErrorstr = "red channel expression";
-		returnExprErrB = true;
-		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+    if (flagsP->exprRGBModeB){
+        fiP.rgbExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->rgbstr, seqP);
+        if (fiP.hasErrorB)
+        {
+            fiP.channelErrorstr = "RGB errors";
+            returnExprErrB = true;
+            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+        }
 
-	}
-	fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->greenstr, seqP);
-	if (fiP.hasErrorB)
-	{
-		fiP.channelErrorstr = "green channel expression";
-		returnExprErrB = true;
-		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+    }
+    else{
+        fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->redstr, seqP);
+        if (fiP.hasErrorB)
+        {
+            fiP.channelErrorstr = "red channel expression";
+            returnExprErrB = true;
+            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+        }
+        fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->greenstr, seqP);
+        if (fiP.hasErrorB)
+        {
+            fiP.channelErrorstr = "green channel expression";
+            returnExprErrB = true;
+            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
 
-	}
-	fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->bluestr, seqP);
-	if (fiP.hasErrorB)
-	{
-		fiP.channelErrorstr = "blue channel expression";
-		returnExprErrB = true;
-		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
+        }
+        fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->bluestr, seqP);
+        if (fiP.hasErrorB)
+        {
+            fiP.channelErrorstr = "blue channel expression";
+            returnExprErrB = true;
+            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
 
-	}
+        }
+    }
 	fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->alphastr, seqP);
 	if (fiP.hasErrorB)
 	{
 		fiP.channelErrorstr = "alpha channel expression";
 		returnExprErrB = true;
 		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-
-
 	}
+
 	if (returnExprErrB) {
 		suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
 			exprErrStr.c_str());
@@ -955,20 +965,23 @@ tl_math_SmartRender(
             miP->pixF[0] = 0;
             miP->pixF[1] = 0;
 			//CALL SEQP
-			std::string redExprStr, greenExprStr, blueExprStr, alphaExprStr, frag1Str, vertStr;
+			std::string redExprStr, greenExprStr, blueExprStr, alphaExprStr, frag1Str, vertStr, rgbstr;
 			if (seqP && !err) {
 				redExprStr = seqP->redExAc;
 				greenExprStr = seqP->greenExAc;
 				blueExprStr = seqP->blueExAc;
 				alphaExprStr = seqP->alphaExAc;
+                rgbstr =  seqP->rgbExprExAc;
 				frag1Str = seqP->Glsl_FragmentShAc;
 				vertStr = seqP->Glsl_VertexShAc;
+
 
 				flagsP.PixelsCallExternalInputB = seqP->pixelsCallExternalInputB;
 				flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
 				flagsP.NeedsPixelAroundB = seqP->needsPixelAroundB;
 				flagsP.NeedsLumaB = seqP->needsLumaB;
 				flagsP.parserModeB = seqP->exprModeB;
+                flagsP.exprRGBModeB = seqP->exprRGBModeB;
 			}
 
 			ExprP.redstr = &redExprStr;
@@ -978,7 +991,7 @@ tl_math_SmartRender(
 			ExprP.frag1str = &frag1Str;
 			ExprP.vertexstr = &vertStr;
 			ExprP.frag2str = &glfrag2str;
-
+            ExprP.rgbstr = &rgbstr;
 			//CALL EXTERNAL LAYER AND TRANSFORM WORLD IF NEEDED
 
 			if (flagsP.PixelsCallExternalInputB) {

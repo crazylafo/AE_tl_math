@@ -254,6 +254,9 @@ CallCepDialog(PF_InData        *in_data,
 
 	A_long compId, layerIndex, effectIndex;
 	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
+    layerIndex +=1; //from AEsdk to AEjs
+    effectIndex +=1; //from AEsdk to AEjs
+
 	std::string plugIdObjJsonStr = parseLayerDataToJsonStr(compId, layerIndex, effectIndex);
 	//script_callMathCEP_to_Execute.append(script_jsontojs);
 
@@ -261,7 +264,8 @@ CallCepDialog(PF_InData        *in_data,
 	AEFX_CLR_STRUCT(scriptAC);
 	sprintf(scriptAC,
 		 script_callMathCEP.c_str(),
-		plugIdObjJsonStr.c_str());
+         plugIdObjJsonStr.c_str(),
+         compId, layerIndex, effectIndex);
 	
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
@@ -314,7 +318,8 @@ SetupDialogSend( PF_InData        *in_data,
                     redErr = seqP->redError,
                     greenErr = seqP->greenError,
                     blueErr = seqP->blueError,
-                    alphaErr =seqP->alphaError;
+                    alphaErr =seqP->alphaError,
+					rgbErr = seqP->rgbError;		
 
     jsonCorrectorStr(fragErr);
     jsonCorrectorStr(vertErr);
@@ -322,22 +327,19 @@ SetupDialogSend( PF_InData        *in_data,
     jsonCorrectorStr(greenErr);
     jsonCorrectorStr(blueErr);
     jsonCorrectorStr(alphaErr);
+	jsonCorrectorStr(rgbErr);
 
     A_long compId,layerIndex, effectIndex;
     ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
-
-    arbDataJS["layerInfo"]["compId"] = compId;
-    arbDataJS["layerInfo"]["layerIndex"] =layerIndex +1; // +1 because plugin starts index at 0 and script at 1
-    arbDataJS["layerInfo"]["effectIndex"] =effectIndex+1;
-
     arbDataJS["effectInfo"]["pluginVersion"] =plugVersionF;
     arbDataJS["gl_expression"]["gl_frag_error"] =  fragErr;
     arbDataJS["gl_expression"]["gl_vert_error"] =  vertErr;
 
-    arbDataJS["math_expression"]["red_error"] =      redErr;
-    arbDataJS["math_expression"]["green_error"] =    greenErr;
-    arbDataJS["math_expression"]["blue_error"] =     blueErr;
-    arbDataJS["math_expression"]["alpha_error"] =    alphaErr;
+    arbDataJS["math_expression"]["red_error"] =   redErr;
+    arbDataJS["math_expression"]["green_error"] = greenErr;
+    arbDataJS["math_expression"]["blue_error"] =  blueErr;
+    arbDataJS["math_expression"]["alpha_error"] = alphaErr;
+	arbDataJS["math_expression"]["rgb_error"] =   rgbErr;
     std::string resultStr;
    std::string jsonDump = "'''";
    jsonDump.append(arbDataJS.dump());
@@ -445,6 +447,7 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	std::string expr_red = (arbDataJS["/math_expression/redExpr"_json_pointer]);
 	std::string expr_green = (arbDataJS["/math_expression/greenExpr"_json_pointer]);
 	std::string expr_blue= (arbDataJS["/math_expression/blueExpr"_json_pointer]);
+	std::string expr_rgb = (arbDataJS["/math_expression/rgbExpr"_json_pointer]);
 	std::string expr_alpha = (arbDataJS["/math_expression/alphaExpr"_json_pointer]);
 	scriptCorrectorStr(gl_fragsh);
 	scriptCorrectorStr(gl_vertsh);
@@ -452,7 +455,9 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	ExprtkCorrectorStr(expr_green);
 	ExprtkCorrectorStr(expr_blue);
 	ExprtkCorrectorStr(expr_alpha);
+	ExprtkCorrectorStr(expr_rgb);
 
+	std::string expr_ColorChNameAc = (arbDataJS["/math_expression/expr_current_channel"_json_pointer]);
 	std::string expr_pix = (arbDataJS["/math_expression/expr_pix"_json_pointer]);
 	std::string expr_luma = (arbDataJS["/math_expression/expr_luma"_json_pointer]);
 	std::string expr_red_off = (arbDataJS["/math_expression/expr_red_off"_json_pointer]);
@@ -460,8 +465,7 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	std::string expr_blue_off = (arbDataJS["/math_expression/expr_blue_off"_json_pointer]);
 	std::string expr_alpha_off = (arbDataJS["/math_expression/expr_alpha_off"_json_pointer]);
 
-
-
+    bool  exprRGBModeB = (arbDataJS["/math_expression/exprRGBModeB"_json_pointer]);
 	bool  param_pixelAroundB= (arbDataJS["/flags/needsPixelAroundB"_json_pointer]);
 	bool param_ExternalInputB = (arbDataJS["/flags/pixelsCallExternalInputB"_json_pointer]);
 	bool param_lumaB = (arbDataJS["/flags/needsLumaB"_json_pointer]);
@@ -597,14 +601,14 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	strncpy_s(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy_s(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
 	strncpy_s(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
-
+	strncpy_s(seqDataP->rgbExprExAc, expr_rgb.c_str(), expr_rgb.length() + 1);
+    strncpy_s(seqDataP->expr_ColorChNameAc, expr_ColorChNameAc.c_str(), expr_ColorChNameAc.length()+1);
 	strncpy_s(seqDataP->expr_pixNameAc,expr_pix.c_str(),expr_pix.length() + 1);
 	strncpy_s(seqDataP->expr_lumaNameAc ,expr_luma.c_str(),expr_luma.length() + 1);
 	strncpy_s(seqDataP->expr_red_offNameAc,expr_red_off.c_str(),expr_red_off.length() + 1);
 	strncpy_s(seqDataP->expr_green_offNameAc,expr_green_off.c_str(),expr_green_off.length() + 1);
 	strncpy_s(seqDataP->expr_blue_offNameAc,expr_blue_off.c_str(),expr_blue_off.length() + 1);
 	strncpy_s(seqDataP->expr_alpha_offNameAc,expr_alpha_off.c_str(),expr_alpha_off.length() + 1);
-
 	strncpy_s(seqDataP->resolution,  setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
 	strncpy_s(seqDataP->layerPosition, setting_layerPosition.c_str(), setting_layerPosition.length()+1);
 	strncpy_s(seqDataP->layerScale, setting_layerScale.c_str(), setting_layerScale.length() + 1);
@@ -668,6 +672,8 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	strncpy(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
 	strncpy(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
 	strncpy(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
+	strncpy(seqDataP->rgbExprExAc, expr_rgb.c_str(), expr_rgb.length() + 1);
+    strncpy(seqDataP->expr_ColorChNameAc, expr_ColorChNameAc.c_str(), expr_ColorChNameAc.length()+1);
 	strncpy(seqDataP->expr_pixNameAc, expr_pix.c_str(), expr_pix.length() + 1);
 	strncpy(seqDataP->expr_lumaNameAc, expr_luma.c_str(), expr_luma.length() + 1);
 	strncpy(seqDataP->expr_red_offNameAc, expr_red_off.c_str(), expr_red_off.length() + 1);
@@ -740,6 +746,8 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	seqDataP->pixelsCallExternalInputB = param_ExternalInputB;
 	seqDataP->needsLumaB = param_lumaB;
 	seqDataP->presetHasWideInputB = paramWideeInputB;
+	seqDataP->exprRGBModeB = exprRGBModeB;
+
 	seqDataP->sliderGrpVisibleB = slider_grpVisibleB;
 	seqDataP->paramSlider01VisibleB = slider_01VisibleB;
 	seqDataP->paramSlider02VisibleB = slider_02VisibleB;
@@ -791,8 +799,6 @@ copyFromArbToSeqData(PF_InData        *in_data,
 
 	seqDataP->layerGrpVisibleB = layer_grpVisibleB;
 	seqDataP->paramLayer01VisibleB = layer_01VisibleB;
-
-
     return err;
 }
 
@@ -800,7 +806,7 @@ PF_Err
 evalScripts(seqData  *seqDataP)
 {
     PF_Err err = PF_Err_NONE;
-    std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh;
+    std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh, evalRgbCh;
 
     evalRedExpr = evalMathExprStr (seqDataP->redExAc, &seqDataP);
     if (evalRedExpr != compile_success){
@@ -829,6 +835,15 @@ evalScripts(seqData  *seqDataP)
                 strncpy(seqDataP->blueExAc, safeExpr.c_str(),  safeExpr.length() + 1);
         #endif
     }
+
+	evalRgbCh = evalMathExprStr(seqDataP->rgbExprExAc, &seqDataP);
+	if (evalRgbCh != compile_success) {
+	#ifdef AE_OS_WIN
+			strncpy_s(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
+	#else
+			strncpy_s(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
+	#endif
+		}
 
     evalAlphaExpr = evalMathExprStr (seqDataP->alphaExAc, &seqDataP);
     if ( evalAlphaExpr != compile_success){
@@ -867,6 +882,7 @@ evalScripts(seqData  *seqDataP)
         strncpy_s(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
         strncpy_s(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
         strncpy_s(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
+		strncpy_s(seqDataP->rgbError, evalRgbCh.c_str(), evalRgbCh.length() + 1);
      #else
         strncpy(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
         strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
@@ -874,6 +890,7 @@ evalScripts(seqData  *seqDataP)
         strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
         strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
         strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+		strncpy_s(seqDataP->rgbError, evalRgbCh.c_str(), evalRgbCh.length() + 1);
      #endif
 
 

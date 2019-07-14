@@ -237,15 +237,32 @@ LineIteration8Func ( void *refconPV,
                 miP->extLayerColorF[3] = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN8;
 
             }
+			if (fiP->rgbExpr) {
+				AEFX_CLR_STRUCT(red_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
+				red_result = MIN(fiP->rgbExpr(), 1);
+				AEFX_CLR_STRUCT(green_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
+				green_result = MIN(fiP->rgbExpr(), 1);
+				AEFX_CLR_STRUCT(blue_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
+				blue_result = MIN(fiP->rgbExpr(), 1);
+			}
+			else {
+				AEFX_CLR_STRUCT(red_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
+				red_result = MIN(fiP->redExpr(), 1);
+				AEFX_CLR_STRUCT(green_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN8;
+				green_result = MIN(fiP->greenExpr(), 1);
+				AEFX_CLR_STRUCT(blue_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN8;
+				blue_result = MIN(fiP->blueExpr(), 1);
+			}
 
-            AEFX_CLR_STRUCT(red_result);
-            red_result = MIN(fiP->redExpr(), 1);
-            AEFX_CLR_STRUCT(green_result);
-            green_result = MIN(fiP->greenExpr(), 1);
-            AEFX_CLR_STRUCT(blue_result);
-            blue_result = MIN(fiP->blueExpr(), 1);
-            AEFX_CLR_STRUCT(alpha_result);
-            alpha_result = MIN(fiP->alphaExpr(), 1);
+			AEFX_CLR_STRUCT(alpha_result);
+			miP->inColorChF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN8;
+			alpha_result = MIN(fiP->alphaExpr(), 1);
 
             bop_outP->alpha = A_u_char(alpha_result *PF_MAX_CHAN8);
             bop_outP->red = A_u_char(red_result *PF_MAX_CHAN8);
@@ -411,14 +428,32 @@ LineIteration16Func(void *refconPV,
                 AEFX_CLR_STRUCT(miP->extLayerColorF[2]);
                 miP->extLayerColorF[2] = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN16;
             }
-            AEFX_CLR_STRUCT(red_result);
-            red_result = MIN(fiP->redExpr(), 1);
-            AEFX_CLR_STRUCT(green_result);
-            green_result = MIN(fiP->greenExpr(), 1);
-            AEFX_CLR_STRUCT(blue_result);
-            blue_result = MIN(fiP->blueExpr(), 1);
-            AEFX_CLR_STRUCT(alpha_result);
-            alpha_result = MIN(fiP->alphaExpr(), 1);
+			if (fiP->rgbExpr) {
+				AEFX_CLR_STRUCT(red_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN16;
+				red_result = MIN(fiP->rgbExpr(), 1);
+				AEFX_CLR_STRUCT(green_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN16;
+				green_result = MIN(fiP->rgbExpr(), 1);
+				AEFX_CLR_STRUCT(blue_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN16;
+				blue_result = MIN(fiP->rgbExpr(), 1);
+			}
+			else {
+				AEFX_CLR_STRUCT(red_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN16;
+				red_result = MIN(fiP->redExpr(), 1);
+				AEFX_CLR_STRUCT(green_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->green / PF_MAX_CHAN16;
+				green_result = MIN(fiP->greenExpr(), 1);
+				AEFX_CLR_STRUCT(blue_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->blue / PF_MAX_CHAN16;
+				blue_result = MIN(fiP->blueExpr(), 1);
+			}
+
+			AEFX_CLR_STRUCT(alpha_result);
+			miP->inColorChF = (PF_FpShort)bop_inP->alpha / PF_MAX_CHAN16;
+			alpha_result = MIN(fiP->alphaExpr(), 1);
 
             bop_outP->alpha = A_u_short(alpha_result *PF_MAX_CHAN16);
             bop_outP->red = A_u_short(red_result *PF_MAX_CHAN16);
@@ -587,15 +622,32 @@ LineIteration32Func(void *refconPV,
 				AEFX_CLR_STRUCT(miP->extLayerColorF[2]);
 				miP->extLayerColorF[2] = (PF_FpShort)bop_extP->blue;
 			}
-			AEFX_CLR_STRUCT(red_result);
-			red_result = MIN(fiP->redExpr(), 1);
-			AEFX_CLR_STRUCT(green_result);
-			green_result = MIN(fiP->greenExpr(), 1);
-			AEFX_CLR_STRUCT(blue_result);
-			blue_result = MIN(fiP->blueExpr(), 1);
-			AEFX_CLR_STRUCT(alpha_result);
-			alpha_result = MIN(fiP->alphaExpr(), 1);
+			if (fiP->rgbExpr) {
+				AEFX_CLR_STRUCT(red_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->red;
+				red_result = MIN(fiP->rgbExpr(), 1);
+				AEFX_CLR_STRUCT(green_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->green;
+				green_result = MIN(fiP->rgbExpr(), 1);
+				AEFX_CLR_STRUCT(blue_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->blue;
+				blue_result = MIN(fiP->rgbExpr(), 1);
+			}
+			else {
+				AEFX_CLR_STRUCT(red_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->red;
+				red_result = MIN(fiP->redExpr(), 1);
+				AEFX_CLR_STRUCT(green_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->green;
+				green_result = MIN(fiP->greenExpr(), 1);
+				AEFX_CLR_STRUCT(blue_result);
+				miP->inColorChF = (PF_FpShort)bop_inP->blue;
+				blue_result = MIN(fiP->blueExpr(), 1);
+			}
 
+			AEFX_CLR_STRUCT(alpha_result);
+			miP->inColorChF = (PF_FpShort)bop_inP->alpha;
+			alpha_result = MIN(fiP->alphaExpr(), 1);
 			bop_outP->alpha =alpha_result;
 			bop_outP->red = red_result;
 			bop_outP->green = green_result;

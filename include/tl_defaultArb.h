@@ -10,8 +10,7 @@
 
 static std::string defaultArb = R"=====(
 {
-  
-    "effectInfo":{
+	   "effectInfo":{
         "effectName":"tlMath",
         "pluginVesion":1.15,
         "minimalPluginVersion":1.15,
@@ -34,11 +33,15 @@ static std::string defaultArb = R"=====(
         "redExpr":"texture0[0]",
         "greenExpr":"texture0[1]",
         "blueExpr":"texture0[2]",
+        "rgbExpr":"inChannel",
         "alphaExpr":"1",
         "red_error": "red channel expression \\n compiled",
         "green_error" : "green channel expression \\n compiled",
         "blue_error" : "blue channel expression \\n compiled",
-        "alpha_error" : "alpha channel expression \\n compiled",	
+        "alpha_error" : "alpha channel expression \\n compiled",
+		"rgb_error" : "rgb expression \\n compiled",
+        "exprRGBModeB":true,
+		"expr_current_channel":"inChannel",
 		"expr_pix":"pix",
 		"expr_luma":"luma",
 		"expr_red_off":"red_off",
@@ -68,7 +71,7 @@ static std::string defaultArb = R"=====(
             "grpVisibleB":true,
             "grpName":"Slider Group",
             "slider_1":{
-                "visibleB":false,
+                "visibleB":true,
                 "name":"slider_1"
             },
             "slider_2":{
@@ -88,7 +91,7 @@ static std::string defaultArb = R"=====(
                 "name":"slider_5"
             },
             "slider_6":{
-                "visibleB":false,
+                "visibleB":true,
                 "name":"slider_6"
             },
             "slider_7":{
@@ -96,7 +99,7 @@ static std::string defaultArb = R"=====(
                 "name":"slider_7"
             },
             "slider_8":{
-                "visibleB":false,
+                "visibleB":true,
                 "name":"slider_8"
             },
             "slider_9":{
