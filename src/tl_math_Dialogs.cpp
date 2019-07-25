@@ -470,6 +470,12 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	bool param_ExternalInputB = (arbDataJS["/flags/pixelsCallExternalInputB"_json_pointer]);
 	bool param_lumaB = (arbDataJS["/flags/needsLumaB"_json_pointer]);
 	bool paramWideeInputB= (arbDataJS["/flags/presetHasWideInputB"_json_pointer]);
+	bool  usesCameraB = (arbDataJS["/flags/usesCameraB"_json_pointer]);
+
+	std::string camera_position = (arbDataJS["/composition/camera_position"_json_pointer]);
+	std::string camera_target = (arbDataJS["/composition/camera_target"_json_pointer]);
+	std::string camera_zoom = (arbDataJS["/composition/camera_zoom"_json_pointer]);
+	std::string camera_rotation = (arbDataJS["/composition/camera_rotation"_json_pointer]);
 
 	std::string setting_resolutionName = (arbDataJS["/composition/resolution"_json_pointer]);
 	std::string setting_layerPosition = (arbDataJS["/composition/layerPosition"_json_pointer]);
@@ -609,6 +615,10 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	strncpy_s(seqDataP->expr_green_offNameAc,expr_green_off.c_str(),expr_green_off.length() + 1);
 	strncpy_s(seqDataP->expr_blue_offNameAc,expr_blue_off.c_str(),expr_blue_off.length() + 1);
 	strncpy_s(seqDataP->expr_alpha_offNameAc,expr_alpha_off.c_str(),expr_alpha_off.length() + 1);
+	strncpy_s(seqDataP->cameraPosNameAc, camera_position.c_str(), camera_position.length() + 1);
+	strncpy_s(seqDataP->cameraTargetNameAc , camera_target.c_str(), camera_target.length() + 1);
+	strncpy_s(seqDataP->cameraZoomNameAc, camera_zoom.c_str(), camera_zoom.length() + 1);
+	strncpy_s(seqDataP->cameraRotationNameAc, camera_rotation.c_str(), camera_rotation.length() + 1);
 	strncpy_s(seqDataP->resolution,  setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
 	strncpy_s(seqDataP->layerPosition, setting_layerPosition.c_str(), setting_layerPosition.length()+1);
 	strncpy_s(seqDataP->layerScale, setting_layerScale.c_str(), setting_layerScale.length() + 1);
@@ -680,6 +690,10 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	strncpy(seqDataP->expr_green_offNameAc, expr_green_off.c_str(), expr_green_off.length() + 1);
 	strncpy(seqDataP->expr_blue_offNameAc, expr_blue_off.c_str(), expr_blue_off.length() + 1);
 	strncpy(seqDataP->expr_alpha_offNameAc, expr_alpha_off.c_str(), expr_alpha_off.length() + 1);
+	strncpy(seqDataP->cameraPosNameAc, camera_position.c_str(), camera_position.length() + 1);
+	strncpy(seqDataP->cameraTargetNameAc, camera_target.c_str(), camera_target.length() + 1);
+	strncpy(seqDataP->cameraZoomNameAc, camera_zoom.c_str(), camera_zoom.length() + 1);
+	strncpy(seqDataP->cameraRotationNameAc, camera_rotation.c_str(), camera_rotation.length() + 1);
 	strncpy(seqDataP->resolution, setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
 	strncpy(seqDataP->layerPosition, setting_layerPosition.c_str(), setting_layerPosition.length() + 1);
 	strncpy(seqDataP->layerScale, setting_layerScale.c_str(), setting_layerScale.length() + 1);
@@ -747,6 +761,7 @@ copyFromArbToSeqData(PF_InData        *in_data,
 	seqDataP->needsLumaB = param_lumaB;
 	seqDataP->presetHasWideInputB = paramWideeInputB;
 	seqDataP->exprRGBModeB = exprRGBModeB;
+	seqDataP->cameraB = usesCameraB;
 
 	seqDataP->sliderGrpVisibleB = slider_grpVisibleB;
 	seqDataP->paramSlider01VisibleB = slider_01VisibleB;
@@ -841,7 +856,7 @@ evalScripts(seqData  *seqDataP)
 	#ifdef AE_OS_WIN
 			strncpy_s(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
 	#else
-			strncpy_s(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
+			strncpy(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
 	#endif
 		}
 
@@ -890,7 +905,7 @@ evalScripts(seqData  *seqDataP)
         strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
         strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
         strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
-		strncpy_s(seqDataP->rgbError, evalRgbCh.c_str(), evalRgbCh.length() + 1);
+		strncpy(seqDataP->rgbError, evalRgbCh.c_str(), evalRgbCh.length() + 1);
      #endif
 
 

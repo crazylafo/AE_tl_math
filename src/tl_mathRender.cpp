@@ -344,6 +344,9 @@ ExprRender(PF_OutData     *out_data,
 	return err;
 }
 
+
+
+
 PF_Err
 tl_math_PreRender(PF_InData                *in_data,
 	PF_OutData                *out_data,
@@ -360,6 +363,7 @@ tl_math_PreRender(PF_InData                *in_data,
 	AEGP_CompH        compH;
 	AEGP_ItemH      itemH;
 	MathInfo        * miP = NULL;
+    PF_Boolean     cameraModeB = false;
 
 	if (infoH) {
 
@@ -412,7 +416,9 @@ tl_math_PreRender(PF_InData                *in_data,
                 if (!initB){
                       ERR(evalScripts  (seqP));
                 }
-
+                if (seqP->cameraB){
+                    cameraModeB = true;
+                }
             }
 
 
@@ -462,14 +468,90 @@ tl_math_PreRender(PF_InData                *in_data,
 
 			layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currTime);
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_POSITION, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValP, &strTypeP);
-			miP->layerPos[0] = strValP.three_d.x;
-			miP->layerPos[1] = strValP.three_d.y;
-			miP->layerPos[2] = strValP.three_d.z;
-			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
-			miP->layerScale[0] = strValSP.three_d.x;
-			miP->layerScale[1] = strValSP.three_d.z;
-			miP->layerScale[2] = strValSP.three_d.z;
 
+			miP->layerPos.point[0] = strValP.three_d.x;
+            miP->layerPos.point[1] = strValP.three_d.y;
+            miP->layerPos.point[2] = strValP.three_d.z,
+
+			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
+			miP->layerScale.point[0] = strValSP.three_d.x;
+			miP->layerScale.point[1] = strValSP.three_d.z;
+			miP->layerScale.point[2] = strValSP.three_d.z;
+
+            if (cameraModeB){
+                A_Matrix4            matrix;
+                A_Time                comp_timeT        =    {0,1};
+
+                AEGP_LayerH camera_layerH    =    NULL;
+                ERR(suites.PFInterfaceSuite1()->AEGP_ConvertEffectToCompTime(in_data->effect_ref,
+                                                                             in_data->current_time,
+                                                                             in_data->time_scale,
+                                                                             &comp_timeT));
+
+                ERR(suites.PFInterfaceSuite1()->AEGP_GetEffectCamera(in_data->effect_ref,
+                                                                     &comp_timeT,
+                                                                     &camera_layerH));
+
+                    if (!err){
+                        AEGP_StreamVal    stream_valZoom, stream_valPos, stream_valTarg, stream_valRot;
+                        AEFX_CLR_STRUCT(stream_valZoom);
+                        // camera zoom
+                        ERR(suites.StreamSuite2()->AEGP_GetLayerStreamValue(     camera_layerH,
+                                                                            AEGP_LayerStream_ZOOM,
+                                                                            AEGP_LTimeMode_CompTime,
+                                                                            &comp_timeT,
+                                                                            FALSE,
+                                                                            &stream_valZoom,
+                                                                            NULL));
+                        //camera position
+                        AEFX_CLR_STRUCT(stream_valPos);
+                        ERR(suites.StreamSuite2()->AEGP_GetLayerStreamValue(     camera_layerH,
+                                                                            AEGP_LayerStream_POSITION ,
+                                                                            AEGP_LTimeMode_CompTime,
+                                                                            &comp_timeT,
+                                                                            FALSE,
+                                                                            &stream_valPos,
+                                                                            NULL));
+
+                        //camera target
+                        AEFX_CLR_STRUCT(stream_valTarg);
+                        ERR(suites.StreamSuite2()->AEGP_GetLayerStreamValue(     camera_layerH,
+                                                                            AEGP_LayerStream_ANCHORPOINT,
+                                                                            AEGP_LTimeMode_CompTime,
+                                                                            &comp_timeT,
+                                                                            FALSE,
+                                                                            &stream_valTarg,
+                                                                            NULL));
+                        //camera rotation
+                        AEFX_CLR_STRUCT(stream_valRot);
+                        ERR(suites.StreamSuite2()->AEGP_GetLayerStreamValue(     camera_layerH,
+                                                                            AEGP_LayerStream_ROTATION,
+                                                                            AEGP_LTimeMode_CompTime,
+                                                                            &comp_timeT,
+                                                                            FALSE,
+                                                                            &stream_valRot,
+                                                                            NULL));
+
+
+
+                        if (!err) {
+                            miP->cameraZoom = stream_valZoom.one_d;
+
+                            miP->cameraPos.point[0] = stream_valPos.three_d.x;
+                            miP->cameraPos.point[1] = stream_valPos.three_d.y;
+                            miP->cameraPos.point[2] = stream_valPos.three_d.z;
+
+                            miP->cameraTarget.point[0] =stream_valTarg.three_d.x;
+                            miP->cameraTarget.point[1] =stream_valTarg.three_d.y;
+                            miP->cameraTarget.point[2] = stream_valRot.three_d.z;
+
+                            miP->cameraRotation.point[0] =stream_valRot.three_d.x;
+                            miP->cameraRotation.point[1] =stream_valRot.three_d.y;
+                            miP->cameraRotation.point[2] = stream_valRot.three_d.z;
+
+                        }
+                    }
+                }
 
 			AEFX_CLR_STRUCT(in_result);
 			AEFX_CLR_STRUCT(extL_result);

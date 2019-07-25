@@ -250,18 +250,18 @@ namespace {
 	}
 
 	void RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
-            PF_InData    *in_data,
-            PF_OutData    *out_data,
-            A_long widthL,
-            A_long heightL,
-            gl::GLuint		inputFrameTexture,
-            gl::GLuint	inputExtFrameTexture,
-            void			*refcon,
-            float			multiplier16bit)
+		PF_InData    *in_data,
+		PF_OutData    *out_data,
+		A_long widthL,
+		A_long heightL,
+		gl::GLuint		inputFrameTexture,
+		gl::GLuint	inputExtFrameTexture,
+		void			*refcon,
+		float			multiplier16bit)
 	{
 		MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
 
-        seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+		seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
 		// - make sure we blend correctly inside the framebuffer
 		// - even though we just cleared it, another effect may want to first
 		// draw some kind of background to blend with
@@ -271,133 +271,145 @@ namespace {
 
 		// view matrix, mimic windows coordinates
 		vmath::Matrix4 ModelviewProjection = vmath::Matrix4::translation(vmath::Vector3(-1.0f, -1.0f, 0.0f)) *
-		vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
+			vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
 
 		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
-        glBindTexture(GL_TEXTURE_2D, inputExtFrameTexture);
+		glBindTexture(GL_TEXTURE_2D, inputExtFrameTexture);
 		glUseProgram(renderContext->mProgramObjSu);
 
 		// program uniforms
 		GLint location = glGetUniformLocation(renderContext->mProgramObjSu, "ModelviewProjection");
 		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
-		location = glGetUniformLocation(renderContext->mProgramObjSu,  seqP->paramSlider01NameAc);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider01NameAc);
 		glUniform1f(location, miP->inSliderF[0]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu,seqP->paramSlider02NameAc);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider02NameAc);
 		glUniform1f(location, miP->inSliderF[1]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider03NameAc);
 		glUniform1f(location, miP->inSliderF[2]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider04NameAc);
 		glUniform1f(location, miP->inSliderF[3]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider05NameAc);
-        glUniform1f(location, miP->inSliderF[4]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider06NameAc);
-        glUniform1f(location, miP->inSliderF[5]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider07NameAc);
-        glUniform1f(location, miP->inSliderF[6]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider08NameAc);
-        glUniform1f(location, miP->inSliderF[7]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider09NameAc);
-        glUniform1f(location, miP->inSliderF[8]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider10NameAc);
-        glUniform1f(location, miP->inSliderF[9]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider05NameAc);
+		glUniform1f(location, miP->inSliderF[4]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider06NameAc);
+		glUniform1f(location, miP->inSliderF[5]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider07NameAc);
+		glUniform1f(location, miP->inSliderF[6]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider08NameAc);
+		glUniform1f(location, miP->inSliderF[7]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider09NameAc);
+		glUniform1f(location, miP->inSliderF[8]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider10NameAc);
+		glUniform1f(location, miP->inSliderF[9]);
 
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint01NameAc);
-        glUniform3f(location, miP->inPoints[0].point[0], convertYCoordAEToGL( miP->inPoints[0].point[1], heightL), miP->inPoints[0].point[2]);
+		glUniform3f(location, miP->inPoints[0].point[0], convertYCoordAEToGL(miP->inPoints[0].point[1], heightL), miP->inPoints[0].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint02NameAc);
-        glUniform3f(location, miP->inPoints[1].point[0], convertYCoordAEToGL( miP->inPoints[1].point[1], heightL), miP->inPoints[1].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint02NameAc);
+		glUniform3f(location, miP->inPoints[1].point[0], convertYCoordAEToGL(miP->inPoints[1].point[1], heightL), miP->inPoints[1].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint03NameAc);
-        glUniform3f(location, miP->inPoints[2].point[0], convertYCoordAEToGL( miP->inPoints[2].point[1], heightL), miP->inPoints[2].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint03NameAc);
+		glUniform3f(location, miP->inPoints[2].point[0], convertYCoordAEToGL(miP->inPoints[2].point[1], heightL), miP->inPoints[2].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint04NameAc);
-        glUniform3f(location, miP->inPoints[3].point[0], convertYCoordAEToGL( miP->inPoints[3].point[1], heightL), miP->inPoints[3].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint04NameAc);
+		glUniform3f(location, miP->inPoints[3].point[0], convertYCoordAEToGL(miP->inPoints[3].point[1], heightL), miP->inPoints[3].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint05NameAc);
-        glUniform3f(location, miP->inPoints[4].point[0], convertYCoordAEToGL( miP->inPoints[4].point[1], heightL), miP->inPoints[4].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint05NameAc);
+		glUniform3f(location, miP->inPoints[4].point[0], convertYCoordAEToGL(miP->inPoints[4].point[1], heightL), miP->inPoints[4].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint06NameAc);
-        glUniform3f(location, miP->inPoints[5].point[0], convertYCoordAEToGL( miP->inPoints[5].point[1], heightL), miP->inPoints[5].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint06NameAc);
+		glUniform3f(location, miP->inPoints[5].point[0], convertYCoordAEToGL(miP->inPoints[5].point[1], heightL), miP->inPoints[5].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint07NameAc);
-        glUniform3f(location, miP->inPoints[6].point[0], convertYCoordAEToGL( miP->inPoints[6].point[1], heightL), miP->inPoints[6].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint07NameAc);
+		glUniform3f(location, miP->inPoints[6].point[0], convertYCoordAEToGL(miP->inPoints[6].point[1], heightL), miP->inPoints[6].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint08NameAc);
-        glUniform3f(location, miP->inPoints[7].point[0], convertYCoordAEToGL( miP->inPoints[7].point[1], heightL), miP->inPoints[7].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint08NameAc);
+		glUniform3f(location, miP->inPoints[7].point[0], convertYCoordAEToGL(miP->inPoints[7].point[1], heightL), miP->inPoints[7].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint09NameAc);
-        glUniform3f(location, miP->inPoints[8].point[0], convertYCoordAEToGL( miP->inPoints[8].point[1], heightL), miP->inPoints[8].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint09NameAc);
+		glUniform3f(location, miP->inPoints[8].point[0], convertYCoordAEToGL(miP->inPoints[8].point[1], heightL), miP->inPoints[8].point[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint10NameAc);
-        glUniform3f(location, miP->inPoints[9].point[0], convertYCoordAEToGL( miP->inPoints[9].point[1], heightL), miP->inPoints[9].point[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramPoint10NameAc);
+		glUniform3f(location, miP->inPoints[9].point[0], convertYCoordAEToGL(miP->inPoints[9].point[1], heightL), miP->inPoints[9].point[2]);
 
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb01NameAc);
-        glUniform1f(location, miP->inCboxF[0]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb02NameAc);
-        glUniform1f(location, miP->inCboxF[1]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb03NameAc);
-        glUniform1f(location, miP->inCboxF[2]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb04NameAc);
-        glUniform1f(location, miP->inCboxF[3]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb05NameAc);
-        glUniform1f(location, miP->inCboxF[4]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb06NameAc);
-        glUniform1f(location, miP->inCboxF[5]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb07NameAc);
-        glUniform1f(location, miP->inCboxF[6]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb08NameAc);
-        glUniform1f(location, miP->inCboxF[7]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb09NameAc);
-        glUniform1f(location, miP->inCboxF[8]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb10NameAc);
-        glUniform1f(location, miP->inCboxF[9]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb01NameAc);
+		glUniform1f(location, miP->inCboxF[0]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb02NameAc);
+		glUniform1f(location, miP->inCboxF[1]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb03NameAc);
+		glUniform1f(location, miP->inCboxF[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb04NameAc);
+		glUniform1f(location, miP->inCboxF[3]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb05NameAc);
+		glUniform1f(location, miP->inCboxF[4]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb06NameAc);
+		glUniform1f(location, miP->inCboxF[5]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb07NameAc);
+		glUniform1f(location, miP->inCboxF[6]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb08NameAc);
+		glUniform1f(location, miP->inCboxF[7]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb09NameAc);
+		glUniform1f(location, miP->inCboxF[8]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramCb10NameAc);
+		glUniform1f(location, miP->inCboxF[9]);
 
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor01NameAc);
-        glUniform3f(location, miP->inColors[0].color[0],  miP->inColors[0].color[1],  miP->inColors[0].color[2]);
+		glUniform3f(location, miP->inColors[0].color[0], miP->inColors[0].color[1], miP->inColors[0].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor02NameAc);
-        glUniform3f(location, miP->inColors[1].color[0],  miP->inColors[1].color[1],  miP->inColors[1].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor02NameAc);
+		glUniform3f(location, miP->inColors[1].color[0], miP->inColors[1].color[1], miP->inColors[1].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor03NameAc);
-        glUniform3f(location, miP->inColors[2].color[0],  miP->inColors[2].color[1],  miP->inColors[2].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor03NameAc);
+		glUniform3f(location, miP->inColors[2].color[0], miP->inColors[2].color[1], miP->inColors[2].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor04NameAc);
-        glUniform3f(location, miP->inColors[3].color[0],  miP->inColors[3].color[1],  miP->inColors[3].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor04NameAc);
+		glUniform3f(location, miP->inColors[3].color[0], miP->inColors[3].color[1], miP->inColors[3].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor05NameAc);
-        glUniform3f(location, miP->inColors[4].color[0],  miP->inColors[4].color[1],  miP->inColors[4].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor05NameAc);
+		glUniform3f(location, miP->inColors[4].color[0], miP->inColors[4].color[1], miP->inColors[4].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor06NameAc);
-        glUniform3f(location, miP->inColors[5].color[0],  miP->inColors[5].color[1],  miP->inColors[5].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor06NameAc);
+		glUniform3f(location, miP->inColors[5].color[0], miP->inColors[5].color[1], miP->inColors[5].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor07NameAc);
-        glUniform3f(location, miP->inColors[6].color[0],  miP->inColors[6].color[1],  miP->inColors[6].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor07NameAc);
+		glUniform3f(location, miP->inColors[6].color[0], miP->inColors[6].color[1], miP->inColors[6].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor08NameAc);
-        glUniform3f(location, miP->inColors[7].color[0],  miP->inColors[7].color[1],  miP->inColors[7].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor08NameAc);
+		glUniform3f(location, miP->inColors[7].color[0], miP->inColors[7].color[1], miP->inColors[7].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor09NameAc);
-        glUniform3f(location, miP->inColors[8].color[0],  miP->inColors[8].color[1],  miP->inColors[8].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor09NameAc);
+		glUniform3f(location, miP->inColors[8].color[0], miP->inColors[8].color[1], miP->inColors[8].color[2]);
 
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor10NameAc);
-        glUniform3f(location, miP->inColors[9].color[0],  miP->inColors[9].color[1],  miP->inColors[9].color[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor10NameAc);
+		glUniform3f(location, miP->inColors[9].color[0], miP->inColors[9].color[1], miP->inColors[9].color[2]);
 
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_sec);
 		glUniform1f(location, miP->layerTime_Sec);
 
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_frame);
 		glUniform1f(location, miP->layerTime_Frame);
-		location = glGetUniformLocation(renderContext->mProgramObjSu,  seqP->resolution);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->resolution);
 		glUniform2f(location, miP->layerSizeF[0], miP->layerSizeF[1]);
-        location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->frame_rate);
-        glUniform1f(location, miP->compFpsF);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->frame_rate);
+		glUniform1f(location, miP->compFpsF);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerPosition);
-		glUniform3f(location, miP->layerPos[0], convertYCoordAEToGL( miP->layerPos[1], heightL), miP->layerPos[2]);
+		glUniform3f(location, miP->layerPos.point[0], convertYCoordAEToGL(miP->layerPos.point[1], heightL), miP->layerPos.point[2]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerScale);
-		glUniform3f(location, miP->layerScale[0], convertYCoordAEToGL( miP->layerScale[1], heightL), miP->layerScale[2]);
+		glUniform3f(location, miP->layerScale.point[0], convertYCoordAEToGL( miP->layerScale.point[1], heightL), miP->layerScale.point[2]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->compResolution);
 		glUniform2f(location, miP->compSizeF[0], miP->compSizeF[1]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->cameraPosNameAc);
+		glUniform3f(location, miP->cameraPos.point[0], convertYCoordAEToGL(miP->cameraPos.point[1], heightL), miP->cameraPos.point[2]);
+
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->cameraTargetNameAc);
+		glUniform3f(location, miP->cameraTarget.point[0], convertYCoordAEToGL(miP->cameraTarget.point[1], heightL), miP->cameraTarget.point[2]);
+
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->cameraRotationNameAc);
+		glUniform3f(location, miP->cameraRotation.point[0], convertYCoordAEToGL(miP->cameraRotation.point[1], heightL), miP->cameraRotation.point[2]);
+
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->cameraZoomNameAc);
+		glUniform1f(location, miP->cameraZoom);
+
 		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
 		// Identify the texture to use and bind it to texture unit 0
@@ -543,6 +555,7 @@ GlobalSetup (
 
 
 	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS |
+                            PF_OutFlag2_I_USE_3D_CAMERA   |
 							PF_OutFlag2_FLOAT_COLOR_AWARE |
 							PF_OutFlag2_SUPPORTS_SMART_RENDER | 
 							PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
@@ -1003,7 +1016,11 @@ QueryDynamicFlags(
            //err2  = PF_Err_NONE;
 
 	if (seqP && !err) {
-		
+        if (seqP->cameraB ){
+            out_data->out_flags2 |= PF_OutFlag2_I_USE_3D_CAMERA;
+        }else{
+            out_data->out_flags2 &= ~PF_OutFlag2_I_USE_3D_CAMERA;
+        }
 		if (seqP->presetHasWideInputB) {
 			out_data->out_flags &= ~PF_OutFlag_WIDE_TIME_INPUT;
             out_data->out_flags2  &= ~PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;

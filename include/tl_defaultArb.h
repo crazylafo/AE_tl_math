@@ -53,7 +53,8 @@ static std::string defaultArb = R"=====(
         "needsPixelAroundB":false,
         "pixelsCallExternalInputB":false,
         "needsLumaB":false,
-        "presetHasWideInputB":false
+        "presetHasWideInputB":false,
+        "usesCameraB":false
     },
     "composition":{
         "resolution":"resolution",
@@ -64,7 +65,10 @@ static std::string defaultArb = R"=====(
         "time_frame":"timef",
         "frame_rate":"fps",
         "camera_position":"camera_pos",
-        "camera_target":"camera_target"
+        "camera_target":"camera_target",
+        "camera_zoom":"camera_zoom",
+        "camera_rotation": "camera_rotation"
+
     },
     "gui_settings":{
         "sliderGrp":{

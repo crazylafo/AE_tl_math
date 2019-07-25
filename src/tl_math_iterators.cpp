@@ -237,7 +237,7 @@ LineIteration8Func ( void *refconPV,
                 miP->extLayerColorF[3] = (PF_FpShort)bop_extP->alpha / PF_MAX_CHAN8;
 
             }
-			if (fiP->rgbExpr) {
+			if (flagsP->exprRGBModeB) {
 				AEFX_CLR_STRUCT(red_result);
 				miP->inColorChF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN8;
 				red_result = MIN(fiP->rgbExpr(), 1);
@@ -428,7 +428,7 @@ LineIteration16Func(void *refconPV,
                 AEFX_CLR_STRUCT(miP->extLayerColorF[2]);
                 miP->extLayerColorF[2] = (PF_FpShort)bop_extP->blue / PF_MAX_CHAN16;
             }
-			if (fiP->rgbExpr) {
+			if (flagsP->exprRGBModeB) {
 				AEFX_CLR_STRUCT(red_result);
 				miP->inColorChF = (PF_FpShort)bop_inP->red / PF_MAX_CHAN16;
 				red_result = MIN(fiP->rgbExpr(), 1);
@@ -592,7 +592,6 @@ LineIteration32Func(void *refconPV,
 				}
 			}
 		}
-
 		AEFX_CLR_STRUCT(miP->pixF[0]);
 		miP->pixF[0] = PF_FpShort(xL);
 
@@ -622,7 +621,7 @@ LineIteration32Func(void *refconPV,
 				AEFX_CLR_STRUCT(miP->extLayerColorF[2]);
 				miP->extLayerColorF[2] = (PF_FpShort)bop_extP->blue;
 			}
-			if (fiP->rgbExpr) {
+			if (flagsP->exprRGBModeB) {
 				AEFX_CLR_STRUCT(red_result);
 				miP->inColorChF = (PF_FpShort)bop_inP->red;
 				red_result = MIN(fiP->rgbExpr(), 1);

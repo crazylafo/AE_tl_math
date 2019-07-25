@@ -113,6 +113,12 @@ typedef struct {
 	A_char expr_blue_offNameAc[32];
 	A_char expr_alpha_offNameAc[32];
 
+
+    A_char   cameraPosNameAc[32];
+    A_char   cameraTargetNameAc[32];
+    A_char   cameraRotationNameAc[32];
+    A_char   cameraZoomNameAc[32];
+
     A_char sliderGrpNameAc[32];
     PF_Boolean sliderGrpVisibleB;
 
@@ -218,6 +224,7 @@ typedef struct {
     PF_Boolean  paramLayer01VisibleB;
 
     //Mode
+    PF_Boolean  cameraB;
     PF_Boolean  exprRGBModeB;
     PF_Boolean  glslModeB;
 	PF_Boolean  exprModeB;
@@ -426,8 +433,12 @@ typedef struct MathInfo{
     PF_FpShort		layerTime_Frame;
     PF_FpShort		layerDuration;
 	PF_FpShort      compFpsF;
-    PF_FpShort      layerPos[3];
-    PF_FpShort      layerScale[3];
+    point_3d       layerPos;
+    point_3d       layerScale;
+    point_3d       cameraPos;
+    point_3d       cameraTarget;
+    point_3d        cameraRotation;
+    PF_FpShort      cameraZoom;
     PF_FpShort      inSliderF[10];
 	point_3d        inPoints[10];
     PF_FpShort      inCboxF[10];
@@ -435,7 +446,7 @@ typedef struct MathInfo{
     PF_FpShort      m9P_red[9];
     PF_FpShort      m9P_green[9];
     PF_FpShort      m9P_blue[9];
-    PF_FpShort m9P_alpha[9];
+    PF_FpShort      m9P_alpha[9];
 
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP;
@@ -482,8 +493,8 @@ public:
         symbol_table.add_vector(seqP->expr_green_offNameAc,miP->m9P_green);
         symbol_table.add_vector(seqP->expr_blue_offNameAc, miP->m9P_blue);
         symbol_table.add_vector(seqP->expr_alpha_offNameAc, miP->m9P_alpha);
-        symbol_table.add_vector(seqP->resolution ,miP->layerSizeF);
-        symbol_table.add_vector(seqP->compResolution, miP->compSizeF);
+        symbol_table.add_vector(seqP->resolution        ,miP->layerSizeF);
+        symbol_table.add_vector(seqP->compResolution    , miP->compSizeF);
         symbol_table.add_vector(seqP->paramPoint01NameAc, miP->inPoints[0].point);
         symbol_table.add_vector(seqP->paramPoint02NameAc, miP->inPoints[1].point);
 		symbol_table.add_vector(seqP->paramPoint03NameAc, miP->inPoints[2].point);
@@ -504,11 +515,15 @@ public:
         symbol_table.add_vector(seqP->paramColor08NameAc, miP->inColors[7].color);
         symbol_table.add_vector(seqP->paramColor09NameAc, miP->inColors[8].color);
         symbol_table.add_vector(seqP->paramColor10NameAc, miP->inColors[9].color);
-        symbol_table.add_vector(seqP->layerPosition, miP->layerPos);
-        symbol_table.add_vector(seqP->layerScale, miP->layerScale);
 
-        
+        symbol_table.add_vector(seqP->layerPosition, miP->layerPos.point);
+        symbol_table.add_vector(seqP->layerScale, miP->layerScale.point);
+		symbol_table.add_vector(seqP->cameraPosNameAc, miP->cameraPos.point);
+		symbol_table.add_vector(seqP->cameraTargetNameAc, miP->cameraTarget.point);
+		symbol_table.add_vector(seqP->cameraRotationNameAc, miP->cameraRotation.point);
+
         symbol_table.add_constants();
+		symbol_table.add_constant(seqP->cameraZoomNameAc, miP->cameraZoom);
         symbol_table.add_constant(seqP->paramSlider01NameAc, miP->inSliderF[0]);
         symbol_table.add_constant(seqP->paramSlider02NameAc, miP->inSliderF[1]);
         symbol_table.add_constant(seqP->paramSlider03NameAc,miP->inSliderF[2]);
