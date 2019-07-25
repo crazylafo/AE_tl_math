@@ -16,6 +16,7 @@
 	<script src="./lib/ace_min/ace.js" type="text/javascript" charset="utf-8"></script>
 	<link rel="stylesheet" type="text/css" href="./css/main_style.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="./css/editor_style.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="./css/tables_style.css" media="screen">
 </head>
 
 <body onLoad="onLoaded()">
@@ -35,7 +36,7 @@
 	
 	<div id="settingsId">
 		<br />
-		<table id="group of tables">
+		<table id="group_of_tables">
 			<td>
 				<table>
 					<tr class = "settingsGrp">
@@ -76,6 +77,14 @@
 							<tr class = "settingsGrp">
 								<td>camera target</td>
 								<td><input type="text" id ="camera_targ" value="camera_target" maxlength="31"></td>
+								</tr>
+							<tr class = "settingsGrp">
+								<td>rotation</td>
+								<td><input type="text" id ="camera_rot" value="camera_rotation" maxlength="31"></td>
+								</tr>
+							<tr class = "settingsGrp">
+								<td>rotation</td>
+								<td><input type="text" id ="camera_zoom" value="camera_zoom" maxlength="31"></td>
 								</tr>
 							</tr>
 					</table>
@@ -147,7 +156,7 @@
 							<th>Parameter</th>
 							<th>GUI Name</th> 
 							<th>Visible</th>
-							<tr class = "sliderGrp">
+							<tr id = "sliderGrp">
 								<tr>
 									<td>slider Group</td>
 									<td><input type="text"   id="sliderGrpName" value="sliderGrp" maxlength="31"></td>
@@ -213,7 +222,7 @@
 							<th>Parameter</th>
 							<th>GUI Name</th> 
 							<th>Visible</th>
-							<tr class = "pointGrp">
+							<tr id= "pointGrp">
 								<tr>
 									<td>point Group</td>
 									<td><input type="text"   id="pointGrpName" value="pointGrp" maxlength="31"></td>
@@ -279,7 +288,7 @@
 							<th>Parameter</th>
 							<th>GUI Name</th> 
 							<th>Visible</th>
-							<tr class = "cboxGrp">
+							<tr id = "cboxGrp">
 								<tr>
 									<td>cbox Group</td>
 									<td><input type="text"   id="cboxGrpName" value="cboxGrp" maxlength="31"></td>
@@ -345,7 +354,7 @@
 							<th>Parameter</th>
 							<th>GUI Name</th> 
 							<th>Visible</th>
-							<tr class = "colorGrp">
+							<tr id = "colorGrp">
 								<tr>
 									<td>color Group</td>
 									<td><input type="text"   id="colorGrpName" value="colorGrp" maxlength="31"></td>

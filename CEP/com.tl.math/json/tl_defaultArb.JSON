@@ -28,7 +28,7 @@
         "green_error" : "green channel expression \\n compiled",
         "blue_error" : "blue channel expression \\n compiled",
         "alpha_error" : "alpha channel expression \\n compiled",
-		"rgb_error" : "rgb expression \\n compiled",
+        "rgb_error" : "rgb expression \\n compiled",
         "exprRGBModeB":true,
         "expr_current_channel":"inChannel",
 		"expr_pix":"pix",
@@ -42,7 +42,8 @@
         "needsPixelAroundB":false,
         "pixelsCallExternalInputB":false,
         "needsLumaB":false,
-        "presetHasWideInputB":false
+        "presetHasWideInputB":false,
+        "usesCameraB":false
     },
     "composition":{
         "resolution":"resolution",
@@ -53,7 +54,9 @@
         "time_frame":"timef",
         "frame_rate":"fps",
         "camera_position":"camera_pos",
-        "camera_target":"camera_target"
+        "camera_target":"camera_target",
+        "camera_zoom":"camera_zoom",
+        "camera_rotation": "camera_rotation"
     },
     "gui_settings":{
         "sliderGrp":{

@@ -25,7 +25,6 @@ function onLoaded() {
 
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
-		alert (fromArbEvent.data.effectInfo.pluginVersion)
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err_PresetFile); return};
 			arbData = fromArbEvent.data;
 			pluginVersion = parseFloat (arbData.effectInfo.pluginVersion).toFixed(2);
@@ -125,8 +124,10 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.composition.frame_rate = $("#fpsName").val().toString();
 	arbData.composition.camera_position = $("#camera_pos").val().toString();
 	arbData.composition.camera_target = $("#camera_targ").val().toString();
+	 arbData.composition.camera_rotation = $("#camera_rot").val().toString();
+	 arbData.composition.camera_zoom = $("#camera_zoom").val().toString();
 	//copy settings for expr
-	arbData.math_expression.exprRGBModeB = $("rgbmodeB").is(':checked');
+	arbData.math_expression.exprRGBModeB = $("#rgbmodeB").is(':checked');
 	arbData.math_expression.expr_current_channel = $("#expr_current_channelName").val().toString();
 	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
 	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
@@ -235,17 +236,59 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
 	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
 
-		/*
-	arbData.effectInfo.needsPixelAroundB":false,
-	arbData.effectInfo.pixelsCallExternalInputB":false,
-	arbData.effectInfo.needsLumaB":false,
-	arbData.effectInfo.presetHasWideInputB":false*/
-	return arbData;
 
+
+	if (arbData.effectMode.gl_modeB){
+
+		arbData.flags.needsPixelAroundB = false;// only for expr mode
+		arbData.flags.needsLumaB = false; // only for expr mode
+		arbData.flags.pixelsCallExternalInputB =setflagFromGL (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
+		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+	}
+	else{
+		arbData.flags.presetHasWideInputB  =  setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.needsPixelAroundB =  setflagFromExpr (arbData, 	[arbData.math_expression.expr_red_off, arbData.math_expression.expr_green_off, arbData.math_expression.expr_blue_off,arbData.math_expression.expr_alpha_off]);
+		arbData.flags.pixelsCallExternalInputB  =  setflagFromExpr (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
+		arbData.flags.needsLumaB  =  setflagFromExpr (arbData,[arbData.math_expression.expr_luma]);		
+		arbData.flags.usesCameraB =  setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);
+		alert (arbData.flags.usesCameraB)}
+	return arbData;
+}
+function setflagFromGL (arbData, strArr){
+	var boolResultB = false;
+	for (var i =0; i<strArr.length; i++){
+		if (arbData.gl_expression.gl_frag_sh.indexOf(strArr[i]) !=-1 ||
+		arbData.gl_expression.gl_vert_sh.indexOf(strArr[i]) !=-1){
+			boolResultB = true;
+		} 
+	}
+	return boolResultB;
+}
+function setflagFromExpr (arbData, strArr){
+	var boolResultB = false;
+	for (var i =0; i<strArr.length; i++){
+		if (arbData.math_expression.alphaExpr.indexOf(strArr[i]) !=-1){
+			boolResultB = true;
+			return boolResultB;
+		}
+		if (arbData.math_expression.exprRGBModeB &&
+			arbData.math_expression.rgbExpr.indexOf(strArr[i]) !=-1){
+				boolResultB = true;
+				return boolResultB;
+			}
+		else if (arbData.math_expression.redExpr.indexOf(strArr[i]) !=-1 ||
+			arbData.math_expression.greenExpr.indexOf(strArr[i]) !=-1||
+			arbData.math_expression.blueExpr.indexOf(strArr[i]) !=-1){
+				boolResultB = true;
+				return boolResultB;
+			}
+
+	} 
+
+	return boolResultB;
 }
 function copyDataToGUI (arbData, editors) {
-	alert ("test input")
-	alert (arbData.math_expression.rgb_error);
 	$("#gl_frag_tab_console").html(arbData.gl_expression.gl_frag_error.toString().replace("\\n", "<br/>"));
 	$("#gl_vert_tab_console").html(arbData.gl_expression.gl_vert_error.toString().replace("\\n", "<br/>"));
 	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
@@ -297,9 +340,9 @@ function copyDataToGUI (arbData, editors) {
 	$("#fpsName").text(arbData.composition.frame_rate.toString());
 	$("#camera_pos").text(arbData.composition.camera_position.toString());
 	$("#camera_targ").text(arbData.composition.camera_target.toString());
-	alert(arbData.math_expression.expr_current_channel)
+	$("#camera_rot").text(arbData.composition.camera_rotation.toString());
+	$("#camera_zoom").text(arbData.composition.camera_zoom.toString());
 	$("#expr_current_channelName").text(arbData.math_expression.expr_current_channel.toString());
-	alert("get")
 	$("#expr_pixName").text(arbData.math_expression.expr_pix.toString());
 	$("#expr_lumaName").text(arbData.math_expression.expr_luma.toString());
 	$("#expr_red_offName").text(arbData.math_expression.expr_red_off.toString());

@@ -1,0 +1,16 @@
+#group_of_tables{
+    width: 100%;
+    color:  #ddd;
+  }
+ #group_of_tables tr {
+    vertical-align: top;
+  }
+
+
+#group_of_tables th:nth-child(1){background-color: #1111}
+#group_of_tables td:nth-child(1){background-color: #1111}
+
+
+#group_of_tables td {
+    vertical-align: top;
+  }
