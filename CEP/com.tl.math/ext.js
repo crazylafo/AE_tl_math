@@ -252,7 +252,7 @@ function sendDataToPlugin(editors, arbData) {
 		arbData.flags.pixelsCallExternalInputB  =  setflagFromExpr (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
 		arbData.flags.needsLumaB  =  setflagFromExpr (arbData,[arbData.math_expression.expr_luma]);		
 		arbData.flags.usesCameraB =  setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);
-		alert (arbData.flags.usesCameraB)}
+		}
 	return arbData;
 }
 function setflagFromGL (arbData, strArr){
@@ -289,6 +289,7 @@ function setflagFromExpr (arbData, strArr){
 	return boolResultB;
 }
 function copyDataToGUI (arbData, editors) {
+	alert (arbData.gl_expression.gl_frag_error)
 	$("#gl_frag_tab_console").html(arbData.gl_expression.gl_frag_error.toString().replace("\\n", "<br/>"));
 	$("#gl_vert_tab_console").html(arbData.gl_expression.gl_vert_error.toString().replace("\\n", "<br/>"));
 	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
@@ -296,7 +297,6 @@ function copyDataToGUI (arbData, editors) {
 	$("#expr_blue_tab_console").html(arbData.math_expression.blue_error.toString().replace("\\n", "<br/>"));
 	$("#expr_rgb_tab_console").html(arbData.math_expression.rgb_error.toString().replace("\\n", "<br/>"));
 	$("#expr_alpha_tab_console").html(arbData.math_expression.alpha_error.toString().replace("\\n", "<br/>"));
-
 
 	if (arbData.gl_expression.gl_frag_sh){
 		editors.gl_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl_frag_sh.toString()), -1);
