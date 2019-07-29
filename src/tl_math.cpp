@@ -1017,9 +1017,9 @@ QueryDynamicFlags(
 
 	if (seqP && !err) {
         if (seqP->cameraB ){
-            out_data->out_flags2 |= PF_OutFlag2_I_USE_3D_CAMERA;
-        }else{
             out_data->out_flags2 &= ~PF_OutFlag2_I_USE_3D_CAMERA;
+        }else{
+            out_data->out_flags2 &= PF_OutFlag2_I_USE_3D_CAMERA;
         }
 		if (seqP->presetHasWideInputB) {
 			out_data->out_flags &= ~PF_OutFlag_WIDE_TIME_INPUT;

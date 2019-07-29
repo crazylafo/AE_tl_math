@@ -416,7 +416,7 @@ tl_math_PreRender(PF_InData                *in_data,
                 if (!initB){
                       ERR(evalScripts  (seqP));
                 }
-                if (seqP->cameraB){
+                if (seqP->cameraB ==true){
                     cameraModeB = true;
                 }
             }
@@ -492,7 +492,7 @@ tl_math_PreRender(PF_InData                *in_data,
                                                                      &comp_timeT,
                                                                      &camera_layerH));
 
-                    if (!err){
+                    if (!err && camera_layerH){
                         AEGP_StreamVal    stream_valZoom, stream_valPos, stream_valTarg, stream_valRot;
                         AEFX_CLR_STRUCT(stream_valZoom);
                         // camera zoom

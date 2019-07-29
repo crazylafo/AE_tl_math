@@ -200,7 +200,7 @@ static void jsonCorrectorStr(std::string &str)
 	strReplace(str, "\f", "\\f");
 	strReplace(str, "\r", "\\r");
 	strReplace(str, "\t", "\\t");
-	strReplace(str, "\'", "\\'");
+	strReplace(str, "\'", " '");
 
 }
 //before execution
@@ -340,7 +340,7 @@ SetupDialogSend( PF_InData        *in_data,
     arbDataJS["math_expression"]["blue_error"] =  blueErr;
     arbDataJS["math_expression"]["alpha_error"] = alphaErr;
 	arbDataJS["math_expression"]["rgb_error"] =   rgbErr;
-    std::string resultStr;
+	    std::string resultStr;
    std::string jsonDump = "'''";
    jsonDump.append(arbDataJS.dump());
    jsonDump.append("'''");
