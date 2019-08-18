@@ -17,6 +17,7 @@
 	<link rel="stylesheet" type="text/css" href="./css/main_style.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="./css/editor_style.css" media="screen">
 	<link rel="stylesheet" type="text/css" href="./css/tables_style.css" media="screen">
+	<link rel="stylesheet" type="text/css" href="./css/preset_style.css"  media="screen"> 
 </head>
 
 <body onLoad="onLoaded()">
@@ -25,15 +26,25 @@
 			<td><input type="text"   id="presetName" value="preset_Name" maxlength="31"></td>
 			<button id="btnExport">Export</button>
 			<button id="btnLoad">Load File</button>
+			<input type="text" id="presetTags" placeholder = "effect skeleton someTags" title="tags">
+			<button id="btnSavePreset">Save Preset</button>
 			<button id="settingsGUI" style="float:right" onClick= "toggleSettings()" >GUI Settings</button>
 			<button id="descriptionGUI" style="float:right" onClick= "toggleDescription()">Description</button>
-			<button id="presetGUI" style="float:right" >Presets</button>
+			<button id="presetGUI" style="float:right"  onCLick="tooglePresets()" >Presets</button>
 		</div>
 	<br />
 	<div id="descriptionId">Description </br>
 		<textarea  rows = "6" cols = "42" maxlength="256" id="descriptionText">describe here</textarea>
 		</div>
-	
+	<div id="presetId">
+			<td id="searchBar">tl Math Presets</td> <br \>
+			<input type="text" id="seachBarInput" placeholder = "search for presets or tags..." title="Type a preset or tag name"><br \>
+			<form action="#">
+				<div  id="presetsListAccess"></div>
+			</form>
+			<div id="presetDescr">description : </div><br \>
+			<button id="btnLoadPresetFromMenu">Load Preset</button>
+		</div>
 	<div id="settingsId">
 		<br />
 		<table id="group_of_tables">
@@ -79,11 +90,11 @@
 								<td><input type="text" id ="camera_targ" value="camera_target" maxlength="31"></td>
 								</tr>
 							<tr class = "settingsGrp">
-								<td>rotation</td>
+								<td>camera rotation</td>
 								<td><input type="text" id ="camera_rot" value="camera_rotation" maxlength="31"></td>
 								</tr>
 							<tr class = "settingsGrp">
-								<td>rotation</td>
+								<td>camera zoom</td>
 								<td><input type="text" id ="camera_zoom" value="camera_zoom" maxlength="31"></td>
 								</tr>
 							</tr>
@@ -416,7 +427,6 @@
 					</td>
 			</table>
 		</div>
-	
 	<div id = langSelecGrp>
 	<br />
 	<td>Coding Langage</td>
@@ -428,6 +438,11 @@
 	<br/>
 	<br/>
 	<div class="tab">
+		<div id ="expr_editor_settings" class="mathGUI">
+				<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
+				</div>
+		<br/>
+		<br/>
 		<button class="mathGUI" id="redExpBtn" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
 		<button class="mathGUI" id="greenExpBtn" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
 		<button class="mathGUI" id="blueExpBtn" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
@@ -435,11 +450,6 @@
 		<button class="mathGUI" id="alphaExpBtn"  onclick="openEditor(event, 'expr_alpha_tab', 'expr_alpha_editor')">Alpha channel expression</button>
 		<button class="glslGUI" onclick="openEditor(event, 'gl_frag_tab', 'gl_frag_editor')" >GLSL Fragment Shader</button>
 		<button class="glslGUI" onclick="openEditor(event, 'gl_vert_tab', 'gl_vert_editor')">GLSL Vertex Shader</button>
-		<br/>
-		<br/>
-		<div id ="expr_editor_settings" class="mathGUI">
-			<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
-			</div>
 		<br/>
 		<div class="text editor">
 			<div id="gl_frag_tab" class="tabEditor">

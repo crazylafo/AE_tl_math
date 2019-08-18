@@ -11,8 +11,9 @@ function onLoaded() {
 	csInterface.setWindowTitle = "tl Math Setup";
 	var err_PresetFile = "Error: the tlMath Preset is not recognized";
 	var err_pluginVersion ="Error: the plugin Version is not compatible with this preset";
+	var err_selectPreset = "Please, select a preset";
 	loadJSX();
-	sendMessageToPlugin()
+	sendMessageToPlugin();
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
 	csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, onAppThemeColorChanged);
@@ -22,6 +23,14 @@ function onLoaded() {
 	var arbdefaultStr = loadDefaultArb();
 	var arbData = JSON.parse(arbdefaultStr);
 	copyDataToGUI (arbData, editors);
+
+	//presets loading
+	var presetsList;
+	csInterface.addEventListener("tlmath.preset", function(fromPresetEvent){
+		presetsList = fromPresetEvent.data;
+		updatePresetMenu (presetsList, editors);
+	});
+	loadPluginPresets();
 
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
@@ -36,34 +45,99 @@ function onLoaded() {
 			arbData = fromArbEvent.data; 
 			copyDataToGUI (arbData, editors);
 		});
+	$("#seachBarInput").on("keyup", function(){
+		var filter = $("#seachBarInput").val().toUpperCase();
+		var list = document.getElementsByClassName ("presetsBlock");
+		for (var i=0; i<list.length; i++){
+			var foundB = false;
+			for (var j=0; j<presetsList.preset[i].tags.length; j++){
+				if (presetsList.preset[i].tags[j].toUpperCase().indexOf(filter) >-1){
+					foundB = true;
+					break;
+				}
+			}
+			if (foundB == true ){
+				list[i].style.display ="";
+			}else{
+				list[i].style.display ="none";
+				}
+			}
+		});
+	$("#presetsListAccess").on("change", function(){
+		var  presetSelectedIndex = $('input[name="presetListRb"]:checked').val();
+		var descriptionStr = "description : "+ presetsList.preset[presetSelectedIndex].description;
+		$("#presetDescr").text(descriptionStr);
+		});
 	$("#btnLoad").on("click", function() {		
-		loadPresetJSON();
+		loadPresetJSONFile();
 		});
 	$("#btnExport").on("click", function() {
 		var arbDataToSend = sendDataToPlugin(editors, arbData);		
+		exportPresetAsJSON(arbDataToSend);
+		});
+	$("#btnSavePreset").on("click", function() {
+		var arbDataToSend = sendDataToPlugin(editors, arbData);		
 		savePresetAsJSON(arbDataToSend);
 		});
+	$("#btnLoadPresetFromMenu").on("click", function(){
+		loadPresetFromMenu(presetsList, editors);
+		tooglePresets();
+	});
 	$("#btnApply").on("click", function() {
 		var arbDataToSend = sendDataToPlugin(editors, arbData);
-		if (arbDataToSend ){
+		if (arbDataToSend){
 			var arbDataStr = JSON.stringify(arbDataToSend);
 			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 			}
 		});
-}
+	}
 function sendMessageToPlugin(){
 	evalScript("$._ext.sendMessageToPlugin()");
-}
-function loadPresetJSON(){
+	}
+function updatePresetMenu (presetsList){
+	for (var i =0; i< presetsList.preset.length; i++){
+		var inputStr = '<label  id="'+presetsList.preset[i].name+'"  class="presetsBlock">'+
+		'<input type="radio" class="presetIconRadio" id="presetIconRadio'+i+'" name="presetListRb" value="'+i+'"/>'+
+		'<img src="'+presetsList.preset[i].icon+'" id="presetIconImgsId">'+
+		'<div id="iconText">'+presetsList.preset[i].name+'</div>'
+		'</label>';
+		$("#presetsListAccess").append(inputStr);
+		}
+	}
+function loadPresetFromMenu(presetsList, editors){
+	var selectedPreset = parseInt($("input[name='presetListRb']:checked").val());
+	if (typeof(selectedPreset) === "undefined"){
+		alert (err_selectPreset);
+		return
+		}
+	var jsonDataObj = JSON.parse(presetsList.preset[selectedPreset].str);
+	copyDataToGUI (jsonDataObj,  editors);
+	}
+function loadPresetJSONFile(){
 	 evalScript("$._ext.loadJSONFile()");
-}
-
-function savePresetAsJSON(arbDataToSend){
+	}
+function exportPresetAsJSON(arbDataToSend){
 	if (arbDataToSend){
 		var arbDataStr = JSON.stringify(arbDataToSend);
-		evalScript("$._ext.savePresetFile("+arbDataStr+")");
+		evalScript("$._ext.exportPresetFile("+arbDataStr+")");
 		}
-}
+	}
+function savePresetAsJSON(arbDataToSend){
+	if (arbDataToSend){
+		var csInterface = new CSInterface();
+		var path = csInterface.getSystemPath(SystemPath.EXTENSION)+"/json/userPresets/";
+		var currFile =path+arbDataToSend.effectInfo.presetName;
+		var arbDataStr = JSON.stringify(arbDataToSend);
+		alert ("export preset");
+		window.cep.fs.setPosixPermissions(path); 
+		var result=window.cep.fs.writeFile(currFile, arbDataStr);
+		if (0 == result.err){
+			alert ("preset saved")
+		  } else {
+			alert (result.err)
+		  }
+		}
+	}
 /**
  * clean json str  replace \ by double \
  * input : str
@@ -79,7 +153,7 @@ function cleanJsonToArbStr (str){
 			   .replace(/\f/g, "\\f");
 
     return str;
-}
+	}
 /**
  * clean json str  replace double\ by  \
  * input : str
@@ -95,7 +169,7 @@ function cleanJsonFromArbStr (str){
 			   .replace(/\\f/g, "\f");
 
     return str;
-}
+	}
 function sendDataToPlugin(editors, arbData) {
 	
 	//copy  expressions
@@ -108,6 +182,7 @@ function sendDataToPlugin(editors, arbData) {
 	arbData.math_expression.alphaExpr = cleanJsonToArbStr(( editors.expr_alpha_editor.getValue()).toString());
 	arbData.effectInfo.presetName = $("#presetName").val().toString();
 	arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
+	arbData.effectInfo.tags =  ($("#presetTags").val().split(","));
 	//detect if flags are active or not    
 	
 	//copy  mode settings
@@ -254,7 +329,7 @@ function sendDataToPlugin(editors, arbData) {
 		arbData.flags.usesCameraB =  setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);
 		}
 	return arbData;
-}
+	}
 function setflagFromGL (arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
@@ -264,7 +339,7 @@ function setflagFromGL (arbData, strArr){
 		} 
 	}
 	return boolResultB;
-}
+	}
 function setflagFromExpr (arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
@@ -287,9 +362,9 @@ function setflagFromExpr (arbData, strArr){
 	} 
 
 	return boolResultB;
-}
+	}
 function copyDataToGUI (arbData, editors) {
-	alert (arbData.gl_expression.gl_frag_error)
+
 	$("#gl_frag_tab_console").html(arbData.gl_expression.gl_frag_error.toString().replace("\\n", "<br/>"));
 	$("#gl_vert_tab_console").html(arbData.gl_expression.gl_vert_error.toString().replace("\\n", "<br/>"));
 	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
@@ -297,7 +372,6 @@ function copyDataToGUI (arbData, editors) {
 	$("#expr_blue_tab_console").html(arbData.math_expression.blue_error.toString().replace("\\n", "<br/>"));
 	$("#expr_rgb_tab_console").html(arbData.math_expression.rgb_error.toString().replace("\\n", "<br/>"));
 	$("#expr_alpha_tab_console").html(arbData.math_expression.alpha_error.toString().replace("\\n", "<br/>"));
-
 	if (arbData.gl_expression.gl_frag_sh){
 		editors.gl_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl_frag_sh.toString()), -1);
 	}
@@ -319,11 +393,9 @@ function copyDataToGUI (arbData, editors) {
 	if(arbData.math_expression.alphaExpr){
 		editors.expr_alpha_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.alphaExpr.toString(), -1));
 	}
-
 	$("#presetName").val( cleanJsonFromArbStr(arbData.effectInfo.presetName.toString()));
 	$("#descriptionText").val(cleanJsonFromArbStr(arbData.effectInfo.description.toString()));
-	
-
+	$("#presetTags").val(arbData.effectInfo.tags.toString());
 	if(arbData.effectMode.gl_modeB){
 		$("#langSelec").val("GLSL"); 
 	}
@@ -447,11 +519,7 @@ function copyDataToGUI (arbData, editors) {
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
 	$("#layer01_name").val(arbData.gui_settings.layerGrp.extLayer_1.name.toString());
 	$("input[name=layer01Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_1.visibleB);
-}
-function onClickButton(ppid) {
-	var extScript = "$._ext_" + ppid + ".run()";
-	evalScript(extScript);
-}
+	}
 function toogleCheckbox(className, currId){
 	classItems = document.getElementsByClassName(className);
 	parentItem =  document.getElementById(currId);
@@ -466,7 +534,7 @@ function toogleCheckbox(className, currId){
 			classItems[i].checked = false;
 		}
 	}
-}
+	}
 function setEditors(){
 	var editors = {};
 	editors.gl_frag_editor = glslEditor("gl_frag_editor");
@@ -477,13 +545,23 @@ function setEditors(){
 	editors.expr_rgb_editor = exprEditor("expr_rgb_editor");
 	editors.expr_alpha_editor  = exprEditor ("expr_alpha_editor");
 	return editors;
-}
+	}
 function defaultVal(){
 	//var langSelec = document.getElementById("langSelec");
 	//langSelec.value = "GLSL";
 	langSelecFunc();
 	toggleSettings();
+	tooglePresets();
 	toggleDescription();
+	}
+function tooglePresets(){
+	var presetsMenu = document.getElementById("presetId");
+	if (presetsMenu.style.display === "none"){
+		presetsMenu.style.display = "block";
+		}
+	else{
+		presetsMenu.style.display = "none";
+		}
 	}
 function toggleSettings(){
 	var settingsMenu = document.getElementById("settingsId");
@@ -544,7 +622,7 @@ function mathGuiModeFunc(){
 	mathGUIRgbModeFunc();
 	
 
-}
+	}
 function mathGUIRgbModeFunc(){
 	if ($("#rgbmodeB").is(':checked')){
 		$("#rgbExpBtn").show();
@@ -560,7 +638,7 @@ function mathGUIRgbModeFunc(){
 		openEditor(event, 'expr_alpha_tab');
 	}
 
-}
+	}
 function glslGuiModeFunc(){
 		var mathGui = document.getElementsByClassName("mathGUI");
 		 var glslGui = document.getElementsByClassName("glslGUI");
@@ -574,16 +652,13 @@ function glslGuiModeFunc(){
 
 	}	
 function langSelecFunc() {
-
 		var langSelec = document.getElementById("langSelec").value;
-
 		if (langSelec === "mExpr"){
 			mathGuiModeFunc();
 		  }
 	  else if (langSelec ==="GLSL"){
 			glslGuiModeFunc();
 		  }
-
 	 }
 function glslEditor(glMode){
 		var editor = ace.edit(glMode);
@@ -661,15 +736,14 @@ function updateThemeWithAppSkinInfo(appSkinInfo) {
 	    addRule(styleId, "input[type=text]", "padding:1px 3px;");
 	    addRule(styleId, "input[type=text]", "background-color: " + inputBackgroundColor) + ";";
 	    addRule(styleId, "input[type=text]:focus", "background-color: #ffffff;");
-	    addRule(styleId, "input[type=text]:focus", "color: #000000;");
+	    addRule(styleId, "input[type=text]:	", "color: #000000;");
 	    
 	} else {
 		// For AI, ID and FL use old implementation	
 		addRule(styleId, ".default", "font-size:" + appSkinInfo.baseFontSize + "px" + "; color:" + reverseColor(panelBackgroundColor) + "; background-color:" + toHex(panelBackgroundColor, 20));
 	    addRule(styleId, "button", "border-color: " + toHex(panelBgColor, -50));
+		}
 	}
-}
-
 function addRule(stylesheetId, selector, rule) {
     var stylesheet = document.getElementById(stylesheetId);
     
@@ -681,12 +755,10 @@ function addRule(stylesheetId, selector, rule) {
                stylesheet.insertRule(selector + ' { ' + rule + ' }', stylesheet.cssRules.length);
            }
     }
-}
-
+	}
 function reverseColor(color, delta) {
     return toHex({red:Math.abs(255-color.red), green:Math.abs(255-color.green), blue:Math.abs(255-color.blue)}, delta);
-}
-
+	}
 /**
  * Convert the Color object to string in hexadecimal format;
  */
@@ -710,19 +782,23 @@ function toHex(color, delta) {
         };
     }
     return "#" + hex;
-}
-
+	}
 function onAppThemeColorChanged(event) {
     // Should get a latest HostEnvironment object from application.
     var skinInfo = JSON.parse(window.__adobe_cep__.getHostEnvironment()).appSkinInfo;
     // Gets the style information such as color info from the skinInfo, 
     // and redraw all UI controls of your extension according to the style info.
     updateThemeWithAppSkinInfo(skinInfo);
-} 
+	}
+function loadPluginPresets(){
+	var csInterface = new CSInterface();
+	var cepFolder = csInterface.getSystemPath(SystemPath.EXTENSION) ;
+	csInterface.evalScript('$._ext.listJsonFiles("' +cepFolder+'")');
+	}
 function loadDefaultArb(){
 	var csInterface = new CSInterface();
-	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/json/";
-	var defaultArbFile  =extensionRoot+ "/tl_defaultArb.JSON";
+	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/json/pluginPresets";
+	var defaultArbFile  =extensionRoot+ "/tl_defaultPreset.JSON";
 	var result =  window.cep.fs.readFile(defaultArbFile);
 	if (result.err == 0) {
 		return  result.data;
@@ -740,6 +816,11 @@ function loadJSX() {
 function evalScript(script, callback) {
     new CSInterface().evalScript(script, callback);
 	}
+/*
+function onClickButton(ppid) {
+	var extScript = "$._ext_" + ppid + ".run()";
+	evalScript(extScript);
+}*/
 
 
 

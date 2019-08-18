@@ -9,7 +9,7 @@ if (!$._ext) {
 $._ext.evalFile = function (path) {
     try {
         $.evalFile(path);
-    } catch (e) { alert("Exception:" + e); }
+    } catch (e) {alert("Exception:" + e);}
 };
 
 // Evaluate all the files in the given folder 
