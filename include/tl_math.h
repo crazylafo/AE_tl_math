@@ -91,12 +91,12 @@ typedef struct {
     A_char  Glsl_VertexShAc[25000];
     A_char  Glsl_FragmentShAc[50000];
     A_char redError[2048];
-    A_char greenError[2048];
-    A_char blueError[2048];
-    A_char alphaError[2048];
-	A_char rgbError[2048];
-    A_char Glsl_VertError[4096];
-    A_char Glsl_fragError[4096];
+    A_char greenError[4096];
+    A_char blueError[4096];
+    A_char alphaError[4096];
+	A_char rgbError[4096];
+    A_char Glsl_VertError[25000];
+    A_char Glsl_fragError[25000];
 	A_char   resolution[32];
 	A_char   layerPosition[32];
 	A_char   layerScale[32];

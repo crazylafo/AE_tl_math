@@ -195,13 +195,13 @@ static void ExprtkCorrectorStr(std::string &str)
 }
 static void jsonCorrectorStr(std::string &str)
 {
+	//strReplace(str, "\\", " ");
 	strReplace(str, "\n", "\\n");
 	strReplace(str, "\b", "\\b");
 	strReplace(str, "\f", "\\f");
 	strReplace(str, "\r", "\\r");
 	strReplace(str, "\t", "\\t");
-	strReplace(str, "\'", " '");
-
+	strReplace(str, "\&", "\\&");
 }
 //before execution
 static void scriptCorrectorStr(std::string &str)
@@ -294,7 +294,7 @@ SetupDialogSend( PF_InData        *in_data,
     std::string plugVersionStr =Majvers.append(".")
                                 .append(MinVers)
                                 .append(Bugvers);
-    float plugVersionF = std::atof( plugVersionStr.c_str());
+    float plugVersionF = round( std::atof( plugVersionStr.c_str()));
 
     //ARB
     PF_ParamDef arb_param;
@@ -330,11 +330,11 @@ SetupDialogSend( PF_InData        *in_data,
 	jsonCorrectorStr(rgbErr);
 
     A_long compId,layerIndex, effectIndex;
-    ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
-    arbDataJS["effectInfo"]["pluginVersion"] =plugVersionF;
-    arbDataJS["gl_expression"]["gl_frag_error"] =  fragErr;
-    arbDataJS["gl_expression"]["gl_vert_error"] =  vertErr;
+    ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex)); 
+    arbDataJS["effectInfo"]["pluginVersion"] = plugVersionF;
 
+	arbDataJS["gl_expression"]["gl_frag_error"] = fragErr;
+	arbDataJS["gl_expression"]["gl_vert_error"] = vertErr;
     arbDataJS["math_expression"]["red_error"] =   redErr;
     arbDataJS["math_expression"]["green_error"] = greenErr;
     arbDataJS["math_expression"]["blue_error"] =  blueErr;

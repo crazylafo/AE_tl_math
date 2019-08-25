@@ -12,7 +12,7 @@ static std::string defaultArb = R"=====(
 {
 	   "effectInfo":{
         "effectName":"tlMath",
-        "pluginVesion":1.15,
+        "pluginVersion":1.15,
         "minimalPluginVersion":1.15,
         "tags":"default",
         "presetName":"default_preset test",
