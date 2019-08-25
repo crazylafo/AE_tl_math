@@ -9,9 +9,14 @@ function onLoaded() {
 	var csInterface = new CSInterface();
 	var appName = csInterface.hostEnvironment.appName;
 	csInterface.setWindowTitle = "tl Math Setup";
-	var err_PresetFile = "Error: the tlMath Preset is not recognized";
-	var err_pluginVersion ="Error: the plugin Version is not compatible with this preset";
-	var err_selectPreset = "Please, select a preset";
+	var numParams =10;
+	var err = defineErr();
+
+	setParamsSettings("slider", numParams, 1, "sliderGrp");
+	setParamsSettings("point", numParams, 3, "pointGrp");
+	setParamsSettings("cbox", numParams, 1, "cboxGrp");
+	setParamsSettings("color", numParams, 3, "colorGrp");
+	setParamsSettings("rotation", numParams, 1, "rotationGrp");
 	loadJSX();
 	sendMessageToPlugin();
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
@@ -22,7 +27,7 @@ function onLoaded() {
 	//laod default arb
 	var arbdefaultStr = loadDefaultArb();
 	var arbData = JSON.parse(arbdefaultStr);
-	copyDataToGUI (arbData, editors);
+	copyDataToGUI (arbData, editors,numParams);
 
 	//presets loading
 	var presetsList;
@@ -30,20 +35,20 @@ function onLoaded() {
 		presetsList = fromPresetEvent.data;
 		updatePresetMenu (presetsList, editors);
 	});
-	loadPluginPresets();
+	loadPluginPresets(arbData);
 
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
-		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err_PresetFile); return};
+		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
 			arbData = fromArbEvent.data;
 			pluginVersion = parseFloat (arbData.effectInfo.pluginVersion).toFixed(2);
-			copyDataToGUI (arbData, editors);
+			copyDataToGUI (arbData, editors,numParams);
 	});
 	csInterface.addEventListener("tlmath.arbSentfromPreset", function(fromArbEvent){
-		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err_PresetFile); return};
-		if (parseFloat(pluginVersion)<parseFloat(fromArbEvent.data.effectInfo.minimalPluginVersion)) {alert (err_pluginVersion); return}
+		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
+		if (parseFloat(pluginVersion)<parseFloat(fromArbEvent.data.effectInfo.minimalPluginVersion)) {alert (err.pluginVersion); return}
 			arbData = fromArbEvent.data; 
-			copyDataToGUI (arbData, editors);
+			copyDataToGUI (arbData, editors,numParams);
 		});
 	$("#seachBarInput").on("keyup", function(){
 		var filter = $("#seachBarInput").val().toUpperCase();
@@ -72,19 +77,19 @@ function onLoaded() {
 		loadPresetJSONFile();
 		});
 	$("#btnExport").on("click", function() {
-		var arbDataToSend = sendDataToPlugin(editors, arbData);		
+		var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);		
 		exportPresetAsJSON(arbDataToSend);
 		});
 	$("#btnSavePreset").on("click", function() {
-		var arbDataToSend = sendDataToPlugin(editors, arbData);		
+		var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);		
 		savePresetAsJSON(arbDataToSend);
 		});
 	$("#btnLoadPresetFromMenu").on("click", function(){
-		loadPresetFromMenu(presetsList, editors);
+		loadPresetFromMenu(presetsList, editors,numParams);
 		tooglePresets();
 	});
 	$("#btnApply").on("click", function() {
-		var arbDataToSend = sendDataToPlugin(editors, arbData);
+		var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
 		if (arbDataToSend){
 			var arbDataStr = JSON.stringify(arbDataToSend);
 			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
@@ -93,6 +98,13 @@ function onLoaded() {
 	}
 function sendMessageToPlugin(){
 	evalScript("$._ext.sendMessageToPlugin()");
+	}
+function defineErr(){
+	var err = {};
+	err.PresetFile = "Error: the tlMath Preset is not recognized";
+	err.pluginVersion ="Error: the plugin Version is not compatible with this preset";
+	err.selectPreset = "Please, select a preset";
+	return err;
 	}
 function updatePresetMenu (presetsList){
 	for (var i =0; i< presetsList.preset.length; i++){
@@ -104,14 +116,15 @@ function updatePresetMenu (presetsList){
 		$("#presetsListAccess").append(inputStr);
 		}
 	}
-function loadPresetFromMenu(presetsList, editors){
+
+function loadPresetFromMenu(presetsList, editors, numParams){
 	var selectedPreset = parseInt($("input[name='presetListRb']:checked").val());
 	if (typeof(selectedPreset) === "undefined"){
-		alert (err_selectPreset);
+		alert (err.selectPreset);
 		return
 		}
 	var jsonDataObj = JSON.parse(presetsList.preset[selectedPreset].str);
-	copyDataToGUI (jsonDataObj,  editors);
+	copyDataToGUI (jsonDataObj,  editors, numParams);
 	}
 function loadPresetJSONFile(){
 	 evalScript("$._ext.loadJSONFile()");
@@ -124,18 +137,8 @@ function exportPresetAsJSON(arbDataToSend){
 	}
 function savePresetAsJSON(arbDataToSend){
 	if (arbDataToSend){
-		var csInterface = new CSInterface();
-		var path = csInterface.getSystemPath(SystemPath.EXTENSION)+"/json/userPresets/";
-		var currFile =path+arbDataToSend.effectInfo.presetName;
 		var arbDataStr = JSON.stringify(arbDataToSend);
-		alert ("export preset");
-		window.cep.fs.setPosixPermissions(path); 
-		var result=window.cep.fs.writeFile(currFile, arbDataStr);
-		if (0 == result.err){
-			alert ("preset saved")
-		  } else {
-			alert (result.err)
-		  }
+		evalScript("$._ext.exportPresetFileToUserLib("+arbDataStr+")");
 		}
 	}
 /**
@@ -170,166 +173,6 @@ function cleanJsonFromArbStr (str){
 
     return str;
 	}
-function sendDataToPlugin(editors, arbData) {
-	
-	//copy  expressions
-	arbData.gl_expression.gl_frag_sh = cleanJsonToArbStr((editors.gl_frag_editor.getValue()).toString());
-	arbData.gl_expression.gl_vert_sh = cleanJsonToArbStr(( editors.gl_vert_editor.getValue()).toString());
-	arbData.math_expression.redExpr= cleanJsonToArbStr((editors.expr_red_editor.getValue()).toString());
-	arbData.math_expression.greenExpr =cleanJsonToArbStr(( editors.expr_green_editor.getValue()).toString())
-	arbData.math_expression.blueExpr =  cleanJsonToArbStr((editors.expr_blue_editor.getValue()).toString());
-	arbData.math_expression.rgbExpr =  cleanJsonToArbStr((editors.expr_rgb_editor.getValue()).toString());
-	arbData.math_expression.alphaExpr = cleanJsonToArbStr(( editors.expr_alpha_editor.getValue()).toString());
-	arbData.effectInfo.presetName = $("#presetName").val().toString();
-	arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
-	arbData.effectInfo.tags =  ($("#presetTags").val().split(","));
-	//detect if flags are active or not    
-	
-	//copy  mode settings
-	($("#langSelec").val() ==("GLSL") ? arbData.effectMode.gl_modeB=true : arbData.effectMode.gl_modeB=false);
-	($("#langSelec").val() ==("mExpr")? arbData.effectMode.expr_modeB=true : arbData.effectMode.expr_modeB = false);
-	//copy compo settings	
-	arbData.composition.resolution = $("#resolutionName").val().toString();
-
-	arbData.composition.layerPosition= $("#layerPositionName").val().toString();
-	arbData.composition.layerScale= $("#layerScaleName").val().toString();
-	arbData.composition.compResolution = $("#compResolutionName").val().toString();
-	arbData.composition.time_sec = $("#tsecName").val().toString();
-	arbData.composition.time_frame = $("#tframeName").val().toString();
-	arbData.composition.frame_rate = $("#fpsName").val().toString();
-	arbData.composition.camera_position = $("#camera_pos").val().toString();
-	arbData.composition.camera_target = $("#camera_targ").val().toString();
-	 arbData.composition.camera_rotation = $("#camera_rot").val().toString();
-	 arbData.composition.camera_zoom = $("#camera_zoom").val().toString();
-	//copy settings for expr
-	arbData.math_expression.exprRGBModeB = $("#rgbmodeB").is(':checked');
-	arbData.math_expression.expr_current_channel = $("#expr_current_channelName").val().toString();
-	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
-	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
-	arbData.math_expression.expr_red_off =$("#expr_red_offName").val().toString();
-	arbData.math_expression.expr_green_off =$("#expr_green_offName").val().toString();
-	arbData.math_expression.expr_blue_off =$("#expr_blue_offName").val().toString();
-	arbData.math_expression.expr_alpha_off=$("#expr_alpha_offName").val().toString();
-
-	//copy sliders settings
-	arbData.gui_settings.sliderGrp.grpName =$("#sliderGrpName").val().toString();	
-	arbData.gui_settings.sliderGrp.grpVisibleB =$("#sliderGrpVisible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_1.name =$("#slider01_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_1.visibleB= $("#slider01Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_2.name =$("#slider02_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_2.visibleB= $("#slider02Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_3.name =$("#slider03_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_3.visibleB= $("#slider03Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_4.name =$("#slider04_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_4.visibleB= $("#slider04Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_5.name =$("#slider05_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_5.visibleB= $("#slider05Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_6.name =$("#slider06_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_6.visibleB= $("#slider06Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_7.name =$("#slider07_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_7.visibleB= $("#slider07Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_8.name =$("#slider08_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_8.visibleB= $("#slider08Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_9.name =$("#slider09_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_9.visibleB= $("#slider09Visible").is(':checked');
-	arbData.gui_settings.sliderGrp.slider_10.name =$("#slider10_name").val().toString();
-	arbData.gui_settings.sliderGrp.slider_10.visibleB= $("#slider10Visible").is(':checked');
-	//copy points settings
-	arbData.gui_settings.pointGrp.grpName =$("#pointGrpName").val().toString();
-	arbData.gui_settings.pointGrp.grpVisibleB =$("#pointGrpVisible").is(':checked');
-	arbData.gui_settings.pointGrp.point_1.name =$("#point01_name").val().toString();
-	arbData.gui_settings.pointGrp.point_1.visibleB= $("#point01Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_2.name =$("#point02_name").val().toString();
-	arbData.gui_settings.pointGrp.point_2.visibleB= $("#point02Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_3.name =$("#point03_name").val().toString();
-	arbData.gui_settings.pointGrp.point_3.visibleB= $("#point03Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_4.name =$("#point04_name").val().toString();
-	arbData.gui_settings.pointGrp.point_4.visibleB= $("#point04Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_5.name =$("#point05_name").val().toString();
-	arbData.gui_settings.pointGrp.point_5.visibleB= $("#point05Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_6.name =$("#point06_name").val().toString();
-	arbData.gui_settings.pointGrp.point_6.visibleB= $("#point06Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_7.name =$("#point07_name").val().toString();
-	arbData.gui_settings.pointGrp.point_7.visibleB= $("#point07Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_8.name =$("#point08_name").val().toString();
-	arbData.gui_settings.pointGrp.point_8.visibleB= $("#point08Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_9.name =$("#point09_name").val().toString();
-	arbData.gui_settings.pointGrp.point_9.visibleB= $("#point09Visible").is(':checked');
-	arbData.gui_settings.pointGrp.point_10.name =$("#point10_name").val().toString();
-	arbData.gui_settings.pointGrp.point_10.visibleB= $("#point10Visible").is(':checked');
-	//copy checkbox settings
-	arbData.gui_settings.cboxGrp.grpName =$("#cboxGrpName").val().toString();
-	arbData.gui_settings.cboxGrp.grpVisibleB =$("#cboxGrpVisible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_1.name =$("#cbox01_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_1.visibleB= $("#cbox01Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_2.name =$("#cbox02_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_2.visibleB= $("#cbox02Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_3.name =$("#cbox03_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_3.visibleB= $("#cbox03Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_4.name =$("#cbox04_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_4.visibleB= $("#cbox04Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_5.name =$("#cbox05_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_5.visibleB= $("#cbox05Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_6.name =$("#cbox06_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_6.visibleB= $("#cbox06Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_7.name =$("#cbox07_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_7.visibleB= $("#cbox07Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_8.name =$("#cbox08_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_8.visibleB= $("#cbox08Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_9.name =$("#cbox09_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_9.visibleB= $("#cbox09Visible").is(':checked');
-	arbData.gui_settings.cboxGrp.cbox_10.name =$("#cbox10_name").val().toString();
-	arbData.gui_settings.cboxGrp.cbox_10.visibleB= $("#cbox10Visible").is(':checked');
-	//copy color settings
-	arbData.gui_settings.colorGrp.grpName =$("#colorGrpName").val().toString();
-	arbData.gui_settings.colorGrp.grpVisibleB =$("#colorGrpVisible").is(':checked');
-	arbData.gui_settings.colorGrp.color_1.name =$("#color01_name").val().toString();
-	arbData.gui_settings.colorGrp.color_1.visibleB= $("#color01Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_2.name =$("#color02_name").val().toString();
-	arbData.gui_settings.colorGrp.color_2.visibleB= $("#color02Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_3.name =$("#color03_name").val().toString();
-	arbData.gui_settings.colorGrp.color_3.visibleB= $("#color03Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_4.name =$("#color04_name").val().toString();
-	arbData.gui_settings.colorGrp.color_4.visibleB= $("#color04Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_5.name =$("#color05_name").val().toString();
-	arbData.gui_settings.colorGrp.color_5.visibleB= $("#color05Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_6.name =$("#color06_name").val().toString();
-	arbData.gui_settings.colorGrp.color_6.visibleB= $("#color06Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_7.name =$("#color07_name").val().toString();
-	arbData.gui_settings.colorGrp.color_7.visibleB= $("#color07Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_8.name =$("#color08_name").val().toString();
-	arbData.gui_settings.colorGrp.color_8.visibleB= $("#color08Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_9.name =$("#color09_name").val().toString();
-	arbData.gui_settings.colorGrp.color_9.visibleB= $("#color09Visible").is(':checked');
-	arbData.gui_settings.colorGrp.color_10.name =$("#color10_name").val().toString();
-	arbData.gui_settings.colorGrp.color_10.visibleB= $("#color10Visible").is(':checked');
-	
-	//copy layer settings
-	arbData.gui_settings.layerGrp.grpName =$("#layerGrpName").val().toString();
-	arbData.gui_settings.layerGrp.grpVisibleB =$("layerGrpVisible").is(':checked');
-	arbData.gui_settings.layerGrp.current_layer.name = $("#layer00_name").val().toString();
-	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
-	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
-
-
-
-	if (arbData.effectMode.gl_modeB){
-
-		arbData.flags.needsPixelAroundB = false;// only for expr mode
-		arbData.flags.needsLumaB = false; // only for expr mode
-		arbData.flags.pixelsCallExternalInputB =setflagFromGL (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
-		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
-	}
-	else{
-		arbData.flags.presetHasWideInputB  =  setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-		arbData.flags.needsPixelAroundB =  setflagFromExpr (arbData, 	[arbData.math_expression.expr_red_off, arbData.math_expression.expr_green_off, arbData.math_expression.expr_blue_off,arbData.math_expression.expr_alpha_off]);
-		arbData.flags.pixelsCallExternalInputB  =  setflagFromExpr (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
-		arbData.flags.needsLumaB  =  setflagFromExpr (arbData,[arbData.math_expression.expr_luma]);		
-		arbData.flags.usesCameraB =  setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);
-		}
-	return arbData;
-	}
 function setflagFromGL (arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
@@ -363,8 +206,49 @@ function setflagFromExpr (arbData, strArr){
 
 	return boolResultB;
 	}
-function copyDataToGUI (arbData, editors) {
+function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
+	var grp = document.getElementById(paramGroupId);
+	var paramGrpStr = '<th>Parameter</th> \n'+
+	'<th>GUI Name</th>\n'+
+	'<th>Visible</th>\n'+
+		'<tr>'+
+		'<td>'+paramName+' Group</td> \n'+
+		'<td><input type="text"   id="'+paramName+'GrpName" value="'+paramName+'Grp" maxlength="31"></td> \n'+
+		'<td><input type="checkbox" name="'+paramName+'GrpVisible" id="'+paramName+'+GrpVisible" onClick= "toogleCheckbox(\'cb'+paramName+'\', \''+paramName+'GrpVisible\')" checked ></td> \n'+
+		'</tr> \n';
+	grp.innerHTML =paramGrpStr;
+	strGrp ="";
+	for (var i=0; i<numParams; i++){
+		var paramStr ='<tr>'+
+			'<td>'+paramName+' '+i+'</td> \n'+
+			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+i+'" maxlength="31"></td> \n'+
+			'<td ><input type="checkbox" id="'+paramName+i+'_visible"  class="cb'+paramName+'" checked></td> \n'+
+			'</tr> \n'
+		strGrp+=paramStr;
+		}
+		grp.innerHTML +=strGrp;
+	}
+function getParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
 
+	$("#"+paramName+"GrpName").val(arbData.gui_settings[paramGroupId].grpName.toString());
+	$("#input[name="+paramName+"GrpVisible]").prop('checked', arbData.gui_settings[paramGroupId].grpVisibleB);
+	for (var i=0; i<numParams; i++){
+		$("#"+paramName+i+"_name").val(arbData.gui_settings[paramGroupId].params[i].name.toString());
+		$("input[names"+paramName+i+"Visible]").prop('checked', arbData.gui_settings[paramGroupId].params[i].visibleB);
+		}
+	}
+function sendParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
+	
+	arbData.gui_settings[paramGroupId].grpName =$("#"+paramName+"GrpName").val().toString();	
+	arbData.gui_settings[paramGroupId].grpVisibleB =$("#"+paramName+"GrpVisible").is(':checked');
+	for (var i=0; i<numParams; i++){
+		arbData.gui_settings[paramGroupId].params[i].name =$("#"+paramName+i+"_name").val().toString();
+		arbData.gui_settings[paramGroupId].params[i].visibleB= $("#"+paramName+i+"Visible").is(':checked');
+	}
+	return arbData;
+
+}
+function copyDataToGUI (arbData, editors, numParams) {
 	$("#gl_frag_tab_console").html(arbData.gl_expression.gl_frag_error.toString().replace("\\n", "<br/>"));
 	$("#gl_vert_tab_console").html(arbData.gl_expression.gl_vert_error.toString().replace("\\n", "<br/>"));
 	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
@@ -401,7 +285,7 @@ function copyDataToGUI (arbData, editors) {
 	}
 	if(arbData.effectMode.expr_modeB){
 		$("#langSelec").val("mExpr");
-	} 
+	}
 	$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
 	$("#resolutionName").text(arbData.composition.resolution.toString());
 	$("layerPositionName").text(arbData.composition.layerPosition.toString());
@@ -421,104 +305,88 @@ function copyDataToGUI (arbData, editors) {
 	$("#expr_green_offName").text(arbData.math_expression.expr_green_off.toString());
 	$("#expr_blue_offName").text(arbData.math_expression.expr_blue_off.toString());
 	$("#expr_alpha_offName").text(arbData.math_expression.expr_alpha_off.toString());
-
-	$("#sliderGrpName").val(arbData.gui_settings.sliderGrp.grpName.toString());
-	$("#input[name=sliderGrpVisible]").prop('checked', arbData.gui_settings.sliderGrp.grpVisibleB);
-	$("#slider01_name").val(arbData.gui_settings.sliderGrp.slider_1.name.toString());
-	$("input[name=slider01Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_1.visibleB);
-	$("#slider02_name").val(arbData.gui_settings.sliderGrp.slider_2.name.toString());
-	$("input[name=slider02Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_2.visibleB);
-	$("#slider03_name").val(arbData.gui_settings.sliderGrp.slider_3.name.toString());
-	$("input[name=slider03Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_3.visibleB);
-	$("#slider04_name").val(arbData.gui_settings.sliderGrp.slider_4.name.toString());
-	$("input[name=slider04Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_4.visibleB);
-	$("#slider05_name").val(arbData.gui_settings.sliderGrp.slider_5.name.toString());
-	$("input[name=slider05Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_5.visibleB);
-	$("#slider06_name").val(arbData.gui_settings.sliderGrp.slider_6.name.toString());
-	$("input[name=slider06Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_6.visibleB);
-	$("#slider07_name").val(arbData.gui_settings.sliderGrp.slider_7.name.toString());
-	$("input[name=slider07Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_7.visibleB);
-	$("#slider08_name").val(arbData.gui_settings.sliderGrp.slider_8.name.toString());
-	$("input[name=slider08Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_8.visibleB);
-	$("#slider09_name").val(arbData.gui_settings.sliderGrp.slider_9.name.toString());
-	$("input[name=slider09Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_9.visibleB);
-	$("#slider10_name").val(arbData.gui_settings.sliderGrp.slider_10.name.toString());
-	$("input[name=slider10Visible]").prop('checked', arbData.gui_settings.sliderGrp.slider_10.visibleB);
-
-	$("#pointGrpName").val(arbData.gui_settings.pointGrp.grpName.toString());
-	$("input[name=pointGrpVisible]").prop('checked', arbData.gui_settings.pointGrp.grpVisibleB);
-	$("#point01_name").val(arbData.gui_settings.pointGrp.point_1.name.toString());
-	$("input[name=point01Visible]").prop('checked', arbData.gui_settings.pointGrp.point_1.visibleB);
-	$("#point02_name").val(arbData.gui_settings.pointGrp.point_2.name.toString());
-	$("input[name=point02Visible]").prop('checked', arbData.gui_settings.pointGrp.point_2.visibleB);
-	$("#point03_name").val(arbData.gui_settings.pointGrp.point_3.name.toString());
-	$("input[name=point03Visible]").prop('checked', arbData.gui_settings.pointGrp.point_3.visibleB);
-	$("#point04_name").val(arbData.gui_settings.pointGrp.point_4.name.toString());
-	$("input[name=point04Visible]").prop('checked', arbData.gui_settings.pointGrp.point_4.visibleB);
-	$("#point05_name").val(arbData.gui_settings.pointGrp.point_5.name.toString());
-	$("input[name=point05Visible]").prop('checked', arbData.gui_settings.pointGrp.point_5.visibleB);
-	$("#point06_name").val(arbData.gui_settings.pointGrp.point_6.name.toString());
-	$("input[name=point06Visible]").prop('checked', arbData.gui_settings.pointGrp.point_6.visibleB);
-	$("#point07_name").val(arbData.gui_settings.pointGrp.point_7.name.toString());
-	$("input[name=point07Visible]").prop('checked', arbData.gui_settings.pointGrp.point_7.visibleB);
-	$("#point08_name").val(arbData.gui_settings.pointGrp.point_8.name.toString());
-	$("input[name=point08Visible]").prop('checked', arbData.gui_settings.pointGrp.point_8.visibleB);
-	$("#point09_name").val(arbData.gui_settings.pointGrp.point_9.name.toString());
-	$("input[name=point09Visible]").prop('checked', arbData.gui_settings.pointGrp.point_9.visibleB);
-	$("#point10_name").val(arbData.gui_settings.pointGrp.point_10.name.toString());
-	$("input[name=point10Visible]").prop('checked', arbData.gui_settings.pointGrp.point_10.visibleB);
-	
-	$("#cboxGrpName").val(arbData.gui_settings.cboxGrp.grpName.toString());
-	$("input[name=cboxGrpVisible]").prop('checked', arbData.gui_settings.cboxGrp.grpVisibleB);
-	$("#cbox01_name").val(arbData.gui_settings.cboxGrp.cbox_1.name.toString());
-	$("input[name=cbox01Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_1.visibleB);
-	$("#cbox02_name").val(arbData.gui_settings.cboxGrp.cbox_2.name.toString());
-	$("input[name=cbox02Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_2.visibleB);
-	$("#cbox03_name").val(arbData.gui_settings.cboxGrp.cbox_3.name.toString());
-	$("input[name=cbox03Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_3.visibleB);
-	$("#cbox04_name").val(arbData.gui_settings.cboxGrp.cbox_4.name.toString());
-	$("input[name=cbox04Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_4.visibleB);
-	$("#cbox05_name").val(arbData.gui_settings.cboxGrp.cbox_5.name.toString());
-	$("input[name=cbox05Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_5.visibleB);
-	$("#cbox06_name").val(arbData.gui_settings.cboxGrp.cbox_6.name.toString());
-	$("input[name=cbox06Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_6.visibleB);
-	$("#cbox07_name").val(arbData.gui_settings.cboxGrp.cbox_7.name.toString());
-	$("input[name=cbox07Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_7.visibleB);
-	$("#cbox08_name").val(arbData.gui_settings.cboxGrp.cbox_8.name.toString());
-	$("input[name=cbox08Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_8.visibleB);
-	$("#cbox09_name").val(arbData.gui_settings.cboxGrp.cbox_9.name.toString());
-	$("input[name=cbox09Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_9.visibleB);
-	$("#cbox10_name").val(arbData.gui_settings.cboxGrp.cbox_10.name.toString());
-	$("input[name=cbox10Visible]").prop('checked', arbData.gui_settings.cboxGrp.cbox_10.visibleB);
-	
-	$("#colorGrpName").val(arbData.gui_settings.colorGrp.grpName.toString());
-	$("input[name=colorGrpVisible]").prop('checked', arbData.gui_settings.colorGrp.grpVisibleB);
-	$("#color01_name").val(arbData.gui_settings.colorGrp.color_1.name.toString());
-	$("input[name=color01Visible]").prop('checked', arbData.gui_settings.colorGrp.color_1.visibleB);
-	$("#color02_name").val(arbData.gui_settings.colorGrp.color_2.name.toString());
-	$("input[name=color02Visible]").prop('checked', arbData.gui_settings.colorGrp.color_2.visibleB);
-	$("#color03_name").val(arbData.gui_settings.colorGrp.color_3.name.toString());
-	$("input[name=color03Visible]").prop('checked', arbData.gui_settings.colorGrp.color_3.visibleB);
-	$("#color04_name").val(arbData.gui_settings.colorGrp.color_4.name.toString());
-	$("input[name=color04Visible]").prop('checked', arbData.gui_settings.colorGrp.color_4.visibleB);
-	$("#color05_name").val(arbData.gui_settings.colorGrp.color_5.name.toString());
-	$("input[name=color05Visible]").prop('checked', arbData.gui_settings.colorGrp.color_5.visibleB);
-	$("#color06_name").val(arbData.gui_settings.colorGrp.color_6.name.toString());
-	$("input[name=color06Visible]").prop('checked', arbData.gui_settings.colorGrp.color_6.visibleB);
-	$("#color07_name").val(arbData.gui_settings.colorGrp.color_7.name.toString());
-	$("input[name=color07Visible]").prop('checked', arbData.gui_settings.colorGrp.color_7.visibleB);
-	$("#color08_name").val(arbData.gui_settings.colorGrp.color_8.name.toString());
-	$("input[name=color08Visible]").prop('checked', arbData.gui_settings.colorGrp.color_8.visibleB);
-	$("#color09_name").val(arbData.gui_settings.colorGrp.color_9.name.toString());
-	$("input[name=color09Visible]").prop('checked', arbData.gui_settings.colorGrp.color_9.visibleB);
-	$("#color10_name").val(arbData.gui_settings.colorGrp.color_10.name.toString());
-	$("input[name=color10Visible]").prop('checked', arbData.gui_settings.colorGrp.color_10.visibleB);
+	getParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
+	getParamsSettings(arbData, "point", numParams, 3, "pointGrp");
+	getParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
+	getParamsSettings(arbData, "color", numParams, 3, "colorGrp");
+	getParamsSettings(arbData, "rotation", numParams, 1, "rotationGrp");
+	alert ("get and send params data with loop function")
 	
 	$("#layerGrpName").val(arbData.gui_settings.layerGrp.grpName.toString());
 	$("input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
 	$("#layer01_name").val(arbData.gui_settings.layerGrp.extLayer_1.name.toString());
 	$("input[name=layer01Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_1.visibleB);
+	}
+function sendDataToPlugin(editors, arbData, numParams) {
+	//copy  expressions
+	arbData.gl_expression.gl_frag_sh = cleanJsonToArbStr((editors.gl_frag_editor.getValue()).toString());
+	arbData.gl_expression.gl_vert_sh = cleanJsonToArbStr(( editors.gl_vert_editor.getValue()).toString());
+	arbData.math_expression.redExpr= cleanJsonToArbStr((editors.expr_red_editor.getValue()).toString());
+	arbData.math_expression.greenExpr =cleanJsonToArbStr(( editors.expr_green_editor.getValue()).toString())
+	arbData.math_expression.blueExpr =  cleanJsonToArbStr((editors.expr_blue_editor.getValue()).toString());
+	arbData.math_expression.rgbExpr =  cleanJsonToArbStr((editors.expr_rgb_editor.getValue()).toString());
+	arbData.math_expression.alphaExpr = cleanJsonToArbStr(( editors.expr_alpha_editor.getValue()).toString());
+	arbData.effectInfo.presetName = $("#presetName").val().toString();
+	arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
+	arbData.effectInfo.tags =  ($("#presetTags").val().split(","));
+	//detect if flags are active or not    
+	
+	//copy  mode settings
+	($("#langSelec").val() ==("GLSL") ? arbData.effectMode.gl_modeB=true : arbData.effectMode.gl_modeB=false);
+	($("#langSelec").val() ==("mExpr")? arbData.effectMode.expr_modeB=true : arbData.effectMode.expr_modeB = false);
+	
+	//copy compo settings	
+	arbData.composition.resolution = $("#resolutionName").val().toString();
+	arbData.composition.layerPosition= $("#layerPositionName").val().toString();
+	arbData.composition.layerScale= $("#layerScaleName").val().toString();
+	arbData.composition.compResolution = $("#compResolutionName").val().toString();
+	arbData.composition.time_sec = $("#tsecName").val().toString();
+	arbData.composition.time_frame = $("#tframeName").val().toString();
+	arbData.composition.frame_rate = $("#fpsName").val().toString();
+	arbData.composition.camera_position = $("#camera_pos").val().toString();
+	arbData.composition.camera_target = $("#camera_targ").val().toString();
+	arbData.composition.camera_rotation = $("#camera_rot").val().toString();
+	arbData.composition.camera_zoom = $("#camera_zoom").val().toString();
+	//copy settings for expr
+	arbData.math_expression.exprRGBModeB = $("#rgbmodeB").is(':checked');
+	arbData.math_expression.expr_current_channel = $("#expr_current_channelName").val().toString();
+	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
+	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
+	arbData.math_expression.expr_red_off =$("#expr_red_offName").val().toString();
+	arbData.math_expression.expr_green_off =$("#expr_green_offName").val().toString();
+	arbData.math_expression.expr_blue_off =$("#expr_blue_offName").val().toString();
+	arbData.math_expression.expr_alpha_off=$("#expr_alpha_offName").val().toString();
+
+	sendParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
+	sendParamsSettings(arbData, "point", numParams, 3, "pointGrp");
+	sendParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
+	sendParamsSettings(arbData, "color", numParams, 3, "colorGrp");
+	sendParamsSettings(arbData, "rotation", numParams, 1, "rotationGrp");
+
+	//copy layer settings
+	arbData.gui_settings.layerGrp.grpName =$("#layerGrpName").val().toString();
+	arbData.gui_settings.layerGrp.grpVisibleB =$("layerGrpVisible").is(':checked');
+	arbData.gui_settings.layerGrp.current_layer.name = $("#layer00_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
+
+	if (arbData.effectMode.gl_modeB){
+
+		arbData.flags.needsPixelAroundB = false;// only for expr mode
+		arbData.flags.needsLumaB = false; // only for expr mode
+		arbData.flags.pixelsCallExternalInputB =setflagFromGL (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
+		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+	}
+	else{
+		arbData.flags.presetHasWideInputB  =  setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.needsPixelAroundB =  setflagFromExpr (arbData, 	[arbData.math_expression.expr_red_off, arbData.math_expression.expr_green_off, arbData.math_expression.expr_blue_off,arbData.math_expression.expr_alpha_off]);
+		arbData.flags.pixelsCallExternalInputB  =  setflagFromExpr (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
+		arbData.flags.needsLumaB  =  setflagFromExpr (arbData,[arbData.math_expression.expr_luma]);		
+		arbData.flags.usesCameraB =  setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);
+		}
+	return arbData;
 	}
 function toogleCheckbox(className, currId){
 	classItems = document.getElementsByClassName(className);
@@ -790,10 +658,18 @@ function onAppThemeColorChanged(event) {
     // and redraw all UI controls of your extension according to the style info.
     updateThemeWithAppSkinInfo(skinInfo);
 	}
-function loadPluginPresets(){
+function loadPluginPresets(arbData){
 	var csInterface = new CSInterface();
-	var cepFolder = csInterface.getSystemPath(SystemPath.EXTENSION) ;
-	csInterface.evalScript('$._ext.listJsonFiles("' +cepFolder+'")');
+	var extensionPath = csInterface.getSystemPath(SystemPath.EXTENSION)+"";
+	var folderPluginpresetsPath  = csInterface.getSystemPath(SystemPath.EXTENSION)+"/json/pluginPresets/";
+	var plugIdStr = arbData.effectInfo.effectName.toString()+arbData.effectInfo.pluginVersion;
+
+	var objData = {};
+	objData.extensionPath =extensionPath;
+	objData.folderPluginpresetsPath = folderPluginpresetsPath;
+	objData.plugIdStr = plugIdStr;
+	objDataStr = JSON.stringify (objData);
+	csInterface.evalScript('$._ext.listJsonFiles('+objDataStr+')');
 	}
 function loadDefaultArb(){
 	var csInterface = new CSInterface();

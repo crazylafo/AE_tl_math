@@ -5,11 +5,11 @@ text-align:left;
 }
 
 
-.tab button:hover {
+.tabEditors button:hover {
     background-color: #ddd;
   }
   
-.tab button:active {
+.tabEditors button:active {
 background-color: #aaa;
 }
 

@@ -6,10 +6,28 @@
 function getLastDotOfFile (scannedFile){
   var dot = 0;
   dot = scannedFile.fsName.lastIndexOf(".");
-
   return dot;
-
   }
+function createUserDataFolder(plugIdStr){
+      var userLibFolder = new Folder (Folder.userData);
+    var tlFolder =  new Folder (userLibFolder.absoluteURI+"\\tl");
+    if (!tlFolder.exists){
+      tlFolder.create();
+    }
+    var thisPluginFolder =  new Folder (tlFolder.absoluteURI+"\\"+plugIdStr);
+    if (!thisPluginFolder.exists){
+      thisPluginFolder.create();
+      }
+    return thisPluginFolder;
+}
+function createUserPresetFolder(plugIdStr){
+    var userFolder = createUserDataFolder(plugIdStr);
+    var userPresetsFolder =new Folder (userFolder.absoluteURI+"\\presets");
+    if(!userPresetsFolder.exists){
+      userPresetsFolder .create();
+      }
+    return userPresetsFolder;
+}
 function getLastSlashofFilePath (scannedFile){
   var slash = 0;
   if ($.os.indexOf ("Windows") !=-1){
@@ -57,15 +75,13 @@ if ( ! $._ext )
   $._ext = {};
 }
 $._ext = {
-  sendMessageToPlugin : function()
-  {
+  sendMessageToPlugin : function(){
     //try{ pluginId} catch(e){return};
     if ( typeof pluginId==="undefined" || !pluginId || pluginId ==null ){return};
     app.project.activeItem.layer(pluginId[0]).effect(pluginId[1]).property(57).setValue(1);//property 567= send message to ARB
     pluginId = undefined;
   },
-  sendDataToPlugin : function(arbData)
-  {
+  sendDataToPlugin : function(arbData){
     if (!arbData){return};
     //send data;
     tlmathDataFromSetup = JSON.stringify(arbData);
@@ -81,8 +97,7 @@ $._ext = {
       }     
     }
   },
-
-  loadJSONFile : function() {
+  loadJSONFile : function(){
     var newFile = null;
     var newJSON = null;
     var loadFile =File.openDialog('Select the file to load');
@@ -101,17 +116,17 @@ $._ext = {
           mathEventToCEPObj.dispatch();
     }
   },
-
-  listJsonFiles : function (extentionPath){
-    var folderPluginPath = extentionPath+"/json/pluginPresets/";
+  listJsonFiles : function (objData){
+    var folderPluginPath = objData.folderPluginpresetsPath;
+    var pluginFolder = new Folder (folderPluginPath);
+    var folderPresetPath = createUserPresetFolder(objData.plugIdStr);
+    if (!pluginFolder || !folderPresetPath){return};
     var listJsonFiles = {};
     listJsonFiles.preset = [];
-    var folder = new Folder (folderPluginPath);
-    if (!folder){return};
-    var folderPresetPath = extentionPath+"/json/userPresets/";
     var userFolder = new Folder (folderPresetPath);
-    var jsonFiles = folder.getFiles("*.json");
+    var jsonFiles = pluginFolder.getFiles("*.json");
     var userJsonFiles = userFolder.getFiles("*.json");
+
     if (typeof (userJsonFiles) !="undefined"){
       for(var i=0;i<userJsonFiles.length; i++){
         jsonFiles.push(userJsonFiles[i]);
@@ -135,7 +150,8 @@ $._ext = {
           preset.tags = jsonObj.effectInfo.tags;
           preset.tags.unshift (preset.name);
           preset.description = jsonObj.effectInfo.description;
-          preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder, extentionPath);
+         
+          preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder, objData.extensionPath);
           preset.str = jsonTemp.toString();
           listJsonFiles.preset[i] = preset;
           listJsonFiles.length =i+1;
@@ -147,10 +163,10 @@ $._ext = {
     var externalObjectName = "PlugPlugExternalObject"; 
     var csxslib = new ExternalObject( "lib:" + externalObjectName);
     var mathEventPreset = new CSXSEvent();
-      mathEventPreset.type="tlmath.preset";
-      mathEventPreset.data=newData;
-      mathEventPreset.dispatch();
-  },
+    mathEventPreset.type="tlmath.preset";
+    mathEventPreset.data=newData;
+    mathEventPreset.dispatch();
+    },
   exportPresetFile : function(dataStr){
     var presetFile =File.saveDialog('save your preset as a json');
     if (presetFile && presetFile.open('w')){
@@ -158,6 +174,17 @@ $._ext = {
         presetFile.write(JSON.stringify(dataStr,undefined, '\r\n'));
         presetFile.close();
       }
+    },
+  exportPresetFileToUserLib : function(dataStr){
+    var plugIdStr = dataStr.effectInfo.effectName.toString()+dataStr.effectInfo.pluginVersion; 
+    var userPresetsFolder = createUserPresetFolder(plugIdStr);
+    var presetFile = new File (userPresetsFolder.absoluteURI+"\\"+dataStr.effectInfo.presetName+".JSON");
+      if (presetFile.open("w")){
+         presetFile.encoding ='UTF-8';
+         presetFile.write(JSON.stringify(dataStr,undefined, '\r\n'));
+         presetFile.close();
+      } 
+     
     },
 };
 

@@ -100,43 +100,42 @@
 							</tr>
 					</table>
 				</td>
-				<td>
-					<table>
+			<td>
+				<table>
+					<tr class = "exprSettingsGrp">
+						<th>Parameter</th>
+						<th>GUI Name</th>
 						<tr class = "exprSettingsGrp">
-							<th>Parameter</th>
-							<th>GUI Name</th>
-							<tr class = "exprSettingsGrp">
-								<td>Current Channel</td>
-								<td><input type="text" id = "expr_current_channelName" value="inChannel" maxlength="31"></td>
+							<td>Current Channel</td>
+							<td><input type="text" id = "expr_current_channelName" value="inChannel" maxlength="31"></td>
+							</tr>
+						<tr class = "exprSettingsGrp">
+							<td>Pixel Coordonates</td>
+							<td><input type="text" id = "expr_pixName" value="pix" maxlength="31"></td>
+							</tr>
+						<tr class = "exprSettingsGrp">
+								<td>Luma</td>
+								<td><input type="text" id = "expr_lumaName" value="luma" maxlength="31"></td>
 								</tr>
-							<tr class = "exprSettingsGrp">
-								<td>Pixel Coordonates</td>
-								<td><input type="text" id = "expr_pixName" value="pix" maxlength="31"></td>
-								</tr>
-							<tr class = "exprSettingsGrp">
-									<td>Luma</td>
-									<td><input type="text" id = "expr_lumaName" value="luma" maxlength="31"></td>
-									</tr>
-							<tr class = "exprSettingsGrp">
-								<td>Pixel off-red chl</td>
-								<td><input type="text" id = "expr_red_offName" value="red_off" maxlength="31"></td>
-								</tr>
-							<tr class = "exprSettingsGrp">
-								<td>Pixel off-green ch</td>
-								<td><input type="text" id = "expr_green_offName" value="green_off" maxlength="31"></td>
-								</tr>
-							<tr class = "exprSettingsGrp">
-									<td>Pixel off-blue ch</td>
-									<td><input type="text" id = "expr_blue_offName" value="blue_off" maxlength="31"></td>
-									</tr>	
-							<tr class = "exprSettingsGrp">
-								<td>Pixel off-alpha ch</td>
-								<td><input type="text" id = "expr_alpha_offName" value="alpha_off" maxlength="31"></td>
-								</tr>
-								</tr>
-						</table>
-					</td>
-
+						<tr class = "exprSettingsGrp">
+							<td>Pixel off-red chl</td>
+							<td><input type="text" id = "expr_red_offName" value="red_off" maxlength="31"></td>
+							</tr>
+						<tr class = "exprSettingsGrp">
+							<td>Pixel off-green ch</td>
+							<td><input type="text" id = "expr_green_offName" value="green_off" maxlength="31"></td>
+							</tr>
+						<tr class = "exprSettingsGrp">
+								<td>Pixel off-blue ch</td>
+								<td><input type="text" id = "expr_blue_offName" value="blue_off" maxlength="31"></td>
+								</tr>	
+						<tr class = "exprSettingsGrp">
+							<td>Pixel off-alpha ch</td>
+							<td><input type="text" id = "expr_alpha_offName" value="alpha_off" maxlength="31"></td>
+							</tr>
+							</tr>
+					</table>
+				</td>
 			<td>
 				<table>
 					<tr>
@@ -161,271 +160,27 @@
 						</tr>
 					</table>
 				</td>
-				<td>
-					<table>
-						<tr>
-							<th>Parameter</th>
-							<th>GUI Name</th> 
-							<th>Visible</th>
-							<tr id = "sliderGrp">
-								<tr>
-									<td>slider Group</td>
-									<td><input type="text"   id="sliderGrpName" value="sliderGrp" maxlength="31"></td>
-									<td><input type="checkbox" name="sliderGrpVisible" id="sliderGrpVisible" onClick= "toogleCheckbox('cbsliders', 'sliderGrpVisible')" checked ></td>
-									</tr>
-								<tr>
-									<td>slider 01</td>
-									<td><input type="text" id = "slider01_name" value="slider01" maxlength="31"></td>
-									<td ><input type="checkbox" id="slider01Visible"  class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 02</td>
-									<td><input type="text" id = "slider02_name" value="slider02" maxlength="31"></td>
-									<td><input type="checkbox" id = "slider02Visible" class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 03</td>
-									<td><input type="text" id = "slider03_name" value="slider03" maxlength="31"></td>
-									<td><input type="checkbox" id="slider03Visible"class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 04</td>
-									<td><input type="text" id = "slider04_name" value="slider04" maxlength="31"></td>
-									<td><input type="checkbox" id="slider04Visible" class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 05</td>
-									<td><input type="text"  id = "slider05_name"  value="slider05" maxlength="31"></td>
-									<td><input type="checkbox" id="slider05Visible"  class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 06</td>
-									<td><input type="text" id = "slider06_name"  value="slider06" maxlength="31"></td>
-									<td><input type="checkbox" id="slider06Visible" class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 07</td>
-									<td><input type="text"  id = "slider07_name"  value="slider07" maxlength="31"></td>
-									<td><input type="checkbox" id="slider07Visible" class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 08</td>
-									<td><input type="text" id = "slider08_name"  value="slider08" maxlength="31"></td>
-									<td><input type="checkbox" id="slider08Visible" class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 09</td>
-									<td><input type="text" id = "slider09_name"  value="slider09" maxlength="31"></td>
-									<td><input type="checkbox" id="slider09Visible" class="cbsliders" checked></td>
-									</tr>
-								<tr>
-									<td>slider 10</td>
-									<td><input type="text"  id = "slider10_name"  value="slider10" maxlength="31"></td>
-									<td><input type="checkbox" id="slider10Visible"class="cbsliders" checked></td>
-									</tr>
-								</tr>
-							</tr>
-						</table>
-					</td>
-				<td>
-					<table>
-						<tr>
-							<th>Parameter</th>
-							<th>GUI Name</th> 
-							<th>Visible</th>
-							<tr id= "pointGrp">
-								<tr>
-									<td>point Group</td>
-									<td><input type="text"   id="pointGrpName" value="pointGrp" maxlength="31"></td>
-									<td><input type="checkbox" id="pointGrpVisible" onClick= "toogleCheckbox('cbpoints', 'pointGrpVisible')" checked ></td>
-									</tr>
-								<tr>
-									<td>point 01</td>
-									<td><input type="text" id = "point01_name" value="point01" maxlength="31"></td>
-									<td><input type="checkbox" id="point01Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 02</td>
-									<td><input type="text" id = "point02_name" value="point02" maxlength="31"></td>
-									<td><input type="checkbox" id="point02Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 03</td>
-									<td><input type="text" id = "point03_name" value="point03" maxlength="31"></td>
-									<td><input type="checkbox" id="point03Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 04</td>
-									<td><input type="text" id = "point04_name" value="point04" maxlength="31"></td>
-									<td><input type="checkbox" id="point04Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 05</td>
-									<td><input type="text"  id = "point05_name"  value="point05" maxlength="31"></td>
-									<td><input type="checkbox" id="point05Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 06</td>
-									<td><input type="text" id = "point06_name"  value="point06" maxlength="31"></td>
-									<td><input type="checkbox" id="point06Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 07</td>
-									<td><input type="text"  id = "point07_name"  value="point07" maxlength="31"></td>
-									<td><input type="checkbox" id="point07Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 08</td>
-									<td><input type="text" id = "point08_name"  value="point08" maxlength="31"></td>
-									<td><input type="checkbox" id="point08Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 09</td>
-									<td><input type="text" id = "point09_name"  value="point09" maxlength="31"></td>
-									<td><input type="checkbox" id="point09Visible" class="cbpoints" checked></td>
-									</tr>
-								<tr>
-									<td>point 10</td>
-									<td><input type="text"  id = "point10_name"  value="point10" maxlength="31"></td>
-									<td><input type="checkbox" id="point10Visible" class="cbpoints" checked></td>
-									</tr>
-								</tr>
-							</tr>
-						</table>
-					</td>
-				<td>
-					<table>
-						<tr>
-							<th>Parameter</th>
-							<th>GUI Name</th> 
-							<th>Visible</th>
-							<tr id = "cboxGrp">
-								<tr>
-									<td>cbox Group</td>
-									<td><input type="text"   id="cboxGrpName" value="cboxGrp" maxlength="31"></td>
-									<td><input type="checkbox" name="cboxGrpVisible" id="cboxGrpVisible" onClick= "toogleCheckbox('cbcboxs', 'cboxGrpVisible')" checked ></td>
-									</tr>
-								<tr>
-									<td>cbox 01</td>
-									<td><input type="text" id = "cbox01_name" value="cbox01" maxlength="31"></td>
-									<td><input  id = "cbox01_visible" type="checkbox" name="cbox01Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 02</td>
-									<td><input type="text" id = "cbox02_name" value="cbox02" maxlength="31"></td>
-									<td><input type="checkbox" id = "cbox02_visible" name="cbox02Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 03</td>
-									<td><input type="text" id = "cbox03_name" value="cbox03" maxlength="31"></td>
-									<td ><input type="checkbox" id = "cbox03_visible" name="cbox03Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 04</td>
-									<td><input type="text" id = "cbox04_name" value="cbox04" maxlength="31"></td>
-									<td ><input type="checkbox" id = "cbox04_visible" name="cbox04Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 05</td>
-									<td><input type="text"  id = "cbox05_name"  value="cbox05" maxlength="31"></td>
-									<td><input type="checkbox" id = "cbox05_visible" name="cbox05Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 06</td>
-									<td><input type="text" id = "cbox06_name"  value="cbox06" maxlength="31"></td>
-									<td><input type="checkbox" id = "cbox06_visible" name="cbox06Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 07</td>
-									<td><input type="text"  id = "cbox07_name"  value="cbox07" maxlength="31"></td>
-									<td><input type="checkbox" id = "cbox07_visible" name="cbox07Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 08</td>
-									<td><input type="text" id = "cbox08_name"  value="cbox08" maxlength="31"></td>
-									<td><input type="checkbox" id = "cbox08_visible" name="cbox08Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 09</td>
-									<td><input type="text" id = "cbox09_name"  value="cbox09" maxlength="31"></td>
-									<td><input type="checkbox" id = "cbox09_visible" name="cbox09Visible" class="cbcboxs" checked></td>
-									</tr>
-								<tr>
-									<td>cbox 10</td>
-									<td><input type="text"  id = "cbox10_name"  value="cbox10" maxlength="31"></td>
-									<td><input type="checkbox" id = "cbox10_visible" name="cbox10Visible" class="cbcboxs" checked></td>
-									</tr>
-								</tr>
-							</tr>
-						</table>
-					</td>
-				<td>
-					<table>
-						<tr>
-							<th>Parameter</th>
-							<th>GUI Name</th> 
-							<th>Visible</th>
-							<tr id = "colorGrp">
-								<tr>
-									<td>color Group</td>
-									<td><input type="text"   id="colorGrpName" value="colorGrp" maxlength="31"></td>
-									<td><input type="checkbox" name="colorGrpVisible" id="colorGrpVisible" onClick= "toogleCheckbox('cbcolors', 'colorGrpVisible')" checked ></td>
-									</tr>
-								<tr>
-									<td>color 01</td>
-									<td><input type="text" id = "color01_name" value="color01" maxlength="31"></td>
-									<td><input type="checkbox" id = "color01_visible" name="color01Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 02</td>
-									<td><input type="text" id = "color02_name" value="color02" maxlength="31"></td>
-									<td><input type="checkbox" id = "color02_visible" name="color02Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 03</td>
-									<td><input type="text" id = "color03_name" value="color03" maxlength="31"></td>
-									<td><input type="checkbox" id = "color03_visible" name="color03Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 04</td>
-									<td><input type="text" id = "color04_name" value="color04" maxlength="31"></td>
-									<td><input type="checkbox" id = "color04_visible" name="color04Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 05</td>
-									<td><input type="text"  id = "color05_name"  value="color05" maxlength="31"></td>
-									<td><input type="checkbox" id = "color05_visible" name="color05Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 06</td>
-									<td><input type="text" id = "color06_name"  value="color06" maxlength="31"></td>
-									<td><input type="checkbox" id = "color06_visible" name="color06Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 07</td>
-									<td><input type="text"  id = "color07_name"  value="color07" maxlength="31"></td>
-									<td><input type="checkbox"  id = "color07_visible" name="color07Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 08</td>
-									<td><input type="text" id = "color08_name"  value="color08" maxlength="31"></td>
-									<td><input type="checkbox" id = "color08_visible" name="color08Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 09</td>
-									<td><input type="text" id = "color09_name"  value="color09" maxlength="31"></td>
-									<td><input type="checkbox" id = "color09_visible" name="color09Visible" class="cbcolors" checked></td>
-									</tr>
-								<tr>
-									<td>color 10</td>
-									<td><input type="text"  id = "color10_name"  value="color10" maxlength="31"></td>
-									<td><input type="checkbox" id = "color10_visible" name="color10Visible" class="cbcolors" checked></td>
-									</tr>
-								</tr>
-							</tr>
-						</table>
-					</td>
-			</table>
+			<td>
+				<table  id="sliderGrp">
+					</table>
+				</td>
+			<td>
+				<table id="pointGrp">
+					</table>
+				</td>
+			<td>
+				<table id="cboxGrp">
+					</table>
+				</td>
+			<td>
+				<table id="colorGrp">
+					</table>
+				</td>
+			<td>
+				<table id="rotationGrp">
+					</table>
+				</td>
+		</table>
 		</div>
 	<div id = langSelecGrp>
 	<br />
@@ -437,7 +192,7 @@
 		</div>
 	<br/>
 	<br/>
-	<div class="tab">
+	<div class="tabEditors">
 		<div id ="expr_editor_settings" class="mathGUI">
 				<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
 				</div>
