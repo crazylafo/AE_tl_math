@@ -7,6 +7,16 @@
 #include "tl_math.h"
 #include "script.h"
 
+static void
+copyStrToChar(std::string input,
+			  A_char     *output[])
+{
+	#ifdef AE_OS_WIN
+	strncpy_s(*output[], input.c_str(), input.length() + 1);
+	#else
+	strncpy (*output, input.c_str(), input.length()+1);
+	#endif
+}
 
 static PF_Err
 GetLayerData(PF_InData     *in_data,
