@@ -19,6 +19,7 @@ function onLoaded() {
 	setParamsSettings("rotation", numParams, 1, "rotationGrp");
 	loadJSX();
 	sendMessageToPlugin();
+	
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
 	csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, onAppThemeColorChanged);
@@ -26,17 +27,19 @@ function onLoaded() {
 	var editors = setEditors();
 	//laod default arb
 	var arbdefaultStr = loadDefaultArb();
+	
 	var arbData = JSON.parse(arbdefaultStr);
 	copyDataToGUI (arbData, editors,numParams);
-
+	
 	//presets loading
 	var presetsList;
 	csInterface.addEventListener("tlmath.preset", function(fromPresetEvent){
 		presetsList = fromPresetEvent.data;
 		updatePresetMenu (presetsList, editors);
 	});
+	
 	loadPluginPresets(arbData);
-
+    
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
@@ -176,8 +179,8 @@ function cleanJsonFromArbStr (str){
 function setflagFromGL (arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
-		if (arbData.gl_expression.gl_frag_sh.indexOf(strArr[i]) !=-1 ||
-		arbData.gl_expression.gl_vert_sh.indexOf(strArr[i]) !=-1){
+		if (arbData.gl_expression.gl33_frag_sh.indexOf(strArr[i]) !=-1 ||
+		arbData.gl_expression.gl33_vert_sh.indexOf(strArr[i]) !=-1){
 			boolResultB = true;
 		} 
 	}
@@ -209,32 +212,41 @@ function setflagFromExpr (arbData, strArr){
 function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 	var grp = document.getElementById(paramGroupId);
 	var paramGrpStr = '<th>Parameter</th> \n'+
-	'<th>GUI Name</th>\n'+
 	'<th>Visible</th>\n'+
+		'<th>GUI Name</th>\n'+
+		'<th>default value</th>\n'+
 		'<tr>'+
 		'<td>'+paramName+' Group</td> \n'+
+		'<td><input type="checkbox" name="'+paramName+'GrpVisible" id="'+paramName+'GrpVisible"'+
+		'onClick= "toogleCheckbox(\'cb'+paramName+'\', \''+paramName+'GrpVisible\')" checked ></td> \n'+
 		'<td><input type="text"   id="'+paramName+'GrpName" value="'+paramName+'Grp" maxlength="31"></td> \n'+
-		'<td><input type="checkbox" name="'+paramName+'GrpVisible" id="'+paramName+'+GrpVisible" onClick= "toogleCheckbox(\'cb'+paramName+'\', \''+paramName+'GrpVisible\')" checked ></td> \n'+
 		'</tr> \n';
 	grp.innerHTML =paramGrpStr;
 	strGrp ="";
 	for (var i=0; i<numParams; i++){
 		var paramStr ='<tr>'+
 			'<td>'+paramName+' '+i+'</td> \n'+
-			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+i+'" maxlength="31"></td> \n'+
 			'<td ><input type="checkbox" id="'+paramName+i+'_visible"  class="cb'+paramName+'" checked></td> \n'+
+			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+i+'" maxlength="31"></td> \n'+
+			'<td><table>';
+		for (var j=0; j<paramDimension; j++){
+			paramStr += '<td><input type="text" id = "'+paramName+i+'_defaultVal'+j+'" value="'+j+'" maxlength="10"></td> \n';
+		}
+		paramStr +='</table></td> \n'+
 			'</tr> \n'
 		strGrp+=paramStr;
 		}
 		grp.innerHTML +=strGrp;
 	}
 function getParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
-
 	$("#"+paramName+"GrpName").val(arbData.gui_settings[paramGroupId].grpName.toString());
 	$("#input[name="+paramName+"GrpVisible]").prop('checked', arbData.gui_settings[paramGroupId].grpVisibleB);
 	for (var i=0; i<numParams; i++){
 		$("#"+paramName+i+"_name").val(arbData.gui_settings[paramGroupId].params[i].name.toString());
 		$("input[names"+paramName+i+"Visible]").prop('checked', arbData.gui_settings[paramGroupId].params[i].visibleB);
+		for (var j=0; j<paramDimension; j++){
+			$("#"+paramName+i+'_defaultVal'+j).val(arbData.gui_settings[paramGroupId].params[i].defaultVal[j]);
+			}
 		}
 	}
 function sendParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
@@ -244,23 +256,26 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 	for (var i=0; i<numParams; i++){
 		arbData.gui_settings[paramGroupId].params[i].name =$("#"+paramName+i+"_name").val().toString();
 		arbData.gui_settings[paramGroupId].params[i].visibleB= $("#"+paramName+i+"Visible").is(':checked');
+		for(var j=0; j<paramDimension; j++){
+			arbData.gui_settings[paramGroupId].param[i].defaultVal[j]=$("#"+paramName+i+'defaultVal'+j).val();
+		}
 	}
 	return arbData;
 
 }
 function copyDataToGUI (arbData, editors, numParams) {
-	$("#gl_frag_tab_console").html(arbData.gl_expression.gl_frag_error.toString().replace("\\n", "<br/>"));
-	$("#gl_vert_tab_console").html(arbData.gl_expression.gl_vert_error.toString().replace("\\n", "<br/>"));
+	$("#gl33_frag_tab_console").html(arbData.gl_expression.gl33_frag_error.toString().replace("\\n", "<br/>"));
+	$("#gl33_vert_tab_console").html(arbData.gl_expression.gl33_vert_error.toString().replace("\\n", "<br/>"));
 	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
 	$("#expr_green_tab_console").html(arbData.math_expression.green_error.toString().replace("\\n", "<br/>"));
 	$("#expr_blue_tab_console").html(arbData.math_expression.blue_error.toString().replace("\\n", "<br/>"));
 	$("#expr_rgb_tab_console").html(arbData.math_expression.rgb_error.toString().replace("\\n", "<br/>"));
 	$("#expr_alpha_tab_console").html(arbData.math_expression.alpha_error.toString().replace("\\n", "<br/>"));
-	if (arbData.gl_expression.gl_frag_sh){
-		editors.gl_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl_frag_sh.toString()), -1);
+	if (arbData.gl_expression.gl33_frag_sh){
+		editors.gl33_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl33_frag_sh.toString()), -1);
 	}
-	if (arbData.gl_expression.gl_vert_sh){
-		editors.gl_vert_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl_vert_sh.toString()), -1);
+	if (arbData.gl_expression.gl33_vert_sh){
+		editors.gl33_vert_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl33_vert_sh.toString()), -1);
 	}
 	if (arbData.math_expression.redExpr){
 		editors.expr_red_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.redExpr.toString(), -1));
@@ -280,7 +295,7 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#presetName").val( cleanJsonFromArbStr(arbData.effectInfo.presetName.toString()));
 	$("#descriptionText").val(cleanJsonFromArbStr(arbData.effectInfo.description.toString()));
 	$("#presetTags").val(arbData.effectInfo.tags.toString());
-	if(arbData.effectMode.gl_modeB){
+	if(arbData.effectMode.gl33_modeB){
 		$("#langSelec").val("GLSL"); 
 	}
 	if(arbData.effectMode.expr_modeB){
@@ -320,8 +335,8 @@ function copyDataToGUI (arbData, editors, numParams) {
 	}
 function sendDataToPlugin(editors, arbData, numParams) {
 	//copy  expressions
-	arbData.gl_expression.gl_frag_sh = cleanJsonToArbStr((editors.gl_frag_editor.getValue()).toString());
-	arbData.gl_expression.gl_vert_sh = cleanJsonToArbStr(( editors.gl_vert_editor.getValue()).toString());
+	arbData.gl_expression.gl33_frag_sh = cleanJsonToArbStr((editors.gl33_frag_editor.getValue()).toString());
+	arbData.gl_expression.gl33_vert_sh = cleanJsonToArbStr(( editors.gl33_vert_editor.getValue()).toString());
 	arbData.math_expression.redExpr= cleanJsonToArbStr((editors.expr_red_editor.getValue()).toString());
 	arbData.math_expression.greenExpr =cleanJsonToArbStr(( editors.expr_green_editor.getValue()).toString())
 	arbData.math_expression.blueExpr =  cleanJsonToArbStr((editors.expr_blue_editor.getValue()).toString());
@@ -333,7 +348,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	//detect if flags are active or not    
 	
 	//copy  mode settings
-	($("#langSelec").val() ==("GLSL") ? arbData.effectMode.gl_modeB=true : arbData.effectMode.gl_modeB=false);
+	($("#langSelec").val() ==("GLSL") ? arbData.effectMode.gl33_modeB=true : arbData.effectMode.gl33_modeB=false);
 	($("#langSelec").val() ==("mExpr")? arbData.effectMode.expr_modeB=true : arbData.effectMode.expr_modeB = false);
 	
 	//copy compo settings	
@@ -371,7 +386,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
 	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
 
-	if (arbData.effectMode.gl_modeB){
+	if (arbData.effectMode.gl33_modeB){
 
 		arbData.flags.needsPixelAroundB = false;// only for expr mode
 		arbData.flags.needsLumaB = false; // only for expr mode
@@ -389,24 +404,24 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	return arbData;
 	}
 function toogleCheckbox(className, currId){
-	classItems = document.getElementsByClassName(className);
-	parentItem =  document.getElementById(currId);
-
+	var classItems = document.getElementsByClassName(className);
+	var parentItem =  document.getElementById(currId);
 	if (parentItem.checked ==true){
 		for (var i=0; i<classItems.length; i++){
+			alert (classItems[i])
 			classItems[i].checked = true;
-		}
-	}
+			}
+		}	
 	else{
 		for (var i=0; i<classItems.length; i++){
 			classItems[i].checked = false;
+			}
 		}
-	}
 	}
 function setEditors(){
 	var editors = {};
-	editors.gl_frag_editor = glslEditor("gl_frag_editor");
-	editors.gl_vert_editor= glslEditor("gl_vert_editor");
+	editors.gl33_frag_editor = glslEditor("gl33_frag_editor");
+	editors.gl33_vert_editor= glslEditor("gl33_vert_editor");
 	editors.expr_red_editor = exprEditor("expr_red_editor");
 	editors.expr_green_editor = exprEditor("expr_green_editor");
 	editors.expr_blue_editor = exprEditor("expr_blue_editor");
@@ -421,6 +436,7 @@ function defaultVal(){
 	toggleSettings();
 	tooglePresets();
 	toggleDescription();
+	openSettingsMenu("settingsGrp")
 	}
 function tooglePresets(){
 	var presetsMenu = document.getElementById("presetId");
@@ -447,6 +463,19 @@ function toggleDescription(){
 		}
 	else{
 		descrMenu.style.display = "none";
+		}
+	}
+function openSettingsMenu (settingIdName){
+	var settArray = ["settingsGrp","exprSettingsGrp", "layerGrp", "sliderGrp", "pointGrp", "cboxGrp", "colorGrp","rotationGrp"];
+	
+	for (var i =0; i<settArray.length; i++){
+		if (settArray[i].toString() === settingIdName){
+			var displayList = document.getElementById(settingIdName);
+			displayList.style.display = "block";
+		}else{
+			var hideList = document.getElementById(settArray[i].toString());
+			hideList.style.display = "none";
+			}
 		}
 	}
 function openEditor(evt, tabName) {
@@ -516,7 +545,7 @@ function glslGuiModeFunc(){
 		for (var i =0; i< glslGui.length; i++){
 			$(glslGui[i]).show();
 		}
-		openEditor(event, 'gl_frag_tab');
+		openEditor(event, 'gl33_frag_tab');
 
 	}	
 function langSelecFunc() {

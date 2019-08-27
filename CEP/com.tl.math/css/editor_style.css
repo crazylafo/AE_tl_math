@@ -1,6 +1,6 @@
 
 
-#gl_frag_tab, #gl_vert_tab{
+#gl33_frag_tab, #gl33_vert_tab{
     width:90%;
     height: 600px;
     display:inline-block;
@@ -16,7 +16,7 @@
 }
 
 
-#gl_frag_editor, #gl_vert_editor{
+#gl33_frag_editor, #gl33_vert_editor{
     position: absolute;
     margin: 1%;
     top: 5%;
@@ -41,7 +41,7 @@
     margin: 1%;
 }
 
-#gl_frag_tab_console, #gl_vert_tab_console{
+#gl33_frag_tab_console, #gl33_vert_tab_console{
     background: black;
     color: #ddd;
     width:50%;
