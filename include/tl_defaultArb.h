@@ -10,24 +10,24 @@
 
 static std::string defaultArb = R"=====(
 {
-	   "effectInfo":{
+    "effectInfo":{
         "effectName":"tlMath",
         "pluginVersion":1.15,
         "minimalPluginVersion":1.15,
-        "tags":"default",
-        "presetName":"default_preset test",
+        "tags":["default", "glsl", "expr","skeleton"],
+        "presetName":"default_preset",
         "description":"simple skeleton effect"
     },
     "effectMode":{
-        "gl_modeB":false,
+        "gl33_modeB":false,
         "expr_modeB":true,
         "evalModeB":false
     },
     "gl_expression":{
-        "gl_frag_sh":"#version 330 // glsls version for opengl 3.3\\nuniform sampler2D texture0; //call the layer source\\nuniform float slider_1;// call somes variables from the ui\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec4 textureIn = texture( tex2d, uv.xy);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n\\nvoid main(void)\\n{\\n    fragColorOut= loadTextureFromAE(texture0, out_uvs.xy);\\n    fragColorOut.r *=slider_1/100; \\n}",
-        "gl_vert_sh":"#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}",
-        "gl_frag_error" : "fragment shader\\n compiled",
-        "gl_vert_error" : "vertex shader\\n compiled"
+        "gl33_frag_sh":"#version 330 // glsls version for opengl 3.3\\nuniform sampler2D texture0; //call the layer source\\nuniform float slider_1;// call somes variables from the ui\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec4 textureIn = texture( tex2d, uv.xy);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n\\nvoid main(void)\\n{\\n    fragColorOut= loadTextureFromAE(texture0, out_uvs.xy);\\n    fragColorOut.r *=slider_1/100; \\n}",
+        "gl33_vert_sh":"#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}",
+        "gl33_frag_error" : "fragment shader\\n compiled",
+        "gl33_vert_error" : "vertex shader\\n compiled"
     },
     "math_expression":{
         "redExpr":"texture0[0]",
@@ -39,15 +39,15 @@ static std::string defaultArb = R"=====(
         "green_error" : "green channel expression \\n compiled",
         "blue_error" : "blue channel expression \\n compiled",
         "alpha_error" : "alpha channel expression \\n compiled",
-		"rgb_error" : "rgb expression \\n compiled",
+        "rgb_error" : "rgb expression \\n compiled",
         "exprRGBModeB":true,
-		"expr_current_channel":"inChannel",
-		"expr_pix":"pix",
-		"expr_luma":"luma",
-		"expr_red_off":"red_off",
-		"expr_green_off":"green_off",
-		"expr_blue_off":"blue_off",
-		"expr_alpha_off":"alpha_off"
+        "expr_current_channel":"inChannel",
+        "expr_pix":"pix",
+        "expr_luma":"luma",
+        "expr_red_off":"red_off",
+        "expr_green_off":"green_off",
+        "expr_blue_off":"blue_off",
+        "expr_alpha_off":"alpha_off"
     },
     "flags":{
         "needsPixelAroundB":false,
@@ -58,9 +58,9 @@ static std::string defaultArb = R"=====(
     },
     "composition":{
         "resolution":"resolution",
-		"layerPosition": "layerPosition",
-	    "layerScale":"layerScale",
-	    "compResolution": "compResolution", 
+        "layerPosition": "layerPosition",
+        "layerScale":"layerScale",
+        "compResolution": "compResolution",
         "time_sec":"time",
         "time_frame":"timef",
         "frame_rate":"fps",
@@ -68,184 +68,287 @@ static std::string defaultArb = R"=====(
         "camera_target":"camera_target",
         "camera_zoom":"camera_zoom",
         "camera_rotation": "camera_rotation"
-
     },
     "gui_settings":{
         "sliderGrp":{
             "grpVisibleB":true,
             "grpName":"Slider Group",
-            "slider_1":{
-                "visibleB":true,
-                "name":"slider_1"
-            },
-            "slider_2":{
-                "visibleB":true,
-                "name":"slider_2"
-            },
-            "slider_3":{
-                "visibleB":true,
-                "name":"slider_3"
-            },
-            "slider_4":{
-                "visibleB":true,
-                "name":"slider_4"
-            },
-            "slider_5":{
-                "visibleB":true,
-                "name":"slider_5"
-            },
-            "slider_6":{
-                "visibleB":true,
-                "name":"slider_6"
-            },
-            "slider_7":{
-                "visibleB":true,
-                "name":"slider_7"
-            },
-            "slider_8":{
-                "visibleB":true,
-                "name":"slider_8"
-            },
-            "slider_9":{
-                "visibleB":true,
-                "name":"slider_9"
-            },
-            "slider_10":{
-                "visibleB":true,
-                "name":"slider_10"
-            }
+            "params":[
+                      {
+                          "visibleB":true,
+                          "name":"slider_1",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_2",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_3",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_4",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_5",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_6",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_7",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_8",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_9",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_10",
+                          "defaultVal":[0]
+                      }
+                      ]
         },
         "pointGrp":{
             "grpVisibleB":true,
             "grpName":"3d Point Group",
-            "point_1":{
-                "visibleB":true,
-                "name":"point_1"
-            },
-            "point_2":{
-                "visibleB":true,
-                "name":"point_2"
-            },
-            "point_3":{
-                "visibleB":true,
-                "name":"point_3"
-            },
-            "point_4":{
-                "visibleB":true,
-                "name":"point_4"
-            },
-            "point_5":{
-                "visibleB":true,
-                "name":"point_5"
-            },
-            "point_6":{
-                "visibleB":true,
-                "name":"point_6"
-            },
-            "point_7":{
-                "visibleB":true,
-                "name":"point_7"
-            },
-            "point_8":{
-                "visibleB":true,
-                "name":"point_8"
-            },
-            "point_9":{
-                "visibleB":true,
-                "name":"point_9"
-            },
-            "point_10":{
-                "visibleB":true,
-                "name":"point_10"
-            }
+            "params": [
+                       {
+                           "visibleB":true,
+                           "name":"point_1",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_2",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_3",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_4",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_5",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_6",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_7",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_8",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_9",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_10",
+                           "defaultVal":[50,50,50]
+                       }
+                       ]
         },
         "colorGrp":{
             "grpVisibleB":true,
             "grpName":"3d color Group",
-            "color_1":{
-                "visibleB":true,
-                "name":"color_1"
-            },
-            "color_2":{
-                "visibleB":true,
-                "name":"color_2"
-            },
-            "color_3":{
-                "visibleB":true,
-                "name":"color_3"
-            },
-            "color_4":{
-                "visibleB":true,
-                "name":"color_4"
-            },
-            "color_5":{
-                "visibleB":true,
-                "name":"color_5"
-            },
-            "color_6":{
-                "visibleB":true,
-                "name":"color_6"
-            },
-            "color_7":{
-                "visibleB":true,
-                "name":"color_7"
-            },
-            "color_8":{
-                "visibleB":true,
-                "name":"color_8"
-            },
-            "color_9":{
-                "visibleB":true,
-                "name":"color_9"
-            },
-            "color_10":{
-                "visibleB":true,
-                "name":"color_10"
-            }
+            "params": [
+                       {
+                           "visibleB":true,
+                           "name":"color_1",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_2",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_3",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_4",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_5",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_6",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_7",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_8",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_9",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_10",
+                           "defaultVal":[1.0,1.0,1.0]
+                       }
+                       ]
         },
         "cboxGrp":{
             "grpVisibleB":true,
             "grpName":"check box Group",
-            "cbox_1":{
-                "visibleB":true,
-                "name":"cbox_1"
-            },
-            "cbox_2":{
-                "visibleB":true,
-                "name":"cbox_2"
-            },
-            "cbox_3":{
-                "visibleB":true,
-                "name":"cbox_3"
-            },
-            "cbox_4":{
-                "visibleB":true,
-                "name":"cbox_4"
-            },
-            "cbox_5":{
-                "visibleB":true,
-                "name":"cbox_5"
-            },
-            "cbox_6":{
-                "visibleB":true,
-                "name":"cbox_6"
-            },
-            "cbox_7":{
-                "visibleB":true,
-                "name":"cbox_7"
-            },
-            "cbox_8":{
-                "visibleB":true,
-                "name":"cbox_8"
-            },
-            "cbox_9":{
-                "visibleB":true,
-                "name":"cbox_9"
-            },
-            "cbox_10":{
-                "visibleB":true,
-                "name":"cbox_10"
-            }
+            "params": [
+                       {
+                           "visibleB":true,
+                           "name":"cbox_1",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_2",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_3",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_4",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_5",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_6",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_7",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_8",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_9",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_10",
+                           "defaultVal":[0]
+                       }
+                       ]
+        },
+        "rotationGrp":{
+            "grpVisibleB":true,
+            "grpName":"rotation Group",
+            "params": [
+                       {
+                           "visibleB":true,
+                           "name":"rotation_1",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_2",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_3",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_4",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_5",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_6",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_7",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_8",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_9",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_10",
+                           "defaultVal":[0]
+                       }
+                       ]
         },
         "layerGrp":{
             "grpVisibleB":true,
