@@ -5,7 +5,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommand>C:\Program Files\Adobe\Adobe After Effects CC 2018\Support Files\AfterFX.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommand>C:\Program Files\Adobe\Adobe After Effects CC 2019\Support Files\AfterFX.exe</LocalDebuggerCommand>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

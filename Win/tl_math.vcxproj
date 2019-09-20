@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B1EA93DE-D4BB-4B73-B0F4-441B9B0E077E}</ProjectGuid>
     <RootNamespace>tl_math</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <ProjectName>tl_math</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -401,6 +401,7 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClCompile Include="..\..\..\Util\Smart_Utils.cpp" />
     <ClCompile Include="..\src\tl_mathParams.cpp" />
     <ClCompile Include="..\src\tl_mathRender.cpp" />
+    <ClCompile Include="..\src\tl_mathSeqData.cpp" />
     <ClCompile Include="..\src\tl_math_Dialogs.cpp" />
     <ClCompile Include="..\src\tl_math_iterators.cpp" />
     <ClCompile Include="..\src\tl_math_Strings.cpp" />
