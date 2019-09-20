@@ -383,20 +383,20 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor10NameAc);
 		glUniform3f(location, miP->inColors[9].color[0], miP->inColors[9].color[1], miP->inColors[9].color[2]);
 
-		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_sec);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_secNameAc);
 		glUniform1f(location, miP->layerTime_Sec);
 
-		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_frame);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_frameNameAc);
 		glUniform1f(location, miP->layerTime_Frame);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->resolution);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->resolutionNameAc);
 		glUniform2f(location, miP->layerSizeF[0], miP->layerSizeF[1]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->frame_rate);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->frame_rateNameAc);
 		glUniform1f(location, miP->compFpsF);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerPosition);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerPositionNameAc);
 		glUniform3f(location, miP->layerPos.point[0], convertYCoordAEToGL(miP->layerPos.point[1], heightL), miP->layerPos.point[2]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerScale);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->layerScaleNameAc);
 		glUniform3f(location, miP->layerScale.point[0], convertYCoordAEToGL( miP->layerScale.point[1], heightL), miP->layerScale.point[2]);
-		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->compResolution);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->compResolutionNameAc);
 		glUniform2f(location, miP->compSizeF[0], miP->compSizeF[1]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->cameraPosNameAc);
 		glUniform3f(location, miP->cameraPos.point[0], convertYCoordAEToGL(miP->cameraPos.point[1], heightL), miP->cameraPos.point[2]);

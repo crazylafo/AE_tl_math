@@ -97,13 +97,13 @@ typedef struct {
 	A_char rgbError[4096];
     A_char Glsl_VertError[25000];
     A_char Glsl_fragError[25000];
-	A_char   resolution[32];
-	A_char   layerPosition[32];
-	A_char   layerScale[32];
-	A_char   compResolution[32];
-	A_char   time_sec[32];
-	A_char   time_frame[32];
-	A_char   frame_rate[32];
+	A_char  resolutionNameAc[32];
+	A_char  layerPositionNameAc[32];
+	A_char  layerScaleNameAc[32];
+	A_char  compResolutionNameAc[32];
+	A_char  time_secNameAc[32];
+	A_char  time_frameNameAc[32];
+	A_char  frame_rateNameAc[32];
 
     A_char expr_ColorChNameAc[32];
 	A_char	expr_pixNameAc[32];
@@ -493,8 +493,8 @@ public:
         symbol_table.add_vector(seqP->expr_green_offNameAc,miP->m9P_green);
         symbol_table.add_vector(seqP->expr_blue_offNameAc, miP->m9P_blue);
         symbol_table.add_vector(seqP->expr_alpha_offNameAc, miP->m9P_alpha);
-        symbol_table.add_vector(seqP->resolution        ,miP->layerSizeF);
-        symbol_table.add_vector(seqP->compResolution    , miP->compSizeF);
+        symbol_table.add_vector(seqP->resolutionNameAc,miP->layerSizeF);
+        symbol_table.add_vector(seqP->compResolutionNameAc, miP->compSizeF);
         symbol_table.add_vector(seqP->paramPoint01NameAc, miP->inPoints[0].point);
         symbol_table.add_vector(seqP->paramPoint02NameAc, miP->inPoints[1].point);
 		symbol_table.add_vector(seqP->paramPoint03NameAc, miP->inPoints[2].point);
@@ -516,8 +516,8 @@ public:
         symbol_table.add_vector(seqP->paramColor09NameAc, miP->inColors[8].color);
         symbol_table.add_vector(seqP->paramColor10NameAc, miP->inColors[9].color);
 
-        symbol_table.add_vector(seqP->layerPosition, miP->layerPos.point);
-        symbol_table.add_vector(seqP->layerScale, miP->layerScale.point);
+        symbol_table.add_vector(seqP->layerPositionNameAc, miP->layerPos.point);
+        symbol_table.add_vector(seqP->layerScaleNameAc, miP->layerScale.point);
 		symbol_table.add_vector(seqP->cameraPosNameAc, miP->cameraPos.point);
 		symbol_table.add_vector(seqP->cameraTargetNameAc, miP->cameraTarget.point);
 		symbol_table.add_vector(seqP->cameraRotationNameAc, miP->cameraRotation.point);
@@ -545,9 +545,9 @@ public:
         symbol_table.add_constant(seqP->paramCb08NameAc, miP->inCboxF[7]);
         symbol_table.add_constant(seqP->paramCb09NameAc, miP->inCboxF[8]);
         symbol_table.add_constant(seqP->paramCb10NameAc, miP->inCboxF[9]);
-        symbol_table.add_constant(seqP->time_sec ,miP->layerTime_Sec);
-        symbol_table.add_constant(seqP->time_frame,miP->layerTime_Frame);
-        symbol_table.add_constant(seqP->frame_rate, miP->compFpsF);
+        symbol_table.add_constant(seqP->time_secNameAc ,miP->layerTime_Sec);
+        symbol_table.add_constant(seqP->time_frameNameAc,miP->layerTime_Frame);
+        symbol_table.add_constant(seqP->frame_rateNameAc, miP->compFpsF);
         expression.register_symbol_table(symbol_table);
         parser->compile(exprstr,expression);
         if (!parser->compile(exprstr,expression))

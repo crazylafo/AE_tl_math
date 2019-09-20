@@ -431,48 +431,6 @@ MakeParamCopy(
 
 }
 PF_Err
-tlmath_updateSeqData(PF_InData			*in_data,
-	PF_OutData			*out_data,
-	PF_ParamDef			*params[])
-{
-	PF_Err				err = PF_Err_NONE;
-	AEGP_SuiteHandler		suites(in_data->pica_basicP);
-	PF_ParamDef arb_param;
-	PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
-	m_ArbData        *arbInP = NULL;
-	std::string arbDataStr;
-	AEFX_CLR_STRUCT(arb_param);
-	ERR(PF_CHECKOUT_PARAM(in_data,
-		MATH_ARB_DATA,
-		in_data->current_time,
-		in_data->time_step,
-		in_data->time_scale,
-		&arb_param));
-
-	AEFX_CLR_STRUCT(arbInP);
-	arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-	if (!arbInP) {
-		err = PF_Err_OUT_OF_MEMORY;
-	}
-	else {
-		arbDataStr = arbInP->arbDataAc;
-	}
-	if (seq_dataH && !err) {
-		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-		if (seqP->initializedB == false) {
-			copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
-			seqP->initializedB = true;
-			out_data->sequence_data = seq_dataH;
-
-		}
-		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
-	}
-	else {    // whoa, we couldn't allocate sequence data; bail!
-		err = PF_Err_OUT_OF_MEMORY;
-	}
-	return err;
-}
-PF_Err
 tlmath_UpdateParameterUI(
 	PF_InData			*in_data,
 	PF_OutData			*out_data,

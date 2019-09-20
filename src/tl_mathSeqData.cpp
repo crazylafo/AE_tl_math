@@ -27,6 +27,41 @@ static void scriptCorrectorStr(std::string &str)
     strReplace(str, "\\'", "\'");
 }
 
+
+static std::string  copyStrFromJsonToSeqData(nlohmann::json arbDataJS,
+								  std::string json_adress)
+{
+	nlohmann::json::json_pointer jpointer(json_adress);
+	std::string dataStr = arbDataJS[jpointer].get<std::string>();
+	return dataStr;
+}
+
+static bool getBoolFromJsonToSeqData(nlohmann::json arbDataJS,
+	std::string json_adress)
+{
+	nlohmann::json::json_pointer jpointer(json_adress);
+	bool dataBool = arbDataJS[jpointer].get<bool>();
+	return dataBool;
+}
+
+
+static std::string  copyExprFromJsonToSeqData(nlohmann::json arbDataJS,
+												std::string json_adress)
+{
+	nlohmann::json::json_pointer jpointer(json_adress);
+	std::string dataStr = arbDataJS[jpointer].get<std::string>();
+	ExprtkCorrectorStr(dataStr);
+	return dataStr;
+}
+static std::string  copyShaderFromJsonToSeqData(nlohmann::json arbDataJS,
+	std::string json_adress)
+{
+	nlohmann::json::json_pointer jpointer(json_adress);
+	std::string dataStr = arbDataJS[jpointer].get<std::string>();
+	scriptCorrectorStr(dataStr);
+	return dataStr;
+}
+
 PF_Err
 copyFromArbToSeqData(PF_InData        *in_data,
                      PF_OutData        *out_data,
@@ -46,396 +81,161 @@ copyFromArbToSeqData(PF_InData        *in_data,
                                               errMess.c_str());
         return PF_Err_INTERNAL_STRUCT_DAMAGED;
     }
-
-    //std::string effect_name = arbDataJS["/effectInfo/effectName"_json_pointer];
-    //std::string effect_presetName=(arbDataJS["/effectInfo/presetName"_json_pointer]);
-
-    auto effect_presetName=arbDataJS["/effectInfo/presetName"_json_pointer].get<std::string>();
-    effect_presetName.copy( seqDataP->presetNameAc, sizeof(seqDataP->presetNameAc));
-
-    //strncpy(seqDataP->presetNameAc, effect_presetName.c_str(), effect_presetName.length() + 1);
-
-
-    std::string effect_description=(arbDataJS["/effectInfo/description"_json_pointer]);
-
-    bool mode_glB    = arbDataJS["/effectMode/gl_modeB"_json_pointer];
-    bool mode_exprB     = arbDataJS["/effectMode/expr_modeB"_json_pointer];
-    bool mode_evalB     = arbDataJS["/effectMode/evalModeB"_json_pointer];
-
-    std::string gl_fragsh =  (arbDataJS["/gl_expression/gl_frag_sh"_json_pointer]);
-    std::string gl_vertsh = (arbDataJS["/gl_expression/gl_vert_sh"_json_pointer]);
-
-    std::string expr_red = (arbDataJS["/math_expression/redExpr"_json_pointer]);
-    std::string expr_green = (arbDataJS["/math_expression/greenExpr"_json_pointer]);
-    std::string expr_blue= (arbDataJS["/math_expression/blueExpr"_json_pointer]);
-    std::string expr_rgb = (arbDataJS["/math_expression/rgbExpr"_json_pointer]);
-    std::string expr_alpha = (arbDataJS["/math_expression/alphaExpr"_json_pointer]);
-
-    scriptCorrectorStr(gl_fragsh);
-    scriptCorrectorStr(gl_vertsh);
-    ExprtkCorrectorStr(expr_red);
-    ExprtkCorrectorStr(expr_green);
-    ExprtkCorrectorStr(expr_blue);
-    ExprtkCorrectorStr(expr_alpha);
-    ExprtkCorrectorStr(expr_rgb);
-
-    std::string expr_ColorChNameAc = (arbDataJS["/math_expression/expr_current_channel"_json_pointer]);
-    std::string expr_pix = (arbDataJS["/math_expression/expr_pix"_json_pointer]);
-    std::string expr_luma = (arbDataJS["/math_expression/expr_luma"_json_pointer]);
-    std::string expr_red_off = (arbDataJS["/math_expression/expr_red_off"_json_pointer]);
-    std::string expr_green_off = (arbDataJS["/math_expression/expr_green_off"_json_pointer]);
-    std::string expr_blue_off = (arbDataJS["/math_expression/expr_blue_off"_json_pointer]);
-    std::string expr_alpha_off = (arbDataJS["/math_expression/expr_alpha_off"_json_pointer]);
-
-    bool  exprRGBModeB = (arbDataJS["/math_expression/exprRGBModeB"_json_pointer]);
-    bool  param_pixelAroundB= (arbDataJS["/flags/needsPixelAroundB"_json_pointer]);
-    bool param_ExternalInputB = (arbDataJS["/flags/pixelsCallExternalInputB"_json_pointer]);
-    bool param_lumaB = (arbDataJS["/flags/needsLumaB"_json_pointer]);
-    bool paramWideeInputB= (arbDataJS["/flags/presetHasWideInputB"_json_pointer]);
-    bool  usesCameraB = (arbDataJS["/flags/usesCameraB"_json_pointer]);
-
-    std::string camera_position = (arbDataJS["/composition/camera_position"_json_pointer]);
-    std::string camera_target = (arbDataJS["/composition/camera_target"_json_pointer]);
-    std::string camera_zoom = (arbDataJS["/composition/camera_zoom"_json_pointer]);
-    std::string camera_rotation = (arbDataJS["/composition/camera_rotation"_json_pointer]);
-
-    std::string setting_resolutionName = (arbDataJS["/composition/resolution"_json_pointer]);
-    std::string setting_layerPosition = (arbDataJS["/composition/layerPosition"_json_pointer]);
-    std::string setting_layerScale = (arbDataJS["/composition/layerScale"_json_pointer]);
-    std::string setting_compResolution = (arbDataJS["/composition/compResolution"_json_pointer]);
-    std::string setting_timeSecName= (arbDataJS["/composition/time_sec"_json_pointer]);
-    std::string setting_timeFrameName= (arbDataJS["/composition/time_frame"_json_pointer]);
-    std::string setting_frameRateName= (arbDataJS["/composition/frame_rate"_json_pointer]);
-
-    bool slider_grpVisibleB = (arbDataJS["/gui_settings/sliderGrp/grpVisibleB"_json_pointer]);
-    std::string slider_grpName = (arbDataJS["/gui_settings/sliderGrp/grpName"_json_pointer]);
-    bool slider_01VisibleB =    (arbDataJS["/gui_settings/sliderGrp/slider_1/visibleB"_json_pointer]);
-    std::string slider_01Name = (arbDataJS["/gui_settings/sliderGrp/slider_1/name"_json_pointer]);
-    bool slider_02VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_2/visibleB"_json_pointer]);
-    std::string slider_02Name = (arbDataJS["/gui_settings/sliderGrp/slider_2/name"_json_pointer]);
-    bool slider_03VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_3/visibleB"_json_pointer]);
-    std::string slider_03Name = (arbDataJS["/gui_settings/sliderGrp/slider_3/name"_json_pointer]);
-    bool slider_04VisibleB =(arbDataJS["/gui_settings/sliderGrp/slider_4/visibleB"_json_pointer]);
-    std::string slider_04Name = (arbDataJS["/gui_settings/sliderGrp/slider_4/name"_json_pointer]);
-    bool slider_05VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_5/visibleB"_json_pointer]);
-    std::string slider_05Name = (arbDataJS["/gui_settings/sliderGrp/slider_5/name"_json_pointer]);
-    bool slider_06VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_6/visibleB"_json_pointer]);
-    std::string slider_06Name = (arbDataJS["/gui_settings/sliderGrp/slider_6/name"_json_pointer]);
-    bool slider_07VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_7/visibleB"_json_pointer]);
-    std::string slider_07Name = (arbDataJS["/gui_settings/sliderGrp/slider_7/name"_json_pointer]);
-    bool slider_08VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_8/visibleB"_json_pointer]);
-    std::string slider_08Name = (arbDataJS["/gui_settings/sliderGrp/slider_8/name"_json_pointer]);
-    bool slider_09VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_9/visibleB"_json_pointer]);
-    std::string slider_09Name=(arbDataJS["/gui_settings/sliderGrp/slider_9/name"_json_pointer]);
-    bool slider_10VisibleB = (arbDataJS["/gui_settings/sliderGrp/slider_10/visibleB"_json_pointer]);
-    std::string slider_10Name =(arbDataJS["/gui_settings/sliderGrp/slider_10/name"_json_pointer]);
-
-    bool point_grpVisibleB = (arbDataJS["/gui_settings/pointGrp/grpVisibleB"_json_pointer]);
-    std::string point_grpName = (arbDataJS["/gui_settings/pointGrp/grpName"_json_pointer]);
-    bool point_01VisibleB = (arbDataJS["/gui_settings/pointGrp/point_1/visibleB"_json_pointer]);
-    std::string point_01Name = (arbDataJS["/gui_settings/pointGrp/point_1/name"_json_pointer]);
-    bool point_02VisibleB = (arbDataJS["/gui_settings/pointGrp/point_2/visibleB"_json_pointer]);
-    std::string point_02Name = (arbDataJS["/gui_settings/pointGrp/point_2/name"_json_pointer]);
-    bool point_03VisibleB = (arbDataJS["/gui_settings/pointGrp/point_3/visibleB"_json_pointer]);
-    std::string point_03Name = (arbDataJS["/gui_settings/pointGrp/point_3/name"_json_pointer]);
-    bool point_04VisibleB = (arbDataJS["/gui_settings/pointGrp/point_4/visibleB"_json_pointer]);
-    std::string point_04Name = (arbDataJS["/gui_settings/pointGrp/point_4/name"_json_pointer]);
-    bool point_05VisibleB = (arbDataJS["/gui_settings/pointGrp/point_5/visibleB"_json_pointer]);
-    std::string point_05Name = (arbDataJS["/gui_settings/pointGrp/point_5/name"_json_pointer]);
-    bool point_06VisibleB = (arbDataJS["/gui_settings/pointGrp/point_6/visibleB"_json_pointer]);
-    std::string point_06Name = (arbDataJS["/gui_settings/pointGrp/point_6/name"_json_pointer]);
-    bool point_07VisibleB = (arbDataJS["/gui_settings/pointGrp/point_7/visibleB"_json_pointer]);
-    std::string point_07Name = (arbDataJS["/gui_settings/pointGrp/point_7/name"_json_pointer]);
-    bool point_08VisibleB = (arbDataJS["/gui_settings/pointGrp/point_8/visibleB"_json_pointer]);
-    std::string point_08Name = (arbDataJS["/gui_settings/pointGrp/point_8/name"_json_pointer]);
-    bool point_09VisibleB = (arbDataJS["/gui_settings/pointGrp/point_9/visibleB"_json_pointer]);
-    std::string point_09Name = (arbDataJS["/gui_settings/pointGrp/point_9/name"_json_pointer]);
-    bool point_10VisibleB = (arbDataJS["/gui_settings/pointGrp/point_10/visibleB"_json_pointer]);
-    std::string point_10Name = (arbDataJS["/gui_settings/pointGrp/point_10/name"_json_pointer]);
-
-
-
-    bool cbox_grpVisibleB = (arbDataJS["/gui_settings/cboxGrp/grpVisibleB"_json_pointer]);
-    std::string cbox_grpName = (arbDataJS["/gui_settings/cboxGrp/grpName"_json_pointer]);
-    bool cbox_01VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_1/visibleB"_json_pointer]);
-    std::string cbox_01Name = (arbDataJS["/gui_settings/cboxGrp/cbox_1/name"_json_pointer]);
-    bool cbox_02VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_2/visibleB"_json_pointer]);
-    std::string cbox_02Name = (arbDataJS["/gui_settings/cboxGrp/cbox_2/name"_json_pointer]);
-    bool cbox_03VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_3/visibleB"_json_pointer]);
-    std::string cbox_03Name = (arbDataJS["/gui_settings/cboxGrp/cbox_3/name"_json_pointer]);
-    bool cbox_04VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_4/visibleB"_json_pointer]);
-    std::string cbox_04Name = (arbDataJS["/gui_settings/cboxGrp/cbox_4/name"_json_pointer]);
-    bool cbox_05VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_5/visibleB"_json_pointer]);
-    std::string cbox_05Name = (arbDataJS["/gui_settings/cboxGrp/cbox_5/name"_json_pointer]);
-    bool cbox_06VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_6/visibleB"_json_pointer]);
-    std::string cbox_06Name = (arbDataJS["/gui_settings/cboxGrp/cbox_6/name"_json_pointer]);
-    bool cbox_07VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_7/visibleB"_json_pointer]);
-    std::string cbox_07Name = (arbDataJS["/gui_settings/cboxGrp/cbox_7/name"_json_pointer]);
-    bool cbox_08VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_8/visibleB"_json_pointer]);
-    std::string cbox_08Name = (arbDataJS["/gui_settings/cboxGrp/cbox_8/name"_json_pointer]);
-    bool cbox_09VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_9/visibleB"_json_pointer]);
-    std::string cbox_09Name = (arbDataJS["/gui_settings/cboxGrp/cbox_9/name"_json_pointer]);
-    bool cbox_10VisibleB = (arbDataJS["/gui_settings/cboxGrp/cbox_10/visibleB"_json_pointer]);
-    std::string cbox_10Name = (arbDataJS["/gui_settings/cboxGrp/cbox_10/name"_json_pointer]);
-
-
-    bool color_grpVisibleB = (arbDataJS["/gui_settings/colorGrp/grpVisibleB"_json_pointer]);
-    std::string color_grpName = (arbDataJS["/gui_settings/colorGrp/grpName"_json_pointer]);
-    bool color_01VisibleB = (arbDataJS["/gui_settings/colorGrp/color_1/visibleB"_json_pointer]);
-    std::string color_01Name = (arbDataJS["/gui_settings/colorGrp/color_1/name"_json_pointer]);
-    bool color_02VisibleB = (arbDataJS["/gui_settings/colorGrp/color_2/visibleB"_json_pointer]);
-    std::string color_02Name = (arbDataJS["/gui_settings/colorGrp/color_2/name"_json_pointer]);
-    bool color_03VisibleB = (arbDataJS["/gui_settings/colorGrp/color_3/visibleB"_json_pointer]);
-    std::string color_03Name = (arbDataJS["/gui_settings/colorGrp/color_3/name"_json_pointer]);
-    bool color_04VisibleB = (arbDataJS["/gui_settings/colorGrp/color_4/visibleB"_json_pointer]);
-    std::string color_04Name = (arbDataJS["/gui_settings/colorGrp/color_4/name"_json_pointer]);
-    bool color_05VisibleB = (arbDataJS["/gui_settings/colorGrp/color_5/visibleB"_json_pointer]);
-    std::string color_05Name = (arbDataJS["/gui_settings/colorGrp/color_5/name"_json_pointer]);
-    bool color_06VisibleB = (arbDataJS["/gui_settings/colorGrp/color_6/visibleB"_json_pointer]);
-    std::string color_06Name = (arbDataJS["/gui_settings/colorGrp/color_6/name"_json_pointer]);
-    bool color_07VisibleB = (arbDataJS["/gui_settings/colorGrp/color_7/visibleB"_json_pointer]);
-    std::string color_07Name = (arbDataJS["/gui_settings/colorGrp/color_7/name"_json_pointer]);
-    bool color_08VisibleB = (arbDataJS["/gui_settings/colorGrp/color_8/visibleB"_json_pointer]);
-    std::string color_08Name = (arbDataJS["/gui_settings/colorGrp/color_8/name"_json_pointer]);
-    bool color_09VisibleB = (arbDataJS["/gui_settings/colorGrp/color_9/visibleB"_json_pointer]);
-    std::string color_09Name = (arbDataJS["/gui_settings/colorGrp/color_9/name"_json_pointer]);
-    bool color_10VisibleB = (arbDataJS["/gui_settings/colorGrp/color_10/visibleB"_json_pointer]);
-    std::string color_10Name = (arbDataJS["/gui_settings/colorGrp/color_10/name"_json_pointer]);
-    bool layer_grpVisibleB= (arbDataJS["/gui_settings/layerGrp/grpVisibleB"_json_pointer]);
-    std::string layerGrpName = (arbDataJS["/gui_settings/layerGrp/grpName"_json_pointer]);
-    std::string layer_currLayerName= (arbDataJS["/gui_settings/layerGrp/current_layer/name"_json_pointer]);
-
-    bool layer_01VisibleB = (arbDataJS["/gui_settings/layerGrp/extLayer_1/visibleB"_json_pointer]);
-    std::string layer_01Name = (arbDataJS["/gui_settings/layerGrp/extLayer_1/name"_json_pointer]);
+    //copy expressions
+	copyStrFromJsonToSeqData(arbDataJS, "/effectInfo/presetName").copy(seqDataP->presetNameAc, sizeof(seqDataP->presetNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/effectInfo/description").copy(seqDataP->descriptionAc, sizeof(seqDataP->presetNameAc));
+	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/redExpr").copy(seqDataP->redExAc, sizeof(seqDataP->redExAc));
+	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/greenExpr").copy(seqDataP->greenExAc, sizeof(seqDataP->greenExAc));
+	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/blueExpr").copy(seqDataP->blueExAc, sizeof(seqDataP->blueExAc));
+	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alphaExpr").copy(seqDataP->alphaExAc, sizeof(seqDataP->alphaExAc));
+	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgbExpr").copy(seqDataP->rgbExprExAc, sizeof(seqDataP->rgbExprExAc));
 
     std::string curr_fragSh = seqDataP->Glsl_FragmentShAc;
     std::string curr_vertSh = seqDataP->Glsl_VertexShAc;
-
-    if (curr_fragSh.compare(gl_fragsh) != 0 || curr_vertSh.compare(gl_vertsh) != 0 )
+    std::string  new_frag = copyShaderFromJsonToSeqData(arbDataJS, "/gl_expression/gl33_frag_sh");
+    std::string  new_vert = copyShaderFromJsonToSeqData (arbDataJS,"/gl_expression/gl33_vert_sh");
+    if (curr_fragSh.compare(new_frag) != 0 || curr_vertSh.compare(new_vert) != 0)
     {
         seqDataP->resetShaderB = true;
+        //copy shaders
+         new_frag.copy(seqDataP->Glsl_FragmentShAc, sizeof(seqDataP->Glsl_FragmentShAc));
+         new_vert.copy(seqDataP->Glsl_VertexShAc, sizeof(seqDataP->Glsl_VertexShAc));
     }
     else {
         seqDataP->resetShaderB = false;
     }
 
-    //copy str to A_char
-#ifdef AE_OS_WIN
-    strncpy_s(seqDataP->presetNameAc, effect_presetName.c_str(), effect_presetName.length() + 1);
-    strncpy_s(seqDataP->descriptionAc, effect_description.c_str(), effect_description.length() + 1);
-    strncpy_s(seqDataP->Glsl_FragmentShAc, gl_fragsh.c_str(), gl_fragsh.length() + 1);
-    strncpy_s(seqDataP->Glsl_VertexShAc , gl_vertsh.c_str(), gl_vertsh.length() + 1);
-    strncpy_s(seqDataP->redExAc, expr_red.c_str(), expr_red.length() + 1);
-    strncpy_s(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
-    strncpy_s(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
-    strncpy_s(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
-    strncpy_s(seqDataP->rgbExprExAc, expr_rgb.c_str(), expr_rgb.length() + 1);
-    strncpy_s(seqDataP->expr_ColorChNameAc, expr_ColorChNameAc.c_str(), expr_ColorChNameAc.length()+1);
-    strncpy_s(seqDataP->expr_pixNameAc,expr_pix.c_str(),expr_pix.length() + 1);
-    strncpy_s(seqDataP->expr_lumaNameAc ,expr_luma.c_str(),expr_luma.length() + 1);
-    strncpy_s(seqDataP->expr_red_offNameAc,expr_red_off.c_str(),expr_red_off.length() + 1);
-    strncpy_s(seqDataP->expr_green_offNameAc,expr_green_off.c_str(),expr_green_off.length() + 1);
-    strncpy_s(seqDataP->expr_blue_offNameAc,expr_blue_off.c_str(),expr_blue_off.length() + 1);
-    strncpy_s(seqDataP->expr_alpha_offNameAc,expr_alpha_off.c_str(),expr_alpha_off.length() + 1);
-    strncpy_s(seqDataP->cameraPosNameAc, camera_position.c_str(), camera_position.length() + 1);
-    strncpy_s(seqDataP->cameraTargetNameAc , camera_target.c_str(), camera_target.length() + 1);
-    strncpy_s(seqDataP->cameraZoomNameAc, camera_zoom.c_str(), camera_zoom.length() + 1);
-    strncpy_s(seqDataP->cameraRotationNameAc, camera_rotation.c_str(), camera_rotation.length() + 1);
-    strncpy_s(seqDataP->resolution,  setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
-    strncpy_s(seqDataP->layerPosition, setting_layerPosition.c_str(), setting_layerPosition.length()+1);
-    strncpy_s(seqDataP->layerScale, setting_layerScale.c_str(), setting_layerScale.length() + 1);
-    strncpy_s(seqDataP->compResolution, setting_compResolution.c_str(), setting_compResolution.length() + 1);
-    strncpy_s(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
-    strncpy_s(seqDataP->time_frame, setting_timeFrameName.c_str(), setting_timeFrameName.length() + 1);
-    strncpy_s(seqDataP->frame_rate, setting_frameRateName.c_str(), setting_frameRateName.length() + 1);
-    strncpy_s(seqDataP->sliderGrpNameAc, slider_grpName.c_str(), slider_grpName.length() + 1);
-    strncpy_s(seqDataP->paramSlider01NameAc, slider_01Name.c_str(), slider_01Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider02NameAc, slider_02Name.c_str(), slider_02Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider03NameAc, slider_03Name.c_str(), slider_03Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider04NameAc, slider_04Name.c_str(), slider_04Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider05NameAc, slider_05Name.c_str(), slider_05Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider06NameAc, slider_06Name.c_str(), slider_06Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider07NameAc, slider_07Name.c_str(), slider_07Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider08NameAc, slider_08Name.c_str(), slider_08Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider09NameAc, slider_09Name.c_str(), slider_09Name.length() + 1);
-    strncpy_s(seqDataP->paramSlider10NameAc, slider_10Name.c_str(), slider_10Name.length() + 1);
-    strncpy_s(seqDataP->pointGrpNameAc, point_grpName.c_str(), point_grpName.length() + 1);
-    strncpy_s(seqDataP->paramPoint01NameAc, point_01Name.c_str(), point_01Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint02NameAc, point_02Name.c_str(), point_02Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint03NameAc, point_03Name.c_str(), point_03Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint04NameAc, point_04Name.c_str(), point_04Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint05NameAc, point_05Name.c_str(), point_05Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint06NameAc, point_06Name.c_str(), point_06Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint07NameAc, point_07Name.c_str(), point_07Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint08NameAc, point_08Name.c_str(), point_08Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint09NameAc, point_09Name.c_str(), point_09Name.length() + 1);
-    strncpy_s(seqDataP->paramPoint10NameAc, point_10Name.c_str(), point_10Name.length() + 1);
-    strncpy_s(seqDataP->cbGrpNameAc, cbox_grpName.c_str(), cbox_grpName.length() + 1);
-    strncpy_s(seqDataP->paramCb01NameAc, cbox_01Name.c_str(), cbox_01Name.length() + 1);
-    strncpy_s(seqDataP->paramCb02NameAc, cbox_02Name.c_str(), cbox_02Name.length() + 1);
-    strncpy_s(seqDataP->paramCb03NameAc, cbox_03Name.c_str(), cbox_03Name.length() + 1);
-    strncpy_s(seqDataP->paramCb04NameAc, cbox_04Name.c_str(), cbox_04Name.length() + 1);
-    strncpy_s(seqDataP->paramCb05NameAc, cbox_05Name.c_str(), cbox_05Name.length() + 1);
-    strncpy_s(seqDataP->paramCb06NameAc, cbox_06Name.c_str(), cbox_06Name.length() + 1);
-    strncpy_s(seqDataP->paramCb07NameAc, cbox_07Name.c_str(), cbox_07Name.length() + 1);
-    strncpy_s(seqDataP->paramCb08NameAc, cbox_08Name.c_str(), cbox_08Name.length() + 1);
-    strncpy_s(seqDataP->paramCb09NameAc, cbox_09Name.c_str(), cbox_09Name.length() + 1);
-    strncpy_s(seqDataP->paramCb10NameAc, cbox_10Name.c_str(), cbox_10Name.length() + 1);
-    strncpy_s(seqDataP->colorGrpNameAc, color_grpName.c_str(), color_grpName.length() + 1);
-    strncpy_s(seqDataP->paramColor01NameAc, color_01Name.c_str(), color_01Name.length() + 1);
-    strncpy_s(seqDataP->paramColor02NameAc, color_02Name.c_str(), color_02Name.length() + 1);
-    strncpy_s(seqDataP->paramColor03NameAc, color_03Name.c_str(), color_03Name.length() + 1);
-    strncpy_s(seqDataP->paramColor04NameAc, color_04Name.c_str(), color_04Name.length() + 1);
-    strncpy_s(seqDataP->paramColor05NameAc, color_05Name.c_str(), color_05Name.length() + 1);
-    strncpy_s(seqDataP->paramColor06NameAc, color_06Name.c_str(), color_06Name.length() + 1);
-    strncpy_s(seqDataP->paramColor07NameAc, color_07Name.c_str(), color_07Name.length() + 1);
-    strncpy_s(seqDataP->paramColor08NameAc, color_08Name.c_str(), color_08Name.length() + 1);
-    strncpy_s(seqDataP->paramColor09NameAc, color_09Name.c_str(), color_09Name.length() + 1);
-    strncpy_s(seqDataP->paramColor10NameAc , color_10Name.c_str(), color_10Name.length() + 1);
-    strncpy_s(seqDataP->paramLayer00NameAc, layer_currLayerName.c_str(), layer_currLayerName.length() + 1);
-    strncpy_s(seqDataP->layerGrpNameAc,layerGrpName.c_str(), layerGrpName.length() + 1);
-    strncpy_s(seqDataP->paramLayer01NameAc, layer_01Name.c_str(), layer_01Name.length() + 1);
-#else
-    //strncpy(seqDataP->presetNameAc, effect_presetName.c_str(), effect_presetName.length() + 1);
-    strncpy(seqDataP->descriptionAc, effect_description.c_str(), effect_description.length() + 1);
-    strncpy(seqDataP->Glsl_FragmentShAc, gl_fragsh.c_str(), gl_fragsh.length() + 1);
-    strncpy(seqDataP->Glsl_VertexShAc, gl_vertsh.c_str(), gl_vertsh.length() + 1);
-    strncpy(seqDataP->redExAc, expr_red.c_str(), expr_red.length() + 1);
-    strncpy(seqDataP->greenExAc, expr_green.c_str(), expr_green.length() + 1);
-    strncpy(seqDataP->blueExAc, expr_blue.c_str(), expr_blue.length() + 1);
-    strncpy(seqDataP->alphaExAc, expr_alpha.c_str(), expr_alpha.length() + 1);
-    strncpy(seqDataP->rgbExprExAc, expr_rgb.c_str(), expr_rgb.length() + 1);
-    strncpy(seqDataP->expr_ColorChNameAc, expr_ColorChNameAc.c_str(), expr_ColorChNameAc.length()+1);
-    strncpy(seqDataP->expr_pixNameAc, expr_pix.c_str(), expr_pix.length() + 1);
-    strncpy(seqDataP->expr_lumaNameAc, expr_luma.c_str(), expr_luma.length() + 1);
-    strncpy(seqDataP->expr_red_offNameAc, expr_red_off.c_str(), expr_red_off.length() + 1);
-    strncpy(seqDataP->expr_green_offNameAc, expr_green_off.c_str(), expr_green_off.length() + 1);
-    strncpy(seqDataP->expr_blue_offNameAc, expr_blue_off.c_str(), expr_blue_off.length() + 1);
-    strncpy(seqDataP->expr_alpha_offNameAc, expr_alpha_off.c_str(), expr_alpha_off.length() + 1);
-    strncpy(seqDataP->cameraPosNameAc, camera_position.c_str(), camera_position.length() + 1);
-    strncpy(seqDataP->cameraTargetNameAc, camera_target.c_str(), camera_target.length() + 1);
-    strncpy(seqDataP->cameraZoomNameAc, camera_zoom.c_str(), camera_zoom.length() + 1);
-    strncpy(seqDataP->cameraRotationNameAc, camera_rotation.c_str(), camera_rotation.length() + 1);
-    strncpy(seqDataP->resolution, setting_resolutionName.c_str(), setting_resolutionName.length() + 1);
-    strncpy(seqDataP->layerPosition, setting_layerPosition.c_str(), setting_layerPosition.length() + 1);
-    strncpy(seqDataP->layerScale, setting_layerScale.c_str(), setting_layerScale.length() + 1);
-    strncpy(seqDataP->compResolution, setting_compResolution.c_str(), setting_compResolution.length() + 1);
-    strncpy(seqDataP->time_sec, setting_timeSecName.c_str(), setting_timeSecName.length() + 1);
-    strncpy(seqDataP->time_frame, setting_timeFrameName.c_str(), setting_timeFrameName.length() + 1);
-    strncpy(seqDataP->frame_rate, setting_frameRateName.c_str(), setting_frameRateName.length() + 1);
-    strncpy(seqDataP->sliderGrpNameAc, slider_grpName.c_str(), slider_grpName.length() + 1);
-    strncpy(seqDataP->paramSlider01NameAc, slider_01Name.c_str(), slider_01Name.length() + 1);
-    strncpy(seqDataP->paramSlider02NameAc, slider_02Name.c_str(), slider_02Name.length() + 1);
-    strncpy(seqDataP->paramSlider03NameAc, slider_03Name.c_str(), slider_03Name.length() + 1);
-    strncpy(seqDataP->paramSlider04NameAc, slider_04Name.c_str(), slider_04Name.length() + 1);
-    strncpy(seqDataP->paramSlider05NameAc, slider_05Name.c_str(), slider_05Name.length() + 1);
-    strncpy(seqDataP->paramSlider06NameAc, slider_06Name.c_str(), slider_06Name.length() + 1);
-    strncpy(seqDataP->paramSlider07NameAc, slider_07Name.c_str(), slider_07Name.length() + 1);
-    strncpy(seqDataP->paramSlider08NameAc, slider_08Name.c_str(), slider_08Name.length() + 1);
-    strncpy(seqDataP->paramSlider09NameAc, slider_09Name.c_str(), slider_09Name.length() + 1);
-    strncpy(seqDataP->paramSlider10NameAc, slider_10Name.c_str(), slider_10Name.length() + 1);
-    strncpy(seqDataP->pointGrpNameAc, point_grpName.c_str(), point_grpName.length() + 1);
-    strncpy(seqDataP->paramPoint01NameAc, point_01Name.c_str(), point_01Name.length() + 1);
-    strncpy(seqDataP->paramPoint02NameAc, point_02Name.c_str(), point_02Name.length() + 1);
-    strncpy(seqDataP->paramPoint03NameAc, point_03Name.c_str(), point_03Name.length() + 1);
-    strncpy(seqDataP->paramPoint04NameAc, point_04Name.c_str(), point_04Name.length() + 1);
-    strncpy(seqDataP->paramPoint05NameAc, point_05Name.c_str(), point_05Name.length() + 1);
-    strncpy(seqDataP->paramPoint06NameAc, point_06Name.c_str(), point_06Name.length() + 1);
-    strncpy(seqDataP->paramPoint07NameAc, point_07Name.c_str(), point_07Name.length() + 1);
-    strncpy(seqDataP->paramPoint08NameAc, point_08Name.c_str(), point_08Name.length() + 1);
-    strncpy(seqDataP->paramPoint09NameAc, point_09Name.c_str(), point_09Name.length() + 1);
-    strncpy(seqDataP->paramPoint10NameAc, point_10Name.c_str(), point_10Name.length() + 1);
-    strncpy(seqDataP->cbGrpNameAc, cbox_grpName.c_str(), cbox_grpName.length() + 1);
-    strncpy(seqDataP->paramCb01NameAc, cbox_01Name.c_str(), cbox_01Name.length() + 1);
-    strncpy(seqDataP->paramCb02NameAc, cbox_02Name.c_str(), cbox_02Name.length() + 1);
-    strncpy(seqDataP->paramCb03NameAc, cbox_03Name.c_str(), cbox_03Name.length() + 1);
-    strncpy(seqDataP->paramCb04NameAc, cbox_04Name.c_str(), cbox_04Name.length() + 1);
-    strncpy(seqDataP->paramCb05NameAc, cbox_05Name.c_str(), cbox_05Name.length() + 1);
-    strncpy(seqDataP->paramCb06NameAc, cbox_06Name.c_str(), cbox_06Name.length() + 1);
-    strncpy(seqDataP->paramCb07NameAc, cbox_07Name.c_str(), cbox_07Name.length() + 1);
-    strncpy(seqDataP->paramCb08NameAc, cbox_08Name.c_str(), cbox_08Name.length() + 1);
-    strncpy(seqDataP->paramCb09NameAc, cbox_09Name.c_str(), cbox_09Name.length() + 1);
-    strncpy(seqDataP->paramCb10NameAc, cbox_10Name.c_str(), cbox_10Name.length() + 1);
-    strncpy(seqDataP->colorGrpNameAc, color_grpName.c_str(), color_grpName.length() + 1);
-    strncpy(seqDataP->paramColor01NameAc, color_01Name.c_str(), color_01Name.length() + 1);
-    strncpy(seqDataP->paramColor02NameAc, color_02Name.c_str(), color_02Name.length() + 1);
-    strncpy(seqDataP->paramColor03NameAc, color_03Name.c_str(), color_03Name.length() + 1);
-    strncpy(seqDataP->paramColor04NameAc, color_04Name.c_str(), color_04Name.length() + 1);
-    strncpy(seqDataP->paramColor05NameAc, color_05Name.c_str(), color_05Name.length() + 1);
-    strncpy(seqDataP->paramColor06NameAc, color_06Name.c_str(), color_06Name.length() + 1);
-    strncpy(seqDataP->paramColor07NameAc, color_07Name.c_str(), color_07Name.length() + 1);
-    strncpy(seqDataP->paramColor08NameAc, color_08Name.c_str(), color_08Name.length() + 1);
-    strncpy(seqDataP->paramColor09NameAc, color_09Name.c_str(), color_09Name.length() + 1);
-    strncpy(seqDataP->paramColor10NameAc, color_10Name.c_str(), color_10Name.length() + 1);
-    strncpy(seqDataP->layerGrpNameAc, layerGrpName.c_str(), layerGrpName.length() + 1);
-    strncpy(seqDataP->paramLayer00NameAc, layer_currLayerName.c_str(), layer_currLayerName.length() + 1);
-    strncpy(seqDataP->paramLayer01NameAc, layer_01Name.c_str(), layer_01Name.length() + 1);
-#endif
 
+     //copy expressions params name
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_current_channel").copy(seqDataP->expr_ColorChNameAc, sizeof(seqDataP->expr_ColorChNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix").copy(seqDataP->expr_pixNameAc, sizeof(seqDataP->expr_pixNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_luma").copy(seqDataP->expr_lumaNameAc, sizeof(seqDataP->expr_lumaNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_red_off").copy(seqDataP->expr_red_offNameAc, sizeof(seqDataP->expr_red_offNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_green_off").copy(seqDataP->expr_green_offNameAc, sizeof(seqDataP->expr_green_offNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_blue_off").copy(seqDataP->expr_blue_offNameAc, sizeof(seqDataP->expr_blue_offNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_alpha_off").copy(seqDataP->expr_alpha_offNameAc, sizeof(seqDataP->expr_alpha_offNameAc));
+    // copy compositions params
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_position").copy(seqDataP->cameraPosNameAc, sizeof(seqDataP->cameraPosNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_target").copy(seqDataP->cameraTargetNameAc, sizeof(seqDataP->cameraTargetNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_zoom").copy(seqDataP->cameraZoomNameAc, sizeof(seqDataP->cameraZoomNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_rotation").copy(seqDataP->cameraRotationNameAc, sizeof(seqDataP->cameraRotationNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/resolution").copy(seqDataP->resolutionNameAc, sizeof(seqDataP->resolutionNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/layerPosition").copy(seqDataP->layerPositionNameAc, sizeof(seqDataP->layerPositionNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/layerScale").copy(seqDataP->layerGrpNameAc, sizeof(seqDataP->layerScaleNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/compResolution").copy(seqDataP->compResolutionNameAc, sizeof(seqDataP->compResolutionNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/time_sec").copy(seqDataP->time_secNameAc, sizeof(seqDataP->time_secNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/time_frame").copy(seqDataP->time_frameNameAc, sizeof(seqDataP->time_frameNameAc));
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/frame_rate").copy(seqDataP->frame_rateNameAc, sizeof(seqDataP->frame_rateNameAc));
 
-    //copy from arb to seqP
-    // copy bool
-    seqDataP->glslModeB = mode_glB;
-    seqDataP->exprModeB =  mode_exprB;
-    seqDataP->evalModeB = mode_evalB;
-    seqDataP->needsPixelAroundB =param_pixelAroundB;
-    seqDataP->pixelsCallExternalInputB = param_ExternalInputB;
-    seqDataP->needsLumaB = param_lumaB;
-    seqDataP->presetHasWideInputB = paramWideeInputB;
-    seqDataP->exprRGBModeB = exprRGBModeB;
-    seqDataP->cameraB = usesCameraB;
+    //copy flags
+    seqDataP->glslModeB =getBoolFromJsonToSeqData (arbDataJS, "/effectMode/gl_modeB");
+    seqDataP->exprModeB =  getBoolFromJsonToSeqData (arbDataJS, "/effectMode/expr_modeB");
+    seqDataP->evalModeB = getBoolFromJsonToSeqData (arbDataJS, "/effectMode/evalModeB");
+    seqDataP->exprRGBModeB = getBoolFromJsonToSeqData (arbDataJS, "/math_expression/exprRGBModeB");
+    seqDataP->needsPixelAroundB =getBoolFromJsonToSeqData (arbDataJS,"/flags/needsPixelAroundB");
+    seqDataP->pixelsCallExternalInputB = getBoolFromJsonToSeqData (arbDataJS, "/flags/pixelsCallExternalInputB");
+    seqDataP->needsLumaB = getBoolFromJsonToSeqData (arbDataJS, "/flags/needsLumaB");
+    seqDataP->presetHasWideInputB = getBoolFromJsonToSeqData (arbDataJS, "/flags/presetHasWideInputB");
+    seqDataP->cameraB = getBoolFromJsonToSeqData (arbDataJS, "/flags/usesCameraB");
+    //copy layers
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/grpName").copy(seqDataP->layerGrpNameAc, sizeof(seqDataP->layerGrpNameAc));
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/current_layer/name").copy(seqDataP->paramLayer00NameAc, sizeof(seqDataP->layerGrpNameAc));
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_1/name").copy(seqDataP->paramLayer01NameAc, sizeof(seqDataP->layerGrpNameAc));
+    seqDataP->layerGrpVisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/grpVisibleB");
+    seqDataP->paramLayer01VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_1/visibleB");
+    //copy params
+    seqDataP->sliderGrpVisibleB  = getBoolFromJsonToSeqData (arbDataJS, "gui_settings/sliderGrp/grpVisibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/grpName").copy(seqDataP->sliderGrpNameAc, sizeof(seqDataP->sliderGrpNameAc));
+    seqDataP->paramSlider01VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[0]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[0]/name").copy(seqDataP->paramSlider01NameAc, sizeof(seqDataP->paramSlider01NameAc));
+    seqDataP->paramSlider02VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[1]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[1]/name").copy(seqDataP->paramSlider02NameAc, sizeof(seqDataP->paramSlider02NameAc));
+    seqDataP->paramSlider03VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[2]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[2]/name").copy(seqDataP->paramSlider03NameAc, sizeof(seqDataP->paramSlider03NameAc));
+    seqDataP->paramSlider04VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[3]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[3]/name").copy(seqDataP->paramSlider04NameAc, sizeof(seqDataP->paramSlider04NameAc));
+    seqDataP->paramSlider05VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[4]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[4]/name").copy(seqDataP->paramSlider05NameAc, sizeof(seqDataP->paramSlider05NameAc));
+    seqDataP->paramSlider06VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[5]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[5]/name").copy(seqDataP->paramSlider06NameAc, sizeof(seqDataP->paramSlider06NameAc));
+    seqDataP->paramSlider07VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[6]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[6]/name").copy(seqDataP->paramSlider07NameAc, sizeof(seqDataP->paramSlider07NameAc));
+    seqDataP->paramSlider08VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[7]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[7]/name").copy(seqDataP->paramSlider08NameAc, sizeof(seqDataP->paramSlider08NameAc));
+    seqDataP->paramSlider09VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[8]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[8]/name").copy(seqDataP->paramSlider09NameAc, sizeof(seqDataP->paramSlider09NameAc));
+    seqDataP->paramSlider10VisibleB =    (arbDataJS["/gui_settings/sliderGrp/params[9]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/params[9]/name").copy(seqDataP->paramSlider10NameAc, sizeof(seqDataP->paramSlider10NameAc));
 
-    seqDataP->sliderGrpVisibleB = slider_grpVisibleB;
-    seqDataP->paramSlider01VisibleB = slider_01VisibleB;
-    seqDataP->paramSlider02VisibleB = slider_02VisibleB;
-    seqDataP->paramSlider03VisibleB = slider_03VisibleB;
-    seqDataP->paramSlider04VisibleB = slider_04VisibleB;
-    seqDataP->paramSlider05VisibleB = slider_05VisibleB;
-    seqDataP->paramSlider06VisibleB = slider_06VisibleB;
-    seqDataP->paramSlider07VisibleB = slider_07VisibleB;
-    seqDataP->paramSlider08VisibleB = slider_08VisibleB;
-    seqDataP->paramSlider09VisibleB = slider_09VisibleB;
-    seqDataP->paramSlider10VisibleB = slider_10VisibleB;
+    seqDataP->pointGrpVisibleB  = getBoolFromJsonToSeqData (arbDataJS, "gui_settings/pointGrp/grpVisibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/grpName").copy(seqDataP->pointGrpNameAc, sizeof(seqDataP->pointGrpNameAc));
+    seqDataP->paramPoint01VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[0]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[0]/name").copy(seqDataP->paramPoint01NameAc, sizeof(seqDataP->paramPoint01NameAc));
+    seqDataP->paramPoint02VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[1]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[1]/name").copy(seqDataP->paramPoint02NameAc, sizeof(seqDataP->paramPoint02NameAc));
+    seqDataP->paramPoint03VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[2]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[2]/name").copy(seqDataP->paramPoint03NameAc, sizeof(seqDataP->paramPoint03NameAc));
+    seqDataP->paramPoint04VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[3]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[3]/name").copy(seqDataP->paramPoint04NameAc, sizeof(seqDataP->paramPoint04NameAc));
+    seqDataP->paramPoint05VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[4]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[4]/name").copy(seqDataP->paramPoint05NameAc, sizeof(seqDataP->paramPoint05NameAc));
+    seqDataP->paramPoint06VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[5]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[5]/name").copy(seqDataP->paramPoint06NameAc, sizeof(seqDataP->paramPoint06NameAc));
+    seqDataP->paramPoint07VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[6]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[6]/name").copy(seqDataP->paramPoint07NameAc, sizeof(seqDataP->paramPoint07NameAc));
+    seqDataP->paramPoint08VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[7]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[7]/name").copy(seqDataP->paramPoint08NameAc, sizeof(seqDataP->paramPoint08NameAc));
+    seqDataP->paramPoint09VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[8]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[8]/name").copy(seqDataP->paramPoint09NameAc, sizeof(seqDataP->paramPoint09NameAc));
+    seqDataP->paramPoint10VisibleB =    (arbDataJS["/gui_settings/pointGrp/params[9]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/pointGrp/params[9]/name").copy(seqDataP->paramPoint10NameAc, sizeof(seqDataP->paramPoint10NameAc));
 
-    seqDataP->pointGrpVisibleB = point_grpVisibleB;
-    seqDataP->paramPoint01VisibleB = point_01VisibleB;
-    seqDataP->paramPoint02VisibleB = point_02VisibleB;
-    seqDataP->paramPoint03VisibleB = point_03VisibleB;
-    seqDataP->paramPoint04VisibleB = point_04VisibleB;
-    seqDataP->paramPoint05VisibleB = point_05VisibleB;
-    seqDataP->paramPoint06VisibleB = point_06VisibleB;
-    seqDataP->paramPoint07VisibleB = point_07VisibleB;
-    seqDataP->paramPoint08VisibleB = point_08VisibleB;
-    seqDataP->paramPoint09VisibleB = point_09VisibleB;
-    seqDataP->paramPoint10VisibleB = point_10VisibleB;
+    seqDataP->cbGrpVisibleB  = getBoolFromJsonToSeqData (arbDataJS, "gui_settings/cboxGrp/grpVisibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/grpName").copy(seqDataP->cbGrpNameAc, sizeof(seqDataP->cbGrpNameAc));
+    seqDataP->paramCb01VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[0]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[0]/name").copy(seqDataP->paramCb01NameAc, sizeof(seqDataP->paramCb01NameAc));
+    seqDataP->paramCb02VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[1]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[1]/name").copy(seqDataP->paramCb02NameAc, sizeof(seqDataP->paramCb02NameAc));
+    seqDataP->paramCb03VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[2]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[2]/name").copy(seqDataP->paramCb03NameAc, sizeof(seqDataP->paramCb03NameAc));
+    seqDataP->paramCb04VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[3]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[3]/name").copy(seqDataP->paramCb04NameAc, sizeof(seqDataP->paramCb04NameAc));
+    seqDataP->paramCb05VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[4]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[4]/name").copy(seqDataP->paramCb05NameAc, sizeof(seqDataP->paramCb05NameAc));
+    seqDataP->paramCb06VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[5]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[5]/name").copy(seqDataP->paramCb06NameAc, sizeof(seqDataP->paramCb06NameAc));
+    seqDataP->paramCb07VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[6]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[6]/name").copy(seqDataP->paramCb07NameAc, sizeof(seqDataP->paramCb07NameAc));
+    seqDataP->paramCb08VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[7]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[7]/name").copy(seqDataP->paramCb08NameAc, sizeof(seqDataP->paramCb08NameAc));
+    seqDataP->paramCb09VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[8]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[8]/name").copy(seqDataP->paramCb09NameAc, sizeof(seqDataP->paramCb09NameAc));
+    seqDataP->paramCb10VisibleB =    (arbDataJS["/gui_settings/cboxGrp/params[9]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/cboxGrp/params[9]/name").copy(seqDataP->paramCb10NameAc, sizeof(seqDataP->paramCb10NameAc));
 
-    seqDataP->cbGrpVisibleB = cbox_grpVisibleB;
-    seqDataP->paramCb01VisibleB = cbox_01VisibleB;
-    seqDataP->paramCb02VisibleB = cbox_02VisibleB;
-    seqDataP->paramCb03VisibleB = cbox_03VisibleB;
-    seqDataP->paramCb04VisibleB = cbox_04VisibleB;
-    seqDataP->paramCb05VisibleB = cbox_05VisibleB;
-    seqDataP->paramCb06VisibleB = cbox_06VisibleB;
-    seqDataP->paramCb07VisibleB = cbox_07VisibleB;
-    seqDataP->paramCb08VisibleB = cbox_08VisibleB;
-    seqDataP->paramCb09VisibleB = cbox_09VisibleB;
-    seqDataP->paramCb10VisibleB = cbox_10VisibleB;
-
-    seqDataP->colorGrpVisibleB = color_grpVisibleB;
-    seqDataP->paramColor01VisibleB = color_01VisibleB;
-    seqDataP->paramColor02VisibleB = color_02VisibleB;
-    seqDataP->paramColor03VisibleB = color_03VisibleB;
-    seqDataP->paramColor04VisibleB = color_04VisibleB;
-    seqDataP->paramColor05VisibleB = color_05VisibleB;
-    seqDataP->paramColor06VisibleB = color_06VisibleB;
-    seqDataP->paramColor07VisibleB = color_07VisibleB;
-    seqDataP->paramColor08VisibleB = color_08VisibleB;
-    seqDataP->paramColor09VisibleB = color_09VisibleB;
-    seqDataP->paramColor10VisibleB = color_10VisibleB;
-
-
-    seqDataP->layerGrpVisibleB = layer_grpVisibleB;
-    seqDataP->paramLayer01VisibleB = layer_01VisibleB;
+    seqDataP->colorGrpVisibleB  = getBoolFromJsonToSeqData (arbDataJS, "gui_settings/colorGrp/grpVisibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/grpName").copy(seqDataP->colorGrpNameAc, sizeof(seqDataP->colorGrpNameAc));
+    seqDataP->paramColor01VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[0]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[0]/name").copy(seqDataP->paramColor01NameAc, sizeof(seqDataP->paramColor01NameAc));
+    seqDataP->paramColor02VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[1]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[1]/name").copy(seqDataP->paramColor02NameAc, sizeof(seqDataP->paramColor02NameAc));
+    seqDataP->paramColor03VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[2]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[2]/name").copy(seqDataP->paramColor03NameAc, sizeof(seqDataP->paramColor03NameAc));
+    seqDataP->paramColor04VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[3]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[3]/name").copy(seqDataP->paramColor04NameAc, sizeof(seqDataP->paramColor04NameAc));
+    seqDataP->paramColor05VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[4]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[4]/name").copy(seqDataP->paramColor05NameAc, sizeof(seqDataP->paramColor05NameAc));
+    seqDataP->paramColor06VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[5]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[5]/name").copy(seqDataP->paramColor06NameAc, sizeof(seqDataP->paramColor06NameAc));
+    seqDataP->paramColor07VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[6]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[6]/name").copy(seqDataP->paramColor07NameAc, sizeof(seqDataP->paramColor07NameAc));
+    seqDataP->paramColor08VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[7]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[7]/name").copy(seqDataP->paramColor08NameAc, sizeof(seqDataP->paramColor08NameAc));
+    seqDataP->paramColor09VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[8]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[8]/name").copy(seqDataP->paramColor09NameAc, sizeof(seqDataP->paramColor09NameAc));
+    seqDataP->paramColor10VisibleB =    (arbDataJS["/gui_settings/colorGrp/params[9]/visibleB"]);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params[9]/name").copy(seqDataP->paramColor10NameAc, sizeof(seqDataP->paramColor10NameAc));
+    
     return err;
 }
 
