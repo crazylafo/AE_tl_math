@@ -78,9 +78,9 @@ $._ext = {
   sendMessageToPlugin : function(){
     //try{ pluginId} catch(e){return};
     if ( typeof pluginId==="undefined" || !pluginId || pluginId ==null ){return};
-    app.project.activeItem.layer(pluginId[0]).effect(pluginId[1]).property(57).setValue(1);//property 567= send message to ARB
+    app.project.activeItem.layer(pluginId[0]).effect(pluginId[1]).property("arb received").setValue(1);
     pluginId = undefined;
-  },
+  }, 
   sendDataToPlugin : function(arbData){
     if (!arbData){return};
     //send data;
@@ -92,7 +92,8 @@ $._ext = {
     for (var i=0; i<listSelectedProps.length; i++){
       if (listSelectedProps[i].name == "tl_math-BETA"){
           propIndex = i;
-          listSelectedProps[propIndex].property(56).setValue(1);//property 56 = get arb. can't find it by name because hidden
+          alert ("test")
+          listSelectedProps[propIndex].property("get arb").setValue(1);
           break;
       }     
     }

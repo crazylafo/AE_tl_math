@@ -94,7 +94,9 @@ function onLoaded() {
 	$("#btnApply").on("click", function() {
 		var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
 		if (arbDataToSend){
+			alert (arbDataToSend)
 			var arbDataStr = JSON.stringify(arbDataToSend);
+			alert ("toto")
 			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 			}
 		});
@@ -119,7 +121,6 @@ function updatePresetMenu (presetsList){
 		$("#presetsListAccess").append(inputStr);
 		}
 	}
-
 function loadPresetFromMenu(presetsList, editors, numParams){
 	var selectedPreset = parseInt($("input[name='presetListRb']:checked").val());
 	if (typeof(selectedPreset) === "undefined"){
@@ -224,10 +225,11 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 	grp.innerHTML =paramGrpStr;
 	strGrp ="";
 	for (var i=0; i<numParams; i++){
+		var indexName = i+1;
 		var paramStr ='<tr>'+
-			'<td>'+paramName+' '+i+'</td> \n'+
+			'<td>'+paramName+' '+indexName+'</td> \n'+
 			'<td ><input type="checkbox" id="'+paramName+i+'_visible"  class="cb'+paramName+'" checked></td> \n'+
-			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+i+'" maxlength="31"></td> \n'+
+			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+indexName+'" maxlength="31"></td> \n'+
 			'<td><table>';
 		for (var j=0; j<paramDimension; j++){
 			paramStr += '<td><input type="text" id = "'+paramName+i+'_defaultVal'+j+'" value="'+j+'" maxlength="10"></td> \n';
@@ -257,9 +259,9 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 		arbData.gui_settings[paramGroupId].params[i].name =$("#"+paramName+i+"_name").val().toString();
 		arbData.gui_settings[paramGroupId].params[i].visibleB= $("#"+paramName+i+"Visible").is(':checked');
 		for(var j=0; j<paramDimension; j++){
-			arbData.gui_settings[paramGroupId].param[i].defaultVal[j]=$("#"+paramName+i+'defaultVal'+j).val();
+			arbData.gui_settings[paramGroupId].params[i].defaultVal[j]=$("#"+paramName+i+'_defaultVal'+j).val();
+			}
 		}
-	}
 	return arbData;
 
 }
@@ -372,7 +374,6 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.math_expression.expr_green_off =$("#expr_green_offName").val().toString();
 	arbData.math_expression.expr_blue_off =$("#expr_blue_offName").val().toString();
 	arbData.math_expression.expr_alpha_off=$("#expr_alpha_offName").val().toString();
-
 	sendParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	sendParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	sendParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
