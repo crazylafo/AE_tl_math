@@ -88,15 +88,15 @@ typedef struct {
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
 	A_char  rgbExprExAc[4096];
-    A_char  Glsl_VertexShAc[25000];
-    A_char  Glsl_FragmentShAc[50000];
+    A_char  Glsl33_VertexShAc[25000];
+    A_char  Glsl33_FragmentShAc[50000];
     A_char redError[2048];
     A_char greenError[4096];
     A_char blueError[4096];
     A_char alphaError[4096];
 	A_char rgbError[4096];
-    A_char Glsl_VertError[25000];
-    A_char Glsl_fragError[25000];
+    A_char Glsl33_VertError[25000];
+    A_char Glsl33_fragError[25000];
 	A_char  resolutionNameAc[32];
 	A_char  layerPositionNameAc[32];
 	A_char  layerScaleNameAc[32];
@@ -226,7 +226,7 @@ typedef struct {
     //Mode
     PF_Boolean  cameraB;
     PF_Boolean  exprRGBModeB;
-    PF_Boolean  glslModeB;
+    PF_Boolean  glsl33ModeB;
 	PF_Boolean  exprModeB;
 	PF_Boolean  evalModeB;
     PF_Boolean needsPixelAroundB;

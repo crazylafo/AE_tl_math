@@ -16,7 +16,7 @@ static std::string defaultArb = R"=====(
         "minimalPluginVersion":1.15,
         "tags":["default", "glsl", "expr","skeleton"],
         "presetName":"default_preset",
-        "description":"simple skeleton effect"
+        "description":"simple skeleton_effect"
     },
     "effectMode":{
         "gl33_modeB":false,

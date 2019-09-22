@@ -312,8 +312,8 @@ SetupDialogSend( PF_InData        *in_data,
         }
     auto  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
 
-    std::string     fragErr = seqP->Glsl_fragError,
-                    vertErr = seqP-> Glsl_VertError,
+    std::string     fragErr = seqP->Glsl33_fragError,
+                    vertErr = seqP-> Glsl33_VertError,
                     redErr = seqP->redError,
                     greenErr = seqP->greenError,
                     blueErr = seqP->blueError,
@@ -464,21 +464,21 @@ evalScripts(seqData  *seqDataP)
         #endif
     }
 
-    evalVertShader (seqDataP->Glsl_VertexShAc, evalVertSh);
+    evalVertShader (seqDataP->Glsl33_VertexShAc, evalVertSh);
     if (evalVertSh != compile_success){
         #ifdef AE_OS_WIN
-                strncpy_s(seqDataP->Glsl_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+                strncpy_s(seqDataP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
         #else
                 strncpy(seqDataP->Glsl_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
         #endif
     }
 
-    evalFragShader (seqDataP->Glsl_FragmentShAc, evalFragSh);
+    evalFragShader (seqDataP->Glsl33_FragmentShAc, evalFragSh);
     if (evalFragSh != compile_success){
         std::string setting_resolutionName = "resolution";
         #ifdef AE_OS_WIN
                  strncpy_s(seqDataP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
-                 strncpy_s(seqDataP->Glsl_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+                 strncpy_s(seqDataP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
         #else
                 strncpy(seqDataP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
                 strncpy(seqDataP->Glsl_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
@@ -486,8 +486,8 @@ evalScripts(seqData  *seqDataP)
 
     }
      #ifdef AE_OS_WIN
-        strncpy_s(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-        strncpy_s(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+        strncpy_s(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+        strncpy_s(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
         strncpy_s(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
         strncpy_s(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
         strncpy_s(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);

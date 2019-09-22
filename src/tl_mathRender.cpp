@@ -1054,8 +1054,8 @@ tl_math_SmartRender(
 				blueExprStr = seqP->blueExAc;
 				alphaExprStr = seqP->alphaExAc;
                 rgbstr =  seqP->rgbExprExAc;
-				frag1Str = seqP->Glsl_FragmentShAc;
-				vertStr = seqP->Glsl_VertexShAc;
+				frag1Str = seqP->Glsl33_FragmentShAc;
+				vertStr = seqP->Glsl33_VertexShAc;
 
 
 				flagsP.PixelsCallExternalInputB = seqP->pixelsCallExternalInputB;
