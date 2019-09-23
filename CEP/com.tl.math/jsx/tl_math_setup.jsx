@@ -92,7 +92,6 @@ $._ext = {
     for (var i=0; i<listSelectedProps.length; i++){
       if (listSelectedProps[i].name == "tl_math-BETA"){
           propIndex = i;
-          alert ("test")
           listSelectedProps[propIndex].property("get arb").setValue(1);
           break;
       }     

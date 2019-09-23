@@ -94,9 +94,7 @@ function onLoaded() {
 	$("#btnApply").on("click", function() {
 		var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
 		if (arbDataToSend){
-			alert (arbDataToSend)
 			var arbDataStr = JSON.stringify(arbDataToSend);
-			alert ("toto")
 			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 			}
 		});
@@ -255,9 +253,10 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 	
 	arbData.gui_settings[paramGroupId].grpName =$("#"+paramName+"GrpName").val().toString();	
 	arbData.gui_settings[paramGroupId].grpVisibleB =$("#"+paramName+"GrpVisible").is(':checked');
+	
 	for (var i=0; i<numParams; i++){
 		arbData.gui_settings[paramGroupId].params[i].name =$("#"+paramName+i+"_name").val().toString();
-		arbData.gui_settings[paramGroupId].params[i].visibleB= $("#"+paramName+i+"Visible").is(':checked');
+		arbData.gui_settings[paramGroupId].params[i].visibleB= $("#"+paramName+i+"_visible").is(':checked');
 		for(var j=0; j<paramDimension; j++){
 			arbData.gui_settings[paramGroupId].params[i].defaultVal[j]=$("#"+paramName+i+'_defaultVal'+j).val();
 			}
@@ -327,8 +326,7 @@ function copyDataToGUI (arbData, editors, numParams) {
 	getParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
 	getParamsSettings(arbData, "color", numParams, 3, "colorGrp");
 	getParamsSettings(arbData, "rotation", numParams, 1, "rotationGrp");
-	alert ("get and send params data with loop function")
-	
+
 	$("#layerGrpName").val(arbData.gui_settings.layerGrp.grpName.toString());
 	$("input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
@@ -409,7 +407,6 @@ function toogleCheckbox(className, currId){
 	var parentItem =  document.getElementById(currId);
 	if (parentItem.checked ==true){
 		for (var i=0; i<classItems.length; i++){
-			alert (classItems[i])
 			classItems[i].checked = true;
 			}
 		}	
