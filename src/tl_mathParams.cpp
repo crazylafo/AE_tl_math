@@ -739,36 +739,36 @@ tlmath_UpdateParameterUI(
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TWO, &MATH_SLIDER_TWO_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_THREE, &MATH_SLIDER_THREE_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FOUR, &MATH_SLIDER_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_ONE, &MATH_SLIDER_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TWO, &MATH_SLIDER_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_THREE, &MATH_SLIDER_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FOUR, &MATH_SLIDER_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FOUR, &MATH_SLIDER_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FOUR, &MATH_SLIDER_TEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FIVE, &MATH_SLIDER_FIVE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_SIX, &MATH_SLIDER_SIX_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_SEVEN, &MATH_SLIDER_SEVEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_HEIGHT, &MATH_SLIDER_HEIGHT_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_NINE, &MATH_SLIDER_NINE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TEN, &MATH_SLIDER_TEN_streamH));
 
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_POINTS, &MATH_TOPIC_POINTS_streamH));
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_ONE, &MATH_POINT_ONE_streamH));
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TWO, &MATH_POINT_TWO_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_THREE, &MATH_POINT_THREE_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FOUR, &MATH_POINT_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_ONE, &MATH_POINT_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TWO, &MATH_POINT_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_THREE, &MATH_POINT_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FOUR, &MATH_POINT_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FOUR, &MATH_POINT_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FOUR, &MATH_POINT_TEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FIVE, &MATH_POINT_FIVE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_SIX, &MATH_POINT_SIX_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_SEVEN, &MATH_POINT_SEVEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_HEIGHT, &MATH_POINT_HEIGHT_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_NINE, &MATH_POINT_NINE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TEN, &MATH_POINT_TEN_streamH));
 
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_CB, &MATH_TOPIC_CB_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_ONE, &MATH_CB_ONE_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_TWO, &MATH_CB_TWO_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_THREE, &MATH_CB_THREE_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FOUR, &MATH_CB_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_ONE, &MATH_CB_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_TWO, &MATH_CB_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_THREE, &MATH_CB_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FOUR, &MATH_CB_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FOUR, &MATH_CB_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FOUR, &MATH_CB_TEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FIVE, &MATH_CB_FIVE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_SIX, &MATH_CB_SIX_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_SEVEN, &MATH_CB_SEVEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_HEIGHT, &MATH_CB_HEIGHT_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_NINE, &MATH_CB_NINE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_TEN, &MATH_CB_TEN_streamH));
 
 
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_COLORS, &MATH_TOPIC_COLORS_streamH));
@@ -776,12 +776,13 @@ tlmath_UpdateParameterUI(
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TWO, &MATH_COLOR_TWO_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_THREE, &MATH_COLOR_THREE_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FOUR, &MATH_COLOR_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_ONE, &MATH_COLOR_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TWO, &MATH_COLOR_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_THREE, &MATH_COLOR_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FOUR, &MATH_COLOR_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FOUR, &MATH_COLOR_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FOUR, &MATH_COLOR_TEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FIVE, &MATH_COLOR_FIVE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_SIX, &MATH_COLOR_SIX_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_SEVEN, &MATH_COLOR_SEVEN_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_HEIGHT, &MATH_COLOR_HEIGHT_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_NINE, &MATH_COLOR_NINE_streamH));
+        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TEN, &MATH_COLOR_TEN_streamH));
+
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_INPUTS, &MATH_TOPIC_INPUTS_streamH));
         //ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH,MATH_CEP_GET_ARB_DATA, &MATH_CEP_GET_ARB_DATA_streamH));
 
@@ -1026,7 +1027,7 @@ tlmath_UserChangedParam(
 	{
 		if (params[MATH_CEP_GET_ARB_DATA]->u.bd.value == TRUE) {
 
-			ERR(SetupGetDataBack(in_data, out_data, params));
+				ERR(SetupGetDataBack(in_data, out_data, params));
 			//deselect checkbox
             params[MATH_CEP_GET_ARB_DATA]->u.bd.value = FALSE;
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
