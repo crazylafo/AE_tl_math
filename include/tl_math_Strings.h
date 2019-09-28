@@ -52,6 +52,18 @@ typedef enum {
     STR_ID_MATH_COLOR_NINE_Param_Name,
     STR_ID_MATH_COLOR_TEN_Param_Name,
 
+	STR_ID_MATH_TOPIC_ROTS_Param_Name,
+	STR_ID_MATH_ROT_ONE_Param_Name,
+	STR_ID_MATH_ROT_TWO_Param_Name,
+	STR_ID_MATH_ROT_THREE_Param_Name,
+	STR_ID_MATH_ROT_FOUR_Param_Name,
+	STR_ID_MATH_ROT_FIVE_Param_Name,
+	STR_ID_MATH_ROT_SIX_Param_Name,
+	STR_ID_MATH_ROT_SEVEN_Param_Name,
+	STR_ID_MATH_ROT_HEIGHT_Param_Name,
+	STR_ID_MATH_ROT_NINE_Param_Name,
+	STR_ID_MATH_ROT_TEN_Param_Name,
+
     StrID_TOPIC_INPUTS_Param_Name,
     StrID_LAYER_ONE_Param_Name,
     StrID_TOFF_ONE_Param_Name,

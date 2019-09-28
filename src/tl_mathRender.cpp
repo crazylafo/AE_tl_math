@@ -660,6 +660,7 @@ tl_math_SmartRender(
 				point_param[10],
 				cb_param[10],
 				color_param[10],
+				rot_param[10],
 				cb_getarb_param;
 
 
@@ -1005,6 +1006,86 @@ tl_math_SmartRender(
 				in_data->time_scale,
 				&color_param[9]));
 
+			AEFX_CLR_STRUCT(rot_param[0]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_ONE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[0]));
+
+			AEFX_CLR_STRUCT(rot_param[1]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_TWO,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[1]));
+
+			AEFX_CLR_STRUCT(rot_param[2]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_THREE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[2]));
+
+			AEFX_CLR_STRUCT(rot_param[3]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_FOUR,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[3]));
+
+			AEFX_CLR_STRUCT(rot_param[4]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_FIVE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[4]));
+
+			AEFX_CLR_STRUCT(rot_param[5]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_SIX,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[5]));
+
+			AEFX_CLR_STRUCT(rot_param[6]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_SEVEN,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[6]));
+
+			AEFX_CLR_STRUCT(rot_param[7]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_HEIGHT,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[7]));
+
+			AEFX_CLR_STRUCT(rot_param[8]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_NINE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[8]));
+
+			AEFX_CLR_STRUCT(rot_param[9]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_ROT_TEN,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&rot_param[9]));
+
 
 			AEFX_CLR_STRUCT(cb_getarb_param);
 			ERR(PF_CHECKOUT_PARAM(in_data,
@@ -1034,6 +1115,9 @@ tl_math_SmartRender(
              for (int i =0; i<10; i++){
                  miP->inCboxF[i] = PF_FpShort (cb_param[i].u.bd.value);
                 }
+			 for (int i = 0; i < 10; i++) {
+				 miP->inRotF[i] = PF_FpShort(rot_param[i].u.ad.value);
+			 }
 			//CONVERT COLOR PARAMS TO FLOAT BYSMART WAY
              PF_PixelFloat tempFloat;
              for (int i =0; i<10; i++){
@@ -1118,10 +1202,11 @@ tl_math_SmartRender(
 			ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
 			ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
 			for (int i = 0; i<10; i++) {
-				ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[0]));
-				ERR2(PF_CHECKIN_PARAM(in_data, &point_param[0]));
-				ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[0]));
-				ERR2(PF_CHECKIN_PARAM(in_data, &color_param[0]));
+				ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[i]));
+				ERR2(PF_CHECKIN_PARAM(in_data, &point_param[i]));
+				ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[i]));
+				ERR2(PF_CHECKIN_PARAM(in_data, &color_param[i]));
+				ERR2(PF_CHECKIN_PARAM(in_data, &rot_param[i]));
 			}
 
 			ERR2(PF_CHECKIN_PARAM(in_data, &cb_getarb_param));

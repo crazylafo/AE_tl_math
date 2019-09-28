@@ -383,6 +383,27 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramColor10NameAc);
 		glUniform3f(location, miP->inColors[9].color[0], miP->inColors[9].color[1], miP->inColors[9].color[2]);
 
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot01NameAc);
+		glUniform1f(location, miP->inRotF[0]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot02NameAc);
+		glUniform1f(location, miP->inRotF[1]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot03NameAc);
+		glUniform1f(location, miP->inRotF[2]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot04NameAc);
+		glUniform1f(location, miP->inRotF[3]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot05NameAc);
+		glUniform1f(location, miP->inRotF[4]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot06NameAc);
+		glUniform1f(location, miP->inRotF[5]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot07NameAc);
+		glUniform1f(location, miP->inRotF[6]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot08NameAc);
+		glUniform1f(location, miP->inRotF[7]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot09NameAc);
+		glUniform1f(location, miP->inRotF[8]);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramRot10NameAc);
+		glUniform1f(location, miP->inRotF[9]);
+
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->time_secNameAc);
 		glUniform1f(location, miP->layerTime_Sec);
 

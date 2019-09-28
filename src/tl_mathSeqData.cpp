@@ -242,6 +242,29 @@ copyFromArbToSeqData(PF_InData* in_data,
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params/8/name",seqDataP->paramColor09NameAc);
     seqDataP->paramColor10VisibleB =    getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params/9/visibleB");
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/colorGrp/params/9/name",seqDataP->paramColor10NameAc);
+
+	seqDataP->rotGrpVisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/grpVisibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/grpName", seqDataP->rotGrpNameAc);
+	seqDataP->paramRot01VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/0/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/0/name", seqDataP->paramRot01NameAc);
+	seqDataP->paramRot02VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/1/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/1/name", seqDataP->paramRot02NameAc);
+	seqDataP->paramRot03VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/2/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/2/name", seqDataP->paramRot03NameAc);
+	seqDataP->paramRot04VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/3/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/3/name", seqDataP->paramRot04NameAc);
+	seqDataP->paramRot05VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/4/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/4/name", seqDataP->paramRot05NameAc);
+	seqDataP->paramRot06VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/5/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/5/name", seqDataP->paramRot06NameAc);
+	seqDataP->paramRot07VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/6/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/6/name", seqDataP->paramRot07NameAc);
+	seqDataP->paramRot08VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/7/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/7/name", seqDataP->paramRot08NameAc);
+	seqDataP->paramRot09VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/8/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/8/name", seqDataP->paramRot09NameAc);
+	seqDataP->paramRot10VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/9/visibleB");
+	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/9/name", seqDataP->paramRot10NameAc);
     
     return err;
 }

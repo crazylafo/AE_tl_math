@@ -283,7 +283,7 @@ tlmath_ParamsSetup  (
     AEFX_CLR_STRUCT(def);
 
     def.flags = PF_ParamFlag_SUPERVISE;
-    PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name), MATH_TOPIC_COLORS_DISK_ID);
+    PF_ADD_TOPIC(STR(STR_ID_MATH_TOPIC_COLORS_Param_Name), MATH_TOPIC_COLORS_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
 
@@ -312,6 +312,44 @@ tlmath_ParamsSetup  (
 
     PF_END_TOPIC (MATH_TOPIC_COLORS_DISK_ID);
     AEFX_CLR_STRUCT(def);
+
+	def.flags = PF_ParamFlag_SUPERVISE;
+	PF_ADD_TOPIC(STR(STR_ID_MATH_TOPIC_ROTS_Param_Name), MATH_TOPIC_ROTS_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_ONE_Param_Name), 0, MATH_ROT_ONE_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_TWO_Param_Name), 0, MATH_ROT_TWO_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_THREE_Param_Name), 0, MATH_ROT_THREE_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_FOUR_Param_Name), 0, MATH_ROT_FOUR_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_FIVE_Param_Name), 0, MATH_ROT_FIVE_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_SIX_Param_Name), 0, MATH_ROT_SIX_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_SEVEN_Param_Name), 0, MATH_ROT_SEVEN_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_HEIGHT_Param_Name), 0, MATH_ROT_HEIGHT_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_NINE_Param_Name), 0, MATH_ROT_NINE_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_TEN_Param_Name), 0, MATH_ROT_TEN_DISK_ID);
+
+
+	PF_END_TOPIC(MATH_TOPIC_ROTS_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+
+
     def.flags = PF_ParamFlag_SUPERVISE;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name), MATH_TOPIC_INPUTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
@@ -419,6 +457,18 @@ MakeParamCopy(
     copy[MATH_COLOR_NINE] = *actual[MATH_COLOR_NINE];
     copy[MATH_COLOR_TEN] = *actual[MATH_COLOR_TEN];
 
+	copy[MATH_TOPIC_ROTS] = *actual[MATH_TOPIC_ROTS];
+	copy[MATH_ROT_ONE] = *actual[MATH_ROT_ONE];
+	copy[MATH_ROT_TWO] = *actual[MATH_ROT_TWO];
+	copy[MATH_ROT_THREE] = *actual[MATH_ROT_THREE];
+	copy[MATH_ROT_FOUR] = *actual[MATH_ROT_FOUR];
+	copy[MATH_ROT_FIVE] = *actual[MATH_ROT_FIVE];
+	copy[MATH_ROT_SIX] = *actual[MATH_ROT_SIX];
+	copy[MATH_ROT_SEVEN] = *actual[MATH_ROT_SEVEN];
+	copy[MATH_ROT_HEIGHT] = *actual[MATH_ROT_HEIGHT];
+	copy[MATH_ROT_NINE] = *actual[MATH_ROT_NINE];
+	copy[MATH_ROT_TEN] = *actual[MATH_ROT_TEN];
+
 	copy[MATH_TOPIC_INPUTS] = *actual[MATH_TOPIC_INPUTS];
 	copy[MATH_INP_LAYER_ONE] = *actual[MATH_INP_LAYER_ONE];
 	copy[MATH_INP_TOFF_ONE] = *actual[MATH_INP_TOFF_ONE];
@@ -493,6 +543,19 @@ tlmath_UpdateParameterUI(
         MATH_COLOR_HEIGHT_streamH = NULL,
         MATH_COLOR_NINE_streamH = NULL,
         MATH_COLOR_TEN_streamH = NULL,
+
+		MATH_TOPIC_ROTS_streamH = NULL,
+		MATH_ROT_ONE_streamH = NULL,
+		MATH_ROT_TWO_streamH = NULL,
+		MATH_ROT_THREE_streamH = NULL,
+		MATH_ROT_FOUR_streamH = NULL,
+		MATH_ROT_FIVE_streamH = NULL,
+		MATH_ROT_SIX_streamH = NULL,
+		MATH_ROT_SEVEN_streamH = NULL,
+		MATH_ROT_HEIGHT_streamH = NULL,
+		MATH_ROT_NINE_streamH = NULL,
+		MATH_ROT_TEN_streamH = NULL,
+
         MATH_TOPIC_INPUTS_streamH = NULL;
        //MATH_CEP_GET_ARB_DATA_streamH = NULL;
 
@@ -725,6 +788,63 @@ tlmath_UpdateParameterUI(
                                                         MATH_COLOR_TEN,
                                                         &param_copy[MATH_COLOR_TEN]));
 
+		strcpy(param_copy[MATH_TOPIC_ROTS].name, seqP->rotGrpNameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_TOPIC_ROTS,
+			&param_copy[MATH_TOPIC_ROTS]));
+
+		strcpy(param_copy[MATH_ROT_ONE].name, seqP->paramRot01NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_ONE,
+			&param_copy[MATH_ROT_ONE]));
+
+		strcpy(param_copy[MATH_ROT_TWO].name, seqP->paramRot02NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_TWO,
+			&param_copy[MATH_ROT_TWO]));
+
+
+		strcpy(param_copy[MATH_ROT_THREE].name, seqP->paramRot03NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_THREE,
+			&param_copy[MATH_ROT_THREE]));
+
+		strcpy(param_copy[MATH_ROT_FOUR].name, seqP->paramRot04NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_FOUR,
+			&param_copy[MATH_ROT_FOUR]));
+
+		strcpy(param_copy[MATH_ROT_FIVE].name, seqP->paramRot05NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_FIVE,
+			&param_copy[MATH_ROT_FIVE]));
+
+		strcpy(param_copy[MATH_ROT_SIX].name, seqP->paramRot06NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_SIX,
+			&param_copy[MATH_ROT_SIX]));
+
+		strcpy(param_copy[MATH_ROT_SEVEN].name, seqP->paramRot07NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_SEVEN,
+			&param_copy[MATH_ROT_SEVEN]));
+
+		strcpy(param_copy[MATH_ROT_HEIGHT].name, seqP->paramRot08NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_HEIGHT,
+			&param_copy[MATH_ROT_HEIGHT]));
+
+		strcpy(param_copy[MATH_ROT_NINE].name, seqP->paramRot09NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_NINE,
+			&param_copy[MATH_ROT_NINE]));
+
+		strcpy(param_copy[MATH_ROT_TEN].name, seqP->paramRot10NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_ROT_TEN,
+			&param_copy[MATH_ROT_TEN]));
+
+
 
 
 
@@ -783,6 +903,19 @@ tlmath_UpdateParameterUI(
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_NINE, &MATH_COLOR_NINE_streamH));
         ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TEN, &MATH_COLOR_TEN_streamH));
 
+
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_ROTS, &MATH_TOPIC_ROTS_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_ONE, &MATH_ROT_ONE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_TWO, &MATH_ROT_TWO_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_THREE, &MATH_ROT_THREE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_FOUR, &MATH_ROT_FOUR_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_FIVE, &MATH_ROT_FIVE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_SIX, &MATH_ROT_SIX_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_SEVEN, &MATH_ROT_SEVEN_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_HEIGHT, &MATH_ROT_HEIGHT_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_NINE, &MATH_ROT_NINE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_TEN, &MATH_ROT_TEN_streamH));
+
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_INPUTS, &MATH_TOPIC_INPUTS_streamH));
         //ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH,MATH_CEP_GET_ARB_DATA, &MATH_CEP_GET_ARB_DATA_streamH));
 
@@ -833,6 +966,20 @@ tlmath_UpdateParameterUI(
         ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor08VisibleB));
         ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor09VisibleB));
         ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor10VisibleB));
+
+
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_ROTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->rotGrpVisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot01VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot02VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot03VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot04VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot05VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot06VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot07VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot08VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot09VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot10VisibleB));
+
 
 
 
@@ -979,6 +1126,40 @@ tlmath_UpdateParameterUI(
         if (MATH_COLOR_TEN_streamH) {
             ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_TEN_streamH));
         }
+
+		if (MATH_TOPIC_ROTS_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_ROTS_streamH));
+		}
+		if (MATH_ROT_ONE_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_ONE_streamH));
+		}
+		if (MATH_ROT_TWO_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_TWO_streamH));
+		}
+		if (MATH_ROT_THREE_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_THREE_streamH));
+		}
+		if (MATH_ROT_FOUR_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_FOUR_streamH));
+		}
+		if (MATH_ROT_FIVE_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_FIVE_streamH));
+		}
+		if (MATH_ROT_SIX_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_SIX_streamH));
+		}
+		if (MATH_ROT_SEVEN_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_SEVEN_streamH));
+		}
+		if (MATH_ROT_HEIGHT_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_HEIGHT_streamH));
+		}
+		if (MATH_ROT_NINE_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_NINE_streamH));
+		}
+		if (MATH_ROT_TEN_streamH) {
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_TEN_streamH));
+		}
 
 		if (MATH_TOPIC_INPUTS_streamH) {
 			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_INPUTS_streamH));

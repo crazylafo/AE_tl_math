@@ -131,6 +131,9 @@ typedef struct {
     A_char       colorGrpNameAc[32];
     PF_Boolean   colorGrpVisibleB;
 
+	A_char       rotGrpNameAc[32];
+	PF_Boolean   rotGrpVisibleB;
+
     A_char       layerGrpNameAc[32];
     PF_Boolean  layerGrpVisibleB;
 
@@ -219,6 +222,29 @@ typedef struct {
     PF_Boolean  paramColor08VisibleB;
     PF_Boolean  paramColor09VisibleB;
     PF_Boolean  paramColor10VisibleB;
+
+	A_char   paramRot01NameAc[32];
+	A_char   paramRot02NameAc[32];
+	A_char   paramRot03NameAc[32];
+	A_char   paramRot04NameAc[32];
+	A_char   paramRot05NameAc[32];
+	A_char   paramRot06NameAc[32];
+	A_char   paramRot07NameAc[32];
+	A_char   paramRot08NameAc[32];
+	A_char   paramRot09NameAc[32];
+	A_char   paramRot10NameAc[32];
+	PF_Boolean  paramRot01VisibleB;
+	PF_Boolean  paramRot02VisibleB;
+	PF_Boolean  paramRot03VisibleB;
+	PF_Boolean  paramRot04VisibleB;
+	PF_Boolean  paramRot05VisibleB;
+	PF_Boolean  paramRot06VisibleB;
+	PF_Boolean  paramRot07VisibleB;
+	PF_Boolean  paramRot08VisibleB;
+	PF_Boolean  paramRot09VisibleB;
+	PF_Boolean  paramRot10VisibleB;
+
+
 	A_char   paramLayer00NameAc[32];
     A_char   paramLayer01NameAc[32];
     PF_Boolean  paramLayer01VisibleB;
@@ -303,6 +329,18 @@ enum {
     MATH_COLOR_NINE,
     MATH_COLOR_TEN,
     MATH_END_TOPIC_COLORS,
+	MATH_TOPIC_ROTS,
+	MATH_ROT_ONE,
+	MATH_ROT_TWO,
+	MATH_ROT_THREE,
+	MATH_ROT_FOUR,
+	MATH_ROT_FIVE,
+	MATH_ROT_SIX,
+	MATH_ROT_SEVEN,
+	MATH_ROT_HEIGHT,
+	MATH_ROT_NINE,
+	MATH_ROT_TEN,
+	MATH_END_TOPIC_ROTS,
     MATH_TOPIC_INPUTS,
     MATH_INP_LAYER_ONE,
     MATH_INP_TOFF_ONE,
@@ -364,6 +402,18 @@ enum {
     MATH_COLOR_NINE_DISK_ID,
     MATH_COLOR_TEN_DISK_ID,
     MATH_END_TOPIC_COLORS_DISK_ID,
+	MATH_TOPIC_ROTS_DISK_ID,
+	MATH_ROT_ONE_DISK_ID,
+	MATH_ROT_TWO_DISK_ID,
+	MATH_ROT_THREE_DISK_ID,
+	MATH_ROT_FOUR_DISK_ID,
+	MATH_ROT_FIVE_DISK_ID,
+	MATH_ROT_SIX_DISK_ID,
+	MATH_ROT_SEVEN_DISK_ID,
+	MATH_ROT_HEIGHT_DISK_ID,
+	MATH_ROT_NINE_DISK_ID,
+	MATH_ROT_TEN_DISK_ID,
+	MATH_END_TOPIC_ROTS_DISK_ID,
     MATH_TOPIC_INPUTS_DISK_ID,
     MATH_INP_LAYER_ONE_DISK_ID,
     MATH_INP_TOFF_ONE_DISK_ID,
@@ -442,6 +492,7 @@ typedef struct MathInfo{
     PF_FpShort      inSliderF[10];
 	point_3d        inPoints[10];
     PF_FpShort      inCboxF[10];
+	PF_FpShort      inRotF[10];
     color_3d        inColors[10];
     PF_FpShort      m9P_red[9];
     PF_FpShort      m9P_green[9];
@@ -545,6 +596,19 @@ public:
         symbol_table.add_constant(seqP->paramCb08NameAc, miP->inCboxF[7]);
         symbol_table.add_constant(seqP->paramCb09NameAc, miP->inCboxF[8]);
         symbol_table.add_constant(seqP->paramCb10NameAc, miP->inCboxF[9]);
+
+		symbol_table.add_constant(seqP->paramRot01NameAc, miP->inRotF[0]);
+		symbol_table.add_constant(seqP->paramRot02NameAc, miP->inRotF[1]);
+		symbol_table.add_constant(seqP->paramRot03NameAc, miP->inRotF[2]);
+		symbol_table.add_constant(seqP->paramRot04NameAc, miP->inRotF[3]);
+		symbol_table.add_constant(seqP->paramRot05NameAc, miP->inRotF[4]);
+		symbol_table.add_constant(seqP->paramRot06NameAc, miP->inRotF[5]);
+		symbol_table.add_constant(seqP->paramRot07NameAc, miP->inRotF[6]);
+		symbol_table.add_constant(seqP->paramRot08NameAc, miP->inRotF[7]);
+		symbol_table.add_constant(seqP->paramRot09NameAc, miP->inRotF[8]);
+		symbol_table.add_constant(seqP->paramRot10NameAc, miP->inRotF[9]);
+
+
         symbol_table.add_constant(seqP->time_secNameAc ,miP->layerTime_Sec);
         symbol_table.add_constant(seqP->time_frameNameAc,miP->layerTime_Frame);
         symbol_table.add_constant(seqP->frame_rateNameAc, miP->compFpsF);
