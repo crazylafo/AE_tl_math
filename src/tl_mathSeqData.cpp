@@ -36,12 +36,18 @@ static bool getBoolFromJsonToSeqData(nlohmann::json arbDataJS,
 }
 
 static std::string getStringFromJsonAdress(nlohmann::json arbDataJS,
-	std::string json_adress)
+                                           std::string json_adress,
+                                           A_char* target)
 {
+     //we input the target. in case of error in json pointer
 	std::string dataStr;
 	AEFX_CLR_STRUCT(dataStr);
 	nlohmann::json::json_pointer jpointer(json_adress);
-	dataStr = arbDataJS[jpointer].get<std::string>();
+    try{
+        dataStr = arbDataJS[jpointer].get<std::string>();
+        }catch (nlohmann::json::exception& e){
+            dataStr = target;
+        }
 	return dataStr;
 }
 
@@ -49,7 +55,7 @@ static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,
 								  std::string json_adress,
 								  char* target)
 {
-	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress);
+	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
@@ -57,9 +63,9 @@ static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,
 
 static void   copyExprFromJsonToSeqData(nlohmann::json arbDataJS,
 												std::string json_adress,
-												char* target)
+												A_char* target)
 {
-	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress);
+	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
 	ExprtkCorrectorStr(dataStr);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
@@ -97,8 +103,8 @@ copyFromArbToSeqData(PF_InData* in_data,
 
 	std::string curr_fragSh = seqDataP->Glsl33_FragmentShAc;
 	std::string curr_vertSh = seqDataP->Glsl33_VertexShAc;
-	std::string  new_frag = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_frag_sh"); 
-	std::string  new_vert = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_vert_sh");
+	std::string  new_frag = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_frag_sh", seqDataP->Glsl33_FragmentShAc);
+	std::string  new_vert = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_vert_sh",seqDataP->Glsl33_VertexShAc);
 	scriptCorrectorStr(new_frag);
 	scriptCorrectorStr(new_vert);
     if (curr_fragSh.compare(new_frag) != 0 || curr_vertSh.compare(new_vert) != 0)

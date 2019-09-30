@@ -16,12 +16,12 @@ GetLayerData(PF_InData     *in_data,
 				A_long *effectIndex)
 {
 	PF_Err				err = PF_Err_NONE, err2 = PF_Err_NONE;
-	AEGP_LayerH        layerH;
-	AEGP_CompH        compH;
-	AEGP_ItemH      itemH;
-	AEGP_StreamRefH streamH;
-	AEGP_EffectRefH effectH;
-	AEGP_StreamRefH parentStreamH;
+	AEGP_LayerH        layerH = NULL;
+	AEGP_CompH        compH = NULL;
+	AEGP_ItemH      itemH = NULL;
+	AEGP_StreamRefH streamH = NULL;
+	AEGP_EffectRefH effectH = NULL;
+	AEGP_StreamRefH parentStreamH = NULL;
 	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
@@ -469,7 +469,7 @@ evalScripts(seqData  *seqDataP)
         #ifdef AE_OS_WIN
                 strncpy_s(seqDataP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
         #else
-                strncpy(seqDataP->Glsl_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+        strncpy(seqDataP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
         #endif
     }
 
@@ -481,7 +481,7 @@ evalScripts(seqData  *seqDataP)
                  strncpy_s(seqDataP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
         #else
                 strncpy(seqDataP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
-                strncpy(seqDataP->Glsl_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+        strncpy(seqDataP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
         #endif
 
     }
@@ -498,8 +498,8 @@ evalScripts(seqData  *seqDataP)
         strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
         strncpy(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
         strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
-        strncpy(seqDataP->Glsl_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-        strncpy(seqDataP->Glsl_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+    strncpy(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+    strncpy(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
 		strncpy(seqDataP->rgbError, evalRgbCh.c_str(), evalRgbCh.length() + 1);
      #endif
 
