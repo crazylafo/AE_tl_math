@@ -251,7 +251,7 @@ CallCepDialog(PF_InData        *in_data,
 	A_char          scriptAC[1500]{ '\0' };
 	my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 
-	A_long compId, layerIndex, effectIndex;
+	A_long compId = NULL, layerIndex = NULL, effectIndex = NULL;
 	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
     layerIndex +=1; //from AEsdk to AEjs
     effectIndex +=1; //from AEsdk to AEjs
@@ -332,8 +332,8 @@ SetupDialogSend( PF_InData        *in_data,
     ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex)); 
     arbDataJS["effectInfo"]["pluginVersion"] = plugVersionF;
 
-	arbDataJS["gl_expression"]["gl_frag_error"] = fragErr;
-	arbDataJS["gl_expression"]["gl_vert_error"] = vertErr;
+	arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
+	arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
     arbDataJS["math_expression"]["red_error"] =   redErr;
     arbDataJS["math_expression"]["green_error"] = greenErr;
     arbDataJS["math_expression"]["blue_error"] =  blueErr;
@@ -355,6 +355,7 @@ SetupDialogSend( PF_InData        *in_data,
 	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 	return err;
 }
+
 
 PF_Err
 SetupGetDataBack(
@@ -397,8 +398,9 @@ SetupGetDataBack(
 
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-		ERR(copyFromArbToSeqData(in_data, out_data,resultStr, seqP ));
-        ERR(evalScripts  (seqP));
+		ERR(copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
+        ERR(tlmath_updateParamsValue(params, resultStr));
+        ERR(evalScripts (seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
 
@@ -410,6 +412,7 @@ SetupGetDataBack(
     return err;
 
 }
+
 
 
 PF_Err

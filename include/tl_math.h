@@ -891,6 +891,10 @@ LineIteration32Func(void *refconPV,
                     void *refconFlags,
                     void *refconWorld,
                     A_long yL);
+
+PF_Err
+tlmath_updateParamsValue(PF_ParamDef     *params[],
+                         std::string     arbStr);
 PF_Err
 CallCepDialog(PF_InData        *in_data,
               PF_OutData        *out_data);

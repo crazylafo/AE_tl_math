@@ -51,6 +51,21 @@ static std::string getStringFromJsonAdress(nlohmann::json arbDataJS,
 	return dataStr;
 }
 
+static PF_FpLong getFloatFromJsonAdress(nlohmann::json arbDataJS,
+                                    std::string json_adress,
+                                    PF_FpLong  target)
+{
+    //we input the target. in case of error in json pointer
+    PF_FpLong  dataF;
+    nlohmann::json::json_pointer jpointer(json_adress);
+    try{
+        dataF = (PF_FpLong) arbDataJS[jpointer].get<float>();
+    }catch (nlohmann::json::exception& e){
+         dataF= target;
+    }
+    return  dataF;
+}
+
 static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,
 								  std::string json_adress,
 								  char* target)
@@ -69,6 +84,44 @@ static void   copyExprFromJsonToSeqData(nlohmann::json arbDataJS,
 	ExprtkCorrectorStr(dataStr);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
+}
+
+PF_Err
+tlmath_updateParamsValue(PF_ParamDef     *params[],
+                         std::string     arbStr)
+{
+    PF_Err err = PF_Err_NONE;
+    nlohmann::json arbDataJS;
+    try {
+        arbDataJS = nlohmann::json::parse(arbStr);
+    }
+    catch (nlohmann::json::exception& e)
+    {
+        return PF_Err_INTERNAL_STRUCT_DAMAGED;
+    }
+    params[MATH_SLIDER_ONE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/0/defaultVal[0]", params[MATH_SLIDER_ONE]->u.fs_d.value);
+    params[MATH_SLIDER_ONE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_TWO]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/1/defaultVal[0]", params[MATH_SLIDER_TWO]->u.fs_d.value);
+    params[MATH_SLIDER_TWO]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_THREE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/2/defaultVal[0]", params[MATH_SLIDER_THREE]->u.fs_d.value);
+    params[MATH_SLIDER_THREE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_FOUR]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/3/defaultVal[0]", params[MATH_SLIDER_FOUR]->u.fs_d.value);
+    params[MATH_SLIDER_FOUR]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_FIVE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/4/defaultVal[0]", params[MATH_SLIDER_FIVE]->u.fs_d.value);
+    params[MATH_SLIDER_FIVE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_SIX]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/5/defaultVal[0]", params[MATH_SLIDER_SIX]->u.fs_d.value);
+    params[MATH_SLIDER_SIX]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_SEVEN]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/6/defaultVal[0]", params[MATH_SLIDER_SEVEN]->u.fs_d.value);
+    params[MATH_SLIDER_SEVEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_HEIGHT]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/7/defaultVal[0]", params[MATH_SLIDER_HEIGHT]->u.fs_d.value);
+    params[MATH_SLIDER_HEIGHT]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_NINE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/8/defaultVal[0]", params[MATH_SLIDER_NINE]->u.fs_d.value);
+    params[MATH_SLIDER_NINE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_SLIDER_TEN]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/9/defaultVal[0]", params[MATH_SLIDER_TEN]->u.fs_d.value);
+    params[MATH_SLIDER_TEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    
+    return err;
+
 }
 
 PF_Err

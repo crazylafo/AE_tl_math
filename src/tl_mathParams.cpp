@@ -1,5 +1,6 @@
 #include "tl_math.h"
 
+
 PF_Err
 tlmath_ParamsSetup  (
                      PF_InData        *in_data,
@@ -398,9 +399,6 @@ tlmath_ParamsSetup  (
     out_data->num_params = MATH_NUM_PARAMS;
     return err;
 }
-
-
-
 PF_Err
 MakeParamCopy(
 	PF_ParamDef *actual[],	/* >> */
@@ -456,7 +454,6 @@ MakeParamCopy(
     copy[MATH_COLOR_HEIGHT] = *actual[MATH_COLOR_HEIGHT];
     copy[MATH_COLOR_NINE] = *actual[MATH_COLOR_NINE];
     copy[MATH_COLOR_TEN] = *actual[MATH_COLOR_TEN];
-
 	copy[MATH_TOPIC_ROTS] = *actual[MATH_TOPIC_ROTS];
 	copy[MATH_ROT_ONE] = *actual[MATH_ROT_ONE];
 	copy[MATH_ROT_TWO] = *actual[MATH_ROT_TWO];
@@ -468,7 +465,6 @@ MakeParamCopy(
 	copy[MATH_ROT_HEIGHT] = *actual[MATH_ROT_HEIGHT];
 	copy[MATH_ROT_NINE] = *actual[MATH_ROT_NINE];
 	copy[MATH_ROT_TEN] = *actual[MATH_ROT_TEN];
-
 	copy[MATH_TOPIC_INPUTS] = *actual[MATH_TOPIC_INPUTS];
 	copy[MATH_INP_LAYER_ONE] = *actual[MATH_INP_LAYER_ONE];
 	copy[MATH_INP_TOFF_ONE] = *actual[MATH_INP_TOFF_ONE];
@@ -478,8 +474,8 @@ MakeParamCopy(
     copy[ MATH_CEP_RETURN_MESSAGE] = *actual[MATH_CEP_RETURN_MESSAGE];
 
 	return PF_Err_NONE;
-
 }
+
 PF_Err
 tlmath_UpdateParameterUI(
 	PF_InData			*in_data,
@@ -1178,6 +1174,8 @@ tlmath_UpdateParameterUI(
 	return err;
 }
 
+
+
 PF_Err
 tlmath_UserChangedParam(
 	PF_InData						*in_data,
@@ -1208,7 +1206,7 @@ tlmath_UserChangedParam(
 	{
 		if (params[MATH_CEP_GET_ARB_DATA]->u.bd.value == TRUE) {
 
-				ERR(SetupGetDataBack(in_data, out_data, params));
+            ERR(SetupGetDataBack(in_data, out_data, params));
 			//deselect checkbox
             params[MATH_CEP_GET_ARB_DATA]->u.bd.value = FALSE;
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
