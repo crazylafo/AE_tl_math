@@ -193,6 +193,16 @@ static void ExprtkCorrectorStr(std::string &str)
 	strReplace(str, "\t", "    ");
 	strReplace(str, "\"", " '");
 }
+/*
+//before execution
+static void scriptCorrectorStr(std::string &str)
+{
+    strReplace(str, "\\n", "\n");
+    strReplace(str, "\\r", "\r");
+    strReplace(str, "\\t", "  ");
+    strReplace(str, "\\'", "\'");
+}
+*/
 static void jsonCorrectorStr(std::string &str)
 {
 	//strReplace(str, "\\", " ");
@@ -202,14 +212,7 @@ static void jsonCorrectorStr(std::string &str)
 	strReplace(str, "\r", "\\r");
 	strReplace(str, "\t", "\\t");
 }
-//before execution
-static void scriptCorrectorStr(std::string &str)
-{
-	strReplace(str, "\\n", "\n");
-	strReplace(str, "\\r", "\r");
-	strReplace(str, "\\t", "  ");
-	strReplace(str, "\\'", "\'");
-}
+
 PF_Boolean
 strToBoolean( std::string str)
 {
@@ -290,10 +293,9 @@ SetupDialogSend( PF_InData        *in_data,
     std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
 
-    std::string plugVersionStr =Majvers.append(".")
-                                .append(MinVers)
+    std::string plugVersionStr =Majvers.append(MinVers)
                                 .append(Bugvers);
-    float plugVersionF = round( std::atof( plugVersionStr.c_str()));
+    A_long plugVersionA = std::atoi( plugVersionStr.c_str());
 
     //ARB
     PF_ParamDef arb_param;
@@ -312,7 +314,8 @@ SetupDialogSend( PF_InData        *in_data,
         }
     auto  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
 
-    std::string     fragErr = seqP->Glsl33_fragError,
+
+    std::string fragErr = seqP->Glsl33_fragError,
                     vertErr = seqP-> Glsl33_VertError,
                     redErr = seqP->redError,
                     greenErr = seqP->greenError,
@@ -322,17 +325,23 @@ SetupDialogSend( PF_InData        *in_data,
 
     jsonCorrectorStr(fragErr);
     jsonCorrectorStr(vertErr);
+
     jsonCorrectorStr(redErr);
     jsonCorrectorStr(greenErr);
     jsonCorrectorStr(blueErr);
     jsonCorrectorStr(alphaErr);
 	jsonCorrectorStr(rgbErr);
 
-    A_long compId,layerIndex, effectIndex;
-    ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex)); 
-    arbDataJS["effectInfo"]["pluginVersion"] = plugVersionF;
+    ExprtkCorrectorStr(redErr);
+    ExprtkCorrectorStr(greenErr);
+    ExprtkCorrectorStr(blueErr);
+    ExprtkCorrectorStr(rgbErr);
 
-	arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
+    //A_long compId,layerIndex, effectIndex;
+    //ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
+    arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
+
+    arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
 	arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
     arbDataJS["math_expression"]["red_error"] =   redErr;
     arbDataJS["math_expression"]["green_error"] = greenErr;
@@ -400,7 +409,7 @@ SetupGetDataBack(
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		ERR(copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
         ERR(tlmath_updateParamsValue(params, resultStr));
-        ERR(evalScripts (seqP));
+        ERR(evalScripts(seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
 

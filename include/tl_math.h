@@ -903,7 +903,14 @@ SetupDialogSend(
 	PF_InData        *in_data,
 	PF_OutData        *out_data,
 	PF_ParamDef        *params[]);
-
+PF_Err
+tlMath_SequenceSetdown (
+                        PF_InData        *in_data,
+                        PF_OutData        *out_data);
+PF_Err
+tlMath_SequenceSetup (
+                      PF_InData        *in_data,
+                      PF_OutData        *out_data);
 PF_Err
 AEGP_GetParamStreamValue(PF_InData            *in_data,
 	PF_OutData            *out_data,

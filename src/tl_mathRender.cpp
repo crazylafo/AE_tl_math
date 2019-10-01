@@ -471,7 +471,7 @@ tl_math_PreRender(PF_InData                *in_data,
 
 			miP->layerPos.point[0] = strValP.three_d.x;
             miP->layerPos.point[1] = strValP.three_d.y;
-            miP->layerPos.point[2] = strValP.three_d.z,
+            miP->layerPos.point[2] = strValP.three_d.z;
 
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
 			miP->layerScale.point[0] = strValSP.three_d.x;

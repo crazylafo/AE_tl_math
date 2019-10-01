@@ -99,25 +99,25 @@ tlmath_updateParamsValue(PF_ParamDef     *params[],
     {
         return PF_Err_INTERNAL_STRUCT_DAMAGED;
     }
-    params[MATH_SLIDER_ONE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/0/defaultVal[0]", params[MATH_SLIDER_ONE]->u.fs_d.value);
+    params[MATH_SLIDER_ONE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/0/defaultVal/0", params[MATH_SLIDER_ONE]->u.fs_d.value);
     params[MATH_SLIDER_ONE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_TWO]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/1/defaultVal[0]", params[MATH_SLIDER_TWO]->u.fs_d.value);
+    params[MATH_SLIDER_TWO]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/1/defaultVal/0", params[MATH_SLIDER_TWO]->u.fs_d.value);
     params[MATH_SLIDER_TWO]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_THREE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/2/defaultVal[0]", params[MATH_SLIDER_THREE]->u.fs_d.value);
+    params[MATH_SLIDER_THREE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/2/defaultVal/0", params[MATH_SLIDER_THREE]->u.fs_d.value);
     params[MATH_SLIDER_THREE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_FOUR]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/3/defaultVal[0]", params[MATH_SLIDER_FOUR]->u.fs_d.value);
+    params[MATH_SLIDER_FOUR]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/3/defaultVal/0", params[MATH_SLIDER_FOUR]->u.fs_d.value);
     params[MATH_SLIDER_FOUR]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_FIVE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/4/defaultVal[0]", params[MATH_SLIDER_FIVE]->u.fs_d.value);
+    params[MATH_SLIDER_FIVE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/4/defaultVal/0", params[MATH_SLIDER_FIVE]->u.fs_d.value);
     params[MATH_SLIDER_FIVE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_SIX]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/5/defaultVal[0]", params[MATH_SLIDER_SIX]->u.fs_d.value);
+    params[MATH_SLIDER_SIX]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/5/defaultVal/0", params[MATH_SLIDER_SIX]->u.fs_d.value);
     params[MATH_SLIDER_SIX]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_SEVEN]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/6/defaultVal[0]", params[MATH_SLIDER_SEVEN]->u.fs_d.value);
+    params[MATH_SLIDER_SEVEN]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/6/defaultVal/0", params[MATH_SLIDER_SEVEN]->u.fs_d.value);
     params[MATH_SLIDER_SEVEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_HEIGHT]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/7/defaultVal[0]", params[MATH_SLIDER_HEIGHT]->u.fs_d.value);
+    params[MATH_SLIDER_HEIGHT]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/7/defaultVal/0", params[MATH_SLIDER_HEIGHT]->u.fs_d.value);
     params[MATH_SLIDER_HEIGHT]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_NINE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/8/defaultVal[0]", params[MATH_SLIDER_NINE]->u.fs_d.value);
+    params[MATH_SLIDER_NINE]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/8/defaultVal/0", params[MATH_SLIDER_NINE]->u.fs_d.value);
     params[MATH_SLIDER_NINE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-    params[MATH_SLIDER_TEN]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/9/defaultVal[0]", params[MATH_SLIDER_TEN]->u.fs_d.value);
+    params[MATH_SLIDER_TEN]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/9/defaultVal/0", params[MATH_SLIDER_TEN]->u.fs_d.value);
     params[MATH_SLIDER_TEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
     
     return err;
@@ -372,6 +372,7 @@ tlmath_updateSeqData(PF_InData            *in_data,
 }
 
 
+
 PF_Err
 tlMath_SequenceSetdown (
                         PF_InData        *in_data,
@@ -402,6 +403,7 @@ tlMath_SequenceSetup (
             seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             seqP->initializedB = false;
             copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
+            ERR(evalScripts(seqP));
             out_data->sequence_data = seq_dataH;
             suites.HandleSuite1()->host_unlock_handle(seq_dataH);
         } else {    // whoa, we couldn't allocate sequence data; bail!

@@ -12,8 +12,8 @@ static std::string defaultArb = R"=====(
 {
     "effectInfo":{
         "effectName":"tlMath",
-        "pluginVersion":1.15,
-        "minimalPluginVersion":1.15,
+        "pluginVersion":115,
+        "minimalPluginVersion":115,
         "tags":["default", "glsl", "expr","skeleton"],
         "presetName":"default_preset",
         "description":"simple skeleton_effect"
