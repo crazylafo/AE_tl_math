@@ -245,7 +245,7 @@ function getParamsSettings(arbData, paramName, numParams, paramDimension, paramG
 		$("#"+paramName+i+"_name").val(arbData.gui_settings[paramGroupId].params[i].name.toString());
 		$("input[names"+paramName+i+"Visible]").prop('checked', arbData.gui_settings[paramGroupId].params[i].visibleB);
 		for (var j=0; j<paramDimension; j++){
-			$("#"+paramName+i+'_defaultVal'+j).val(parseInt(arbData.gui_settings[paramGroupId].params[i].defaultVal[j]));
+			$("#"+paramName+i+'_defaultVal'+j).val(parseFloat(arbData.gui_settings[paramGroupId].params[i].defaultVal[j]));
 			}
 		}
 	}
@@ -258,7 +258,7 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 		arbData.gui_settings[paramGroupId].params[i].name =$("#"+paramName+i+"_name").val().toString();
 		arbData.gui_settings[paramGroupId].params[i].visibleB= $("#"+paramName+i+"_visible").is(':checked');
 		for(var j=0; j<paramDimension; j++){
-			arbData.gui_settings[paramGroupId].params[i].defaultVal[j]=parseInt($("#"+paramName+i+'_defaultVal'+j).val());
+			arbData.gui_settings[paramGroupId].params[i].defaultVal[j]=parseFloat($("#"+paramName+i+'_defaultVal'+j).val());
 			}
 		}
 	return arbData;
