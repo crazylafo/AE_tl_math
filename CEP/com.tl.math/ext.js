@@ -5,7 +5,7 @@
 
 function onLoaded() {
 	var pluginName = "tlMath";
-	var pluginVersion =1.15;
+	var pluginVersion =115;
 	var csInterface = new CSInterface();
 	var appName = csInterface.hostEnvironment.appName;
 	csInterface.setWindowTitle = "tl Math Setup";
@@ -44,12 +44,12 @@ function onLoaded() {
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
 			arbData = fromArbEvent.data;
-			pluginVersion = parseFloat (arbData.effectInfo.pluginVersion).toFixed(2);
+			pluginVersion = parseInt(arbData.effectInfo.pluginVersion);
 			copyDataToGUI (arbData, editors,numParams);
 	});
 	csInterface.addEventListener("tlmath.arbSentfromPreset", function(fromArbEvent){
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
-		if (parseFloat(pluginVersion)<parseFloat(fromArbEvent.data.effectInfo.minimalPluginVersion)) {alert (err.pluginVersion); return}
+		if (parseInt(pluginVersion)<parseInt(fromArbEvent.data.effectInfo.minimalPluginVersion)) {alert (err.pluginVersion); return}
 			arbData = fromArbEvent.data; 
 			copyDataToGUI (arbData, editors,numParams);
 		});
