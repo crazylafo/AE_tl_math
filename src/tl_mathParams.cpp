@@ -53,7 +53,7 @@ tlmath_ParamsSetup  (
         err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
     }
     AEFX_CLR_STRUCT(def);
-    def.flags= PF_ParamFlag_SUPERVISE;
+    def.flags= PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name),  MATH_TOPIC_SLIDER_DISK_ID);
 
     AEFX_CLR_STRUCT(def);
@@ -191,7 +191,7 @@ tlmath_ParamsSetup  (
 
     AEFX_CLR_STRUCT(def);
 
-    def.flags = PF_ParamFlag_SUPERVISE;
+    def.flags = PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name), MATH_TOPIC_POINTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
     def.flags = PF_ParamFlag_SUPERVISE;
@@ -237,7 +237,7 @@ tlmath_ParamsSetup  (
     PF_END_TOPIC(MATH_TOPIC_POINTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
-    def.flags = PF_ParamFlag_SUPERVISE;
+	def.flags = PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR(STR_ID_MATH_TOPIC_CB_Param_Name), MATH_TOPIC_CB_DISK_ID);
     AEFX_CLR_STRUCT(def);
     def.flags = PF_ParamFlag_SUPERVISE;
@@ -283,7 +283,7 @@ tlmath_ParamsSetup  (
     PF_END_TOPIC ( MATH_TOPIC_CB_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
-    def.flags = PF_ParamFlag_SUPERVISE;
+	def.flags = PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR(STR_ID_MATH_TOPIC_COLORS_Param_Name), MATH_TOPIC_COLORS_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
@@ -314,7 +314,7 @@ tlmath_ParamsSetup  (
     PF_END_TOPIC (MATH_TOPIC_COLORS_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
-	def.flags = PF_ParamFlag_SUPERVISE;
+	def.flags = PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
 	PF_ADD_TOPIC(STR(STR_ID_MATH_TOPIC_ROTS_Param_Name), MATH_TOPIC_ROTS_DISK_ID);
 	AEFX_CLR_STRUCT(def);
 	PF_ADD_ANGLE(STR(STR_ID_MATH_ROT_ONE_Param_Name), 0, MATH_ROT_ONE_DISK_ID);
@@ -351,7 +351,7 @@ tlmath_ParamsSetup  (
 	AEFX_CLR_STRUCT(def);
 
 
-    def.flags = PF_ParamFlag_SUPERVISE;
+	def.flags = PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name), MATH_TOPIC_INPUTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
     def.flags = PF_ParamFlag_SUPERVISE;

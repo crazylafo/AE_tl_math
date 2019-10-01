@@ -62,8 +62,6 @@ namespace {
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-
-
 	struct CopyPixelFloat_t {
 		PF_PixelFloat	*floatBufferP;
 		PF_EffectWorld	*input_worldP;
@@ -575,7 +573,8 @@ GlobalSetup (
 		PF_OutFlag_NON_PARAM_VARY ;
 
 
-	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS |
+	out_data->out_flags2 =  PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS |
+							PF_OutFlag2_PARAM_GROUP_START_COLLAPSED_FLAG|
                             PF_OutFlag2_I_USE_3D_CAMERA   |
 							PF_OutFlag2_FLOAT_COLOR_AWARE |
 							PF_OutFlag2_SUPPORTS_SMART_RENDER | 

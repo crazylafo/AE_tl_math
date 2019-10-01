@@ -348,7 +348,7 @@ SetupDialogSend( PF_InData        *in_data,
     arbDataJS["math_expression"]["blue_error"] =  blueErr;
     arbDataJS["math_expression"]["alpha_error"] = alphaErr;
 	arbDataJS["math_expression"]["rgb_error"] =   rgbErr;
-	    std::string resultStr;
+	std::string resultStr;
    std::string jsonDump = "'''";
    jsonDump.append(arbDataJS.dump());
    jsonDump.append("'''");
@@ -408,7 +408,7 @@ SetupGetDataBack(
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		ERR(copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
-        ERR(tlmath_updateParamsValue(params, resultStr));
+        ERR(tlmath_updateParamsValue(in_data, params, resultStr));
         ERR(evalScripts(seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
