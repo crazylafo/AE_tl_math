@@ -70,21 +70,19 @@ static PF_FpLong getFloatFromJsonAdress(nlohmann::json arbDataJS,std::string jso
 static PF_Point3DDef getPointsFromJsonAdress(nlohmann::json arbDataJS, std::string json_adress, PF_Point3DDef  target)
 {
 	//we input the target. in case of error in json pointer
-	PF_Point3DDef   data3dF;
-	PF_FpLong tmpF[3];
+    PF_Point3DDef   data3dF = target;
+    std::string json_adress_X = json_adress+"0";
+    std::string json_adress_Y= json_adress+"1";
+    std::string json_adress_Z= json_adress+"2";
 	try {
-		for (int i = 0; i < 3; i++) {
-			std::string iteratorStr = std::to_string(i);
-			if (i > 0) {
-				strReplace(iteratorStr, "0", "");
-			}
-			json_adress.append(iteratorStr);
-			nlohmann::json::json_pointer jpointer(json_adress);
-			tmpF[i]= (PF_FpLong)arbDataJS[jpointer].get<float>();
-		}
-		data3dF.x_value = tmpF[0];
-		data3dF.y_value = tmpF[1];
-		data3dF.z_value = tmpF[2];
+        nlohmann::json::json_pointer jpointerX(json_adress_X);
+        data3dF.x_value= (PF_FpLong)arbDataJS[jpointerX].get<float>();
+
+        nlohmann::json::json_pointer jpointerY(json_adress_Y);
+        data3dF.y_value= (PF_FpLong)arbDataJS[jpointerY].get<float>();
+
+        nlohmann::json::json_pointer jpointerZ( json_adress_Z);
+        data3dF.z_value= (PF_FpLong)arbDataJS[jpointerZ].get<float>();
 	}
 	catch (nlohmann::json::exception& e) {
 		data3dF = target;
@@ -165,6 +163,25 @@ tlmath_updateParamsValue(PF_InData* in_data,
     params[MATH_SLIDER_TEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 
 	params[MATH_POINT_ONE]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/0/defaultVal/", params[MATH_POINT_ONE]->u.point3d_d);
+    params[MATH_POINT_ONE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_TWO]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/1/defaultVal/", params[MATH_POINT_TWO]->u.point3d_d);
+    params[MATH_POINT_TWO]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_THREE]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/2/defaultVal/", params[MATH_POINT_THREE]->u.point3d_d);
+    params[MATH_POINT_THREE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_FOUR]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/3/defaultVal/", params[MATH_POINT_FOUR]->u.point3d_d);
+    params[MATH_POINT_FOUR]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_FIVE]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/4/defaultVal/", params[MATH_POINT_FIVE]->u.point3d_d);
+    params[MATH_POINT_FIVE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_SIX]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/5/defaultVal/", params[MATH_POINT_SIX]->u.point3d_d);
+    params[MATH_POINT_SIX]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_SEVEN]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/6/defaultVal/", params[MATH_POINT_SEVEN]->u.point3d_d);
+    params[MATH_POINT_SEVEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_HEIGHT]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/7/defaultVal/", params[MATH_POINT_HEIGHT]->u.point3d_d);
+    params[MATH_POINT_HEIGHT]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_NINE]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/8/defaultVal/", params[MATH_POINT_NINE]->u.point3d_d);
+    params[MATH_POINT_NINE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
+    params[MATH_POINT_TEN]->u.point3d_d = getPointsFromJsonAdress( arbDataJS, "/gui_settings/pointGrp/params/9/defaultVal/", params[MATH_POINT_TEN]->u.point3d_d);
+    params[MATH_POINT_TEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 
 	params[MATH_CB_ONE]->u.bd.value = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/gui_settings/cboxGrp/params/0/defaultVal/0", params[MATH_CB_ONE]->u.bd.value));
 	params[MATH_CB_ONE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
@@ -187,34 +204,26 @@ tlmath_updateParamsValue(PF_InData* in_data,
 	params[MATH_CB_TEN]->u.bd.value = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/gui_settings/cboxGrp/params/9/defaultVal/0", params[MATH_CB_TEN]->u.bd.value));
 	params[MATH_CB_TEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 
-	
-
-	params[MATH_ROT_ONE]->u.ad.value = INT2FIX (getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/0/defaultVal/0", MATH_ROT_ONE));
+	params[MATH_ROT_ONE]->u.ad.value = INT2FIX (getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/0/defaultVal/0", params[MATH_ROT_ONE]->u.ad.value));
 	params[MATH_ROT_ONE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_TWO]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/1/defaultVal/0", MATH_ROT_TWO));
+	params[MATH_ROT_TWO]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/1/defaultVal/0", params[MATH_ROT_TWO]->u.ad.value));
 	params[MATH_ROT_TWO]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_THREE]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/2/defaultVal/0", MATH_ROT_THREE));
+	params[MATH_ROT_THREE]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/2/defaultVal/0", params[MATH_ROT_THREE]->u.ad.value));
 	params[MATH_ROT_THREE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_FOUR]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/3/defaultVal/0", MATH_ROT_FOUR));
+	params[MATH_ROT_FOUR]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/3/defaultVal/0", params[MATH_ROT_FOUR]->u.ad.value));
 	params[MATH_ROT_FOUR]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_FIVE]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/4/defaultVal/0", MATH_ROT_FIVE));
+	params[MATH_ROT_FIVE]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/4/defaultVal/0", params[MATH_ROT_FIVE]->u.ad.value));
 	params[MATH_ROT_FIVE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_SIX]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/5/defaultVal/0", MATH_ROT_SIX));
+	params[MATH_ROT_SIX]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/5/defaultVal/0", params[MATH_ROT_SIX]->u.ad.value));
 	params[MATH_ROT_SIX]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_SEVEN]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/6/defaultVal/0", MATH_ROT_SEVEN));
+	params[MATH_ROT_SEVEN]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/6/defaultVal/0", params[MATH_ROT_SEVEN]->u.ad.value));
 	params[MATH_ROT_SEVEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_HEIGHT]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/7/defaultVal/0", MATH_ROT_HEIGHT));
+	params[MATH_ROT_HEIGHT]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/7/defaultVal/0", params[MATH_ROT_HEIGHT]->u.ad.value));
 	params[MATH_ROT_HEIGHT]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_NINE]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/8/defaultVal/0", MATH_ROT_NINE));
+	params[MATH_ROT_NINE]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/8/defaultVal/0", params[MATH_ROT_NINE]->u.ad.value));
 	params[MATH_ROT_NINE]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-	params[MATH_ROT_TEN]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/9/defaultVal/0", MATH_ROT_TEN));
+	params[MATH_ROT_TEN]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/9/defaultVal/0", params[MATH_ROT_TEN]->u.ad.value));
 	params[MATH_ROT_TEN]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
-
-
-
-
-
-
     
     return err;
 

@@ -313,15 +313,23 @@ SetupDialogSend( PF_InData        *in_data,
             err = PF_Err_OUT_OF_MEMORY;
         }
     auto  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
+    evalScripts( seqP);
 
-
-    std::string fragErr = seqP->Glsl33_fragError,
-                    vertErr = seqP-> Glsl33_VertError,
-                    redErr = seqP->redError,
-                    greenErr = seqP->greenError,
-                    blueErr = seqP->blueError,
-                    alphaErr =seqP->alphaError,
-					rgbErr = seqP->rgbError;		
+    std::string fragErr, vertErr ,redErr, greenErr , blueErr, alphaErr, rgbErr;
+    AEFX_CLR_STRUCT(fragErr);
+    fragErr = seqP->Glsl33_fragError;
+    AEFX_CLR_STRUCT(vertErr);
+    vertErr = seqP-> Glsl33_VertError;
+    AEFX_CLR_STRUCT(redErr);
+    redErr = seqP->redError;
+    AEFX_CLR_STRUCT(greenErr);
+    greenErr = seqP->greenError;
+    AEFX_CLR_STRUCT(blueErr);
+    blueErr = seqP->blueError;
+    AEFX_CLR_STRUCT(alphaErr);
+    alphaErr =seqP->alphaError;
+    AEFX_CLR_STRUCT (rgbErr);
+    rgbErr = seqP->rgbError;
 
     jsonCorrectorStr(fragErr);
     jsonCorrectorStr(vertErr);
@@ -340,7 +348,6 @@ SetupDialogSend( PF_InData        *in_data,
     //A_long compId,layerIndex, effectIndex;
     //ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
     arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
-
     arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
 	arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
     arbDataJS["math_expression"]["red_error"] =   redErr;
@@ -349,9 +356,9 @@ SetupDialogSend( PF_InData        *in_data,
     arbDataJS["math_expression"]["alpha_error"] = alphaErr;
 	arbDataJS["math_expression"]["rgb_error"] =   rgbErr;
 	std::string resultStr;
-   std::string jsonDump = "'''";
-   jsonDump.append(arbDataJS.dump());
-   jsonDump.append("'''");
+    std::string jsonDump = "'''";
+    jsonDump.append(arbDataJS.dump());
+    jsonDump.append("'''");
 
 
 	AEFX_CLR_STRUCT(scriptAC);
