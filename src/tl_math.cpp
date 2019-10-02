@@ -1065,44 +1065,6 @@ QueryDynamicFlags(
 	return err;
 }
 
-static PF_Err
-SequenceSetdown (
-                 PF_InData        *in_data,
-                 PF_OutData        *out_data)
-{
-    PF_Err err = PF_Err_NONE;
-
-    if (in_data->sequence_data){
-        AEGP_SuiteHandler suites(in_data->pica_basicP);
-        suites.HandleSuite1()->host_dispose_handle(in_data->sequence_data);
-    }
-    return err;
-}
-
-static PF_Err
-SequenceSetup (
-               PF_InData        *in_data,
-               PF_OutData        *out_data)
-{
-	PF_Err err = PF_Err_NONE;
-    AEGP_SuiteHandler suites(in_data->pica_basicP);
-    err = SequenceSetdown(in_data, out_data);
-
-    if (!err){
-        PF_Handle    seq_dataH =    suites.HandleSuite1()->host_new_handle(sizeof(seqData));
-
-        if (seq_dataH){
-			seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-				seqP->initializedB = false;
-				copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
-                out_data->sequence_data = seq_dataH;
-                suites.HandleSuite1()->host_unlock_handle(seq_dataH);
-        } else {    // whoa, we couldn't allocate sequence data; bail!
-            err = PF_Err_OUT_OF_MEMORY;
-        }
-    }
-    return err;
-}
 
 DllExport	
 PF_Err 
@@ -1158,15 +1120,15 @@ PF_Err
                 break;
 
             case PF_Cmd_SEQUENCE_SETUP:
-                err = SequenceSetup(in_data,out_data);
+                err = tlMath_SequenceSetup(in_data,out_data);
                 break;
 
             case PF_Cmd_SEQUENCE_SETDOWN:
-                err = SequenceSetdown(in_data,out_data);
+                err = tlMath_SequenceSetdown(in_data,out_data);
                 break;
 
             case PF_Cmd_SEQUENCE_RESETUP:
-                err = SequenceSetup(in_data,out_data);
+                err = tlMath_SequenceSetup(in_data,out_data);
                 break;
                 
             

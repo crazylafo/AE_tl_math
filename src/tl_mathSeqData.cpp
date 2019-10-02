@@ -14,24 +14,7 @@ static PF_Boolean convertIntToBool(A_long input) {
 	}
 	else return false;
 }
-static void ExprtkCorrectorStr(std::string &str)
-{
-    //convert some AE javascript operator to exprtk operators
-    strReplace(str, "&&", "&");
-    strReplace(str, "||", "|");
-    strReplace(str, "++", "+=1");
-    strReplace(str, "--", "-=1");
-    strReplace(str, " = ", " := ");
-    strReplace(str, "\t", "    ");
-    strReplace(str, "\"", " '");
-}
-static void scriptCorrectorStr(std::string &str)
-{
-    strReplace(str, "\\n", "\n");
-    strReplace(str, "\\r", "\r");
-    strReplace(str, "\\t", "  ");
-    strReplace(str, "\\'", "\'");
-}
+
 
 static bool getBoolFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress)
 {
@@ -181,11 +164,7 @@ static void updateCbParams(PF_ParamDef * params[],nlohmann::json arbDataJS, int 
 		params[paramIndex]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 	}
 }
-
-static void updateRotParams(PF_ParamDef* params[],
-	nlohmann::json arbDataJS,
-	int indexOffsetI,
-	int numParamsI)
+static void updateRotParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)
 {
 	for (int index = 0; index < numParamsI; index++) {
 		int paramIndex = index + indexOffsetI;
@@ -193,11 +172,7 @@ static void updateRotParams(PF_ParamDef* params[],
 		params[paramIndex]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 	}
 }
-
-static void updateColorParams(PF_ParamDef* params[],
-								nlohmann::json arbDataJS,
-								int indexOffsetI,
-								int numParamsI)
+static void updateColorParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)
 {
 	for (int index = 0; index < numParamsI; index++) {
 		int paramIndex = index + indexOffsetI;

@@ -863,6 +863,7 @@ static std::string safeExpr ="0";
 std::string strCopyAndReplace(std::string str,
                               const std::string& oldStr,
                               const std::string& newStr);
+
 PF_Boolean
 strToBoolean( std::string str);
 void
@@ -870,7 +871,9 @@ strReplace(std::string& str,
            const std::string& oldStr,
            const std::string& newStr);
 
-
+void jsonCorrectorStr(std::string& str); //to json
+void scriptCorrectorStr(std::string& str); //from json
+void ExprtkCorrectorStr(std::string& str); // for exprtk script only
 
 PF_Err
 LineIteration8Func ( void *refconPV,
@@ -912,12 +915,13 @@ PF_Err
 tlMath_SequenceSetup (
                       PF_InData        *in_data,
                       PF_OutData        *out_data);
+/*
 PF_Err
 AEGP_GetParamStreamValue(PF_InData            *in_data,
 	PF_OutData            *out_data,
 	AEGP_PluginID        PlugId,
 	PF_ParamIndex        param_index,
-	PF_Handle           *ArbH);
+	PF_Handle           *ArbH);*/
 
 PF_Err
 SetupGetDataBack(
