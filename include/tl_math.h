@@ -77,7 +77,7 @@ using namespace gl33core;
 
 #define ARB_REFCON            (void*)0xDEADBEEFDEADBEEF
 typedef struct {
-    A_char arbDataAc[100000];
+    A_char arbDataAc[250000];
 } m_ArbData;
 typedef struct {
 	bool    initializedB;
@@ -281,6 +281,7 @@ enum {
 	MATH_INPUT = 0,
 	MATH_SETUP,
     MATH_ARB_DATA,
+    MATH_EFFECT_DESCRIPTION,
     MATH_TOPIC_SLIDER,
 	MATH_SLIDER_ONE,
     MATH_SLIDER_TWO,
@@ -354,6 +355,7 @@ enum {
 enum {
 	MATH_SETUP_DISK_ID =1,
 	MATH_ARB_DATA_DISK_ID,
+    MATH_EFFECT_DESCRIPTION_DISK_ID,    
     MATH_TOPIC_SLIDER_DISK_ID,
     MATH_SLIDER_ONE_DISK_ID,
     MATH_SLIDER_TWO_DISK_ID,
@@ -859,7 +861,7 @@ Arb_Scan(
 
 static std::string compile_success = "compiled successfully";
 static std::string safeExpr ="0";
-
+void descriptionCorrectorStr (std::string& str);
 std::string strCopyAndReplace(std::string str,
                               const std::string& oldStr,
                               const std::string& newStr);

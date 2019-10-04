@@ -6,7 +6,7 @@ typedef enum {
 	StrID_Name,
 	StrID_Description,
 	STR_ID_BUTTON_SETUP_Param_Name,
-
+    StrID_EffectDescription,
     STR_ID_MATH_TOPIC_SLIDER_Param_Name,
     STR_ID_MATH_SLIDER_ONE_Param_Name,
     STR_ID_MATH_SLIDER_TWO_Param_Name,

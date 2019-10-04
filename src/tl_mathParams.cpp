@@ -53,6 +53,15 @@ tlmath_ParamsSetup  (
         err = (*(in_data->inter.register_ui))(in_data->effect_ref, &ci);
     }
     AEFX_CLR_STRUCT(def);
+
+
+    PF_ADD_BUTTON("Effect Description",
+                  STR(StrID_EffectDescription),
+                  0,
+                  PF_ParamFlag_SUPERVISE,
+                  MATH_EFFECT_DESCRIPTION_DISK_ID);
+
+    AEFX_CLR_STRUCT(def);
     def.flags= PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name),  MATH_TOPIC_SLIDER_DISK_ID);
 
@@ -1186,6 +1195,19 @@ tlmath_UserChangedParam(
 {
 	PF_Err				err = PF_Err_NONE;
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
+    seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+
+    if(which_hitP->param_index == MATH_EFFECT_DESCRIPTION){
+
+        AEGP_SuiteHandler suites(in_data->pica_basicP);
+        std::string descrStr =seqP->descriptionAc;
+        descriptionCorrectorStr (descrStr);
+
+        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
+                                              "%s",
+                                              descrStr.c_str());
+        
+    }
     if(which_hitP->param_index == MATH_CEP_RETURN_MESSAGE &&
        params[MATH_CEP_RETURN_MESSAGE]->u.bd.value == TRUE){
         ERR(SetupDialogSend(in_data, out_data, params));

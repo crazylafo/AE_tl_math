@@ -7,7 +7,6 @@
 #include "tl_math.h"
 
 
-
 PF_Err
 ShiftImage8 (
              void         *refcon,

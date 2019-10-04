@@ -27,6 +27,9 @@ void strReplace(std::string& str,
 	}
 }
 
+void descriptionCorrectorStr (std::string& str){
+    strReplace(str, "\\n", "\r");
+}
 void scriptCorrectorStr(std::string& str)
 {
 	strReplace(str, "\\n", "\n");

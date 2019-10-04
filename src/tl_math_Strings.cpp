@@ -15,6 +15,7 @@ TableString		g_strs[StrID_NUMTYPES] = {
 	StrID_Name,						    "tl Maths",
 	StrID_Description,				    "Execute GLSL shaders or Math operations in the pixel world.",
 	STR_ID_BUTTON_SETUP_Param_Name,     "SETUP",
+    StrID_EffectDescription,            "Description",
     STR_ID_MATH_TOPIC_POINTS_Param_Name,   "slider_group",
     STR_ID_MATH_SLIDER_ONE_Param_Name,      "slider01",
     STR_ID_MATH_SLIDER_TWO_Param_Name,      "slider02",
