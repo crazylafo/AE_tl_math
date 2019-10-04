@@ -255,7 +255,7 @@
     <ClCompile Include="..\src\tl_mathSeqData.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="tl_mathStrOperations.cpp">
+    <ClCompile Include="..\src\tl_mathStrOperations.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
