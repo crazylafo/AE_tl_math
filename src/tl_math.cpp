@@ -621,9 +621,7 @@ GlobalSetup (
 }
 
 
-std::string
-evalMathExprStr (std::string expr,
-                 seqDataP   *seqP)
+std::string tlmath::evalMathExprStr (std::string expr, seqDataP   *seqP)
 {
     PF_Boolean returnExprErrB = false;
     std::string errReturn = "Error \n";
@@ -643,8 +641,7 @@ evalMathExprStr (std::string expr,
     return errReturn;
 }
 
-void
-evalVertShader(std::string inVertShaderStr, std::string& errReturn)
+void tlmath::evalVertShader(std::string inVertShaderStr, std::string& errReturn)
 {
 
      // always restore back AE's own OGL context
@@ -680,10 +677,8 @@ evalVertShader(std::string inVertShaderStr, std::string& errReturn)
     glFlush();
 }
 
-void
-evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
+void tlmath::evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
 {
-
     // always restore back AE's own OGL context
     SaveRestoreOGLContext oSavedContext;
 
@@ -718,8 +713,8 @@ evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
     glDeleteShader(fragmentShaderSu);
     glFlush();
 }
-PF_Err
-Render_GLSL(PF_InData                *in_data,
+
+PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		    PF_OutData               *out_data,
 			PF_EffectWorld           *inputP,
 			PF_EffectWorld           *outputP,
@@ -827,9 +822,7 @@ Render_GLSL(PF_InData                *in_data,
 	}
 	return  err;
 }
-
-static PF_Err
-GlobalSetdown(
+static PF_Err GlobalSetdown(
 	PF_InData		*in_data,
 	PF_OutData		*out_data,
 	PF_ParamDef		*params[],
@@ -873,136 +866,6 @@ GlobalSetdown(
     return PF_Err_NONE;
 }
 
-static PF_Err
-HandleArbitrary(
-                PF_InData			*in_data,
-                PF_OutData			*out_data,
-                PF_ParamDef			*params[],
-                PF_LayerDef			*output,
-                PF_ArbParamsExtra	*extra)
-{
-    PF_Err 	err 	= PF_Err_NONE;
-    void 	*srcP	= NULL,
-		 	*dstP	= NULL;
-    
-    switch (extra->which_function) {
-            
-        case PF_Arbitrary_NEW_FUNC:
-            if (extra->u.new_func_params.refconPV != ARB_REFCON) {
-                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-            } else {
-                err = CreateDefaultArb(	in_data,
-                                       out_data,
-                                       extra->u.new_func_params.arbPH);
-            }
-            break;
-          
-        case PF_Arbitrary_DISPOSE_FUNC:
-            if (extra->u.dispose_func_params.refconPV != ARB_REFCON) {
-                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-            } else {
-                PF_DISPOSE_HANDLE(extra->u.dispose_func_params.arbH);
-            }
-            break;
-            
-        case PF_Arbitrary_COPY_FUNC:
-            if(extra->u.copy_func_params.refconPV == ARB_REFCON) {
-                ERR(CreateDefaultArb(	in_data,
-                                     out_data,
-                                     extra->u.copy_func_params.dst_arbPH));
-                
-                ERR(Arb_Copy(in_data,
-                             out_data,
-                             &extra->u.copy_func_params.src_arbH,
-                             extra->u.copy_func_params.dst_arbPH));
-            }
-            break;
-           
-        case PF_Arbitrary_FLAT_SIZE_FUNC:
-            *(extra->u.flat_size_func_params.flat_data_sizePLu) = sizeof(m_ArbData);
-            break;
-            
-        case PF_Arbitrary_FLATTEN_FUNC:
-
-            if(extra->u.flatten_func_params.buf_sizeLu == sizeof(m_ArbData)){
-                srcP = (m_ArbData*)PF_LOCK_HANDLE(extra->u.flatten_func_params.arbH);
-                dstP = extra->u.flatten_func_params.flat_dataPV;
-                if (srcP){
-                    memcpy(dstP,srcP,sizeof(m_ArbData));
-                }
-                PF_UNLOCK_HANDLE(extra->u.flatten_func_params.arbH);
-            }
-            break;
-            
-        case PF_Arbitrary_UNFLATTEN_FUNC:
-            if(extra->u.unflatten_func_params.buf_sizeLu == sizeof(m_ArbData)){
-                PF_Handle	handle = PF_NEW_HANDLE(sizeof(m_ArbData));
-                dstP = (m_ArbData*)PF_LOCK_HANDLE(handle);
-                srcP = (void*)extra->u.unflatten_func_params.flat_dataPV;
-                if (srcP){
-                    memcpy(dstP,srcP,sizeof(m_ArbData));
-                }
-                *(extra->u.unflatten_func_params.arbPH) = handle;
-                PF_UNLOCK_HANDLE(handle);
-            }
-            break;
-            
-        case PF_Arbitrary_INTERP_FUNC:
-            if(extra->u.interp_func_params.refconPV == ARB_REFCON) {
-                ERR(CreateDefaultArb(	in_data,
-                                     out_data,
-                                     extra->u.interp_func_params.interpPH));
-                
-                ERR(Arb_Interpolate(	in_data,
-                                    out_data,
-                                    extra->u.interp_func_params.tF,
-                                    &extra->u.interp_func_params.left_arbH,
-                                    &extra->u.interp_func_params.right_arbH,
-                                    extra->u.interp_func_params.interpPH));
-            }
-            break;
-            
-        case PF_Arbitrary_COMPARE_FUNC:
-            ERR(Arb_Compare(	in_data,
-                            out_data,
-                            &extra->u.compare_func_params.a_arbH,
-                            &extra->u.compare_func_params.b_arbH,
-                            extra->u.compare_func_params.compareP));
-            break;
-            
-             
-        case PF_Arbitrary_PRINT_SIZE_FUNC:
-            err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
-            break;
-                case PF_Arbitrary_PRINT_FUNC:
-            
-            if (extra->u.print_func_params.refconPV == ARB_REFCON) {
-                ERR(Arb_Print(in_data,
-                              out_data,
-                              extra->u.print_func_params.print_flags,
-                              extra->u.print_func_params.arbH,
-                              extra->u.print_func_params.print_sizeLu,
-                              extra->u.print_func_params.print_bufferPC));
-            } else {
-                err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
-            }
-            break;
-            
-        case PF_Arbitrary_SCAN_FUNC:
-            if (extra->u.scan_func_params.refconPV == ARB_REFCON) {
-                ERR(Arb_Scan(	in_data,
-                             out_data,
-                             extra->u.scan_func_params.refconPV,
-                             extra->u.scan_func_params.bufPC,
-                             extra->u.scan_func_params.bytes_to_scanLu,
-                             extra->u.scan_func_params.arbPH));
-            } else {
-                err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
-            }
-            break;
-    }
-    return err;
-}
 
 static PF_Err
 RespondtoAEGP (
@@ -1077,6 +940,7 @@ PF_Err
 	void			*extra)
 {
 	PF_Err		err = PF_Err_NONE;
+    tlmath    tlmath;
 	
 	try {
 		switch (cmd) {
@@ -1105,14 +969,14 @@ PF_Err
                 
             case PF_Cmd_PARAMS_SETUP:
                 
-                err =tlmath_ParamsSetup (	in_data,
+                err =tlmath.ParamsSetup (	in_data,
                                   out_data,
                                   params,
                                   output);
                 break;
 
             case PF_Cmd_ARBITRARY_CALLBACK:
-                err = HandleArbitrary(	in_data,
+                err = tlmath.HandleArbitrary(	in_data,
                                       out_data,
                                       params,
                                       output,
@@ -1120,15 +984,15 @@ PF_Err
                 break;
 
             case PF_Cmd_SEQUENCE_SETUP:
-                err = tlMath_SequenceSetup(in_data,out_data);
+                err = tlmath.SequenceSetup(in_data,out_data);
                 break;
 
             case PF_Cmd_SEQUENCE_SETDOWN:
-                err = tlMath_SequenceSetdown(in_data,out_data);
+                err = tlmath.SequenceSetdown(in_data,out_data);
                 break;
 
             case PF_Cmd_SEQUENCE_RESETUP:
-                err = tlMath_SequenceSetup(in_data,out_data);
+                err = tlmath.SequenceSetup(in_data,out_data);
                 break;
                 
             
@@ -1147,7 +1011,7 @@ PF_Err
 				break;
 
 			case PF_Cmd_USER_CHANGED_PARAM:
-				err = tlmath_UserChangedParam(in_data,
+				err = tlmath.UserChangedParam(in_data,
 					out_data,
 					params,
 					output,
@@ -1155,19 +1019,19 @@ PF_Err
 				break;
 
             case PF_Cmd_SMART_RENDER:
-                err = tl_math_SmartRender(    in_data,
+                err = tlmath.SmartRender(    in_data,
                                   out_data,
                                   reinterpret_cast<PF_SmartRenderExtra*>(extra));
                 break;
 
             case PF_Cmd_SMART_PRE_RENDER:
-                err = tl_math_PreRender(    in_data,
+                err = tlmath.PreRender(    in_data,
                                 out_data,
                                 reinterpret_cast<PF_PreRenderExtra*>(extra));
                 break;
 				
             case PF_Cmd_UPDATE_PARAMS_UI:
-                err = tlmath_UpdateParameterUI(	in_data,
+                err = tlmath.UpdateParameterUI(	in_data,
                                         out_data,
                                         params,
                                         output);

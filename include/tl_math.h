@@ -2,12 +2,9 @@
 /*
 	tl_math.h
 */
-
 #pragma once
-
 #ifndef TLMATH_H
 #define TLMATH_H
-
 #define PF_TABLE_BITS	12
 #define PF_TABLE_SZ_16	4096
 typedef unsigned char		u_char;
@@ -18,14 +15,12 @@ typedef short int			int16;
 typedef float				fpshort;
 #define PF_DEEP_COLOR_AWARE 1	// make sure we get 16bpc pixels; 
 								// AE_Effect.h checks for this.
-
 #include "AEConfig.h"
 
 #ifdef AE_OS_WIN
 	typedef unsigned short PixelType;
 	#include <Windows.h>
 #endif
-
 //#include "AE_EffectUI.h"
 #include "AEFX_ArbParseHelper.h"
 #include "entry.h"
@@ -42,11 +37,9 @@ typedef float				fpshort;
 #include "AE_EffectSuites.h"
 #include "tl_math_Strings.h"
 #include "Smart_Utils.h" // for smartfx
-
 #include "exprtk.hpp"
 #include "json.hpp"
 #include    "tl_defaultArb.h"
-
 #include <cstdio>
 #include <string>
 #include <thread>
@@ -54,12 +47,8 @@ typedef float				fpshort;
 #include <mutex>
 #include <assert.h>
 #include <atomic>
-
 #include "GL_base.h"
 #include "vmath.hpp"
-
-
-
 
 using namespace AESDK_OpenGL;
 using namespace gl33core;
@@ -276,7 +265,6 @@ typedef struct {
 #define TIMEOFFSET_MAX       1000
 #define TIMEOFFSET_DFLT      0
 
-
 enum {
 	MATH_INPUT = 0,
 	MATH_SETUP,
@@ -351,7 +339,6 @@ enum {
     MATH_CEP_RETURN_MESSAGE,
 	MATH_NUM_PARAMS
 };
-
 enum {
 	MATH_SETUP_DISK_ID =1,
 	MATH_ARB_DATA_DISK_ID,
@@ -433,7 +420,6 @@ typedef struct  FlagsInfo {
 		PF_Boolean parserModeB;
         PF_Boolean exprRGBModeB; //for expression mode only
 }FlagsInfoP;
-
 typedef struct {
 	std::string  *redstr;
 	std::string  *greenstr;
@@ -444,7 +430,6 @@ typedef struct {
 	std::string  *frag2str;
 	std::string  *vertexstr;
 }ExprInfoP;
-
 typedef struct funcTransfertInfo {
 	
 	std::function<PF_FpShort()> redExpr;
@@ -457,21 +442,17 @@ typedef struct funcTransfertInfo {
 	std::string     channelErrorstr;
 	std::string     errorstr;
 }funcTransfertInfoP;
-
 typedef struct WorldTransfertInfo {
     PF_EffectWorld  inW;
     PF_EffectWorld  outW;
     PF_EffectWorld  extLW;
 }WorldTransfertInfoP;
-
 struct point_3d {
     PF_FpShort point[3];
 };
 struct color_3d {
     PF_FpShort color[3];
 };
-
-
 typedef struct MathInfo{
     PF_FpShort      scale_x;
     PF_FpShort      scale_y;
@@ -507,20 +488,15 @@ typedef struct MathInfo{
     PF_Fixed    y_offFi;
 
 } MathInfoP, *MathinfoP, **MathinfoH;
-
-
 typedef struct {
     PF_Fixed    x_offFi;
     PF_Fixed    y_offFi;
     PF_SampPB    samp_pb;
     PF_InData    in_data;
 } OffInfo;
-
 typedef struct {
 	AEGP_PluginID	my_id;
 } my_global_data, *my_global_dataP, **my_global_dataH;
-
-
 template <typename T=PF_FpShort> class parseExpr {
 private:
     std::shared_ptr<exprtk::parser<T>> parser;
@@ -626,26 +602,115 @@ public:
     T operator()() { return expression.value(); }
 };
 
-class threaded_render
-{
+PF_Err ShiftImage32 (void *refcon, A_long xL, A_long yL, PF_Pixel32 *inP, PF_Pixel32 *outP);
+PF_Err ShiftImage16 ( void *refcon,A_long xL, A_long yL, PF_Pixel16 *inP, PF_Pixel16 *outP);
+PF_Err ShiftImage8 ( void *refcon, A_long xL, A_long yL, PF_Pixel *inP, PF_Pixel *outP);
+
+class thSafeExpr_render{
 private:
     std::mutex mut;
     A_long curNumIter;
+    PF_Err LineIteration8Func ( void *refconPV,void *refconFunc,void *refconFlags,void *refconWorld, A_long yL);
+    PF_Err LineIteration16Func ( void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long yL);
+    PF_Err LineIteration32Func(void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long yL);
 public:
-    
     void render_8(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld,  A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
-
     void render_16(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
-
 	void render_32(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
+};
+class tlmath{
+private:
+    std::string evalMathExprStr(std::string expr, seqDataP    *seqP);
+    void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn);
+    void evalVertShader(std::string inVertShaderStr, std::string& errReturn);
+
+    std::string strCopyAndReplace(std::string str,const std::string& oldStr,const std::string& newStr);
+    PF_Boolean strToBoolean( std::string str);
+    void strReplace(std::string& str,const std::string& oldStr,const std::string& newStr);
+    void jsonCorrectorStr(std::string& str); //to json
+    void scriptCorrectorStr(std::string& str); //from json
+    void ExprtkCorrectorStr(std::string& str); // for exprtk script only
+    void descriptionCorrectorStr (std::string& str);
+    void copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target);
+    PF_Err evalScripts  (seqData  *seqDataP);
+
+    PF_Err CallCepDialog(PF_InData  *in_data, PF_OutData  *out_data);
+    PF_Err SetupGetDataBack(PF_InData *in_data, PF_OutData  *out_data, PF_ParamDef *params[]);
+    PF_Err copyFromArbToSeqData(PF_InData *in_data, PF_OutData   *out_data, std::string arbStr, seqData   *seqDataP);
+    PF_Err MakeParamCopy( PF_ParamDef *actual[], PF_ParamDef copy[]);
+    PF_Err updateSeqData(PF_InData *in_data, PF_OutData *out_data,  PF_ParamDef *params[]);
+    PF_Err SetupDialogSend( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[]);
+    PF_Err updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[], std::string     arbStr);
+
 
     
+    PF_Err
+    Render_GLSL(PF_InData  *in_data,
+                PF_OutData *out_data,
+                PF_EffectWorld *inputP,
+                PF_EffectWorld *outputP,
+                PF_EffectWorld *extLW,
+                PF_PixelFormat format,
+                AEGP_SuiteHandler &suites,
+                void  *refcon,
+                PF_Boolean ShaderResetB,
+                const std::string& vertexShstr,
+                const std::string& fragSh1str,
+                const std::string&        fragSh2str);
+
+    PF_Err
+    ExprRender(PF_OutData     *out_data,
+               PF_PixelFormat format,
+               PF_EffectWorld *inputP,
+               PF_EffectWorld *outputP,
+               PF_EffectWorld *extLW,
+               AEGP_SuiteHandler &suites,
+               void    *refcon,
+               void    *refconFlags,
+               void    *refconExpr);
+
+    PF_Err
+    ExtLayerInput(void *refcon,
+                  PF_InData       *in_data,
+                  PF_EffectWorld *inputP,
+                  PF_EffectWorld *extLP,
+                  PF_EffectWorld *extLW,
+                  AEGP_SuiteHandler &suites,
+                  PF_PixelFormat   format);
+
+    PF_Err Arb_Print_Size();
+    PF_Err CreateDefaultArb( PF_InData  *in_data, PF_OutData *out_data, PF_ArbitraryH *dephault);
+    PF_Err AEFX_AppendText(A_char  *srcAC, const A_u_long dest_sizeLu, A_char *destAC, A_u_long *current_indexPLu);
+    PF_Err Arb_Copy( PF_InData *in_data, PF_OutData *out_data, const PF_ArbitraryH *srcP,PF_ArbitraryH *dstP);
+    PF_Err Arb_Interpolate( PF_InData *in_data, PF_OutData *out_data, double  itrp_amtF, const PF_ArbitraryH *l_arbP, const PF_ArbitraryH *r_arbP, PF_ArbitraryH  *result_arbP);
+    PF_Err Arb_Compare( PF_InData   *in_data, PF_OutData *out_data, const PF_ArbitraryH   *a_arbP,const PF_ArbitraryH  *b_arbP, PF_ArbCompareResult  *resultP);
+    PF_Err Arb_Print( PF_InData *in_data, PF_OutData *out_data, PF_ArbPrintFlags print_flags, PF_ArbitraryH arbH, A_u_long print_sizeLu, A_char *print_bufferPC);
+    PF_Err Arb_Scan( PF_InData *in_data, PF_OutData *out_data, void *refconPV, const char *bufPC, unsigned long bytes_to_scanLu, PF_ArbitraryH *arbPH);
+
+public:
+
+    PF_Err UpdateParameterUI(PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP);
+    PF_Err UserChangedParam( PF_InData  *in_data, PF_OutData *out_data,PF_ParamDef  *params[],PF_LayerDef *outputP, const PF_UserChangedParamExtra    *which_hitP);
+    PF_Err ParamsSetup (PF_InData        *in_data, PF_OutData        *out_data, PF_ParamDef        *params[], PF_LayerDef        *output );
+    PF_Err SmartRender(PF_InData *in_data, PF_OutData  *out_data,  PF_SmartRenderExtra *extraP);
+    PF_Err PreRender(PF_InData  *in_data,  PF_OutData *out_data,PF_PreRenderExtra *extraP);
+    PF_Err SequenceSetdown (PF_InData *in_data, PF_OutData *out_data);
+    PF_Err SequenceSetup (PF_InData  *in_data, PF_OutData *out_data);
+    PF_Err  HandleArbitrary( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output, PF_ArbParamsExtra    *extra);
 };
 
 
-
+//glsl helper func
+inline u_char AlphaLookup(u_int16 inValSu, u_int16 inMaxSu)
+{
+    fpshort normValFp = 1.0f - (inValSu) / static_cast<fpshort>(inMaxSu);
+    return static_cast<u_char>(normValFp*normValFp*0.8f * 255);
+}
 
 //GLSL SCRIPTS
+
+static std::string compile_success = "compiled successfully";
+static std::string safeExpr ="0";
 static std::string glvertstr = "#version 330 \n\
 in vec4 Position;\n\
 in vec2 UVs;\n\
@@ -659,9 +724,7 @@ void main(void)\n\
 	out_uvs = UVs;\n\
 }";
 
-
-
-static std::string glfrag2str = "#version 330\n\
+static std::string glfrag2str ="#version 330\n\
 uniform sampler2D layerTex;\n\
 uniform float multiplier16bit;\n\
 in vec4 out_pos;\n\
@@ -677,12 +740,6 @@ void main(void)\n\
 	}\n\
 	colourOut = colourOut / multiplier16bit;\n\
 }";
-//helper func
-inline u_char AlphaLookup(u_int16 inValSu, u_int16 inMaxSu)
-{
-	fpshort normValFp = 1.0f - (inValSu) / static_cast<fpshort>(inMaxSu);
-	return static_cast<u_char>(normValFp*normValFp*0.8f * 255);
-}
 
 static std::string glErrorMessageStr = R"=====(
     // based on http://glslsandbox.com/e#53346.0
@@ -802,218 +859,4 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-
-std::string evalMathExprStr(std::string expr, seqDataP    *seqP);
-void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn);
-void evalVertShader(std::string inVertShaderStr, std::string& errReturn);
-
-PF_Err
-CreateDefaultArb(
-                 PF_InData            *in_data,
-                 PF_OutData            *out_data,
-                 PF_ArbitraryH        *dephault);
-
-
-PF_Err
-Arb_Copy(
-         PF_InData                *in_data,
-         PF_OutData                *out_data,
-         const PF_ArbitraryH        *srcP,
-         PF_ArbitraryH            *dstP);
-
-PF_Err
-Arb_Interpolate(
-                PF_InData                *in_data,
-                PF_OutData                *out_data,
-                double                    itrp_amtF,
-                const PF_ArbitraryH        *l_arbP,
-                const PF_ArbitraryH        *r_arbP,
-                PF_ArbitraryH            *result_arbP);
-
-PF_Err
-Arb_Compare(
-            PF_InData                *in_data,
-            PF_OutData                *out_data,
-            const PF_ArbitraryH        *a_arbP,
-            const PF_ArbitraryH        *b_arbP,
-            PF_ArbCompareResult        *resultP);
-
-PF_Err
-Arb_Print_Size();
-
-PF_Err
-Arb_Print(
-          PF_InData            *in_data,
-          PF_OutData            *out_data,
-          PF_ArbPrintFlags    print_flags,
-          PF_ArbitraryH        arbH,
-          A_u_long            print_sizeLu,
-          A_char                *print_bufferPC);
-PF_Err
-Arb_Scan(
-         PF_InData            *in_data,
-         PF_OutData            *out_data,
-         void                 *refconPV,
-         const char            *bufPC,
-         unsigned long        bytes_to_scanLu,
-         PF_ArbitraryH        *arbPH);
-
-
-static std::string compile_success = "compiled successfully";
-static std::string safeExpr ="0";
-void descriptionCorrectorStr (std::string& str);
-std::string strCopyAndReplace(std::string str,
-                              const std::string& oldStr,
-                              const std::string& newStr);
-
-PF_Boolean
-strToBoolean( std::string str);
-void
-strReplace(std::string& str,
-           const std::string& oldStr,
-           const std::string& newStr);
-
-void jsonCorrectorStr(std::string& str); //to json
-void scriptCorrectorStr(std::string& str); //from json
-void ExprtkCorrectorStr(std::string& str); // for exprtk script only
-
-PF_Err
-LineIteration8Func ( void *refconPV,
-                    void *refconFunc,
-                    void *refconFlags,
-                    void *refconWorld,
-                    A_long yL);
-PF_Err
-LineIteration16Func ( void *refconPV,
-                     void *refconFunc,
-                     void *refconFlags,
-                     void *refconWorld,
-                     A_long yL);
-
-PF_Err
-LineIteration32Func(void *refconPV,
-                    void *refconFunc,
-                    void *refconFlags,
-                    void *refconWorld,
-                    A_long yL);
-
-PF_Err
-tlmath_updateParamsValue(PF_InData* in_data, 
-						PF_ParamDef     *params[],
-                        std::string     arbStr);
-PF_Err
-CallCepDialog(PF_InData        *in_data,
-              PF_OutData        *out_data);
-PF_Err
-SetupDialogSend(
-	PF_InData        *in_data,
-	PF_OutData        *out_data,
-	PF_ParamDef        *params[]);
-PF_Err
-tlMath_SequenceSetdown (
-                        PF_InData        *in_data,
-                        PF_OutData        *out_data);
-PF_Err
-tlMath_SequenceSetup (
-                      PF_InData        *in_data,
-                      PF_OutData        *out_data);
-/*
-PF_Err
-AEGP_GetParamStreamValue(PF_InData            *in_data,
-	PF_OutData            *out_data,
-	AEGP_PluginID        PlugId,
-	PF_ParamIndex        param_index,
-	PF_Handle           *ArbH);*/
-
-PF_Err
-SetupGetDataBack(
-                PF_InData        *in_data,
-                PF_OutData        *out_data,
-                PF_ParamDef        *params[]);
-
-PF_Err
-copyFromArbToSeqData(PF_InData        *in_data,
-                     PF_OutData        *out_data,
-                     std::string       arbStr,
-                     seqData    *seqDataP);
-PF_Err
-evalScripts  (seqData  *seqDataP);
-PF_Err
-ShiftImage32 (
-              void         *refcon,
-              A_long         xL,
-              A_long         yL,
-              PF_Pixel32     *inP,
-              PF_Pixel32     *outP);
-PF_Err
-ShiftImage16 (
-              void         *refcon,
-              A_long         xL,
-              A_long         yL,
-              PF_Pixel16     *inP,
-              PF_Pixel16     *outP);
-PF_Err
-ShiftImage8 (
-             void         *refcon,
-             A_long         xL,
-             A_long         yL,
-             PF_Pixel     *inP,
-             PF_Pixel     *outP);
-
-PF_Err
-MakeParamCopy(
-	PF_ParamDef *actual[],
-	PF_ParamDef copy[]);
-PF_Err
-tlmath_updateSeqData(PF_InData			*in_data,
-	PF_OutData			*out_data,
-	PF_ParamDef			*params[]);
-
-PF_Err
-tlmath_UpdateParameterUI(
-	PF_InData			*in_data,
-	PF_OutData			*out_data,
-	PF_ParamDef			*params[],
-	PF_LayerDef			*outputP);
-PF_Err
-tlmath_UserChangedParam(
-	PF_InData						*in_data,
-	PF_OutData						*out_data,
-	PF_ParamDef						*params[],
-	PF_LayerDef						*outputP,
-	const PF_UserChangedParamExtra	*which_hitP);
-
-PF_Err
-tlmath_ParamsSetup (
-             PF_InData        *in_data,
-             PF_OutData        *out_data,
-             PF_ParamDef        *params[],
-              PF_LayerDef        *output );
-
-PF_Err
-tl_math_SmartRender(
-	PF_InData                *in_data,
-	PF_OutData                *out_data,
-	PF_SmartRenderExtra        *extraP);
-
-PF_Err
-tl_math_PreRender(PF_InData                *in_data,
-	PF_OutData                *out_data,
-	PF_PreRenderExtra        *extraP);
-
-PF_Err
-Render_GLSL(PF_InData                *in_data,
-	PF_OutData               *out_data,
-	PF_EffectWorld           *inputP,
-	PF_EffectWorld           *outputP,
-	PF_EffectWorld           *extLW,
-	PF_PixelFormat           format,
-	AEGP_SuiteHandler        &suites,
-	void                    *refcon,
-	PF_Boolean              ShaderResetB,
-	const std::string&		vertexShstr,
-	const std::string&		fragSh1str,
-	const std::string&		fragSh2str);
-
-
 #endif // TLMATH

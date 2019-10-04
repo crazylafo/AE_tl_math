@@ -2,7 +2,7 @@
 
 
 PF_Err
-tlmath_ParamsSetup  (
+tlmath::ParamsSetup  (
                      PF_InData        *in_data,
                      PF_OutData        *out_data,
                      PF_ParamDef        *params[],
@@ -20,7 +20,7 @@ tlmath_ParamsSetup  (
                   MATH_SETUP_DISK_ID);
 
     AEFX_CLR_STRUCT(def);
-    ERR(CreateDefaultArb(in_data,
+    ERR(tlmath::CreateDefaultArb(in_data,
                          out_data,
                          &def.u.arb_d.dephault));
 
@@ -409,7 +409,7 @@ tlmath_ParamsSetup  (
     return err;
 }
 PF_Err
-MakeParamCopy(
+tlmath::MakeParamCopy(
 	PF_ParamDef *actual[],	/* >> */
 	PF_ParamDef copy[])		/* << */
 {
@@ -486,7 +486,7 @@ MakeParamCopy(
 }
 
 PF_Err
-tlmath_UpdateParameterUI(
+tlmath::UpdateParameterUI(
 	PF_InData			*in_data,
 	PF_OutData			*out_data,
 	PF_ParamDef			*params[],
@@ -497,7 +497,7 @@ tlmath_UpdateParameterUI(
 	AEGP_EffectRefH			meH = NULL;
 	PF_ParamDef		param_copy[MATH_NUM_PARAMS];
 	ERR(MakeParamCopy(params, param_copy));
-	ERR(tlmath_updateSeqData(in_data, out_data, params));
+	ERR(tlmath::updateSeqData(in_data, out_data, params));
 	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 	seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
 
@@ -1186,7 +1186,7 @@ tlmath_UpdateParameterUI(
 
 
 PF_Err
-tlmath_UserChangedParam(
+tlmath::UserChangedParam(
 	PF_InData						*in_data,
 	PF_OutData						*out_data,
 	PF_ParamDef						*params[],
@@ -1201,7 +1201,7 @@ tlmath_UserChangedParam(
 
         AEGP_SuiteHandler suites(in_data->pica_basicP);
         std::string descrStr =seqP->descriptionAc;
-        descriptionCorrectorStr (descrStr);
+        tlmath::descriptionCorrectorStr (descrStr);
 
         suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
                                               "%s",

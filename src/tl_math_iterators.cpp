@@ -63,7 +63,6 @@ ShiftImage16 (
     return err;
 }
 
-
 PF_Err
 ShiftImage32 (
               void         *refcon,
@@ -93,7 +92,7 @@ ShiftImage32 (
 }
 
 PF_Err
-LineIteration8Func ( void *refconPV,
+thSafeExpr_render::LineIteration8Func ( void *refconPV,
                     void *refconFunc,
                     void *refconFlags,
                     void *refconWorld,
@@ -282,7 +281,7 @@ LineIteration8Func ( void *refconPV,
     return err;
 }
 PF_Err
-LineIteration16Func(void *refconPV,
+thSafeExpr_render::LineIteration16Func(void *refconPV,
                     void *refconFunc,
                     void *refconFlags,
                     void *refconWorld,
@@ -475,7 +474,7 @@ LineIteration16Func(void *refconPV,
 }
 
 PF_Err
-LineIteration32Func(void *refconPV,
+thSafeExpr_render::LineIteration32Func(void *refconPV,
                     void *refconFunc,
                     void *refconFlags,
                     void *refconWorld,
@@ -596,8 +595,6 @@ LineIteration32Func(void *refconPV,
 
 		AEFX_CLR_STRUCT(miP->inColorF[3]);
 		miP->inColorF[3] = (PF_FpShort)bop_inP->alpha;
-
-
 		if (miP->inColorF[3] != 0) {
 			if (flagsP->NeedsLumaB) {
 				AEFX_CLR_STRUCT(miP->luma);
@@ -666,7 +663,7 @@ LineIteration32Func(void *refconPV,
 	return err;
 }
 
-void threaded_render::render_8(void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void thSafeExpr_render::render_8(void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
     curNumIter =numIter;
     if ( thread_idxL == (numThreads-1)){
@@ -677,11 +674,11 @@ void threaded_render::render_8(void *refconPV, void *refconFunc, void *refconFla
     for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
     {
         A_long yL =  thread_idxL*numIter+iterIndex;
-        LineIteration8Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
+        thSafeExpr_render::LineIteration8Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
     }
 }
 
-void threaded_render::render_16(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void thSafeExpr_render::render_16(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
     curNumIter =numIter;
     if ( thread_idxL == (numThreads-1)){
@@ -691,12 +688,12 @@ void threaded_render::render_16(void *refconPV, void *refconFunc, void *refconFl
     for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
     {
         A_long yL =  thread_idxL*numIter+iterIndex;
-        LineIteration16Func(refconPV,refconFunc, refconFlags,refconWorld, yL);
+        thSafeExpr_render::LineIteration16Func(refconPV,refconFunc, refconFlags,refconWorld, yL);
     }
 }
 
 
-void threaded_render::render_32(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
+void thSafeExpr_render::render_32(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {
 	curNumIter = numIter;
 	if (thread_idxL == (numThreads - 1)) {
@@ -706,6 +703,6 @@ void threaded_render::render_32(void *refconPV, void *refconFunc, void *refconFl
 	for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
 	{
 		A_long yL = thread_idxL * numIter + iterIndex;
-		LineIteration32Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
+		thSafeExpr_render::LineIteration32Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
 	}
 }

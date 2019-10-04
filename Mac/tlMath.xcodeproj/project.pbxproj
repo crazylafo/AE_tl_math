@@ -13,6 +13,7 @@
 		043D97DA22C6536A003423B2 /* tl_mathRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043D97D822C6536A003423B2 /* tl_mathRender.cpp */; };
 		04B1B38622B3912E00D7B7D5 /* tl_mathParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */; };
 		04BA3383231D3A6600981A6D /* tl_mathSeqData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04BA3382231D3A6600981A6D /* tl_mathSeqData.cpp */; };
+		04EB1D7923472DB100EA1BD0 /* tl_mathStrOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04EB1D7723472DB000EA1BD0 /* tl_mathStrOperations.cpp */; };
 		7ECB51A715DB18A300C5BAD5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ECB51A615DB18A300C5BAD5 /* Cocoa.framework */; };
 		8F2D54CC0C3DC8BC000535F4 /* tl_math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D54C90C3DC8BC000535F4 /* tl_math.cpp */; };
 		8F2D54D10C3DC8FE000535F4 /* tl_mathPiPL.r in Rez */ = {isa = PBXBuildFile; fileRef = 8F2D54D00C3DC8FD000535F4 /* tl_mathPiPL.r */; };
@@ -60,6 +61,7 @@
 		043D97D822C6536A003423B2 /* tl_mathRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathRender.cpp; sourceTree = "<group>"; };
 		04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathParams.cpp; sourceTree = "<group>"; };
 		04BA3382231D3A6600981A6D /* tl_mathSeqData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathSeqData.cpp; sourceTree = "<group>"; };
+		04EB1D7723472DB000EA1BD0 /* tl_mathStrOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathStrOperations.cpp; sourceTree = "<group>"; };
 		04F4617A223BA625003E0F9F /* script.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = script.h; path = ../script/script.h; sourceTree = "<group>"; };
 		04F4617C223BA625003E0F9F /* json_to_js.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = json_to_js.h; path = ../script/json_to_js.h; sourceTree = "<group>"; };
 		7EB428A80FBA1B62003C7DD1 /* tl_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math.h; path = ../include/tl_math.h; sourceTree = SOURCE_ROOT; };
@@ -110,6 +112,7 @@
 				04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */,
 				040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */,
 				04BA3382231D3A6600981A6D /* tl_mathSeqData.cpp */,
+				04EB1D7723472DB000EA1BD0 /* tl_mathStrOperations.cpp */,
 			);
 			name = src;
 			path = ../src;
@@ -299,6 +302,7 @@
 				040A7FE0222FFC8A00E7E6D2 /* tl_math_Dialogs.cpp in Sources */,
 				040A7FE1222FFC8A00E7E6D2 /* tl_math_iterators.cpp in Sources */,
 				043D97DA22C6536A003423B2 /* tl_mathRender.cpp in Sources */,
+				04EB1D7923472DB100EA1BD0 /* tl_mathStrOperations.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

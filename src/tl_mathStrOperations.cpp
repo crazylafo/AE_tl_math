@@ -1,7 +1,7 @@
 #include "tl_math.h"
 
 //fast copy/find/replace all method
-std::string strCopyAndReplace(std::string str,
+std::string tlmath::strCopyAndReplace(std::string str,
 	const std::string& oldStr,
 	const std::string& newStr)
 {
@@ -16,7 +16,7 @@ std::string strCopyAndReplace(std::string str,
 }
 
 //quick find/replace all method
-void strReplace(std::string& str,
+void tlmath::strReplace(std::string& str,
 	const std::string& oldStr,
 	const std::string& newStr)
 {
@@ -27,10 +27,10 @@ void strReplace(std::string& str,
 	}
 }
 
-void descriptionCorrectorStr (std::string& str){
+void tlmath::descriptionCorrectorStr (std::string& str){
     strReplace(str, "\\n", "\r");
 }
-void scriptCorrectorStr(std::string& str)
+void tlmath::scriptCorrectorStr(std::string& str)
 {
 	strReplace(str, "\\n", "\n");
 	strReplace(str, "\\r", "\r");
@@ -38,7 +38,7 @@ void scriptCorrectorStr(std::string& str)
 	strReplace(str, "\\'", "\'");
 }
 
-void ExprtkCorrectorStr(std::string& str)
+void tlmath::ExprtkCorrectorStr(std::string& str)
 {
 	scriptCorrectorStr(str);
 	//convert some AE javascript operator to exprtk operators
@@ -50,7 +50,7 @@ void ExprtkCorrectorStr(std::string& str)
 	strReplace(str, "\t", "    ");
 	strReplace(str, "\"", " '");
 }
- void jsonCorrectorStr(std::string& str)
+ void tlmath::jsonCorrectorStr(std::string& str)
 {
 	//strReplace(str, "\\", " ");
 	strReplace(str, "\n", "\\n");
@@ -60,7 +60,7 @@ void ExprtkCorrectorStr(std::string& str)
 	strReplace(str, "\t", "\\t");
 }
 
-PF_Boolean strToBoolean(std::string str)
+PF_Boolean tlmath::strToBoolean(std::string str)
 {
 	if (str == "1" || str == "true") {
 		return true;

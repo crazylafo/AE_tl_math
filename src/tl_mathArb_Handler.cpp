@@ -1,9 +1,140 @@
 
 #include	"tl_math.h"
 
+PF_Err
+tlmath::HandleArbitrary(
+                PF_InData            *in_data,
+                PF_OutData            *out_data,
+                PF_ParamDef            *params[],
+                PF_LayerDef            *output,
+                PF_ArbParamsExtra    *extra)
+{
+    PF_Err     err     = PF_Err_NONE;
+    void     *srcP    = NULL,
+    *dstP    = NULL;
+
+    switch (extra->which_function) {
+
+        case PF_Arbitrary_NEW_FUNC:
+            if (extra->u.new_func_params.refconPV != ARB_REFCON) {
+                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+            } else {
+                err = tlmath::CreateDefaultArb(    in_data,
+                                       out_data,
+                                       extra->u.new_func_params.arbPH);
+            }
+            break;
+
+        case PF_Arbitrary_DISPOSE_FUNC:
+            if (extra->u.dispose_func_params.refconPV != ARB_REFCON) {
+                err = PF_Err_INTERNAL_STRUCT_DAMAGED;
+            } else {
+                PF_DISPOSE_HANDLE(extra->u.dispose_func_params.arbH);
+            }
+            break;
+
+        case PF_Arbitrary_COPY_FUNC:
+            if(extra->u.copy_func_params.refconPV == ARB_REFCON) {
+                ERR(CreateDefaultArb(    in_data,
+                                     out_data,
+                                     extra->u.copy_func_params.dst_arbPH));
+
+                ERR(tlmath::Arb_Copy(in_data,
+                             out_data,
+                             &extra->u.copy_func_params.src_arbH,
+                             extra->u.copy_func_params.dst_arbPH));
+            }
+            break;
+
+        case PF_Arbitrary_FLAT_SIZE_FUNC:
+            *(extra->u.flat_size_func_params.flat_data_sizePLu) = sizeof(m_ArbData);
+            break;
+
+        case PF_Arbitrary_FLATTEN_FUNC:
+
+            if(extra->u.flatten_func_params.buf_sizeLu == sizeof(m_ArbData)){
+                srcP = (m_ArbData*)PF_LOCK_HANDLE(extra->u.flatten_func_params.arbH);
+                dstP = extra->u.flatten_func_params.flat_dataPV;
+                if (srcP){
+                    memcpy(dstP,srcP,sizeof(m_ArbData));
+                }
+                PF_UNLOCK_HANDLE(extra->u.flatten_func_params.arbH);
+            }
+            break;
+
+        case PF_Arbitrary_UNFLATTEN_FUNC:
+            if(extra->u.unflatten_func_params.buf_sizeLu == sizeof(m_ArbData)){
+                PF_Handle    handle = PF_NEW_HANDLE(sizeof(m_ArbData));
+                dstP = (m_ArbData*)PF_LOCK_HANDLE(handle);
+                srcP = (void*)extra->u.unflatten_func_params.flat_dataPV;
+                if (srcP){
+                    memcpy(dstP,srcP,sizeof(m_ArbData));
+                }
+                *(extra->u.unflatten_func_params.arbPH) = handle;
+                PF_UNLOCK_HANDLE(handle);
+            }
+            break;
+
+        case PF_Arbitrary_INTERP_FUNC:
+            if(extra->u.interp_func_params.refconPV == ARB_REFCON) {
+                ERR(CreateDefaultArb(    in_data,
+                                     out_data,
+                                     extra->u.interp_func_params.interpPH));
+
+                ERR(Arb_Interpolate(    in_data,
+                                    out_data,
+                                    extra->u.interp_func_params.tF,
+                                    &extra->u.interp_func_params.left_arbH,
+                                    &extra->u.interp_func_params.right_arbH,
+                                    extra->u.interp_func_params.interpPH));
+            }
+            break;
+
+        case PF_Arbitrary_COMPARE_FUNC:
+            ERR(tlmath::Arb_Compare(    in_data,
+                            out_data,
+                            &extra->u.compare_func_params.a_arbH,
+                            &extra->u.compare_func_params.b_arbH,
+                            extra->u.compare_func_params.compareP));
+            break;
+
+
+        case PF_Arbitrary_PRINT_SIZE_FUNC:
+            err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
+            break;
+        case PF_Arbitrary_PRINT_FUNC:
+
+            if (extra->u.print_func_params.refconPV == ARB_REFCON) {
+                ERR(Arb_Print(in_data,
+                              out_data,
+                              extra->u.print_func_params.print_flags,
+                              extra->u.print_func_params.arbH,
+                              extra->u.print_func_params.print_sizeLu,
+                              extra->u.print_func_params.print_bufferPC));
+            } else {
+                err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
+            }
+            break;
+
+        case PF_Arbitrary_SCAN_FUNC:
+            if (extra->u.scan_func_params.refconPV == ARB_REFCON) {
+                ERR(tlmath::Arb_Scan(    in_data,
+                             out_data,
+                             extra->u.scan_func_params.refconPV,
+                             extra->u.scan_func_params.bufPC,
+                             extra->u.scan_func_params.bytes_to_scanLu,
+                             extra->u.scan_func_params.arbPH));
+            } else {
+                err = PF_Err_UNRECOGNIZED_PARAM_TYPE;
+            }
+            break;
+    }
+    return err;
+}
+
 
 PF_Err	
-CreateDefaultArb(	
+tlmath::CreateDefaultArb(
 	PF_InData			*in_data,
 	PF_OutData			*out_data,
 	PF_ArbitraryH		*dephault)
@@ -39,7 +170,7 @@ CreateDefaultArb(
 }
 
 PF_Err
-Arb_Copy(	
+tlmath::Arb_Copy(
 	PF_InData				*in_data,
 	PF_OutData				*out_data,
 	const PF_ArbitraryH		*srcP,
@@ -75,10 +206,8 @@ Arb_Copy(
 	}
 	return err;
 }
-
-
 PF_Err
-Arb_Interpolate(
+tlmath::Arb_Interpolate(
 	PF_InData				*in_data,
 	PF_OutData				*out_data,
 	double					intrp_amtF,
@@ -113,9 +242,8 @@ Arb_Interpolate(
 	suites.HandleSuite1()->host_unlock_handle(*r_arbPH);
 	return err;
 }
-
 PF_Err
-Arb_Compare(
+tlmath::Arb_Compare(
 	PF_InData				*in_data,
 	PF_OutData				*out_data,
 	const PF_ArbitraryH		*a_arbP,
@@ -163,10 +291,8 @@ Arb_Compare(
 	}
 	return err;
 }
-
-
 PF_Err
-Arb_Scan(
+tlmath::Arb_Scan(
          PF_InData			*in_data,
          PF_OutData			*out_data,
          void 				*refconPV,
@@ -178,20 +304,16 @@ Arb_Scan(
 
     return err;
 }
-
-
 PF_Err
-Arb_Print_Size()
+tlmath::Arb_Print_Size()
 {
 	// This size is actually provided directly in ColorGrid.cpp,
 	// in response to PF_Arbitrary_PRINT_FUNC
 	PF_Err err = PF_Err_NONE;
 	return err;
 }
-
-
 PF_Err
-Arb_Print(
+tlmath::Arb_Print(
 	PF_InData			*in_data,
 	PF_OutData			*out_data,
 	PF_ArbPrintFlags	print_flags,
@@ -219,7 +341,7 @@ Arb_Print(
 
 
 PF_Err
-AEFX_AppendText(
+tlmath::AEFX_AppendText(
 	A_char					*srcAC,				/* >> */
 	const A_u_long			dest_sizeLu,		/* >> */
 	A_char					*destAC,			/* <> */
@@ -227,7 +349,7 @@ AEFX_AppendText(
 {
 	PF_Err			err = PF_Err_NONE;
 
-	A_u_long		new_strlenLu = strlen(srcAC) + *current_indexPLu;
+	A_u_long		new_strlenLu = A_u_long (strlen(srcAC)) + *current_indexPLu;
 
 
 	if (new_strlenLu <= dest_sizeLu) {

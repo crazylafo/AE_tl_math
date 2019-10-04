@@ -13,8 +13,9 @@ copyPointsParam(PF_ParamDef  point_param,
 
 
 }
-static PF_Err
-ExtLayerInput(void *refcon,
+
+PF_Err
+tlmath::ExtLayerInput(void *refcon,
 	PF_InData       *in_data,
 	PF_EffectWorld *inputP,
 	PF_EffectWorld *extLP,
@@ -97,7 +98,7 @@ ExtLayerInput(void *refcon,
 				NULL,
 				&origin,
 				(void*)(oiP),
-				ShiftImage32,
+                ShiftImage32,
 				&ExternalWorldTransform));
 			break;
 
@@ -110,7 +111,7 @@ ExtLayerInput(void *refcon,
 				NULL,
 				&origin,
 				(void*)(oiP),
-				ShiftImage16,
+                ShiftImage16,
 				&ExternalWorldTransform));
 			break;
 
@@ -123,7 +124,7 @@ ExtLayerInput(void *refcon,
 				NULL,
 				&origin,
 				(void*)(oiP),
-				ShiftImage8,
+                ShiftImage8,
 				&ExternalWorldTransform));
 
 			break;
@@ -175,8 +176,8 @@ ExtLayerInput(void *refcon,
 	return err;
 }
 
-static PF_Err
-ExprRender(PF_OutData     *out_data,
+PF_Err
+tlmath::ExprRender(PF_OutData     *out_data,
 	PF_PixelFormat format,
 	PF_EffectWorld *inputP,
 	PF_EffectWorld *outputP,
@@ -205,11 +206,9 @@ ExprRender(PF_OutData     *out_data,
 	AEFX_CLR_STRUCT(wtiP);
 	wtiP.inW = *inputP;
 	wtiP.outW = *outputP;
-	if (&extLW->data && flagsPP.PixelsCallExternalInputB) {
+	if (flagsPP.PixelsCallExternalInputB) { //&extLW->data &&
 		wtiP.extLW = *extLW;
 	}
-
-
 
 	std::string exprErrStr = "Error \n";
 	PF_Boolean returnExprErrB = false;
@@ -270,13 +269,13 @@ ExprRender(PF_OutData     *out_data,
 	ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
 	part_length = A_long((outputP->height / (float)num_thrd));
 	lastPart_length = part_length + (outputP->height - (part_length*num_thrd));
-	threaded_render* thRenderPtr = new threaded_render();
+	thSafeExpr_render* thRenderPtr = new thSafeExpr_render();
 	switch (format) {
 
 	case PF_PixelFormat_ARGB128:
 		AEFX_CLR_STRUCT(workers_thrds);
 		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&threaded_render::render_32,
+			workers_thrds.emplace_back(std::thread(&thSafeExpr_render::render_32,
 				thRenderPtr,
 				(void*)&miPP,
 				(void*)&fiP,
@@ -297,7 +296,7 @@ ExprRender(PF_OutData     *out_data,
 	case PF_PixelFormat_ARGB64:
 		AEFX_CLR_STRUCT(workers_thrds);
 		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&threaded_render::render_16,
+			workers_thrds.emplace_back(std::thread(&thSafeExpr_render::render_16,
 				thRenderPtr,
 				(void*)&miPP,
 				(void*)&fiP,
@@ -318,7 +317,7 @@ ExprRender(PF_OutData     *out_data,
 	case PF_PixelFormat_ARGB32:
 		AEFX_CLR_STRUCT(workers_thrds);
 		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&threaded_render::render_8,
+			workers_thrds.emplace_back(std::thread(&thSafeExpr_render::render_8,
 				thRenderPtr,
 				(void*)&miPP,
 				(void*)&fiP,
@@ -345,10 +344,8 @@ ExprRender(PF_OutData     *out_data,
 }
 
 
-
-
 PF_Err
-tl_math_PreRender(PF_InData                *in_data,
+tlmath::PreRender(PF_InData                *in_data,
 	PF_OutData                *out_data,
 	PF_PreRenderExtra        *extraP)
 {
@@ -408,13 +405,13 @@ tl_math_PreRender(PF_InData                *in_data,
                 if (seqP->initializedB == false){
                     initB = false;
                     m_ArbData *arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-                    ERR(copyFromArbToSeqData( in_data, out_data, arbOutP->arbDataAc , seqP));
+                    ERR(tlmath::copyFromArbToSeqData( in_data, out_data, arbOutP->arbDataAc , seqP));
                     seqP->initializedB = true;
                     out_data->sequence_data = seq_dataH;
                 }
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
                 if (!initB){
-                      ERR(evalScripts  (seqP));
+                      ERR(tlmath::evalScripts  (seqP));
                 }
                 if (seqP->cameraB ==true){
                     cameraModeB = true;
@@ -479,9 +476,7 @@ tl_math_PreRender(PF_InData                *in_data,
 			miP->layerScale.point[2] = strValSP.three_d.z;
 
             if (cameraModeB){
-                A_Matrix4            matrix;
                 A_Time                comp_timeT        =    {0,1};
-
                 AEGP_LayerH camera_layerH    =    NULL;
                 ERR(suites.PFInterfaceSuite1()->AEGP_ConvertEffectToCompTime(in_data->effect_ref,
                                                                              in_data->current_time,
@@ -606,7 +601,7 @@ tl_math_PreRender(PF_InData                *in_data,
 }
 
 PF_Err
-tl_math_SmartRender(
+tlmath::SmartRender(
 	PF_InData                *in_data,
 	PF_OutData                *out_data,
 	PF_SmartRenderExtra        *extraP)
@@ -655,6 +650,7 @@ tl_math_SmartRender(
 
 			//CHECKOUT PARAMS
 			PF_ParamDef  setup_param,
+                description_param,
 				arb_param,
 				slider_param[10],
 				point_param[10],
@@ -671,6 +667,14 @@ tl_math_SmartRender(
 				in_data->time_step,
 				in_data->time_scale,
 				&setup_param));
+
+            AEFX_CLR_STRUCT(description_param);
+            ERR(PF_CHECKOUT_PARAM(in_data,
+                  MATH_SETUP,
+                  in_data->current_time,
+                  in_data->time_step,
+                  in_data->time_scale,
+                  &description_param));
 
 			AEFX_CLR_STRUCT(arb_param);
 			ERR(PF_CHECKOUT_PARAM(in_data,
@@ -1164,7 +1168,7 @@ tl_math_SmartRender(
 				oiP.x_offFi = miP->x_offFi;
 				oiP.y_offFi = miP->y_offFi;
 
-				ERR(ExtLayerInput((void*)&oiP,
+				ERR(tlmath::ExtLayerInput((void*)&oiP,
 					in_data,
 					inputP,
 					extLP,
@@ -1175,7 +1179,7 @@ tl_math_SmartRender(
 
 			//CALL PARSER MODE
 			if (!err && flagsP.parserModeB) {
-				ERR(ExprRender(out_data, format, inputP, outputP, &extLW, suites,
+				ERR(tlmath::ExprRender(out_data, format, inputP, outputP, &extLW, suites,
 					(void*)miP,
 					(void*)&flagsP,
 					(void*)&ExprP));
@@ -1183,7 +1187,7 @@ tl_math_SmartRender(
 			}
 			// CALL GLSL
 			else if (!err) {
-				ERR(Render_GLSL(in_data,
+                ERR(tlmath::Render_GLSL(in_data,
 					out_data,
 					inputP,
 					outputP,
@@ -1200,6 +1204,7 @@ tl_math_SmartRender(
 			//CHECKIN PARAMS
 			PF_UNLOCK_HANDLE(arbH);
 			ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
+            ERR2(PF_CHECKIN_PARAM(in_data, &description_param));
 			ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
 			for (int i = 0; i<10; i++) {
 				ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[i]));

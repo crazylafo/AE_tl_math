@@ -22,7 +22,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/GL_base.cpp"
@@ -74,28 +74,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_math.cpp"
-            timestampString = "590691075.989668"
+            timestampString = "591869378.0227"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "805"
             endingLineNumber = "805"
-            landmarkName = "Render_GLSL(PF_InData *in_data, PF_OutData *out_data, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extLW, PF_PixelFormat format, AEGP_SuiteHandler &amp;suites, void *refcon, PF_Boolean ShaderResetB, const std::string&amp; vertexShstr, const std::string&amp; fragSh1str, const std::string&amp; fragSh2str )"
-            landmarkType = "9">
+            landmarkName = "tlmath::Render_GLSL(PF_InData *in_data, PF_OutData *out_data, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extLW, PF_PixelFormat format, AEGP_SuiteHandler &amp;suites, void *refcon, PF_Boolean ShaderResetB, const std::string&amp; vertexShstr, const std::string&amp; fragSh1str, const std::string&amp; fragSh2str )"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../include/tl_math.h"
-            timestampString = "590689794.063439"
+            timestampString = "591874866.573085"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "367"
-            endingLineNumber = "367"
-            landmarkName = "enum { MATH_SETUP_DISK_ID =1, MATH_ARB_DATA_DISK_ID, MATH_TOPIC_SLIDER_DISK_ID, MATH_SLIDER_ONE_DISK_ID, MATH_SLIDER_TWO_DISK_ID, MATH_SLIDER_THREE_DISK_ID, MATH_SLIDER_FOUR_DISK_ID, MATH_SLIDER_FIVE_DISK_ID, MATH_SLIDER_SIX_DISK_ID, MATH_SLIDER_SEVEN_DISK_ID, MATH_SLIDER_HEIGHT_DISK_ID, MATH_SLIDER_NINE_DISK_ID, MATH_SLIDER_TEN_DISK_ID, MATH_END_TOPIC_SLIDER_DISK_ID, MATH_TOPIC_POINTS_DISK_ID, MATH_POINT_ONE_DISK_ID, MATH_POINT_TWO_DISK_ID, MATH_POINT_THREE_DISK_ID, MATH_POINT_FOUR_DISK_ID, MATH_POINT_FIVE_DISK_ID, MATH_POINT_SIX_DISK_ID, MATH_POINT_SEVEN_DISK_ID, MATH_POINT_HEIGHT_DISK_ID, MATH_POINT_NINE_DISK_ID, MATH_POINT_TEN_DISK_ID, MATH_END_TOPIC_POINTS_DISK_ID, MATH_TOPIC_CB_DISK_ID, MATH_CB_ONE_DISK_ID, MATH_CB_TWO_DISK_ID, MATH_CB_THREE_DISK_ID, MATH_CB_FOUR_DISK_ID, MATH_CB_FIVE_DISK_ID, MATH_CB_SIX_DISK_ID, MATH_CB_SEVEN_DISK_ID, MATH_CB_HEIGHT_DISK_ID, MATH_CB_NINE_DISK_ID, MATH_CB_TEN_DISK_ID, MATH_END_TOPIC_CB_DISK_ID, MATH_TOPIC_COLORS_DISK_ID, MATH_COLOR_ONE_DISK_ID, MATH_COLOR_TWO_DISK_ID, MATH_COLOR_THREE_DISK_ID, MATH_COLOR_FOUR_DISK_ID, MATH_COLOR_FIVE_DISK_ID, MATH_COLOR_SIX_DISK_ID, MATH_COLOR_SEVEN_DISK_ID, MATH_COLOR_HEIGHT_DISK_ID, MATH_COLOR_NINE_DISK_ID, MATH_COLOR_TEN_DISK_ID, MATH_END_TOPIC_COLORS_DISK_ID, MATH_TOPIC_INPUTS_DISK_ID, MATH_INP_LAYER_ONE_DISK_ID, MATH_INP_TOFF_ONE_DISK_ID, MATH_INP_POFF_ONE_DISK_ID, MATH_END_TOPIC_INPUTS_DISK_ID, MATH_CEP_GET_ARB_DATA_DISK_ID, MATH_CEP_RETURN_MESSAGE_DISK_ID }"
+            startingLineNumber = "358"
+            endingLineNumber = "358"
+            landmarkName = "enum { MATH_SETUP_DISK_ID =1, MATH_ARB_DATA_DISK_ID, MATH_EFFECT_DESCRIPTION_DISK_ID, MATH_TOPIC_SLIDER_DISK_ID, MATH_SLIDER_ONE_DISK_ID, MATH_SLIDER_TWO_DISK_ID, MATH_SLIDER_THREE_DISK_ID, MATH_SLIDER_FOUR_DISK_ID, MATH_SLIDER_FIVE_DISK_ID, MATH_SLIDER_SIX_DISK_ID, MATH_SLIDER_SEVEN_DISK_ID, MATH_SLIDER_HEIGHT_DISK_ID, MATH_SLIDER_NINE_DISK_ID, MATH_SLIDER_TEN_DISK_ID, MATH_END_TOPIC_SLIDER_DISK_ID, MATH_TOPIC_POINTS_DISK_ID, MATH_POINT_ONE_DISK_ID, MATH_POINT_TWO_DISK_ID, MATH_POINT_THREE_DISK_ID, MATH_POINT_FOUR_DISK_ID, MATH_POINT_FIVE_DISK_ID, MATH_POINT_SIX_DISK_ID, MATH_POINT_SEVEN_DISK_ID, MATH_POINT_HEIGHT_DISK_ID, MATH_POINT_NINE_DISK_ID, MATH_POINT_TEN_DISK_ID, MATH_END_TOPIC_POINTS_DISK_ID, MATH_TOPIC_CB_DISK_ID, MATH_CB_ONE_DISK_ID, MATH_CB_TWO_DISK_ID, MATH_CB_THREE_DISK_ID, MATH_CB_FOUR_DISK_ID, MATH_CB_FIVE_DISK_ID, MATH_CB_SIX_DISK_ID, MATH_CB_SEVEN_DISK_ID, MATH_CB_HEIGHT_DISK_ID, MATH_CB_NINE_DISK_ID, MATH_CB_TEN_DISK_ID, MATH_END_TOPIC_CB_DISK_ID, MATH_TOPIC_COLORS_DISK_ID, MATH_COLOR_ONE_DISK_ID, MATH_COLOR_TWO_DISK_ID, MATH_COLOR_THREE_DISK_ID, MATH_COLOR_FOUR_DISK_ID, MATH_COLOR_FIVE_DISK_ID, MATH_COLOR_SIX_DISK_ID, MATH_COLOR_SEVEN_DISK_ID, MATH_COLOR_HEIGHT_DISK_ID, MATH_COLOR_NINE_DISK_ID, MATH_COLOR_TEN_DISK_ID, MATH_END_TOPIC_COLORS_DISK_ID, MATH_TOPIC_ROTS_DISK_ID, MATH_ROT_ONE_DISK_ID, MATH_ROT_TWO_DISK_ID, MATH_ROT_THREE_DISK_ID, MATH_ROT_FOUR_DISK_ID, MATH_ROT_FIVE_DISK_ID, MATH_ROT_SIX_DISK_ID, MATH_ROT_SEVEN_DISK_ID, MATH_ROT_HEIGHT_DISK_ID, MATH_ROT_NINE_DISK_ID, MATH_ROT_TEN_DISK_ID, MATH_END_TOPIC_ROTS_DISK_ID, MATH_TOPIC_INPUTS_DISK_ID, MATH_INP_LAYER_ONE_DISK_ID, MATH_INP_TOFF_ONE_DISK_ID, MATH_INP_POFF_ONE_DISK_ID, MATH_END_TOPIC_INPUTS_DISK_ID, MATH_CEP_GET_ARB_DATA_DISK_ID, MATH_CEP_RETURN_MESSAGE_DISK_ID }"
             landmarkType = "13">
          </BreakpointContent>
       </BreakpointProxy>
@@ -106,29 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_math.cpp"
-            timestampString = "590691075.98979"
+            timestampString = "591869378.023236"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1073"
-            endingLineNumber = "1073"
-            landmarkName = "SequenceSetup ( PF_InData *in_data, PF_OutData *out_data)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/tl_mathRender.cpp"
-            timestampString = "590691075.989862"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "379"
-            endingLineNumber = "379"
-            landmarkName = "tl_math_PreRender(PF_InData *in_data, PF_OutData *out_data, PF_PreRenderExtra *extraP)"
-            landmarkType = "9">
+            endingLineNumber = "1073">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -138,28 +120,108 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathRender.cpp"
-            timestampString = "590691075.98993"
+            timestampString = "591900388.2029361"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "965"
-            endingLineNumber = "965"
-            landmarkName = "tl_math_SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
-            landmarkType = "9">
+            startingLineNumber = "377"
+            endingLineNumber = "377"
+            landmarkName = "tlmath::PreRender(PF_InData *in_data, PF_OutData *out_data, PF_PreRenderExtra *extraP)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathRender.cpp"
-            timestampString = "590691075.989995"
+            timestampString = "591900388.203764"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "188"
-            endingLineNumber = "188"
-            landmarkName = "ExprRender(PF_OutData *out_data, PF_PixelFormat format, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extLW, AEGP_SuiteHandler &amp;suites, void *refcon, void *refconFlags, void *refconExpr)"
+            startingLineNumber = "970"
+            endingLineNumber = "970"
+            landmarkName = "tlmath::SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_math_Dialogs.cpp"
+            timestampString = "591869702.349416"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "418"
+            endingLineNumber = "418"
+            landmarkName = "tlmath::evalScripts(seqData *seqDataP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathSeqData.cpp"
+            timestampString = "591700126.298506"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
+            landmarkName = "getIntFromJsonAdress(nlohmann::json arbDataJS, std::string json_adress, A_long target)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "getPointsFromJsonAdress(PF_InData*, nlohmann::basic_json&lt;std::__1::map, std::__1::vector, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, long long, unsigned long long, double, std::__1::allocator, nlohmann::adl_serializer&gt;, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, PF_Point3DDef)"
+                  moduleName = "tlMath"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Exchange/thomas.laforge/_LIBRAIRIE/AE/AE_SDK/Adobe%20After%20Effects%20CC%202017%20Mac%20SDK/Examples/Thomas/AE_tl_math/src/tl_mathSeqData.cpp"
+                  timestampString = "591867774.226542"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "88"
+                  endingLineNumber = "88"
+                  offsetFromSymbolStart = "548">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "getPointsFromJsonAdress(PF_InData*, nlohmann::basic_json&lt;std::__1::map, std::__1::vector, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, long long, unsigned long long, double, std::__1::allocator, nlohmann::adl_serializer&gt;, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, PF_Point3DDef)"
+                  moduleName = "tlMath"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Exchange/thomas.laforge/_LIBRAIRIE/AE/AE_SDK/Adobe%20After%20Effects%20CC%202017%20Mac%20SDK/Examples/Thomas/AE_tl_math/src/tl_mathSeqData.cpp"
+                  timestampString = "591867774.230515"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "88"
+                  endingLineNumber = "88"
+                  offsetFromSymbolStart = "576">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathSeqData.cpp"
+            timestampString = "591700344.1816829"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "78"
+            endingLineNumber = "78"
+            landmarkName = "getPointsFromJsonAdress(PF_InData* in_data, nlohmann::json arbDataJS, std::string json_adress, PF_Point3DDef target)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -170,45 +232,45 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathSeqData.cpp"
-            timestampString = "590691075.990062"
+            timestampString = "591700354.351895"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "copyStrFromJsonToSeqData(nlohmann::json arbDataJS, std::string json_adress)"
+            startingLineNumber = "165"
+            endingLineNumber = "165"
+            landmarkName = "updateColorParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)"
             landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/tl_mathSeqData.cpp"
-            timestampString = "590691075.9904799"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "93"
-            endingLineNumber = "93"
-            landmarkName = "copyFromArbToSeqData(PF_InData *in_data, PF_OutData *out_data, std::string arbStr, seqData *seqDataP)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../src/tl_mathSeqData.cpp"
-            timestampString = "590691075.990811"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "copyShaderFromJsonToSeqData(nlohmann::json arbDataJS, std::string json_adress)"
-            landmarkType = "9">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "updateCbParams(PF_ParamDef**, nlohmann::basic_json&lt;std::__1::map, std::__1::vector, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, long long, unsigned long long, double, std::__1::allocator, nlohmann::adl_serializer&gt;, int, int)"
+                  moduleName = "tlMath"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Exchange/thomas.laforge/_LIBRAIRIE/AE/AE_SDK/Adobe%20After%20Effects%20CC%202017%20Mac%20SDK/Examples/Thomas/AE_tl_math/src/tl_mathSeqData.cpp"
+                  timestampString = "591867774.2385941"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "166"
+                  endingLineNumber = "166"
+                  offsetFromSymbolStart = "830">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "updateCbParams(PF_ParamDef**, nlohmann::basic_json&lt;std::__1::map, std::__1::vector, std::__1::basic_string&lt;char, std::__1::char_traits&lt;char&gt;, std::__1::allocator&lt;char&gt; &gt;, bool, long long, unsigned long long, double, std::__1::allocator, nlohmann::adl_serializer&gt;, int, int)"
+                  moduleName = "tlMath"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Volumes/Exchange/thomas.laforge/_LIBRAIRIE/AE/AE_SDK/Adobe%20After%20Effects%20CC%202017%20Mac%20SDK/Examples/Thomas/AE_tl_math/src/tl_mathSeqData.cpp"
+                  timestampString = "591867774.241042"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "166"
+                  endingLineNumber = "166"
+                  offsetFromSymbolStart = "958">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -217,14 +279,30 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../src/tl_mathSeqData.cpp"
-            timestampString = "590691075.991134"
+            filePath = "../src/tl_mathParams.cpp"
+            timestampString = "591870954.497849"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "24"
-            endingLineNumber = "24"
-            landmarkName = "scriptCorrectorStr(std::string &amp;str)"
-            landmarkType = "9">
+            startingLineNumber = "1203"
+            endingLineNumber = "1203"
+            landmarkName = "tlmath::UserChangedParam( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP, const PF_UserChangedParamExtra *which_hitP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_math.cpp"
+            timestampString = "591882700.850437"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "731"
+            endingLineNumber = "731"
+            landmarkName = "tlmath::Render_GLSL(PF_InData *in_data, PF_OutData *out_data, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extLW, PF_PixelFormat format, AEGP_SuiteHandler &amp;suites, void *refcon, PF_Boolean ShaderResetB, const std::string&amp; vertexShstr, const std::string&amp; fragSh1str, const std::string&amp; fragSh2str )"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

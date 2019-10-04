@@ -8,23 +8,19 @@
 
 #include    "tl_math.h"
 
+
 static PF_Boolean convertIntToBool(A_long input) {
 	if (input > 0) {
 		return true;
 	}
 	else return false;
 }
-
-
-static bool getBoolFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress)
-{
+static bool getBoolFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress){
 	nlohmann::json::json_pointer jpointer(json_adress);
 	bool dataBoolB = arbDataJS[jpointer].get<bool>();
 	return dataBoolB;
 }
-
-static std::string getStringFromJsonAdress(nlohmann::json arbDataJS,std::string json_adress, A_char* target)
-{
+static std::string getStringFromJsonAdress(nlohmann::json arbDataJS,std::string json_adress, A_char* target){
      //we input the target. in case of error in json pointer
 	std::string dataStr;
 	AEFX_CLR_STRUCT(dataStr);
@@ -36,8 +32,7 @@ static std::string getStringFromJsonAdress(nlohmann::json arbDataJS,std::string 
         }
 	return dataStr;
 }
-static PF_FpLong getFloatFromJsonAdress(nlohmann::json arbDataJS,std::string json_adress, PF_FpLong  target)
-{
+static PF_FpLong getFloatFromJsonAdress(nlohmann::json arbDataJS,std::string json_adress, PF_FpLong  target){
     //we input the target. in case of error in json pointer
     PF_FpLong  dataF;
     nlohmann::json::json_pointer jpointer(json_adress);
@@ -48,10 +43,7 @@ static PF_FpLong getFloatFromJsonAdress(nlohmann::json arbDataJS,std::string jso
     }
     return  dataF;
 }
-static void getMiddleVal(PF_InData* in_data, 
-						 PF_Point3DDef *input
-						)
-{
+static void getMiddleVal(PF_InData* in_data,  PF_Point3DDef *input){
 	if (input->x_value == 50.0) {
 		input->x_value = (PF_FpLong)in_data->width / 2;
 		}
@@ -63,8 +55,7 @@ static void getMiddleVal(PF_InData* in_data,
 		}
 
 }
-static PF_Point3DDef getPointsFromJsonAdress(PF_InData* in_data, nlohmann::json arbDataJS, std::string json_adress, PF_Point3DDef  target)
-{
+static PF_Point3DDef getPointsFromJsonAdress(PF_InData* in_data, nlohmann::json arbDataJS, std::string json_adress, PF_Point3DDef  target){
 	//we input the target. in case of error in json pointer
     PF_Point3DDef   data3dF = target;
     std::string json_adress_X = json_adress+"0";
@@ -86,10 +77,7 @@ static PF_Point3DDef getPointsFromJsonAdress(PF_InData* in_data, nlohmann::json 
 	getMiddleVal(in_data, &data3dF);
 	return   data3dF;
 }
-static A_long getIntFromJsonAdress(nlohmann::json arbDataJS,
-	std::string json_adress,
-	A_long  target)
-{
+static A_long getIntFromJsonAdress(nlohmann::json arbDataJS, std::string json_adress, A_long  target){
 	//we input the target. in case of error in json pointer
 	A_long  dataA;
 	nlohmann::json::json_pointer jpointer(json_adress);
@@ -101,7 +89,6 @@ static A_long getIntFromJsonAdress(nlohmann::json arbDataJS,
 	}
 	return  dataA;
 }
-
 static PF_Pixel getColorFromJsonAdress(nlohmann::json arbDataJS, std::string json_adress, PF_Pixel  target) {
 	PF_Pixel dataColorCh = target;
 	PF_Pixel32 dataSourceF;
@@ -128,16 +115,14 @@ static PF_Pixel getColorFromJsonAdress(nlohmann::json arbDataJS, std::string jso
 	}
 	return dataColorCh;
 }
-static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress, char* target)
-{
+static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress, char* target){
 	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
-static void   copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target)
-{
+void   tlmath::copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target){
 	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
-	ExprtkCorrectorStr(dataStr);
+	tlmath::ExprtkCorrectorStr(dataStr);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
@@ -182,10 +167,7 @@ static void updateColorParams(PF_ParamDef* params[], nlohmann::json arbDataJS, i
 }
 
 PF_Err
-tlmath_updateParamsValue(PF_InData* in_data,
-						PF_ParamDef     *params[],
-                         std::string     arbStr)
-{
+tlmath::updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[],std::string     arbStr){
     PF_Err err = PF_Err_NONE;
     nlohmann::json arbDataJS;
     try {
@@ -208,10 +190,7 @@ tlmath_updateParamsValue(PF_InData* in_data,
 }
 
 PF_Err
-copyFromArbToSeqData(PF_InData* in_data,
-	PF_OutData* out_data,
-	std::string       arbStr,
-	seqData* seqDataP)
+tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::string       arbStr, seqData* seqDataP)
 {
 	PF_Err err = PF_Err_NONE;
 	nlohmann::json arbDataJS;
@@ -241,8 +220,8 @@ copyFromArbToSeqData(PF_InData* in_data,
 	std::string curr_vertSh = seqDataP->Glsl33_VertexShAc;
 	std::string  new_frag = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_frag_sh", seqDataP->Glsl33_FragmentShAc);
 	std::string  new_vert = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_vert_sh",seqDataP->Glsl33_VertexShAc);
-	scriptCorrectorStr(new_frag);
-	scriptCorrectorStr(new_vert);
+	tlmath::scriptCorrectorStr(new_frag);
+	tlmath::scriptCorrectorStr(new_vert);
     if (curr_fragSh.compare(new_frag) != 0 || curr_vertSh.compare(new_vert) != 0)
     {
         seqDataP->resetShaderB = true;
@@ -412,7 +391,7 @@ copyFromArbToSeqData(PF_InData* in_data,
 }
 
 PF_Err
-tlmath_updateSeqData(PF_InData            *in_data,
+tlmath::updateSeqData(PF_InData            *in_data,
                      PF_OutData            *out_data,
                      PF_ParamDef            *params[])
 {
@@ -457,7 +436,7 @@ tlmath_updateSeqData(PF_InData            *in_data,
 
 
 PF_Err
-tlMath_SequenceSetdown (
+tlmath::SequenceSetdown (
                         PF_InData        *in_data,
                         PF_OutData        *out_data)
 {
@@ -471,13 +450,13 @@ tlMath_SequenceSetdown (
 }
 
 PF_Err
-tlMath_SequenceSetup (
+tlmath::SequenceSetup (
                       PF_InData        *in_data,
                       PF_OutData        *out_data)
 {
     PF_Err err = PF_Err_NONE;
     AEGP_SuiteHandler suites(in_data->pica_basicP);
-    err = tlMath_SequenceSetdown(in_data, out_data);
+    err = SequenceSetdown(in_data, out_data);
 
     if (!err){
         PF_Handle    seq_dataH =    suites.HandleSuite1()->host_new_handle(sizeof(seqData));
@@ -486,7 +465,7 @@ tlMath_SequenceSetup (
             seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             seqP->initializedB = false;
             copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
-            ERR(evalScripts(seqP));
+            ERR(tlmath::evalScripts(seqP));
             out_data->sequence_data = seq_dataH;
             suites.HandleSuite1()->host_unlock_handle(seq_dataH);
         } else {    // whoa, we couldn't allocate sequence data; bail!

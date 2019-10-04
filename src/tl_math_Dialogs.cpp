@@ -175,7 +175,7 @@ parseLayerDataToJsonStr(A_long compId,
 }
 
 PF_Err
-CallCepDialog(PF_InData        *in_data,
+tlmath::CallCepDialog(PF_InData        *in_data,
 			PF_OutData        *out_data)
 {
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
@@ -210,7 +210,7 @@ CallCepDialog(PF_InData        *in_data,
 }
 
 PF_Err
-SetupDialogSend( PF_InData        *in_data,
+tlmath::SetupDialogSend( PF_InData        *in_data,
                   PF_OutData        *out_data,
                   PF_ParamDef        *params[])
 {
@@ -262,19 +262,19 @@ SetupDialogSend( PF_InData        *in_data,
     AEFX_CLR_STRUCT (rgbErr);
     rgbErr = seqP->rgbError;
 
-    jsonCorrectorStr(fragErr);
-    jsonCorrectorStr(vertErr);
+    tlmath::jsonCorrectorStr(fragErr);
+    tlmath::jsonCorrectorStr(vertErr);
 
-    jsonCorrectorStr(redErr);
-    jsonCorrectorStr(greenErr);
-    jsonCorrectorStr(blueErr);
-    jsonCorrectorStr(alphaErr);
-	jsonCorrectorStr(rgbErr);
+    tlmath::jsonCorrectorStr(redErr);
+    tlmath::jsonCorrectorStr(greenErr);
+    tlmath::jsonCorrectorStr(blueErr);
+    tlmath::jsonCorrectorStr(alphaErr);
+	tlmath::jsonCorrectorStr(rgbErr);
 
-    ExprtkCorrectorStr(redErr);
-    ExprtkCorrectorStr(greenErr);
-    ExprtkCorrectorStr(blueErr);
-    ExprtkCorrectorStr(rgbErr);
+    tlmath::ExprtkCorrectorStr(redErr);
+    tlmath::ExprtkCorrectorStr(greenErr);
+    tlmath::ExprtkCorrectorStr(blueErr);
+    tlmath::ExprtkCorrectorStr(rgbErr);
 
     //A_long compId,layerIndex, effectIndex;
     //ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
@@ -305,7 +305,7 @@ SetupDialogSend( PF_InData        *in_data,
 
 
 PF_Err
-SetupGetDataBack(
+tlmath::SetupGetDataBack(
                  PF_InData        *in_data,
                  PF_OutData        *out_data,
                  PF_ParamDef        *params[])
@@ -345,9 +345,9 @@ SetupGetDataBack(
 
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-		ERR(copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
-        ERR(tlmath_updateParamsValue(in_data, params, resultStr));
-        ERR(evalScripts(seqP));
+		ERR(tlmath::copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
+        ERR(tlmath::updateParamsValue(in_data, params, resultStr));
+        ERR(tlmath::evalScripts(seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
 
@@ -363,12 +363,12 @@ SetupGetDataBack(
 
 
 PF_Err
-evalScripts(seqData  *seqDataP)
+tlmath::evalScripts(seqData  *seqDataP)
 {
     PF_Err err = PF_Err_NONE;
     std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh, evalRgbCh;
 
-    evalRedExpr = evalMathExprStr (seqDataP->redExAc, &seqDataP);
+    evalRedExpr = tlmath::evalMathExprStr (seqDataP->redExAc, &seqDataP);
     if (evalRedExpr != compile_success){
         #ifdef AE_OS_WIN
          strncpy_s(seqDataP->redExAc, safeExpr.c_str(),  safeExpr.length() + 1);
@@ -378,7 +378,7 @@ evalScripts(seqData  *seqDataP)
 
     }
 
-    evalGreenExpr = evalMathExprStr (seqDataP->greenExAc, &seqDataP);
+    evalGreenExpr = tlmath::evalMathExprStr (seqDataP->greenExAc, &seqDataP);
     if (evalGreenExpr != compile_success){
         #ifdef AE_OS_WIN
                 strncpy_s(seqDataP->greenExAc, safeExpr.c_str(),  safeExpr.length() + 1);
@@ -387,7 +387,7 @@ evalScripts(seqData  *seqDataP)
         #endif
     }
 
-    evalBlueExpr = evalMathExprStr (seqDataP->blueExAc, &seqDataP);
+    evalBlueExpr = tlmath::evalMathExprStr (seqDataP->blueExAc, &seqDataP);
     if (evalBlueExpr != compile_success){
         #ifdef AE_OS_WIN
                 strncpy_s(seqDataP->blueExAc, safeExpr.c_str(),  safeExpr.length() + 1);
@@ -396,7 +396,7 @@ evalScripts(seqData  *seqDataP)
         #endif
     }
 
-	evalRgbCh = evalMathExprStr(seqDataP->rgbExprExAc, &seqDataP);
+	evalRgbCh = tlmath::evalMathExprStr(seqDataP->rgbExprExAc, &seqDataP);
 	if (evalRgbCh != compile_success) {
 	#ifdef AE_OS_WIN
 			strncpy_s(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
@@ -405,7 +405,7 @@ evalScripts(seqData  *seqDataP)
 	#endif
 		}
 
-    evalAlphaExpr = evalMathExprStr (seqDataP->alphaExAc, &seqDataP);
+    evalAlphaExpr = tlmath::evalMathExprStr (seqDataP->alphaExAc, &seqDataP);
     if ( evalAlphaExpr != compile_success){
         #ifdef AE_OS_WIN
                 strncpy_s(seqDataP->alphaExAc, safeExpr.c_str(),  safeExpr.length() + 1);
@@ -414,7 +414,7 @@ evalScripts(seqData  *seqDataP)
         #endif
     }
 
-    evalVertShader (seqDataP->Glsl33_VertexShAc, evalVertSh);
+    tlmath::evalVertShader (seqDataP->Glsl33_VertexShAc, evalVertSh);
     if (evalVertSh != compile_success){
         #ifdef AE_OS_WIN
                 strncpy_s(seqDataP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
@@ -423,7 +423,7 @@ evalScripts(seqData  *seqDataP)
         #endif
     }
 
-    evalFragShader (seqDataP->Glsl33_FragmentShAc, evalFragSh);
+    tlmath::evalFragShader (seqDataP->Glsl33_FragmentShAc, evalFragSh);
     if (evalFragSh != compile_success){
         std::string setting_resolutionName = "resolution";
         #ifdef AE_OS_WIN
