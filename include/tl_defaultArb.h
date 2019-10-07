@@ -19,8 +19,8 @@ static std::string defaultArb = R"=====(
         "description":"simple skeleton_effect"
     },
     "effectMode":{
-        "gl33_modeB":false,
-        "expr_modeB":true,
+        "gl33_modeB":true,
+        "expr_modeB":false,
         "evalModeB":false
     },
     "gl_expression":{
@@ -51,7 +51,7 @@ static std::string defaultArb = R"=====(
     },
     "flags":{
         "needsPixelAroundB":false,
-        "pixelsCallExternalInputB":false,
+        "pixelsCallExternalInputB":[0,0,0,0],
         "needsLumaB":false,
         "presetHasWideInputB":false,
         "usesCameraB":false
@@ -359,6 +359,18 @@ static std::string defaultArb = R"=====(
             "extLayer_1":{
                 "visibleB":true,
                 "name":"texture1"
+            },
+            "extLayer_2":{
+                "visibleB":true,
+                "name":"texture2"
+            },
+            "extLayer_3":{
+                "visibleB":true,
+                "name":"texture3"
+            },
+            "extLayer_4":{
+                "visibleB":true,
+                "name":"texture4"
             }
         }
     }

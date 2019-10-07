@@ -237,6 +237,12 @@ typedef struct {
 	A_char   paramLayer00NameAc[32];
     A_char   paramLayer01NameAc[32];
     PF_Boolean  paramLayer01VisibleB;
+    A_char   paramLayer02NameAc[32];
+    PF_Boolean  paramLayer02VisibleB;
+    A_char   paramLayer03NameAc[32];
+    PF_Boolean  paramLayer03VisibleB;
+    A_char   paramLayer04NameAc[32];
+    PF_Boolean  paramLayer04VisibleB;
 
     //Mode
     PF_Boolean  cameraB;
@@ -245,7 +251,7 @@ typedef struct {
 	PF_Boolean  exprModeB;
 	PF_Boolean  evalModeB;
     PF_Boolean needsPixelAroundB;
-    PF_Boolean pixelsCallExternalInputB;
+    bool pixelsCallExternalInputB[4];
     PF_Boolean needsLumaB;
     PF_Boolean presetHasWideInputB;
 	PF_Boolean resetShaderB;
@@ -334,6 +340,15 @@ enum {
     MATH_INP_LAYER_ONE,
     MATH_INP_TOFF_ONE,
     MATH_INP_POFF_ONE,
+	MATH_INP_LAYER_TWO,
+	MATH_INP_TOFF_TWO,
+	MATH_INP_POFF_TWO,
+	MATH_INP_LAYER_THREE,
+	MATH_INP_TOFF_THREE,
+	MATH_INP_POFF_THREE,
+	MATH_INP_LAYER_FOUR,
+	MATH_INP_TOFF_FOUR,
+	MATH_INP_POFF_FOUR,
     MATH_END_TOPIC_INPUTS,
 	MATH_CEP_GET_ARB_DATA,
     MATH_CEP_RETURN_MESSAGE,
@@ -407,6 +422,15 @@ enum {
     MATH_INP_LAYER_ONE_DISK_ID,
     MATH_INP_TOFF_ONE_DISK_ID,
     MATH_INP_POFF_ONE_DISK_ID,
+	MATH_INP_LAYER_TWO_DISK_ID,
+	MATH_INP_TOFF_TWO_DISK_ID,
+	MATH_INP_POFF_TWO_DISK_ID,
+	MATH_INP_LAYER_THREE_DISK_ID,
+	MATH_INP_TOFF_THREE_DISK_ID,
+	MATH_INP_POFF_THREE_DISK_ID,
+	MATH_INP_LAYER_FOUR_DISK_ID,
+	MATH_INP_TOFF_FOUR_DISK_ID,
+	MATH_INP_POFF_FOUR_DISK_ID,
     MATH_END_TOPIC_INPUTS_DISK_ID,
     MATH_CEP_GET_ARB_DATA_DISK_ID,
     MATH_CEP_RETURN_MESSAGE_DISK_ID
@@ -414,7 +438,7 @@ enum {
 
 typedef struct  FlagsInfo {
         PF_Boolean NeedsPixelAroundB;
-        PF_Boolean PixelsCallExternalInputB;
+        PF_Boolean PixelsCallExternalInputB[4];
         PF_Boolean NeedsLumaB;
         PF_Boolean PresetHasWideInput;
 		PF_Boolean parserModeB;
@@ -459,6 +483,9 @@ typedef struct MathInfo{
     PF_FpShort 		inColorF[4];
     PF_FpShort      inColorChF;
     PF_FpShort      extLayerColorF[4];
+	PF_FpShort      extLayer2ColorF[4];
+	PF_FpShort      extLayer3ColorF[4];
+	PF_FpShort      extLayer4ColorF[4];
     PF_FpShort      pixF[2];
     PF_FpShort      layerSizeF[2];
     PF_FpShort      compSizeF[2];
@@ -484,8 +511,8 @@ typedef struct MathInfo{
 
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP;
-    PF_Fixed    x_offFi;
-    PF_Fixed    y_offFi;
+    PF_Fixed    x_offFi[4];
+    PF_Fixed    y_offFi[4];
 
 } MathInfoP, *MathinfoP, **MathinfoH;
 typedef struct {
@@ -563,7 +590,6 @@ public:
 		symbol_table.add_constant(seqP->paramSlider08NameAc, miP->inSliderF[7]);
 		symbol_table.add_constant(seqP->paramSlider09NameAc, miP->inSliderF[8]);
 		symbol_table.add_constant(seqP->paramSlider10NameAc, miP->inSliderF[9]);
-
         symbol_table.add_constant(seqP->paramCb01NameAc, miP->inCboxF[0]);
         symbol_table.add_constant(seqP->paramCb02NameAc, miP->inCboxF[1]);
         symbol_table.add_constant(seqP->paramCb03NameAc, miP->inCboxF[2]);
@@ -574,7 +600,6 @@ public:
         symbol_table.add_constant(seqP->paramCb08NameAc, miP->inCboxF[7]);
         symbol_table.add_constant(seqP->paramCb09NameAc, miP->inCboxF[8]);
         symbol_table.add_constant(seqP->paramCb10NameAc, miP->inCboxF[9]);
-
 		symbol_table.add_constant(seqP->paramRot01NameAc, miP->inRotF[0]);
 		symbol_table.add_constant(seqP->paramRot02NameAc, miP->inRotF[1]);
 		symbol_table.add_constant(seqP->paramRot03NameAc, miP->inRotF[2]);
@@ -606,11 +631,11 @@ PF_Err ShiftImage32 (void *refcon, A_long xL, A_long yL, PF_Pixel32 *inP, PF_Pix
 PF_Err ShiftImage16 ( void *refcon,A_long xL, A_long yL, PF_Pixel16 *inP, PF_Pixel16 *outP);
 PF_Err ShiftImage8 ( void *refcon, A_long xL, A_long yL, PF_Pixel *inP, PF_Pixel *outP);
 
-class thSafeExpr_render{
+class thSafeExpr_render {
 private:
     std::mutex mut;
     A_long curNumIter;
-    PF_Err LineIteration8Func ( void *refconPV,void *refconFunc,void *refconFlags,void *refconWorld, A_long yL);
+	PF_Err LineIteration8Func(void *refconPV, void* refconFunc, void* refconFlags, void* refconWorld, A_long yL);
     PF_Err LineIteration16Func ( void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long yL);
     PF_Err LineIteration32Func(void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long yL);
 public:
@@ -643,13 +668,14 @@ private:
     PF_Err updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[], std::string     arbStr);
 
 
-    
-    PF_Err
-    Render_GLSL(PF_InData  *in_data,
+    PF_Err Render_GLSL(PF_InData  *in_data,
                 PF_OutData *out_data,
                 PF_EffectWorld *inputP,
                 PF_EffectWorld *outputP,
-                PF_EffectWorld *extLW,
+                PF_EffectWorld *extL1W,
+                PF_EffectWorld *extL2W,
+                PF_EffectWorld *extL3W,
+                PF_EffectWorld *extL4W,
                 PF_PixelFormat format,
                 AEGP_SuiteHandler &suites,
                 void  *refcon,
@@ -657,17 +683,6 @@ private:
                 const std::string& vertexShstr,
                 const std::string& fragSh1str,
                 const std::string&        fragSh2str);
-
-    PF_Err
-    ExprRender(PF_OutData     *out_data,
-               PF_PixelFormat format,
-               PF_EffectWorld *inputP,
-               PF_EffectWorld *outputP,
-               PF_EffectWorld *extLW,
-               AEGP_SuiteHandler &suites,
-               void    *refcon,
-               void    *refconFlags,
-               void    *refconExpr);
 
     PF_Err
     ExtLayerInput(void *refcon,
@@ -688,7 +703,15 @@ private:
     PF_Err Arb_Scan( PF_InData *in_data, PF_OutData *out_data, void *refconPV, const char *bufPC, unsigned long bytes_to_scanLu, PF_ArbitraryH *arbPH);
 
 public:
-
+	PF_Err ExprRender(PF_OutData* out_data,
+			PF_PixelFormat format,
+			PF_EffectWorld* inputP,
+			PF_EffectWorld* outputP,
+			PF_EffectWorld* extLW,
+			AEGP_SuiteHandler& suites,
+			void* refcon,
+			void* refconFlags,
+			void* refconExpr);
     PF_Err UpdateParameterUI(PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP);
     PF_Err UserChangedParam( PF_InData  *in_data, PF_OutData *out_data,PF_ParamDef  *params[],PF_LayerDef *outputP, const PF_UserChangedParamExtra    *which_hitP);
     PF_Err ParamsSetup (PF_InData        *in_data, PF_OutData        *out_data, PF_ParamDef        *params[], PF_LayerDef        *output );

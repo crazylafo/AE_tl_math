@@ -6,7 +6,7 @@ copyPointsParam(PF_ParamDef  point_param,
 {
 
     //user param points
-    pt->point[0] =  static_cast<PF_FpShort>(point_param.u.point3d_d.x_value);
+    pt->point[2] =  static_cast<PF_FpShort>(point_param.u.point3d_d.x_value);
     pt->point[1] =   static_cast<PF_FpShort>(point_param.u.point3d_d.y_value);
     pt->point[2] =  static_cast<PF_FpShort>(point_param.u.point3d_d.z_value);
 
@@ -206,7 +206,7 @@ tlmath::ExprRender(PF_OutData     *out_data,
 	AEFX_CLR_STRUCT(wtiP);
 	wtiP.inW = *inputP;
 	wtiP.outW = *outputP;
-	if (flagsPP.PixelsCallExternalInputB) { //&extLW->data &&
+	if (flagsPP.PixelsCallExternalInputB[0]) { //&extLW->data &&
 		wtiP.extLW = *extLW;
 	}
 
@@ -353,7 +353,7 @@ tlmath::PreRender(PF_InData                *in_data,
 
 	PF_RenderRequest req = extraP->input->output_request;
 
-	PF_CheckoutResult        in_result, extL_result;
+	PF_CheckoutResult        in_result, extL_result[4];
 	AEGP_SuiteHandler        suites(in_data->pica_basicP);
 	PF_Handle   infoH = suites.HandleSuite1()->host_new_handle(sizeof(MathInfoP));
 	AEGP_LayerH        layerH;
@@ -363,9 +363,6 @@ tlmath::PreRender(PF_InData                *in_data,
     PF_Boolean     cameraModeB = false;
 
 	if (infoH) {
-
-
-
 		miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(infoH));
 		if (miP) {
 			extraP->output->pre_render_data = infoH;
@@ -380,22 +377,70 @@ tlmath::PreRender(PF_InData                *in_data,
 				&arb_param));
 
 
-			PF_ParamDef extlayer_toff_param;
-			AEFX_CLR_STRUCT(extlayer_toff_param);
+			PF_ParamDef extlayer_toff_param[4];
+			PF_ParamDef extlayer_poff_param[4];
+
+			AEFX_CLR_STRUCT(extlayer_toff_param[2]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_ONE,
 				in_data->current_time,
 				in_data->time_step,
 				in_data->time_scale,
-				&extlayer_toff_param));
-			PF_ParamDef extlayer_poff_param;
-			AEFX_CLR_STRUCT(extlayer_poff_param);
+				&extlayer_toff_param[2]));
+			AEFX_CLR_STRUCT(extlayer_poff_param[2]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_POFF_ONE,
 				in_data->current_time,
 				in_data->time_step,
 				in_data->time_scale,
-				&extlayer_poff_param));
+				&extlayer_poff_param[2]));
+
+			AEFX_CLR_STRUCT(extlayer_toff_param[1]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_INP_TOFF_TWO,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&extlayer_toff_param[1]));
+			AEFX_CLR_STRUCT(extlayer_poff_param[1]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_INP_POFF_TWO,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&extlayer_poff_param[1]));
+
+			AEFX_CLR_STRUCT(extlayer_toff_param[2]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_INP_TOFF_THREE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&extlayer_toff_param[2]));
+			AEFX_CLR_STRUCT(extlayer_poff_param[2]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_INP_POFF_THREE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&extlayer_poff_param[2]));
+
+			AEFX_CLR_STRUCT(extlayer_toff_param[3]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_INP_TOFF_FOUR,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&extlayer_toff_param[3]));
+			AEFX_CLR_STRUCT(extlayer_poff_param[3]);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_INP_POFF_THREE,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&extlayer_poff_param[3]));
+
+
 
             PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
             PF_Boolean   initB = true;
@@ -466,12 +511,12 @@ tlmath::PreRender(PF_InData                *in_data,
 			layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currTime);
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_POSITION, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValP, &strTypeP);
 
-			miP->layerPos.point[0] = strValP.three_d.x;
+			miP->layerPos.point[2] = strValP.three_d.x;
             miP->layerPos.point[1] = strValP.three_d.y;
             miP->layerPos.point[2] = strValP.three_d.z;
 
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
-			miP->layerScale.point[0] = strValSP.three_d.x;
+			miP->layerScale.point[2] = strValSP.three_d.x;
 			miP->layerScale.point[1] = strValSP.three_d.z;
 			miP->layerScale.point[2] = strValSP.three_d.z;
 
@@ -532,15 +577,15 @@ tlmath::PreRender(PF_InData                *in_data,
                         if (!err) {
                             miP->cameraZoom = stream_valZoom.one_d;
 
-                            miP->cameraPos.point[0] = stream_valPos.three_d.x;
+                            miP->cameraPos.point[2] = stream_valPos.three_d.x;
                             miP->cameraPos.point[1] = stream_valPos.three_d.y;
                             miP->cameraPos.point[2] = stream_valPos.three_d.z;
 
-                            miP->cameraTarget.point[0] =stream_valTarg.three_d.x;
+                            miP->cameraTarget.point[2] =stream_valTarg.three_d.x;
                             miP->cameraTarget.point[1] =stream_valTarg.three_d.y;
                             miP->cameraTarget.point[2] = stream_valRot.three_d.z;
 
-                            miP->cameraRotation.point[0] =stream_valRot.three_d.x;
+                            miP->cameraRotation.point[2] =stream_valRot.three_d.x;
                             miP->cameraRotation.point[1] =stream_valRot.three_d.y;
                             miP->cameraRotation.point[2] = stream_valRot.three_d.z;
 
@@ -563,31 +608,66 @@ tlmath::PreRender(PF_InData                *in_data,
 					&in_result));
 
 
-
-
-
-
 				if (!err) {
 
 					UnionLRect(&in_result.result_rect, &extraP->output->result_rect);
 					UnionLRect(&in_result.max_result_rect, &extraP->output->max_result_rect);
 
 
+					PF_Fixed     widthFi[4], heightFi[4];
+
 					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
 						MATH_INP_LAYER_ONE,
 						MATH_INP_LAYER_ONE,
 						&req,
-						(in_data->current_time + A_long(extlayer_toff_param.u.fs_d.value) * in_data->time_step),
+						(in_data->current_time + A_long(extlayer_toff_param[2].u.fs_d.value) * in_data->time_step),
 						in_data->time_step,
 						in_data->time_scale,
-						&extL_result));
+						&extL_result[2]));
+					widthFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.right - extL_result[2].max_result_rect.left));
+					heightFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.bottom - extL_result[2].max_result_rect.top));
+					miP->x_offFi[2] = PF_Fixed(widthFi[2] / 2 - extlayer_poff_param[2].u.td.x_value);
+					miP->y_offFi[2] = PF_Fixed(heightFi[2] / 2 - extlayer_poff_param[2].u.td.y_value);
 
 
-					PF_Fixed     widthFi = INT2FIX(ABS(extL_result.max_result_rect.right - extL_result.max_result_rect.left)),
-						heightFi = INT2FIX(ABS(extL_result.max_result_rect.bottom - extL_result.max_result_rect.top));
+					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
+						MATH_INP_LAYER_TWO,
+						MATH_INP_LAYER_TWO,
+						&req,
+						(in_data->current_time + A_long(extlayer_toff_param[1].u.fs_d.value) * in_data->time_step),
+						in_data->time_step,
+						in_data->time_scale,
+						&extL_result[1]));
+					widthFi[1] = INT2FIX(ABS(extL_result[1].max_result_rect.right - extL_result[1].max_result_rect.left));
+					heightFi[1] = INT2FIX(ABS(extL_result[1].max_result_rect.bottom - extL_result[1].max_result_rect.top));
+					miP->x_offFi[1] = PF_Fixed(widthFi[1] / 2 - extlayer_poff_param[1].u.td.x_value);
+					miP->y_offFi[1] = PF_Fixed(heightFi[1] / 2 - extlayer_poff_param[1].u.td.y_value);
 
-					miP->x_offFi = PF_Fixed(widthFi / 2 - extlayer_poff_param.u.td.x_value);
-					miP->y_offFi = PF_Fixed(heightFi / 2 - extlayer_poff_param.u.td.y_value);
+					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
+						MATH_INP_LAYER_THREE,
+						MATH_INP_LAYER_THREE,
+						&req,
+						(in_data->current_time + A_long(extlayer_toff_param[2].u.fs_d.value) * in_data->time_step),
+						in_data->time_step,
+						in_data->time_scale,
+						&extL_result[2]));
+					widthFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.right - extL_result[2].max_result_rect.left));
+					heightFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.bottom - extL_result[2].max_result_rect.top));
+					miP->x_offFi[2] = PF_Fixed(widthFi[2] / 2 - extlayer_poff_param[2].u.td.x_value);
+					miP->y_offFi[2] = PF_Fixed(heightFi[2] / 2 - extlayer_poff_param[2].u.td.y_value);
+
+					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
+						MATH_INP_LAYER_FOUR,
+						MATH_INP_LAYER_FOUR,
+						&req,
+						(in_data->current_time + A_long(extlayer_toff_param[3].u.fs_d.value) * in_data->time_step),
+						in_data->time_step,
+						in_data->time_scale,
+						&extL_result[3]));
+					widthFi[3] = INT2FIX(ABS(extL_result[3].max_result_rect.right - extL_result[3].max_result_rect.left));
+					heightFi[3] = INT2FIX(ABS(extL_result[3].max_result_rect.bottom - extL_result[3].max_result_rect.top));
+					miP->x_offFi[3] = PF_Fixed(widthFi[3] / 2 - extlayer_poff_param[3].u.td.x_value);
+					miP->y_offFi[3] = PF_Fixed(heightFi[3] / 2 - extlayer_poff_param[3].u.td.y_value);
 
 
 
@@ -600,6 +680,8 @@ tlmath::PreRender(PF_InData                *in_data,
 	return err;
 }
 
+
+
 PF_Err
 tlmath::SmartRender(
 	PF_InData                *in_data,
@@ -610,9 +692,12 @@ tlmath::SmartRender(
 	PF_Err            err = PF_Err_NONE,
 		err2 = PF_Err_NONE;
 
-	PF_EffectWorld  *inputP = NULL,
-		*outputP = NULL,
-		*extLP = NULL;
+	PF_EffectWorld* inputP = NULL,
+		* outputP = NULL,
+		* extL1P = NULL,
+		* extL2P = NULL,
+		* extL3P = NULL,
+		* extL4P = NULL;
 	PF_PixelFormat    format = PF_PixelFormat_INVALID;
 	AEGP_SuiteHandler suites(in_data->pica_basicP);
 	seqDataP            seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
@@ -631,7 +716,7 @@ tlmath::SmartRender(
 			FlagsInfo      flagsP;
 			AEFX_CLR_STRUCT(flagsP);
 			PF_Handle arbH = NULL;
-			PF_EffectWorld extLW;
+			PF_EffectWorld extL1W, extL2W, extL3W, extL4W;
 			ExprInfoP       ExprP;
 			AEFX_CLR_STRUCT(ExprP);
 
@@ -639,13 +724,19 @@ tlmath::SmartRender(
 
 			// checkout input & output buffers.
 			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INPUT, &inputP)));
-			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE, &extLP)));
+			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE, &extL1P)));
+			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_TWO, &extL2P)));
+			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_THREE, &extL3P)));
+			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_FOUR, &extL4P)));
 
 			ERR(extraP->cb->checkout_output(in_data->effect_ref, &outputP));
 
 			// determine requested output depth
 			ERR(wsP->PF_GetPixelFormat(outputP, &format));
-			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extLW));
+			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extL1W));
+			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extL2W));
+			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extL3W));
+			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extL4W));
 
 
 			//CHECKOUT PARAMS
@@ -1128,7 +1219,7 @@ tlmath::SmartRender(
                  AEFX_CLR_STRUCT(tempFloat)
                  ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, &color_param[i], &tempFloat));
                  //user param color
-                 miP->inColors[i].color[0] =tempFloat.red;
+                 miP->inColors[i].color[2] =tempFloat.red;
                  miP->inColors[i].color[1] =tempFloat.green;
                  miP->inColors[i].color[2] =tempFloat.blue;
                 }
@@ -1145,8 +1236,9 @@ tlmath::SmartRender(
 				frag1Str = seqP->Glsl33_FragmentShAc;
 				vertStr = seqP->Glsl33_VertexShAc;
 
-
-				flagsP.PixelsCallExternalInputB = seqP->pixelsCallExternalInputB;
+                for (int i=0; i<4;i++){
+                    flagsP.PixelsCallExternalInputB[i] = seqP->pixelsCallExternalInputB[i];
+                }
 				flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
 				flagsP.NeedsPixelAroundB = seqP->needsPixelAroundB;
 				flagsP.NeedsLumaB = seqP->needsLumaB;
@@ -1164,22 +1256,61 @@ tlmath::SmartRender(
             ExprP.rgbstr = &rgbstr;
 			//CALL EXTERNAL LAYER AND TRANSFORM WORLD IF NEEDED
 
-			if (flagsP.PixelsCallExternalInputB) {
-				oiP.x_offFi = miP->x_offFi;
-				oiP.y_offFi = miP->y_offFi;
-
+            if (flagsP.PixelsCallExternalInputB[0]) {
+                AEFX_CLR_STRUCT(oiP.x_offFi);
+                AEFX_CLR_STRUCT(oiP.y_offFi);
+				oiP.x_offFi = miP->x_offFi[0];
+				oiP.y_offFi = miP->y_offFi[0];
 				ERR(tlmath::ExtLayerInput((void*)&oiP,
 					in_data,
 					inputP,
-					extLP,
-					&extLW,
+					extL1P,
+					&extL1W,
 					suites,
 					format));
 			}
-
+            if (flagsP.PixelsCallExternalInputB[1]) {
+                AEFX_CLR_STRUCT(oiP.x_offFi);
+                AEFX_CLR_STRUCT(oiP.y_offFi);
+                oiP.x_offFi = miP->x_offFi[1];
+                oiP.y_offFi = miP->y_offFi[1];
+                ERR(tlmath::ExtLayerInput((void*)&oiP,
+                                          in_data,
+                                          inputP,
+                                          extL2P,
+                                          &extL2W,
+                                          suites,
+                                          format));
+            }
+            if (flagsP.PixelsCallExternalInputB[2]) {
+                AEFX_CLR_STRUCT(oiP.x_offFi);
+                AEFX_CLR_STRUCT(oiP.y_offFi);
+                oiP.x_offFi = miP->x_offFi[2];
+                oiP.y_offFi = miP->y_offFi[2];
+                ERR(tlmath::ExtLayerInput((void*)&oiP,
+                                          in_data,
+                                          inputP,
+                                          extL3P,
+                                          &extL3W,
+                                          suites,
+                                          format));
+            }
+            if (flagsP.PixelsCallExternalInputB[3]) {
+                AEFX_CLR_STRUCT(oiP.x_offFi);
+                AEFX_CLR_STRUCT(oiP.y_offFi);
+                oiP.x_offFi = miP->x_offFi[3];
+                oiP.y_offFi = miP->y_offFi[3];
+                ERR(tlmath::ExtLayerInput((void*)&oiP,
+                                          in_data,
+                                          inputP,
+                                          extL4P,
+                                          &extL4W,
+                                          suites,
+                                          format));
+            }
 			//CALL PARSER MODE
 			if (!err && flagsP.parserModeB) {
-				ERR(tlmath::ExprRender(out_data, format, inputP, outputP, &extLW, suites,
+				ERR(tlmath::ExprRender(out_data, format, inputP, outputP, &extL1W, suites,
 					(void*)miP,
 					(void*)&flagsP,
 					(void*)&ExprP));
@@ -1191,7 +1322,10 @@ tlmath::SmartRender(
 					out_data,
 					inputP,
 					outputP,
-					&extLW,
+					&extL1W,
+                    &extL2W,
+                    &extL3W,
+                    &extL4W,
 					format,
 					suites,
 					(void*)miP,
@@ -1216,11 +1350,17 @@ tlmath::SmartRender(
 
 			ERR2(PF_CHECKIN_PARAM(in_data, &cb_getarb_param));
 
-			if (extLW.data) {
-				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extLW));
+			if (extL1W.data) {
+				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL1W));
+				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL2W));
+				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL3W));
+				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL4W));
 			}
 			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
 			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
+			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_TWO));
+			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_THREE));
+			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_FOUR));
 		}
 
 		suites.HandleSuite1()->host_unlock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data));

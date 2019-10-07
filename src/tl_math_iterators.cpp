@@ -674,7 +674,7 @@ void thSafeExpr_render::render_8(void *refconPV, void *refconFunc, void *refconF
     for (A_long iterIndex = 0; iterIndex < curNumIter; ++iterIndex)
     {
         A_long yL =  thread_idxL*numIter+iterIndex;
-        thSafeExpr_render::LineIteration8Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
+		thSafeExpr_render::LineIteration8Func(refconPV, refconFunc, refconFlags,refconWorld, yL);
     }
 }
 
@@ -691,7 +691,6 @@ void thSafeExpr_render::render_16(void *refconPV, void *refconFunc, void *refcon
         thSafeExpr_render::LineIteration16Func(refconPV,refconFunc, refconFlags,refconWorld, yL);
     }
 }
-
 
 void thSafeExpr_render::render_32(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter)
 {

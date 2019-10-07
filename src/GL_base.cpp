@@ -685,7 +685,7 @@ void AESDK_OpenGL_InitShader( gl::GLuint *ObjSu,
 
 /*
 ** Bind Texture
-*/
+*/ 
 void AESDK_OpenGL_BindTexture0ToTarget(gl::GLuint program, GLint inTexture, std::string inTargetName)
 {
 	if (inTexture != -1) {
@@ -697,17 +697,52 @@ void AESDK_OpenGL_BindTexture0ToTarget(gl::GLuint program, GLint inTexture, std:
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
 	}
 }
-void AESDK_OpenGL_BindTexture1ToTarget(gl::GLuint program, GLint inTexture, std::string inTargetName)
+
+void AESDK_OpenGL_BindTexture1ToTarget(gl::GLuint program, gl::GLint inTexture, std::string inTargetName)
 {
 	if (inTexture != -1) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, inTexture);
-		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 1);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
 	}
 	else {
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
 	}
 }
+void AESDK_OpenGL_BindTexture2ToTarget(gl::GLuint program, gl::GLint inTexture, std::string inTargetName)
+{
+	if (inTexture != -1) {
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, inTexture);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+	}
+	else {
+		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
+	}
+}
+void  AESDK_OpenGL_BindTexture3ToTarget(gl::GLuint program, gl::GLint inTexture, std::string inTargetName)
+{
+	if (inTexture != -1) {
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, inTexture);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+	}
+	else {
+		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
+	}
+}
+void AESDK_OpenGL_BindTexture4ToTarget(gl::GLuint program, gl::GLint inTexture, std::string inTargetName)
+{
+	if (inTexture != -1) {
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, inTexture);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+	}
+	else {
+		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
+	}
+}
+
 
 /*
 ** AESDK error reporting

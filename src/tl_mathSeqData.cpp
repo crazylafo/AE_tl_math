@@ -261,16 +261,28 @@ tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::stri
     seqDataP->evalModeB = getBoolFromJsonToSeqData (arbDataJS, "/effectMode/evalModeB");
     seqDataP->exprRGBModeB = getBoolFromJsonToSeqData (arbDataJS, "/math_expression/exprRGBModeB");
     seqDataP->needsPixelAroundB =getBoolFromJsonToSeqData (arbDataJS,"/flags/needsPixelAroundB");
-    seqDataP->pixelsCallExternalInputB = getBoolFromJsonToSeqData (arbDataJS, "/flags/pixelsCallExternalInputB");
+    seqDataP->pixelsCallExternalInputB[0] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/0", 0));
+    seqDataP->pixelsCallExternalInputB[1] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/1",0));
+    seqDataP->pixelsCallExternalInputB[2] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/2",0));
+    seqDataP->pixelsCallExternalInputB[3] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/3",0));
     seqDataP->needsLumaB = getBoolFromJsonToSeqData (arbDataJS, "/flags/needsLumaB");
     seqDataP->presetHasWideInputB = getBoolFromJsonToSeqData (arbDataJS, "/flags/presetHasWideInputB");
     seqDataP->cameraB = getBoolFromJsonToSeqData (arbDataJS, "/flags/usesCameraB");
+
     //copy layers
-    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/grpName",seqDataP->layerGrpNameAc);
+
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/current_layer/name",seqDataP->paramLayer00NameAc);
-    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_1/name",seqDataP->paramLayer01NameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/grpName",seqDataP->layerGrpNameAc);
     seqDataP->layerGrpVisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/grpVisibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_1/name",seqDataP->paramLayer01NameAc);
     seqDataP->paramLayer01VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_1/visibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_2/name",seqDataP->paramLayer02NameAc);
+    seqDataP->paramLayer02VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_2/visibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_3/name",seqDataP->paramLayer03NameAc);
+    seqDataP->paramLayer03VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_3/visibleB");
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_4/name",seqDataP->paramLayer04NameAc);
+    seqDataP->paramLayer04VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_4/visibleB");
+
     //copy params
     seqDataP->sliderGrpVisibleB  = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/sliderGrp/grpVisibleB");
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/sliderGrp/grpName",seqDataP->sliderGrpNameAc);
@@ -420,7 +432,7 @@ tlmath::updateSeqData(PF_InData            *in_data,
     if (seq_dataH && !err) {
         seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
         if (seqP->initializedB == false) {
-            copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
+            tlmath::copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
             seqP->initializedB = true;
             out_data->sequence_data = seq_dataH;
 
@@ -464,7 +476,7 @@ tlmath::SequenceSetup (
         if (seq_dataH){
             seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             seqP->initializedB = false;
-            copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
+            tlmath::copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
             ERR(tlmath::evalScripts(seqP));
             out_data->sequence_data = seq_dataH;
             suites.HandleSuite1()->host_unlock_handle(seq_dataH);

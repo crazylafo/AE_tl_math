@@ -253,7 +253,10 @@ namespace {
 		A_long widthL,
 		A_long heightL,
 		gl::GLuint		inputFrameTexture,
-		gl::GLuint	inputExtFrameTexture,
+		gl::GLuint	inputExtFrame1Texture,
+        gl::GLuint    inputExtFrame2Texture,
+        gl::GLuint    inputExtFrame3Texture,
+        gl::GLuint    inputExtFrame4Texture,
 		void			*refcon,
 		float			multiplier16bit)
 	{
@@ -272,7 +275,10 @@ namespace {
 			vmath::Matrix4::scale(vmath::Vector3(2.0 / float(widthL), 2.0 / float(heightL), 1.0f));
 
 		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
-		glBindTexture(GL_TEXTURE_2D, inputExtFrameTexture);
+		glBindTexture(GL_TEXTURE_2D, inputExtFrame1Texture);
+        glBindTexture(GL_TEXTURE_2D, inputExtFrame2Texture);
+        glBindTexture(GL_TEXTURE_2D, inputExtFrame3Texture);
+        glBindTexture(GL_TEXTURE_2D, inputExtFrame4Texture);
 		glUseProgram(renderContext->mProgramObjSu);
 
 		// program uniforms
@@ -433,7 +439,10 @@ namespace {
 		glUniform1f(location, multiplier16bit);
 		// Identify the texture to use and bind it to texture unit 0
 		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObjSu, inputFrameTexture, seqP->paramLayer00NameAc);
-		AESDK_OpenGL_BindTexture1ToTarget(renderContext->mProgramObjSu, inputExtFrameTexture, seqP->paramLayer01NameAc);
+		AESDK_OpenGL_BindTexture1ToTarget(renderContext->mProgramObjSu, inputExtFrame1Texture, seqP->paramLayer01NameAc);
+        AESDK_OpenGL_BindTexture2ToTarget(renderContext->mProgramObjSu, inputExtFrame2Texture, seqP->paramLayer02NameAc);
+		AESDK_OpenGL_BindTexture3ToTarget(renderContext->mProgramObjSu, inputExtFrame3Texture, seqP->paramLayer03NameAc);
+        AESDK_OpenGL_BindTexture4ToTarget(renderContext->mProgramObjSu, inputExtFrame4Texture, seqP->paramLayer04NameAc);
 		// render
 		glBindVertexArray(renderContext->vao);
 		RenderQuad(renderContext->quad);
@@ -718,7 +727,10 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		    PF_OutData               *out_data,
 			PF_EffectWorld           *inputP,
 			PF_EffectWorld           *outputP,
-			PF_EffectWorld           *extLW,
+            PF_EffectWorld           *extL1W,
+            PF_EffectWorld           *extL2W,
+            PF_EffectWorld           *extL3W,
+            PF_EffectWorld           *extL4W,
 			PF_PixelFormat           format,
 			AEGP_SuiteHandler        &suites,
 			void                    *refcon, 
@@ -776,7 +788,10 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		gl::GLenum glFmt;
 		float multiplier16bit;
 		gl::GLuint inputFrameTexture = UploadTexture(suites, format, inputP, outputP, in_data, pixSize, glFmt, multiplier16bit,0);
-		gl::GLuint inputExtFrameTexture = UploadTexture(suites, format, extLW, outputP , in_data, pixSize, glFmt, multiplier16bit, 1);
+        gl::GLuint inputExtFrame1Texture = UploadTexture(suites, format, extL1W, outputP , in_data, pixSize, glFmt, multiplier16bit, 1);
+        gl::GLuint inputExtFrame2Texture = UploadTexture(suites, format, extL2W, outputP , in_data, pixSize, glFmt, multiplier16bit, 1);
+        gl::GLuint inputExtFrame3Texture = UploadTexture(suites, format, extL3W, outputP , in_data, pixSize, glFmt, multiplier16bit, 1);
+        gl::GLuint inputExtFrame4Texture = UploadTexture(suites, format, extL4W, outputP , in_data, pixSize, glFmt, multiplier16bit, 1);
 		// Set up the frame-buffer object just like a window.
 		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), renderContext->mOutputFrameTexture);
 		ReportIfErrorFramebuffer(in_data, out_data);
@@ -786,11 +801,24 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// - simply blend the texture inside the frame buffer
-		RenderGL(renderContext, in_data, out_data, widthL, heightL, inputFrameTexture, inputExtFrameTexture,(void*)miP, multiplier16bit);
+		RenderGL(renderContext, in_data,
+                 out_data,
+                 widthL,
+                 heightL,
+                 inputFrameTexture,
+                 inputExtFrame1Texture,
+                 inputExtFrame2Texture,
+                 inputExtFrame3Texture,
+                 inputExtFrame4Texture,
+                 (void*)miP,
+                 multiplier16bit);
 
 		// - we toggle PBO textures (we use the PBO we just created as an input)
 		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputFrameTexture);
-		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputExtFrameTexture);
+		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputExtFrame1Texture);
+        AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputExtFrame2Texture);
+        AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputExtFrame3Texture);
+        AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), inputExtFrame4Texture);
 		ReportIfErrorFramebuffer(in_data, out_data);
 
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -810,7 +838,10 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		glBindTexture(GL_TEXTURE_2D, 0);
         glBindTexture(GL_TEXTURE_2D, 1);
 		glDeleteTextures(1, &inputFrameTexture);
-        glDeleteTextures(2, &inputExtFrameTexture);
+        glDeleteTextures(2, &inputExtFrame1Texture);
+        glDeleteTextures(3, &inputExtFrame2Texture);
+        glDeleteTextures(4, &inputExtFrame3Texture);
+        glDeleteTextures(5, &inputExtFrame4Texture);
 	}
 	catch (PF_Err& thrown_err)
 	{

@@ -380,6 +380,58 @@ tlmath::ParamsSetup  (
     PF_ADD_POINT(STR(StrID_POFF_ONE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_ONE_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
+
+
+
+	def.flags = PF_ParamFlag_SUPERVISE;
+	PF_ADD_LAYER(STR(StrID_LAYER_TWO_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_TWO_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_FLOAT_SLIDERX(STR(StrID_TOFF_TWO_Param_Name),
+		TIMEOFFSET_MIN,
+		TIMEOFFSET_MAX,
+		MATH_SLIDER_MIN,
+		MATH_SLIDER_MAX,
+		TIMEOFFSET_DFLT,
+		PF_Precision_INTEGER,
+		0,
+		PF_ParamFlag_SUPERVISE,
+		MATH_INP_TOFF_TWO_DISK_ID);
+
+	PF_ADD_POINT(STR(StrID_POFF_TWO_Param_Name), 50, 50, FALSE, MATH_INP_POFF_TWO_DISK_ID);
+	AEFX_CLR_STRUCT(def);   
+	def.flags = PF_ParamFlag_SUPERVISE;
+	PF_ADD_LAYER(STR(StrID_LAYER_THREE_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_THREE_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_FLOAT_SLIDERX(STR(StrID_TOFF_THREE_Param_Name),
+		TIMEOFFSET_MIN,
+		TIMEOFFSET_MAX,
+		MATH_SLIDER_MIN,
+		MATH_SLIDER_MAX,
+		TIMEOFFSET_DFLT,
+		PF_Precision_INTEGER,
+		0,
+		PF_ParamFlag_SUPERVISE,
+		MATH_INP_TOFF_THREE_DISK_ID);
+	PF_ADD_POINT(STR(StrID_POFF_THREE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_THREE_DISK_ID);
+
+	AEFX_CLR_STRUCT(def); 
+	def.flags = PF_ParamFlag_SUPERVISE;
+	PF_ADD_LAYER(STR(StrID_LAYER_FOUR_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_FOUR_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+	PF_ADD_FLOAT_SLIDERX(STR(StrID_TOFF_FOUR_Param_Name),
+		TIMEOFFSET_MIN,
+		TIMEOFFSET_MAX,
+		MATH_SLIDER_MIN,
+		MATH_SLIDER_MAX,
+		TIMEOFFSET_DFLT,
+		PF_Precision_INTEGER,
+		0,
+		PF_ParamFlag_SUPERVISE,
+		MATH_INP_TOFF_FOUR_DISK_ID);
+
+	PF_ADD_POINT(STR(StrID_POFF_FOUR_Param_Name), 50, 50, FALSE, MATH_INP_POFF_FOUR_DISK_ID);
+	AEFX_CLR_STRUCT(def);
+
     PF_END_TOPIC(MATH_TOPIC_INPUTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
@@ -478,6 +530,15 @@ tlmath::MakeParamCopy(
 	copy[MATH_INP_LAYER_ONE] = *actual[MATH_INP_LAYER_ONE];
 	copy[MATH_INP_TOFF_ONE] = *actual[MATH_INP_TOFF_ONE];
 	copy[MATH_INP_POFF_ONE] = *actual[MATH_INP_POFF_ONE];
+	copy[MATH_INP_LAYER_TWO] = *actual[MATH_INP_LAYER_TWO];
+	copy[MATH_INP_TOFF_TWO] = *actual[MATH_INP_TOFF_TWO];
+	copy[MATH_INP_POFF_TWO] = *actual[MATH_INP_POFF_TWO];
+	copy[MATH_INP_LAYER_THREE] = *actual[MATH_INP_LAYER_THREE];
+	copy[MATH_INP_TOFF_THREE] = *actual[MATH_INP_TOFF_THREE];
+	copy[MATH_INP_POFF_THREE] = *actual[MATH_INP_POFF_THREE];
+	copy[MATH_INP_LAYER_FOUR] = *actual[MATH_INP_LAYER_FOUR];
+	copy[MATH_INP_TOFF_FOUR] = *actual[MATH_INP_TOFF_FOUR];
+	copy[MATH_INP_POFF_FOUR] = *actual[MATH_INP_POFF_FOUR];
 
 	copy[MATH_CEP_GET_ARB_DATA] = *actual[MATH_CEP_GET_ARB_DATA];
     copy[ MATH_CEP_RETURN_MESSAGE] = *actual[MATH_CEP_RETURN_MESSAGE];
@@ -506,48 +567,48 @@ tlmath::UpdateParameterUI(
 		MATH_SLIDER_TWO_streamH = NULL,
 		MATH_SLIDER_THREE_streamH = NULL,
 		MATH_SLIDER_FOUR_streamH = NULL,
-        MATH_SLIDER_FIVE_streamH = NULL,
-        MATH_SLIDER_SIX_streamH = NULL,
-        MATH_SLIDER_SEVEN_streamH = NULL,
-        MATH_SLIDER_HEIGHT_streamH = NULL,
-        MATH_SLIDER_NINE_streamH = NULL,
-        MATH_SLIDER_TEN_streamH = NULL,
+		MATH_SLIDER_FIVE_streamH = NULL,
+		MATH_SLIDER_SIX_streamH = NULL,
+		MATH_SLIDER_SEVEN_streamH = NULL,
+		MATH_SLIDER_HEIGHT_streamH = NULL,
+		MATH_SLIDER_NINE_streamH = NULL,
+		MATH_SLIDER_TEN_streamH = NULL,
 
 		MATH_TOPIC_POINTS_streamH = NULL,
-        MATH_POINT_ONE_streamH = NULL,
-        MATH_POINT_TWO_streamH = NULL,
-        MATH_POINT_THREE_streamH = NULL,
-        MATH_POINT_FOUR_streamH = NULL,
-        MATH_POINT_FIVE_streamH = NULL,
-        MATH_POINT_SIX_streamH = NULL,
-        MATH_POINT_SEVEN_streamH = NULL,
-        MATH_POINT_HEIGHT_streamH = NULL,
-        MATH_POINT_NINE_streamH = NULL,
-        MATH_POINT_TEN_streamH = NULL,
+		MATH_POINT_ONE_streamH = NULL,
+		MATH_POINT_TWO_streamH = NULL,
+		MATH_POINT_THREE_streamH = NULL,
+		MATH_POINT_FOUR_streamH = NULL,
+		MATH_POINT_FIVE_streamH = NULL,
+		MATH_POINT_SIX_streamH = NULL,
+		MATH_POINT_SEVEN_streamH = NULL,
+		MATH_POINT_HEIGHT_streamH = NULL,
+		MATH_POINT_NINE_streamH = NULL,
+		MATH_POINT_TEN_streamH = NULL,
 
-        MATH_TOPIC_CB_streamH = NULL,
-        MATH_CB_ONE_streamH = NULL,
-        MATH_CB_TWO_streamH = NULL,
-        MATH_CB_THREE_streamH = NULL,
-        MATH_CB_FOUR_streamH = NULL,
-        MATH_CB_FIVE_streamH = NULL,
-        MATH_CB_SIX_streamH = NULL,
-        MATH_CB_SEVEN_streamH = NULL,
-        MATH_CB_HEIGHT_streamH = NULL,
-        MATH_CB_NINE_streamH = NULL,
-        MATH_CB_TEN_streamH = NULL,
+		MATH_TOPIC_CB_streamH = NULL,
+		MATH_CB_ONE_streamH = NULL,
+		MATH_CB_TWO_streamH = NULL,
+		MATH_CB_THREE_streamH = NULL,
+		MATH_CB_FOUR_streamH = NULL,
+		MATH_CB_FIVE_streamH = NULL,
+		MATH_CB_SIX_streamH = NULL,
+		MATH_CB_SEVEN_streamH = NULL,
+		MATH_CB_HEIGHT_streamH = NULL,
+		MATH_CB_NINE_streamH = NULL,
+		MATH_CB_TEN_streamH = NULL,
 
 		MATH_TOPIC_COLORS_streamH = NULL,
 		MATH_COLOR_ONE_streamH = NULL,
 		MATH_COLOR_TWO_streamH = NULL,
-        MATH_COLOR_THREE_streamH = NULL,
-        MATH_COLOR_FOUR_streamH = NULL,
-        MATH_COLOR_FIVE_streamH = NULL,
-        MATH_COLOR_SIX_streamH = NULL,
-        MATH_COLOR_SEVEN_streamH = NULL,
-        MATH_COLOR_HEIGHT_streamH = NULL,
-        MATH_COLOR_NINE_streamH = NULL,
-        MATH_COLOR_TEN_streamH = NULL,
+		MATH_COLOR_THREE_streamH = NULL,
+		MATH_COLOR_FOUR_streamH = NULL,
+		MATH_COLOR_FIVE_streamH = NULL,
+		MATH_COLOR_SIX_streamH = NULL,
+		MATH_COLOR_SEVEN_streamH = NULL,
+		MATH_COLOR_HEIGHT_streamH = NULL,
+		MATH_COLOR_NINE_streamH = NULL,
+		MATH_COLOR_TEN_streamH = NULL,
 
 		MATH_TOPIC_ROTS_streamH = NULL,
 		MATH_ROT_ONE_streamH = NULL,
@@ -561,10 +622,19 @@ tlmath::UpdateParameterUI(
 		MATH_ROT_NINE_streamH = NULL,
 		MATH_ROT_TEN_streamH = NULL,
 
-        MATH_TOPIC_INPUTS_streamH = NULL;
-       //MATH_CEP_GET_ARB_DATA_streamH = NULL;
-
-
+		MATH_TOPIC_INPUTS_streamH = NULL,
+		MATH_INP_LAYER_ONE_streamH = NULL,
+		MATH_INP_TOFF_ONE_streamH = NULL,
+		MATH_INP_POFF_ONE_streamH = NULL,
+		MATH_INP_LAYER_TWO_streamH = NULL,
+		MATH_INP_TOFF_TWO_streamH = NULL,
+		MATH_INP_POFF_TWO_streamH = NULL,
+		MATH_INP_LAYER_THREE_streamH = NULL,
+		MATH_INP_TOFF_THREE_streamH = NULL,
+		MATH_INP_POFF_THREE_streamH = NULL,
+		MATH_INP_LAYER_FOUR_streamH = NULL,
+		MATH_INP_TOFF_FOUR_streamH = NULL,
+		MATH_INP_POFF_FOUR_streamH = NULL;
 	if (seqP) {
 
 		strcpy(param_copy[MATH_ARB_DATA].name, seqP->presetNameAc);
@@ -849,14 +919,67 @@ tlmath::UpdateParameterUI(
 			MATH_ROT_TEN,
 			&param_copy[MATH_ROT_TEN]));
 
-
-
-
-
 		strcpy(param_copy[MATH_TOPIC_INPUTS].name, seqP->layerGrpNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_TOPIC_INPUTS,
 			&param_copy[MATH_TOPIC_INPUTS]));
+
+
+		strcpy(param_copy[MATH_INP_LAYER_ONE].name, seqP->paramLayer01NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_LAYER_ONE,
+			&param_copy[MATH_INP_LAYER_ONE]));
+		strcpy(param_copy[MATH_INP_TOFF_ONE].name, seqP->paramLayer01NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_TOFF_ONE,
+			&param_copy[MATH_INP_TOFF_ONE]));
+		strcpy(param_copy[MATH_INP_POFF_ONE].name, seqP->paramLayer01NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_POFF_ONE,
+			&param_copy[MATH_INP_POFF_ONE]));
+
+
+		strcpy(param_copy[MATH_INP_LAYER_TWO].name, seqP->paramLayer02NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_LAYER_TWO,
+			&param_copy[MATH_INP_LAYER_TWO]));
+		strcpy(param_copy[MATH_INP_TOFF_TWO].name, seqP->paramLayer02NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_TOFF_TWO,
+			&param_copy[MATH_INP_TOFF_TWO]));
+		strcpy(param_copy[MATH_INP_POFF_TWO].name, seqP->paramLayer02NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_POFF_TWO,
+			&param_copy[MATH_INP_POFF_TWO]));
+
+		strcpy(param_copy[MATH_INP_LAYER_THREE].name, seqP->paramLayer03NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_LAYER_THREE,
+			&param_copy[MATH_INP_LAYER_THREE]));
+		strcpy(param_copy[MATH_INP_TOFF_THREE].name, seqP->paramLayer03NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_TOFF_THREE,
+			&param_copy[MATH_INP_TOFF_THREE]));
+		strcpy(param_copy[MATH_INP_POFF_THREE].name, seqP->paramLayer03NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_POFF_THREE,
+			&param_copy[MATH_INP_POFF_THREE]));
+
+		strcpy(param_copy[MATH_INP_LAYER_FOUR].name, seqP->paramLayer04NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_LAYER_FOUR,
+			&param_copy[MATH_INP_LAYER_FOUR]));
+		strcpy(param_copy[MATH_INP_TOFF_FOUR].name, seqP->paramLayer04NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_TOFF_FOUR,
+			&param_copy[MATH_INP_TOFF_FOUR]));
+		strcpy(param_copy[MATH_INP_POFF_FOUR].name, seqP->paramLayer04NameAc);
+		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+			MATH_INP_POFF_FOUR,
+			&param_copy[MATH_INP_POFF_FOUR]));
+
+
+
 
 		ERR(suites.PFInterfaceSuite1()->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &meH));
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_SLIDER, &MATH_TOPIC_SLIDER_streamH));
@@ -922,6 +1045,21 @@ tlmath::UpdateParameterUI(
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_TEN, &MATH_ROT_TEN_streamH));
 
 		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_INPUTS, &MATH_TOPIC_INPUTS_streamH));
+
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_ONE, &MATH_INP_LAYER_ONE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_ONE, &MATH_INP_TOFF_ONE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_ONE, &MATH_INP_POFF_ONE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_TWO, &MATH_INP_LAYER_TWO_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_TWO, &MATH_INP_TOFF_TWO_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_TWO, &MATH_INP_POFF_TWO_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_THREE, &MATH_INP_LAYER_THREE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_THREE, &MATH_INP_TOFF_THREE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_THREE, &MATH_INP_POFF_THREE_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_FOUR, &MATH_INP_LAYER_FOUR_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_FOUR, &MATH_INP_TOFF_FOUR_streamH));
+		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_FOUR, &MATH_INP_POFF_FOUR_streamH));
+
+
         //ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH,MATH_CEP_GET_ARB_DATA, &MATH_CEP_GET_ARB_DATA_streamH));
 
 		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_SLIDER_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->sliderGrpVisibleB));
@@ -986,9 +1124,22 @@ tlmath::UpdateParameterUI(
 		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot10VisibleB));
 
 
-
-
 		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_INPUTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->layerGrpVisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_ONE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_ONE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
+
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_TWO_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_TWO_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
+
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_THREE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_THREE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_THREE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
+
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_FOUR_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
+		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_FOUR_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
 
         //ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CEP_GET_ARB_DATA_streamH,AEGP_DynStreamFlag_HIDDEN, FALSE, TRUE));
 
@@ -1168,6 +1319,42 @@ tlmath::UpdateParameterUI(
 
 		if (MATH_TOPIC_INPUTS_streamH) {
 			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_INPUTS_streamH));
+		}
+		if (MATH_INP_LAYER_ONE_streamH){
+			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_ONE_streamH));
+			}
+		if (MATH_INP_TOFF_ONE_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_ONE_streamH));
+		}
+		if (MATH_INP_POFF_ONE_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_ONE_streamH));
+		}
+		if (MATH_INP_LAYER_TWO_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_TWO_streamH));
+		}
+		if (MATH_INP_TOFF_TWO_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_TWO_streamH));
+		}
+		if (MATH_INP_POFF_TWO_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_TWO_streamH));
+		}
+		if (MATH_INP_LAYER_THREE_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_THREE_streamH));
+		}
+		if (MATH_INP_TOFF_THREE_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_THREE_streamH));
+		}
+		if (MATH_INP_POFF_THREE_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_THREE_streamH));
+		}
+		if (MATH_INP_LAYER_FOUR_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_FOUR_streamH));
+		}
+		if (MATH_INP_TOFF_FOUR_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_FOUR_streamH));
+		}
+		if (MATH_INP_POFF_FOUR_streamH){
+		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_FOUR_streamH));
 		}
         /*
         if (MATH_CEP_GET_ARB_DATA_streamH){
