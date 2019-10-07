@@ -42,8 +42,10 @@ function onLoaded() {
     
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
+		alert (fromArbEvent.data.effectInfo.effectName)
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
 			arbData = fromArbEvent.data;
+			alert("test")
 			pluginVersion = parseInt(arbData.effectInfo.pluginVersion);
 			copyDataToGUI (arbData, editors,numParams);
 	});
@@ -265,13 +267,13 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 
 }
 function copyDataToGUI (arbData, editors, numParams) {
-	$("#gl33_frag_tab_console").html(arbData.gl_expression.gl33_frag_error.toString().replace("\\n", "<br/>"));
-	$("#gl33_vert_tab_console").html(arbData.gl_expression.gl33_vert_error.toString().replace("\\n", "<br/>"));
-	$("#expr_red_tab_console").html(arbData.math_expression.red_error.toString().replace("\\n", "<br/>"));	
-	$("#expr_green_tab_console").html(arbData.math_expression.green_error.toString().replace("\\n", "<br/>"));
-	$("#expr_blue_tab_console").html(arbData.math_expression.blue_error.toString().replace("\\n", "<br/>"));
-	$("#expr_rgb_tab_console").html(arbData.math_expression.rgb_error.toString().replace("\\n", "<br/>"));
-	$("#expr_alpha_tab_console").html(arbData.math_expression.alpha_error.toString().replace("\\n", "<br/>"));
+	$("#gl33_frag_tab_console").html(cleanJsonFromArbStr(arbData.gl_expression.gl33_frag_error.toString()).replace("\\n", "<br/>"));
+	$("#gl33_vert_tab_console").html(cleanJsonFromArbStr(arbData.gl_expression.gl33_vert_error.toString()).replace("\\n", "<br/>"));
+	$("#expr_red_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.red_error.toString()).replace("\\n", "<br/>"));	
+	$("#expr_green_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.green_error.toString()).replace("\\n", "<br/>"));
+	$("#expr_blue_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.blue_error.toString()).replace("\\n", "<br/>"));
+	$("#expr_rgb_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.rgb_error.toString()).replace("\\n", "<br/>"));
+	$("#expr_alpha_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.alpha_error.toString()).replace("\\n", "<br/>"));
 	if (arbData.gl_expression.gl33_frag_sh){
 		editors.gl33_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl33_frag_sh.toString()), -1);
 	}
@@ -380,23 +382,27 @@ function sendDataToPlugin(editors, arbData, numParams) {
 
 	//copy layer settings
 	arbData.gui_settings.layerGrp.grpName =$("#layerGrpName").val().toString();
-	arbData.gui_settings.layerGrp.grpVisibleB =$("layerGrpVisible").is(':checked');
+	arbData.gui_settings.layerGrp.grpVisibleB =$("#layerGrpVisible").is(':checked');
 	arbData.gui_settings.layerGrp.current_layer.name = $("#layer00_name").val().toString();
 	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
 	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
-
+	arbData.gui_settings.layerGrp.extLayer_2.name =$("#layer02_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_2.visibleB= $("#layer02Visible").is(':checked');
+	arbData.gui_settings.layerGrp.extLayer_3.name =$("#layer03_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_3.visibleB= $("#layer03Visible").is(':checked');
+	arbData.gui_settings.layerGrp.extLayer_4.name =$("#layer04_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_4.visibleB= $("#layer04Visible").is(':checked');
 	if (arbData.effectMode.gl33_modeB){
-
 		arbData.flags.needsPixelAroundB = false;// only for expr mode
 		arbData.flags.needsLumaB = false; // only for expr mode
-		arbData.flags.pixelsCallExternalInputB =setflagFromGL (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
+		arbData.flags.pixelsCallExternalInputB =setflagFromGL (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name]);
 		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
 		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
 	}
 	else{
 		arbData.flags.presetHasWideInputB  =  setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
 		arbData.flags.needsPixelAroundB =  setflagFromExpr (arbData, 	[arbData.math_expression.expr_red_off, arbData.math_expression.expr_green_off, arbData.math_expression.expr_blue_off,arbData.math_expression.expr_alpha_off]);
-		arbData.flags.pixelsCallExternalInputB  =  setflagFromExpr (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name]);
+		arbData.flags.pixelsCallExternalInputB  =  setflagFromExpr (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name]);
 		arbData.flags.needsLumaB  =  setflagFromExpr (arbData,[arbData.math_expression.expr_luma]);		
 		arbData.flags.usesCameraB =  setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);
 		}

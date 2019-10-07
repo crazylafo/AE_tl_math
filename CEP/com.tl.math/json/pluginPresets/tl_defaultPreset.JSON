@@ -1,15 +1,15 @@
 {
     "effectInfo":{
-    "effectName":"tlMath",
-    "pluginVersion":115,
-    "minimalPluginVersion":115,
-    "tags":["default", "glsl", "expr","skeleton"],
-    "presetName":"default_preset",
-    "description":"simple skeleton effect"
+        "effectName":"tlMath",
+        "pluginVersion":115,
+        "minimalPluginVersion":115,
+        "tags":["default", "glsl", "expr","skeleton"],
+        "presetName":"default_preset",
+        "description":"simple skeleton_effect"
     },
     "effectMode":{
-        "gl33_modeB":false,
-        "expr_modeB":true,
+        "gl33_modeB":true,
+        "expr_modeB":false,
         "evalModeB":false
     },
     "gl_expression":{
@@ -31,25 +31,25 @@
         "rgb_error" : "rgb expression \\n compiled",
         "exprRGBModeB":true,
         "expr_current_channel":"inChannel",
-		"expr_pix":"pix",
-		"expr_luma":"luma",
-		"expr_red_off":"red_off",
-		"expr_green_off":"green_off",
-		"expr_blue_off":"blue_off",
-		"expr_alpha_off":"alpha_off"
+        "expr_pix":"pix",
+        "expr_luma":"luma",
+        "expr_red_off":"red_off",
+        "expr_green_off":"green_off",
+        "expr_blue_off":"blue_off",
+        "expr_alpha_off":"alpha_off"
     },
     "flags":{
         "needsPixelAroundB":false,
-        "pixelsCallExternalInputB":false,
+        "pixelsCallExternalInputB":[false,false,false,false],
         "needsLumaB":false,
         "presetHasWideInputB":false,
         "usesCameraB":false
     },
     "composition":{
         "resolution":"resolution",
-		"layerPosition": "layerPosition",
-	    "layerScale":"layerScale",
-	    "compResolution": "compResolution", 
+        "layerPosition": "layerPosition",
+        "layerScale":"layerScale",
+        "compResolution": "compResolution",
         "time_sec":"time",
         "time_frame":"timef",
         "frame_rate":"fps",
@@ -63,291 +63,304 @@
             "grpVisibleB":true,
             "grpName":"Slider Group",
             "params":[
-                {
-                    "visibleB":true,
-                    "name":"slider_1",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_2",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_3",
-                    "defaultVal":[0]
-                    },
-               {
-                    "visibleB":true,
-                    "name":"slider_4",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_5",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_6",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_7",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_8",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_9",
-                    "defaultVal":[0]
-                    },
-                {
-                    "visibleB":true,
-                    "name":"slider_10",
-                    "defaultVal":[0]
-                    }
-            ]
+                      {
+                          "visibleB":true,
+                          "name":"slider_1",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_2",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_3",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_4",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_5",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_6",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_7",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_8",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_9",
+                          "defaultVal":[0]
+                      },
+                      {
+                          "visibleB":true,
+                          "name":"slider_10",
+                          "defaultVal":[0]
+                      }
+                      ]
         },
         "pointGrp":{
             "grpVisibleB":true,
             "grpName":"3d Point Group",
             "params": [
-                {
-                    "visibleB":true,
-                    "name":"point_1",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_2",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_3",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_4",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_5",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_6",
-                    "defaultVal":[50,50,50]
-                },
-               {
-                    "visibleB":true,
-                    "name":"point_7",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_8",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_9",
-                    "defaultVal":[50,50,50]
-                },
-                {
-                    "visibleB":true,
-                    "name":"point_10",
-                    "defaultVal":[50,50,50]
-                }
-            ]
+                       {
+                           "visibleB":true,
+                           "name":"point_1",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_2",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_3",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_4",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_5",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_6",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_7",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_8",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_9",
+                           "defaultVal":[50,50,50]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"point_10",
+                           "defaultVal":[50,50,50]
+                       }
+                       ]
         },
         "colorGrp":{
             "grpVisibleB":true,
             "grpName":"3d color Group",
             "params": [
-                {
-                    "visibleB":true,
-                    "name":"color_1",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_2",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_3",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_4",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_5",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_6",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-               {
-                    "visibleB":true,
-                    "name":"color_7",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_8",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_9",
-                    "defaultVal":[1.0,1.0,1.0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"color_10",
-                    "defaultVal":[1.0,1.0,1.0]
-                }
-            ]
+                       {
+                           "visibleB":true,
+                           "name":"color_1",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_2",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_3",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_4",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_5",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_6",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_7",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_8",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_9",
+                           "defaultVal":[1.0,1.0,1.0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"color_10",
+                           "defaultVal":[1.0,1.0,1.0]
+                       }
+                       ]
         },
         "cboxGrp":{
             "grpVisibleB":true,
             "grpName":"check box Group",
             "params": [
-                {
-                    "visibleB":true,
-                    "name":"cbox_1",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_2",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_3",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_4",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_5",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_6",
-                    "defaultVal":[0]
-                },
-               {
-                    "visibleB":true,
-                    "name":"cbox_7",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_8",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_9",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"cbox_10",
-                    "defaultVal":[0]
-                }
-            ]
+                       {
+                           "visibleB":true,
+                           "name":"cbox_1",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_2",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_3",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_4",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_5",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_6",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_7",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_8",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_9",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"cbox_10",
+                           "defaultVal":[0]
+                       }
+                       ]
         },
         "rotationGrp":{
             "grpVisibleB":true,
             "grpName":"rotation Group",
             "params": [
-                {
-                    "visibleB":true,
-                    "name":"rotation_1",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_2",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_3",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_4",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_5",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_6",
-                    "defaultVal":[0]
-                },
-               {
-                    "visibleB":true,
-                    "name":"rotation_7",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_8",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_9",
-                    "defaultVal":[0]
-                },
-                {
-                    "visibleB":true,
-                    "name":"rotation_10",
-                    "defaultVal":[0]
-                }
-            ]
+                       {
+                           "visibleB":true,
+                           "name":"rotation_1",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_2",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_3",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_4",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_5",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_6",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_7",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_8",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_9",
+                           "defaultVal":[0]
+                       },
+                       {
+                           "visibleB":true,
+                           "name":"rotation_10",
+                           "defaultVal":[0]
+                       }
+                       ]
         },
         "layerGrp":{
             "grpVisibleB":true,
             "grpName":"Layer Group",
             "current_layer":{
+                "visibleB":true,
                 "name":"texture0"
             },
             "extLayer_1":{
                 "visibleB":true,
                 "name":"texture1"
+            },
+			"extLayer_2":{
+                "visibleB":true,
+                "name":"texture2"
+            },
+            "extLayer_3":{
+                "visibleB":true,
+                "name":"texture3"
+            },
+            "extLayer_4":{
+                "visibleB":true,
+                "name":"texture4"
             }
         }
     }
