@@ -2,7 +2,7 @@
 //  tl_defaultArb.h
 //  tlMath
 //
-//  Created by Hercules on 20/05/2019.
+// Created by Hercules on 20/05/2019.
 //
 
 #ifndef tl_defaultArb_h
@@ -358,19 +358,27 @@ static std::string defaultArb = R"=====(
             },
             "extLayer_1":{
                 "visibleB":true,
-                "name":"texture1"
+                "name":"texture1",
+                "poffName":"layer1_position_off",
+                "toffName":"layer1_time_off"
             },
             "extLayer_2":{
                 "visibleB":true,
-                "name":"texture2"
+                "name":"texture2",
+                "poffName":"layer2_position_off",
+                "toffName":"layer2_time_off"
             },
             "extLayer_3":{
                 "visibleB":true,
-                "name":"texture3"
+                "name":"texture3",
+                "poffName":"layer3_position_off",
+                "toffName":"layer3_time_off"
             },
             "extLayer_4":{
                 "visibleB":true,
-                "name":"texture4"
+                "name":"texture4",
+                "poffName":"layer4_position_off",
+                "toffName":"layer4_time_off"
             }
         }
     }

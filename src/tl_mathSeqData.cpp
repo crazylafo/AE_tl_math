@@ -274,13 +274,23 @@ tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::stri
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/current_layer/name",seqDataP->paramLayer00NameAc);
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/grpName",seqDataP->layerGrpNameAc);
     seqDataP->layerGrpVisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/grpVisibleB");
+
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_1/name",seqDataP->paramLayer01NameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_1/poffName",seqDataP->paramLayer01PoffNameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_1/toffName",seqDataP->paramLayer01ToffNameAc);
+
     seqDataP->paramLayer01VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_1/visibleB");
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_2/name",seqDataP->paramLayer02NameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_2/poffName",seqDataP->paramLayer02PoffNameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_2/toffName",seqDataP->paramLayer02ToffNameAc);
     seqDataP->paramLayer02VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_2/visibleB");
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_3/name",seqDataP->paramLayer03NameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_3/poffName",seqDataP->paramLayer03PoffNameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_3/toffName",seqDataP->paramLayer03ToffNameAc);
     seqDataP->paramLayer03VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_3/visibleB");
     copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_4/name",seqDataP->paramLayer04NameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_4/poffName",seqDataP->paramLayer04PoffNameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/layerGrp/extLayer_4/toffName",seqDataP->paramLayer04ToffNameAc);
     seqDataP->paramLayer04VisibleB = getBoolFromJsonToSeqData (arbDataJS, "/gui_settings/layerGrp/extLayer_4/visibleB");
 
     //copy params

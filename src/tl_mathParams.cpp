@@ -924,31 +924,27 @@ tlmath::UpdateParameterUI(
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_TOPIC_INPUTS,
 			&param_copy[MATH_TOPIC_INPUTS]));
-
-
 		strcpy(param_copy[MATH_INP_LAYER_ONE].name, seqP->paramLayer01NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_LAYER_ONE,
 			&param_copy[MATH_INP_LAYER_ONE]));
-		strcpy(param_copy[MATH_INP_TOFF_ONE].name, seqP->paramLayer01NameAc);
+		strcpy(param_copy[MATH_INP_TOFF_ONE].name, seqP->paramLayer01ToffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_TOFF_ONE,
 			&param_copy[MATH_INP_TOFF_ONE]));
-		strcpy(param_copy[MATH_INP_POFF_ONE].name, seqP->paramLayer01NameAc);
+		strcpy(param_copy[MATH_INP_POFF_ONE].name, seqP->paramLayer01PoffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_POFF_ONE,
 			&param_copy[MATH_INP_POFF_ONE]));
-
-
 		strcpy(param_copy[MATH_INP_LAYER_TWO].name, seqP->paramLayer02NameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_LAYER_TWO,
 			&param_copy[MATH_INP_LAYER_TWO]));
-		strcpy(param_copy[MATH_INP_TOFF_TWO].name, seqP->paramLayer02NameAc);
+		strcpy(param_copy[MATH_INP_TOFF_TWO].name, seqP->paramLayer02ToffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_TOFF_TWO,
 			&param_copy[MATH_INP_TOFF_TWO]));
-		strcpy(param_copy[MATH_INP_POFF_TWO].name, seqP->paramLayer02NameAc);
+		strcpy(param_copy[MATH_INP_POFF_TWO].name, seqP->paramLayer02PoffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_POFF_TWO,
 			&param_copy[MATH_INP_POFF_TWO]));
@@ -957,11 +953,11 @@ tlmath::UpdateParameterUI(
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_LAYER_THREE,
 			&param_copy[MATH_INP_LAYER_THREE]));
-		strcpy(param_copy[MATH_INP_TOFF_THREE].name, seqP->paramLayer03NameAc);
+		strcpy(param_copy[MATH_INP_TOFF_THREE].name, seqP->paramLayer03ToffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_TOFF_THREE,
 			&param_copy[MATH_INP_TOFF_THREE]));
-		strcpy(param_copy[MATH_INP_POFF_THREE].name, seqP->paramLayer03NameAc);
+		strcpy(param_copy[MATH_INP_POFF_THREE].name, seqP->paramLayer03PoffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_POFF_THREE,
 			&param_copy[MATH_INP_POFF_THREE]));
@@ -970,11 +966,11 @@ tlmath::UpdateParameterUI(
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_LAYER_FOUR,
 			&param_copy[MATH_INP_LAYER_FOUR]));
-		strcpy(param_copy[MATH_INP_TOFF_FOUR].name, seqP->paramLayer04NameAc);
+		strcpy(param_copy[MATH_INP_TOFF_FOUR].name, seqP->paramLayer04ToffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_TOFF_FOUR,
 			&param_copy[MATH_INP_TOFF_FOUR]));
-		strcpy(param_copy[MATH_INP_POFF_FOUR].name, seqP->paramLayer04NameAc);
+		strcpy(param_copy[MATH_INP_POFF_FOUR].name, seqP->paramLayer04PoffNameAc);
 		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 			MATH_INP_POFF_FOUR,
 			&param_copy[MATH_INP_POFF_FOUR]));
