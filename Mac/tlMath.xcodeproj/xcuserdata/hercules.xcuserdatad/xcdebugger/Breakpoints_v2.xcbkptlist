@@ -58,7 +58,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/GL_base.cpp"
-            timestampString = "583680269.032796"
+            timestampString = "592225777.33079"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "653"
@@ -74,12 +74,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_math.cpp"
-            timestampString = "591869378.0227"
+            timestampString = "592237433.1309299"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "805"
-            endingLineNumber = "805"
-            landmarkName = "tlmath::Render_GLSL(PF_InData *in_data, PF_OutData *out_data, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extLW, PF_PixelFormat format, AEGP_SuiteHandler &amp;suites, void *refcon, PF_Boolean ShaderResetB, const std::string&amp; vertexShstr, const std::string&amp; fragSh1str, const std::string&amp; fragSh2str )"
+            startingLineNumber = "833"
+            endingLineNumber = "833"
+            landmarkName = "tlmath::Render_GLSL(PF_InData *in_data, PF_OutData *out_data, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extL1W, PF_EffectWorld *extL2W, PF_EffectWorld *extL3W, PF_EffectWorld *extL4W, PF_PixelFormat format, AEGP_SuiteHandler &amp;suites, void *refcon, PF_Boolean ShaderResetB, const std::string&amp; vertexShstr, const std::string&amp; fragSh1str, const std::string&amp; fragSh2str )"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -90,12 +90,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../include/tl_math.h"
-            timestampString = "591874866.573085"
+            timestampString = "592240633.565735"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "358"
-            endingLineNumber = "358"
-            landmarkName = "enum { MATH_SETUP_DISK_ID =1, MATH_ARB_DATA_DISK_ID, MATH_EFFECT_DESCRIPTION_DISK_ID, MATH_TOPIC_SLIDER_DISK_ID, MATH_SLIDER_ONE_DISK_ID, MATH_SLIDER_TWO_DISK_ID, MATH_SLIDER_THREE_DISK_ID, MATH_SLIDER_FOUR_DISK_ID, MATH_SLIDER_FIVE_DISK_ID, MATH_SLIDER_SIX_DISK_ID, MATH_SLIDER_SEVEN_DISK_ID, MATH_SLIDER_HEIGHT_DISK_ID, MATH_SLIDER_NINE_DISK_ID, MATH_SLIDER_TEN_DISK_ID, MATH_END_TOPIC_SLIDER_DISK_ID, MATH_TOPIC_POINTS_DISK_ID, MATH_POINT_ONE_DISK_ID, MATH_POINT_TWO_DISK_ID, MATH_POINT_THREE_DISK_ID, MATH_POINT_FOUR_DISK_ID, MATH_POINT_FIVE_DISK_ID, MATH_POINT_SIX_DISK_ID, MATH_POINT_SEVEN_DISK_ID, MATH_POINT_HEIGHT_DISK_ID, MATH_POINT_NINE_DISK_ID, MATH_POINT_TEN_DISK_ID, MATH_END_TOPIC_POINTS_DISK_ID, MATH_TOPIC_CB_DISK_ID, MATH_CB_ONE_DISK_ID, MATH_CB_TWO_DISK_ID, MATH_CB_THREE_DISK_ID, MATH_CB_FOUR_DISK_ID, MATH_CB_FIVE_DISK_ID, MATH_CB_SIX_DISK_ID, MATH_CB_SEVEN_DISK_ID, MATH_CB_HEIGHT_DISK_ID, MATH_CB_NINE_DISK_ID, MATH_CB_TEN_DISK_ID, MATH_END_TOPIC_CB_DISK_ID, MATH_TOPIC_COLORS_DISK_ID, MATH_COLOR_ONE_DISK_ID, MATH_COLOR_TWO_DISK_ID, MATH_COLOR_THREE_DISK_ID, MATH_COLOR_FOUR_DISK_ID, MATH_COLOR_FIVE_DISK_ID, MATH_COLOR_SIX_DISK_ID, MATH_COLOR_SEVEN_DISK_ID, MATH_COLOR_HEIGHT_DISK_ID, MATH_COLOR_NINE_DISK_ID, MATH_COLOR_TEN_DISK_ID, MATH_END_TOPIC_COLORS_DISK_ID, MATH_TOPIC_ROTS_DISK_ID, MATH_ROT_ONE_DISK_ID, MATH_ROT_TWO_DISK_ID, MATH_ROT_THREE_DISK_ID, MATH_ROT_FOUR_DISK_ID, MATH_ROT_FIVE_DISK_ID, MATH_ROT_SIX_DISK_ID, MATH_ROT_SEVEN_DISK_ID, MATH_ROT_HEIGHT_DISK_ID, MATH_ROT_NINE_DISK_ID, MATH_ROT_TEN_DISK_ID, MATH_END_TOPIC_ROTS_DISK_ID, MATH_TOPIC_INPUTS_DISK_ID, MATH_INP_LAYER_ONE_DISK_ID, MATH_INP_TOFF_ONE_DISK_ID, MATH_INP_POFF_ONE_DISK_ID, MATH_END_TOPIC_INPUTS_DISK_ID, MATH_CEP_GET_ARB_DATA_DISK_ID, MATH_CEP_RETURN_MESSAGE_DISK_ID }"
+            startingLineNumber = "373"
+            endingLineNumber = "373"
+            landmarkName = "enum { MATH_SETUP_DISK_ID =1, MATH_ARB_DATA_DISK_ID, MATH_EFFECT_DESCRIPTION_DISK_ID, MATH_TOPIC_SLIDER_DISK_ID, MATH_SLIDER_ONE_DISK_ID, MATH_SLIDER_TWO_DISK_ID, MATH_SLIDER_THREE_DISK_ID, MATH_SLIDER_FOUR_DISK_ID, MATH_SLIDER_FIVE_DISK_ID, MATH_SLIDER_SIX_DISK_ID, MATH_SLIDER_SEVEN_DISK_ID, MATH_SLIDER_HEIGHT_DISK_ID, MATH_SLIDER_NINE_DISK_ID, MATH_SLIDER_TEN_DISK_ID, MATH_END_TOPIC_SLIDER_DISK_ID, MATH_TOPIC_POINTS_DISK_ID, MATH_POINT_ONE_DISK_ID, MATH_POINT_TWO_DISK_ID, MATH_POINT_THREE_DISK_ID, MATH_POINT_FOUR_DISK_ID, MATH_POINT_FIVE_DISK_ID, MATH_POINT_SIX_DISK_ID, MATH_POINT_SEVEN_DISK_ID, MATH_POINT_HEIGHT_DISK_ID, MATH_POINT_NINE_DISK_ID, MATH_POINT_TEN_DISK_ID, MATH_END_TOPIC_POINTS_DISK_ID, MATH_TOPIC_CB_DISK_ID, MATH_CB_ONE_DISK_ID, MATH_CB_TWO_DISK_ID, MATH_CB_THREE_DISK_ID, MATH_CB_FOUR_DISK_ID, MATH_CB_FIVE_DISK_ID, MATH_CB_SIX_DISK_ID, MATH_CB_SEVEN_DISK_ID, MATH_CB_HEIGHT_DISK_ID, MATH_CB_NINE_DISK_ID, MATH_CB_TEN_DISK_ID, MATH_END_TOPIC_CB_DISK_ID, MATH_TOPIC_COLORS_DISK_ID, MATH_COLOR_ONE_DISK_ID, MATH_COLOR_TWO_DISK_ID, MATH_COLOR_THREE_DISK_ID, MATH_COLOR_FOUR_DISK_ID, MATH_COLOR_FIVE_DISK_ID, MATH_COLOR_SIX_DISK_ID, MATH_COLOR_SEVEN_DISK_ID, MATH_COLOR_HEIGHT_DISK_ID, MATH_COLOR_NINE_DISK_ID, MATH_COLOR_TEN_DISK_ID, MATH_END_TOPIC_COLORS_DISK_ID, MATH_TOPIC_ROTS_DISK_ID, MATH_ROT_ONE_DISK_ID, MATH_ROT_TWO_DISK_ID, MATH_ROT_THREE_DISK_ID, MATH_ROT_FOUR_DISK_ID, MATH_ROT_FIVE_DISK_ID, MATH_ROT_SIX_DISK_ID, MATH_ROT_SEVEN_DISK_ID, MATH_ROT_HEIGHT_DISK_ID, MATH_ROT_NINE_DISK_ID, MATH_ROT_TEN_DISK_ID, MATH_END_TOPIC_ROTS_DISK_ID, MATH_TOPIC_INPUTS_DISK_ID, MATH_INP_LAYER_ONE_DISK_ID, MATH_INP_TOFF_ONE_DISK_ID, MATH_INP_POFF_ONE_DISK_ID, MATH_INP_LAYER_TWO_DISK_ID, MATH_INP_TOFF_TWO_DISK_ID, MATH_INP_POFF_TWO_DISK_ID, MATH_INP_LAYER_THREE_DISK_ID, MATH_INP_TOFF_THREE_DISK_ID, MATH_INP_POFF_THREE_DISK_ID, MATH_INP_LAYER_FOUR_DISK_ID, MATH_INP_TOFF_FOUR_DISK_ID, MATH_INP_POFF_FOUR_DISK_ID, MATH_END_TOPIC_INPUTS_DISK_ID, MATH_CEP_GET_ARB_DATA_DISK_ID, MATH_CEP_RETURN_MESSAGE_DISK_ID }"
             landmarkType = "13">
          </BreakpointContent>
       </BreakpointProxy>
@@ -106,11 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_math.cpp"
-            timestampString = "591869378.023236"
+            timestampString = "592237433.131061"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1073"
-            endingLineNumber = "1073">
+            startingLineNumber = "1083"
+            endingLineNumber = "1083">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -120,11 +120,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathRender.cpp"
-            timestampString = "591900388.2029361"
+            timestampString = "592240633.565886"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "377"
-            endingLineNumber = "377"
+            startingLineNumber = "391"
+            endingLineNumber = "391"
             landmarkName = "tlmath::PreRender(PF_InData *in_data, PF_OutData *out_data, PF_PreRenderExtra *extraP)"
             landmarkType = "7">
          </BreakpointContent>
@@ -135,24 +135,8 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../src/tl_mathRender.cpp"
-            timestampString = "591900388.203764"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "970"
-            endingLineNumber = "970"
-            landmarkName = "tlmath::SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "../src/tl_math_Dialogs.cpp"
-            timestampString = "591869702.349416"
+            timestampString = "592162221.071133"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "418"
@@ -168,7 +152,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathSeqData.cpp"
-            timestampString = "591700126.298506"
+            timestampString = "592240633.565995"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "87"
@@ -216,7 +200,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathSeqData.cpp"
-            timestampString = "591700344.1816829"
+            timestampString = "592240633.566074"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "78"
@@ -232,7 +216,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathSeqData.cpp"
-            timestampString = "591700354.351895"
+            timestampString = "592240633.5661319"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "165"
@@ -280,12 +264,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_mathParams.cpp"
-            timestampString = "591870954.497849"
+            timestampString = "592240633.566218"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1203"
-            endingLineNumber = "1203"
-            landmarkName = "tlmath::UserChangedParam( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP, const PF_UserChangedParamExtra *which_hitP)"
+            startingLineNumber = "1200"
+            endingLineNumber = "1200"
+            landmarkName = "tlmath::UpdateParameterUI( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *outputP)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -296,13 +280,157 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../src/tl_math.cpp"
-            timestampString = "591882700.850437"
+            timestampString = "592237433.131873"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "731"
-            endingLineNumber = "731"
-            landmarkName = "tlmath::Render_GLSL(PF_InData *in_data, PF_OutData *out_data, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extLW, PF_PixelFormat format, AEGP_SuiteHandler &amp;suites, void *refcon, PF_Boolean ShaderResetB, const std::string&amp; vertexShstr, const std::string&amp; fragSh1str, const std::string&amp; fragSh2str )"
+            startingLineNumber = "761"
+            endingLineNumber = "761"
+            landmarkName = "tlmath::Render_GLSL(PF_InData *in_data, PF_OutData *out_data, PF_EffectWorld *inputP, PF_EffectWorld *outputP, PF_EffectWorld *extL1W, PF_EffectWorld *extL2W, PF_EffectWorld *extL3W, PF_EffectWorld *extL4W, PF_PixelFormat format, AEGP_SuiteHandler &amp;suites, void *refcon, PF_Boolean ShaderResetB, const std::string&amp; vertexShstr, const std::string&amp; fragSh1str, const std::string&amp; fragSh2str )"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathRender.cpp"
+            timestampString = "592240633.566296"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "817"
+            endingLineNumber = "817"
+            landmarkName = "tlmath::SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathRender.cpp"
+            timestampString = "592240633.566354"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "847"
+            endingLineNumber = "847"
+            landmarkName = "tlmath::SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathRender.cpp"
+            timestampString = "592240633.566417"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "833"
+            endingLineNumber = "833"
+            landmarkName = "tlmath::SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathSeqData.cpp"
+            timestampString = "592240633.566499"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "274"
+            endingLineNumber = "274"
+            landmarkName = "tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::string arbStr, seqData* seqDataP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathSeqData.cpp"
+            timestampString = "592240633.566574"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "263"
+            endingLineNumber = "263"
+            landmarkName = "tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::string arbStr, seqData* seqDataP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathRender.cpp"
+            timestampString = "592240633.56665"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "853"
+            endingLineNumber = "853"
+            landmarkName = "tlmath::SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathRender.cpp"
+            timestampString = "592240633.566708"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "878"
+            endingLineNumber = "878"
+            landmarkName = "tlmath::SmartRender( PF_InData *in_data, PF_OutData *out_data, PF_SmartRenderExtra *extraP)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_math.cpp"
+            timestampString = "592237433.133418"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "441"
+            endingLineNumber = "441"
+            landmarkName = "RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr&amp; renderContext, PF_InData *in_data, PF_OutData *out_data, A_long widthL, A_long heightL, gl::GLuint inputFrameTexture, gl::GLuint inputExtFrame1Texture, gl::GLuint inputExtFrame2Texture, gl::GLuint inputExtFrame3Texture, gl::GLuint inputExtFrame4Texture, void *refcon, float multiplier16bit)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../src/tl_mathRender.cpp"
+            timestampString = "592240633.566783"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "7"
+            endingLineNumber = "7"
+            landmarkName = "checkoutParamsArray(PF_InData *in_data, PF_ParamDef *param, A_long ParamIndex)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

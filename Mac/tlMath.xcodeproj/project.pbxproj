@@ -59,6 +59,7 @@
 		040A7FDE222FFC8A00E7E6D2 /* tl_math_iterators.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_iterators.cpp; path = ../src/tl_math_iterators.cpp; sourceTree = SOURCE_ROOT; };
 		0434630B2292DA4F00AE77BD /* tl_defaultArb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tl_defaultArb.h; sourceTree = "<group>"; };
 		043D97D822C6536A003423B2 /* tl_mathRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathRender.cpp; sourceTree = "<group>"; };
+		0481B760234CCC370020A5EC /* tl_defaultShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tl_defaultShaders.h; sourceTree = "<group>"; };
 		04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathParams.cpp; sourceTree = "<group>"; };
 		04BA3382231D3A6600981A6D /* tl_mathSeqData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathSeqData.cpp; sourceTree = "<group>"; };
 		04EB1D7723472DB000EA1BD0 /* tl_mathStrOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathStrOperations.cpp; sourceTree = "<group>"; };
@@ -122,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				7EB428A80FBA1B62003C7DD1 /* tl_math.h */,
+				0481B760234CCC370020A5EC /* tl_defaultShaders.h */,
 				7EB428DB0FBA1C77003C7DD1 /* GL_base.h */,
 				7EB428DC0FBA1C80003C7DD1 /* tl_math_Strings.h */,
 				0434630B2292DA4F00AE77BD /* tl_defaultArb.h */,
