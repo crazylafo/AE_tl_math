@@ -703,7 +703,7 @@ void AESDK_OpenGL_BindTexture1ToTarget(gl::GLuint program, gl::GLint inTexture, 
 	if (inTexture != -1) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, inTexture);
-		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 1);
 	}
 	else {
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
@@ -714,7 +714,7 @@ void AESDK_OpenGL_BindTexture2ToTarget(gl::GLuint program, gl::GLint inTexture, 
 	if (inTexture != -1) {
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, inTexture);
-		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 2);
 	}
 	else {
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
@@ -725,7 +725,7 @@ void  AESDK_OpenGL_BindTexture3ToTarget(gl::GLuint program, gl::GLint inTexture,
 	if (inTexture != -1) {
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, inTexture);
-		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 3);
 	}
 	else {
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);
@@ -736,7 +736,7 @@ void AESDK_OpenGL_BindTexture4ToTarget(gl::GLuint program, gl::GLint inTexture, 
 	if (inTexture != -1) {
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, inTexture);
-		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 0);
+		glUniform1i(glGetUniformLocation(program, inTargetName.c_str()), 4);
 	}
 	else {
 		GL_CHECK(AESDK_OpenGL_ShaderInit_Err);

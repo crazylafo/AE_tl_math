@@ -6,7 +6,7 @@ copyPointsParam(PF_ParamDef  point_param,
 {
 
     //user param points
-    pt->point[2] =  static_cast<PF_FpShort>(point_param.u.point3d_d.x_value);
+    pt->point[0] =  static_cast<PF_FpShort>(point_param.u.point3d_d.x_value);
     pt->point[1] =   static_cast<PF_FpShort>(point_param.u.point3d_d.y_value);
     pt->point[2] =  static_cast<PF_FpShort>(point_param.u.point3d_d.z_value);
 
@@ -380,20 +380,20 @@ tlmath::PreRender(PF_InData                *in_data,
 			PF_ParamDef extlayer_toff_param[4];
 			PF_ParamDef extlayer_poff_param[4];
 
-			AEFX_CLR_STRUCT(extlayer_toff_param[2]);
+			AEFX_CLR_STRUCT(extlayer_toff_param[0]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_ONE,
 				in_data->current_time,
 				in_data->time_step,
 				in_data->time_scale,
-				&extlayer_toff_param[2]));
-			AEFX_CLR_STRUCT(extlayer_poff_param[2]);
+				&extlayer_toff_param[0]));
+			AEFX_CLR_STRUCT(extlayer_poff_param[0]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_POFF_ONE,
 				in_data->current_time,
 				in_data->time_step,
 				in_data->time_scale,
-				&extlayer_poff_param[2]));
+				&extlayer_poff_param[0]));
 
 			AEFX_CLR_STRUCT(extlayer_toff_param[1]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
@@ -434,7 +434,7 @@ tlmath::PreRender(PF_InData                *in_data,
 				&extlayer_toff_param[3]));
 			AEFX_CLR_STRUCT(extlayer_poff_param[3]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_INP_POFF_THREE,
+				MATH_INP_POFF_FOUR,
 				in_data->current_time,
 				in_data->time_step,
 				in_data->time_scale,
@@ -511,12 +511,12 @@ tlmath::PreRender(PF_InData                *in_data,
 			layerSuite->AEGP_GetLayerCurrentTime(layerH, AEGP_LTimeMode_LayerTime, &currTime);
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_POSITION, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValP, &strTypeP);
 
-			miP->layerPos.point[2] = strValP.three_d.x;
+			miP->layerPos.point[0] = strValP.three_d.x;
             miP->layerPos.point[1] = strValP.three_d.y;
             miP->layerPos.point[2] = strValP.three_d.z;
 
 			StreamSuite->AEGP_GetLayerStreamValue(layerH, AEGP_LayerStream_SCALE, AEGP_LTimeMode_LayerTime, &currTime, NULL, &strValSP, &strTypeP);
-			miP->layerScale.point[2] = strValSP.three_d.x;
+			miP->layerScale.point[0] = strValSP.three_d.x;
 			miP->layerScale.point[1] = strValSP.three_d.z;
 			miP->layerScale.point[2] = strValSP.three_d.z;
 
@@ -577,15 +577,15 @@ tlmath::PreRender(PF_InData                *in_data,
                         if (!err) {
                             miP->cameraZoom = stream_valZoom.one_d;
 
-                            miP->cameraPos.point[2] = stream_valPos.three_d.x;
+                            miP->cameraPos.point[0] = stream_valPos.three_d.x;
                             miP->cameraPos.point[1] = stream_valPos.three_d.y;
                             miP->cameraPos.point[2] = stream_valPos.three_d.z;
 
-                            miP->cameraTarget.point[2] =stream_valTarg.three_d.x;
+                            miP->cameraTarget.point[0] =stream_valTarg.three_d.x;
                             miP->cameraTarget.point[1] =stream_valTarg.three_d.y;
                             miP->cameraTarget.point[2] = stream_valRot.three_d.z;
 
-                            miP->cameraRotation.point[2] =stream_valRot.three_d.x;
+                            miP->cameraRotation.point[0] =stream_valRot.three_d.x;
                             miP->cameraRotation.point[1] =stream_valRot.three_d.y;
                             miP->cameraRotation.point[2] = stream_valRot.three_d.z;
 
@@ -594,7 +594,10 @@ tlmath::PreRender(PF_InData                *in_data,
                 }
 
 			AEFX_CLR_STRUCT(in_result);
-			AEFX_CLR_STRUCT(extL_result);
+			AEFX_CLR_STRUCT(extL_result[0]);
+            AEFX_CLR_STRUCT(extL_result[1]);
+            AEFX_CLR_STRUCT(extL_result[2]);
+            AEFX_CLR_STRUCT(extL_result[3]);
 
 			if (!err) {
 				req.preserve_rgb_of_zero_alpha = FALSE;
@@ -620,14 +623,14 @@ tlmath::PreRender(PF_InData                *in_data,
 						MATH_INP_LAYER_ONE,
 						MATH_INP_LAYER_ONE,
 						&req,
-						(in_data->current_time + A_long(extlayer_toff_param[2].u.fs_d.value) * in_data->time_step),
+						(in_data->current_time + A_long(extlayer_toff_param[0].u.fs_d.value) * in_data->time_step),
 						in_data->time_step,
 						in_data->time_scale,
-						&extL_result[2]));
-					widthFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.right - extL_result[2].max_result_rect.left));
-					heightFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.bottom - extL_result[2].max_result_rect.top));
-					miP->x_offFi[2] = PF_Fixed(widthFi[2] / 2 - extlayer_poff_param[2].u.td.x_value);
-					miP->y_offFi[2] = PF_Fixed(heightFi[2] / 2 - extlayer_poff_param[2].u.td.y_value);
+						&extL_result[0]));
+					widthFi[0] = INT2FIX(ABS(extL_result[0].max_result_rect.right - extL_result[0].max_result_rect.left));
+					heightFi[0] = INT2FIX(ABS(extL_result[0].max_result_rect.bottom - extL_result[0].max_result_rect.top));
+					miP->x_offFi[0] = PF_Fixed(widthFi[0] / 2 - extlayer_poff_param[0].u.td.x_value);
+					miP->y_offFi[0] = PF_Fixed(heightFi[0] / 2 - extlayer_poff_param[0].u.td.y_value);
 
 
 					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
@@ -674,7 +677,11 @@ tlmath::PreRender(PF_InData                *in_data,
 				}
 			}
 			ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
-			suites.HandleSuite1()->host_unlock_handle(infoH);
+            for (int i=0; i<4; i++){
+                ERR(PF_CHECKIN_PARAM(in_data,&extlayer_toff_param[i]));
+                ERR(PF_CHECKIN_PARAM(in_data,&extlayer_poff_param[i]));
+            }
+            suites.HandleSuite1()->host_unlock_handle(infoH);
 		}
 	}
 	return err;
@@ -1219,7 +1226,7 @@ tlmath::SmartRender(
                  AEFX_CLR_STRUCT(tempFloat)
                  ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, &color_param[i], &tempFloat));
                  //user param color
-                 miP->inColors[i].color[2] =tempFloat.red;
+                 miP->inColors[i].color[0] =tempFloat.red;
                  miP->inColors[i].color[1] =tempFloat.green;
                  miP->inColors[i].color[2] =tempFloat.blue;
                 }
@@ -1352,10 +1359,16 @@ tlmath::SmartRender(
 
 			if (extL1W.data) {
 				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL1W));
-				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL2W));
-				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL3W));
-				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL4W));
-			}
+            }
+            if (extL2W.data) {
+                ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL2W));
+            }
+            if (extL3W.data) {
+                ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL3W));
+            }
+            if (extL4W.data) {
+                ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL4W));
+            }
 			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
 			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
 			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_TWO));

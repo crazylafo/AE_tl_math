@@ -376,7 +376,7 @@ tlmath::ParamsSetup  (
                          0,
                          PF_ParamFlag_SUPERVISE ,
                          MATH_INP_TOFF_ONE_DISK_ID);
-
+     AEFX_CLR_STRUCT(def);
     PF_ADD_POINT(STR(StrID_POFF_ONE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_ONE_DISK_ID);
     AEFX_CLR_STRUCT(def);
 
@@ -396,7 +396,7 @@ tlmath::ParamsSetup  (
 		0,
 		PF_ParamFlag_SUPERVISE,
 		MATH_INP_TOFF_TWO_DISK_ID);
-
+     AEFX_CLR_STRUCT(def);
 	PF_ADD_POINT(STR(StrID_POFF_TWO_Param_Name), 50, 50, FALSE, MATH_INP_POFF_TWO_DISK_ID);
 	AEFX_CLR_STRUCT(def);   
 	def.flags = PF_ParamFlag_SUPERVISE;
@@ -412,6 +412,7 @@ tlmath::ParamsSetup  (
 		0,
 		PF_ParamFlag_SUPERVISE,
 		MATH_INP_TOFF_THREE_DISK_ID);
+     AEFX_CLR_STRUCT(def);
 	PF_ADD_POINT(STR(StrID_POFF_THREE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_THREE_DISK_ID);
 
 	AEFX_CLR_STRUCT(def); 
@@ -428,7 +429,7 @@ tlmath::ParamsSetup  (
 		0,
 		PF_ParamFlag_SUPERVISE,
 		MATH_INP_TOFF_FOUR_DISK_ID);
-
+ AEFX_CLR_STRUCT(def);
 	PF_ADD_POINT(STR(StrID_POFF_FOUR_Param_Name), 50, 50, FALSE, MATH_INP_POFF_FOUR_DISK_ID);
 	AEFX_CLR_STRUCT(def);
 

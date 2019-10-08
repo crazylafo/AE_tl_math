@@ -837,6 +837,9 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
         glBindTexture(GL_TEXTURE_2D, 1);
+        glBindTexture(GL_TEXTURE_2D, 2);
+        glBindTexture(GL_TEXTURE_2D, 3);
+        glBindTexture(GL_TEXTURE_2D, 4);
 		glDeleteTextures(1, &inputFrameTexture);
         glDeleteTextures(2, &inputExtFrame1Texture);
         glDeleteTextures(3, &inputExtFrame2Texture);
@@ -930,7 +933,7 @@ QueryDynamicFlags(
            //err2  = PF_Err_NONE;
 
 	if (seqP && !err) {
-        if (seqP->cameraB ){
+        if (seqP->cameraB){
             out_data->out_flags2 &= ~PF_OutFlag2_I_USE_3D_CAMERA;
         }else{
             out_data->out_flags2 &= PF_OutFlag2_I_USE_3D_CAMERA;
@@ -948,7 +951,6 @@ QueryDynamicFlags(
 		}
 		else {
 			out_data->out_flags |= PF_OutFlag_PIX_INDEPENDENT;
-			
 		}
 		
 
