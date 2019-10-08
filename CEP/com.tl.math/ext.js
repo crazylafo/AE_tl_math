@@ -395,7 +395,10 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	if (arbData.effectMode.gl33_modeB){
 		arbData.flags.needsPixelAroundB = false;// only for expr mode
 		arbData.flags.needsLumaB = false; // only for expr mode
-		arbData.flags.pixelsCallExternalInputB =setflagFromGL (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name]);
+		var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
+		for (var i=0; i<listLayers.length; i++){			
+			arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
+		}
 		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
 		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
 	}
@@ -434,8 +437,8 @@ function setEditors(){
 	return editors;
 	}
 function defaultVal(){
-	//var langSelec = document.getElementById("langSelec");
-	//langSelec.value = "GLSL";
+	var langSelec = document.getElementById("langSelec");
+	langSelec.value = "GLSL";
 	langSelecFunc();
 	toggleSettings();
 	tooglePresets();
