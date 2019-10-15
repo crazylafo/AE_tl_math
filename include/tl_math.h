@@ -37,7 +37,7 @@ typedef float				fpshort;
 #include "AE_EffectSuites.h"
 #include "tl_math_Strings.h"
 #include "Smart_Utils.h" // for smartfx
-#include "exprtk.hpp"
+
 #include "json.hpp"
 #include  "tl_defaultArb.h"
 #include  "tl_defaultShaders.h"
@@ -73,6 +73,7 @@ typedef struct {
 	bool    initializedB;
 	A_char  descriptionAc[2048];
 	A_char  presetNameAc[32];
+
     A_char  redExAc[4096];
     A_char  greenExAc[4096];
     A_char  blueExAc[4096];
@@ -80,13 +81,16 @@ typedef struct {
 	A_char  rgbExprExAc[4096];
     A_char  Glsl33_VertexShAc[25000];
     A_char  Glsl33_FragmentShAc[50000];
+
     A_char redError[2048];
     A_char greenError[4096];
     A_char blueError[4096];
     A_char alphaError[4096];
 	A_char rgbError[4096];
+
     A_char Glsl33_VertError[25000];
     A_char Glsl33_fragError[25000];
+
 	A_char  resolutionNameAc[32];
 	A_char  layerPositionNameAc[32];
 	A_char  layerScaleNameAc[32];
@@ -98,11 +102,7 @@ typedef struct {
     A_char expr_ColorChNameAc[32];
 	A_char	expr_pixNameAc[32];
 	A_char expr_lumaNameAc[32];
-	A_char expr_red_offNameAc[32];
-	A_char expr_green_offNameAc[32];
-	A_char expr_blue_offNameAc[32];
-	A_char expr_alpha_offNameAc[32];
-
+	A_char expr_pix_offNameAc[32];
 
     A_char   cameraPosNameAc[32];
     A_char   cameraTargetNameAc[32];
@@ -259,7 +259,6 @@ typedef struct {
     PF_Boolean  glsl33ModeB;
 	PF_Boolean  exprModeB;
 	PF_Boolean  evalModeB;
-    PF_Boolean needsPixelAroundB;
     bool pixelsCallExternalInputB[4];
     PF_Boolean needsLumaB;
     PF_Boolean presetHasWideInputB;
@@ -444,9 +443,7 @@ enum {
     MATH_CEP_GET_ARB_DATA_DISK_ID,
     MATH_CEP_RETURN_MESSAGE_DISK_ID
 };
-
 typedef struct  FlagsInfo {
-        PF_Boolean NeedsPixelAroundB;
         PF_Boolean PixelsCallExternalInputB[4];
         PF_Boolean NeedsLumaB;
         PF_Boolean PresetHasWideInput;
@@ -463,18 +460,6 @@ typedef struct {
 	std::string  *frag2str;
 	std::string  *vertexstr;
 }ExprInfoP;
-typedef struct funcTransfertInfo {
-	
-	std::function<PF_FpShort()> redExpr;
-	std::function<PF_FpShort()> greenExpr;
-	std::function<PF_FpShort()> blueExpr;
-    std::function<PF_FpShort()> rgbExpr;
-	std::function<PF_FpShort()> alphaExpr;
-    std::function<PF_FpShort()> evalExpr;
-	PF_Boolean      hasErrorB;
-	std::string     channelErrorstr;
-	std::string     errorstr;
-}funcTransfertInfoP;
 typedef struct WorldTransfertInfo {
     PF_EffectWorld  inW;
     PF_EffectWorld  outW;
@@ -486,16 +471,10 @@ struct point_3d {
 struct color_3d {
     PF_FpShort color[3];
 };
+
 typedef struct MathInfo{
     PF_FpShort      scale_x;
     PF_FpShort      scale_y;
-    PF_FpShort 		inColorF[4];
-    PF_FpShort      inColorChF;
-    PF_FpShort      extLayerColorF[4];
-	PF_FpShort      extLayer2ColorF[4];
-	PF_FpShort      extLayer3ColorF[4];
-	PF_FpShort      extLayer4ColorF[4];
-    PF_FpShort      pixF[2];
     PF_FpShort      layerSizeF[2];
     PF_FpShort      compSizeF[2];
     PF_FpShort		layerTime_Sec;
@@ -510,14 +489,9 @@ typedef struct MathInfo{
     PF_FpShort      cameraZoom;
     PF_FpShort      inSliderF[10];
 	point_3d        inPoints[10];
-    PF_FpShort      inCboxF[10];
+    bool            inCboxF[10];
 	PF_FpShort      inRotF[10];
     color_3d        inColors[10];
-    PF_FpShort      m9P_red[9];
-    PF_FpShort      m9P_green[9];
-    PF_FpShort      m9P_blue[9];
-    PF_FpShort      m9P_alpha[9];
-
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP;
     PF_Fixed    x_offFi[4];
@@ -533,125 +507,12 @@ typedef struct {
 typedef struct {
 	AEGP_PluginID	my_id;
 } my_global_data, *my_global_dataP, **my_global_dataH;
-template <typename T=PF_FpShort> class parseExpr {
-private:
-    std::shared_ptr<exprtk::parser<T>> parser;
-    exprtk::expression<T> expression;
-    exprtk::symbol_table<T> symbol_table;
-public:
-    parseExpr(void *mathRefcon, void *refconFunc, const std::string &exprstr,seqDataP seqP) {
-        MathInfo	*miP	= reinterpret_cast<MathInfo*>(mathRefcon);
-		funcTransfertInfo *fiP = reinterpret_cast<funcTransfertInfo*>(refconFunc);
 
-        std::string  expression_string_Safe = "1";
-        if (!parser){
-            parser = std::make_shared<exprtk::parser<T>>();
-        }
-        fiP->hasErrorB = FALSE;
-        symbol_table.clear();
-        symbol_table.add_variable(seqP->expr_lumaNameAc, miP->luma);
-        symbol_table.add_variable(seqP->expr_ColorChNameAc, miP->inColorChF);
-        symbol_table.add_vector(seqP->expr_pixNameAc,  miP->pixF);
-        symbol_table.add_vector(seqP->paramLayer00NameAc, miP->inColorF);
-        symbol_table.add_vector(seqP->paramLayer01NameAc,  miP->extLayerColorF);
-        symbol_table.add_vector(seqP->expr_red_offNameAc, miP->m9P_red);
-        symbol_table.add_vector(seqP->expr_green_offNameAc,miP->m9P_green);
-        symbol_table.add_vector(seqP->expr_blue_offNameAc, miP->m9P_blue);
-        symbol_table.add_vector(seqP->expr_alpha_offNameAc, miP->m9P_alpha);
-        symbol_table.add_vector(seqP->resolutionNameAc,miP->layerSizeF);
-        symbol_table.add_vector(seqP->compResolutionNameAc, miP->compSizeF);
-        symbol_table.add_vector(seqP->paramPoint01NameAc, miP->inPoints[0].point);
-        symbol_table.add_vector(seqP->paramPoint02NameAc, miP->inPoints[1].point);
-		symbol_table.add_vector(seqP->paramPoint03NameAc, miP->inPoints[2].point);
-		symbol_table.add_vector(seqP->paramPoint04NameAc, miP->inPoints[3].point);
-		symbol_table.add_vector(seqP->paramPoint05NameAc, miP->inPoints[4].point);
-		symbol_table.add_vector(seqP->paramPoint06NameAc, miP->inPoints[5].point);
-		symbol_table.add_vector(seqP->paramPoint07NameAc, miP->inPoints[6].point);
-		symbol_table.add_vector(seqP->paramPoint08NameAc, miP->inPoints[7].point);
-		symbol_table.add_vector(seqP->paramPoint09NameAc, miP->inPoints[8].point);
-		symbol_table.add_vector(seqP->paramPoint10NameAc, miP->inPoints[9].point);
-        symbol_table.add_vector(seqP->paramColor01NameAc, miP->inColors[0].color);
-        symbol_table.add_vector(seqP->paramColor02NameAc, miP->inColors[1].color);
-        symbol_table.add_vector(seqP->paramColor03NameAc, miP->inColors[2].color);
-        symbol_table.add_vector(seqP->paramColor04NameAc, miP->inColors[3].color);
-        symbol_table.add_vector(seqP->paramColor05NameAc, miP->inColors[4].color);
-        symbol_table.add_vector(seqP->paramColor06NameAc, miP->inColors[5].color);
-        symbol_table.add_vector(seqP->paramColor07NameAc, miP->inColors[6].color);
-        symbol_table.add_vector(seqP->paramColor08NameAc, miP->inColors[7].color);
-        symbol_table.add_vector(seqP->paramColor09NameAc, miP->inColors[8].color);
-        symbol_table.add_vector(seqP->paramColor10NameAc, miP->inColors[9].color);
-
-        symbol_table.add_vector(seqP->layerPositionNameAc, miP->layerPos.point);
-        symbol_table.add_vector(seqP->layerScaleNameAc, miP->layerScale.point);
-		symbol_table.add_vector(seqP->cameraPosNameAc, miP->cameraPos.point);
-		symbol_table.add_vector(seqP->cameraTargetNameAc, miP->cameraTarget.point);
-		symbol_table.add_vector(seqP->cameraRotationNameAc, miP->cameraRotation.point);
-
-        symbol_table.add_constants();
-		symbol_table.add_constant(seqP->cameraZoomNameAc, miP->cameraZoom);
-        symbol_table.add_constant(seqP->paramSlider01NameAc, miP->inSliderF[0]);
-        symbol_table.add_constant(seqP->paramSlider02NameAc, miP->inSliderF[1]);
-        symbol_table.add_constant(seqP->paramSlider03NameAc,miP->inSliderF[2]);
-        symbol_table.add_constant(seqP->paramSlider04NameAc,miP->inSliderF[3]);
-		symbol_table.add_constant(seqP->paramSlider05NameAc, miP->inSliderF[4]);
-		symbol_table.add_constant(seqP->paramSlider06NameAc, miP->inSliderF[5]);
-		symbol_table.add_constant(seqP->paramSlider07NameAc, miP->inSliderF[6]);
-		symbol_table.add_constant(seqP->paramSlider08NameAc, miP->inSliderF[7]);
-		symbol_table.add_constant(seqP->paramSlider09NameAc, miP->inSliderF[8]);
-		symbol_table.add_constant(seqP->paramSlider10NameAc, miP->inSliderF[9]);
-        symbol_table.add_constant(seqP->paramCb01NameAc, miP->inCboxF[0]);
-        symbol_table.add_constant(seqP->paramCb02NameAc, miP->inCboxF[1]);
-        symbol_table.add_constant(seqP->paramCb03NameAc, miP->inCboxF[2]);
-        symbol_table.add_constant(seqP->paramCb04NameAc, miP->inCboxF[3]);
-        symbol_table.add_constant(seqP->paramCb05NameAc, miP->inCboxF[4]);
-        symbol_table.add_constant(seqP->paramCb06NameAc, miP->inCboxF[5]);
-        symbol_table.add_constant(seqP->paramCb07NameAc, miP->inCboxF[6]);
-        symbol_table.add_constant(seqP->paramCb08NameAc, miP->inCboxF[7]);
-        symbol_table.add_constant(seqP->paramCb09NameAc, miP->inCboxF[8]);
-        symbol_table.add_constant(seqP->paramCb10NameAc, miP->inCboxF[9]);
-		symbol_table.add_constant(seqP->paramRot01NameAc, miP->inRotF[0]);
-		symbol_table.add_constant(seqP->paramRot02NameAc, miP->inRotF[1]);
-		symbol_table.add_constant(seqP->paramRot03NameAc, miP->inRotF[2]);
-		symbol_table.add_constant(seqP->paramRot04NameAc, miP->inRotF[3]);
-		symbol_table.add_constant(seqP->paramRot05NameAc, miP->inRotF[4]);
-		symbol_table.add_constant(seqP->paramRot06NameAc, miP->inRotF[5]);
-		symbol_table.add_constant(seqP->paramRot07NameAc, miP->inRotF[6]);
-		symbol_table.add_constant(seqP->paramRot08NameAc, miP->inRotF[7]);
-		symbol_table.add_constant(seqP->paramRot09NameAc, miP->inRotF[8]);
-		symbol_table.add_constant(seqP->paramRot10NameAc, miP->inRotF[9]);
-
-
-        symbol_table.add_constant(seqP->time_secNameAc ,miP->layerTime_Sec);
-        symbol_table.add_constant(seqP->time_frameNameAc,miP->layerTime_Frame);
-        symbol_table.add_constant(seqP->frame_rateNameAc, miP->compFpsF);
-        expression.register_symbol_table(symbol_table);
-        parser->compile(exprstr,expression);
-        if (!parser->compile(exprstr,expression))
-        {
-            fiP->hasErrorB = TRUE;
-            fiP->errorstr =parser->error();
-            parser->compile(expression_string_Safe, expression);
-        }
-    }
-    T operator()() { return expression.value(); }
-};
 
 PF_Err ShiftImage32 (void *refcon, A_long xL, A_long yL, PF_Pixel32 *inP, PF_Pixel32 *outP);
 PF_Err ShiftImage16 ( void *refcon,A_long xL, A_long yL, PF_Pixel16 *inP, PF_Pixel16 *outP);
 PF_Err ShiftImage8 ( void *refcon, A_long xL, A_long yL, PF_Pixel *inP, PF_Pixel *outP);
 
-class thSafeExpr_render {
-private:
-    std::mutex mut;
-    A_long curNumIter;
-	PF_Err LineIteration8Func(void *refconPV, void* refconFunc, void* refconFlags, void* refconWorld, A_long yL);
-    PF_Err LineIteration16Func ( void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long yL);
-    PF_Err LineIteration32Func(void *refconPV, void *refconFunc, void *refconFlags, void *refconWorld, A_long yL);
-public:
-    void render_8(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld,  A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
-    void render_16(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
-	void render_32(void *refconPV, void *refconFunc, void *refconFlags,void *refconWorld, A_long thread_idxL, A_long numThreads, A_long numIter, A_long lastNumIter);
-};
 class tlmath{
 private:
     std::string evalMathExprStr(std::string expr, seqDataP    *seqP);
@@ -663,10 +524,8 @@ private:
     void strReplace(std::string& str,const std::string& oldStr,const std::string& newStr);
     void jsonCorrectorStr(std::string& str); //to json
     void scriptCorrectorStr(std::string& str); //from json
-    void ExprtkCorrectorStr(std::string& str); // for exprtk script only
     void descriptionCorrectorStr (std::string& str);
-    void copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target);
-    PF_Err evalScripts  (seqData  *seqDataP);
+    PF_Err evalScripts (seqData  *seqDataP);
 
     PF_Err CallCepDialog(PF_InData  *in_data, PF_OutData  *out_data);
     PF_Err SetupGetDataBack(PF_InData *in_data, PF_OutData  *out_data, PF_ParamDef *params[]);
@@ -675,6 +534,7 @@ private:
     PF_Err updateSeqData(PF_InData *in_data, PF_OutData *out_data,  PF_ParamDef *params[]);
     PF_Err SetupDialogSend( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[]);
     PF_Err updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[], std::string     arbStr);
+    PF_Err embedExprInShaders  (seqData  *seqP);
 
 
     PF_Err Render_GLSL(PF_InData  *in_data,

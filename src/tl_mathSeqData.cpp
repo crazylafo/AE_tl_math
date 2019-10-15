@@ -120,12 +120,13 @@ static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_a
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
-void   tlmath::copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target){
+
+static void   copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target){
 	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
-	tlmath::ExprtkCorrectorStr(dataStr);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
+
 static void updateSliderParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)
 {
 	for (int index = 0; index < numParamsI; index++) {
@@ -238,10 +239,7 @@ tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::stri
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_current_channel",seqDataP->expr_ColorChNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix",seqDataP->expr_pixNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_luma",seqDataP->expr_lumaNameAc);
-	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_red_off",seqDataP->expr_red_offNameAc);
-	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_green_off",seqDataP->expr_green_offNameAc);
-	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_blue_off",seqDataP->expr_blue_offNameAc);
-	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_alpha_off",seqDataP->expr_alpha_offNameAc);
+    copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix_off",seqDataP->expr_pix_offNameAc);
     // copy compositions params
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_position",seqDataP->cameraPosNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_target",seqDataP->cameraTargetNameAc);
@@ -260,7 +258,6 @@ tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::stri
     seqDataP->exprModeB =  getBoolFromJsonToSeqData (arbDataJS, "/effectMode/expr_modeB");
     seqDataP->evalModeB = getBoolFromJsonToSeqData (arbDataJS, "/effectMode/evalModeB");
     seqDataP->exprRGBModeB = getBoolFromJsonToSeqData (arbDataJS, "/math_expression/exprRGBModeB");
-    seqDataP->needsPixelAroundB =getBoolFromJsonToSeqData (arbDataJS,"/flags/needsPixelAroundB");
     seqDataP->pixelsCallExternalInputB[0] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/0", 0));
     seqDataP->pixelsCallExternalInputB[1] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/1",0));
     seqDataP->pixelsCallExternalInputB[2] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/2",0));
@@ -455,8 +452,6 @@ tlmath::updateSeqData(PF_InData            *in_data,
     return err;
 }
 
-
-
 PF_Err
 tlmath::SequenceSetdown (
                         PF_InData        *in_data,
@@ -470,7 +465,6 @@ tlmath::SequenceSetdown (
     }
     return err;
 }
-
 PF_Err
 tlmath::SequenceSetup (
                       PF_InData        *in_data,

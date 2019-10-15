@@ -44,10 +44,8 @@ static std::string defaultArb = R"=====(
         "expr_current_channel":"inChannel",
         "expr_pix":"pix",
         "expr_luma":"luma",
-        "expr_red_off":"red_off",
-        "expr_green_off":"green_off",
-        "expr_blue_off":"blue_off",
-        "expr_alpha_off":"alpha_off"
+        "expr_pix_off":"pix_off"
+
     },
     "flags":{
         "needsPixelAroundB":false,

@@ -575,7 +575,6 @@ GlobalSetup (
 
     
 	out_data->out_flags = PF_OutFlag_CUSTOM_UI |
-		PF_OutFlag_PIX_INDEPENDENT |
 		PF_OutFlag_SEND_UPDATE_PARAMS_UI |
 		PF_OutFlag_WIDE_TIME_INPUT |
 		PF_OutFlag_DEEP_COLOR_AWARE |	// just 16bpc, not 32bpc
@@ -629,27 +628,6 @@ GlobalSetup (
 	return err;
 }
 
-
-std::string tlmath::evalMathExprStr (std::string expr, seqDataP   *seqP)
-{
-    PF_Boolean returnExprErrB = false;
-    std::string errReturn = "Error \n";
-    MathInfoP miP;
-    funcTransfertInfoP fiP;
-    fiP.evalExpr = parseExpr<PF_FpShort>((void*)&miP, &fiP, expr, *seqP);
-    if (fiP.hasErrorB)
-    {
-        fiP.channelErrorstr = " expression error";
-        returnExprErrB = true;
-        errReturn.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-    }
-    else {
-        errReturn = compile_success;
-        
-    }
-    return errReturn;
-}
-
 void tlmath::evalVertShader(std::string inVertShaderStr, std::string& errReturn)
 {
 
@@ -685,7 +663,6 @@ void tlmath::evalVertShader(std::string inVertShaderStr, std::string& errReturn)
     glDeleteShader(vertShaderSu);
     glFlush();
 }
-
 void tlmath::evalFragShader(std::string inFragmentShaderStr, std::string& errReturn)
 {
     // always restore back AE's own OGL context
@@ -722,7 +699,6 @@ void tlmath::evalFragShader(std::string inFragmentShaderStr, std::string& errRet
     glDeleteShader(fragmentShaderSu);
     glFlush();
 }
-
 PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		    PF_OutData               *out_data,
 			PF_EffectWorld           *inputP,
@@ -739,7 +715,6 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 			const std::string&		fragSh1str,
 			const std::string&		fragSh2str
 )
-
 {
 	PF_Err err = PF_Err_NONE;
 	MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
@@ -856,6 +831,7 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 	}
 	return  err;
 }
+
 static PF_Err GlobalSetdown(
 	PF_InData		*in_data,
 	PF_OutData		*out_data,
@@ -899,8 +875,6 @@ static PF_Err GlobalSetdown(
     
     return PF_Err_NONE;
 }
-
-
 static PF_Err
 RespondtoAEGP (
                PF_InData		*in_data,
@@ -946,18 +920,7 @@ QueryDynamicFlags(
 			out_data->out_flags &= PF_OutFlag_WIDE_TIME_INPUT;
 			out_data->out_flags2 &= PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
 		}
-        if (seqP->needsPixelAroundB){
-			out_data->out_flags &= ~PF_OutFlag_PIX_INDEPENDENT;
-		}
-		else {
-			out_data->out_flags |= PF_OutFlag_PIX_INDEPENDENT;
-		}
-		
-
 	}
-
-
-
 	return err;
 }
 

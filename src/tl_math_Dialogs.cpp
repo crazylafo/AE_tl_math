@@ -102,10 +102,10 @@ AEGP_SetParamStreamValue(PF_InData            *in_data,
 {
     PF_Err  err = PF_Err_NONE,
     err2 = PF_Err_NONE;
-    AEGP_LayerH        layerH;
-    AEGP_StreamRefH effect_streamH = NULL;
-    AEGP_EffectRefH   thisEffect_refH;
-    AEGP_StreamValue2    val;
+    AEGP_LayerH        layerH = nullptr;
+    AEGP_StreamRefH effect_streamH = nullptr;
+    AEGP_EffectRefH   thisEffect_refH = nullptr;
+	AEGP_StreamValue2    val;
     AEGP_StreamValue2    *sample_valP = &val;
     A_Time currT;
 
@@ -271,11 +271,6 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     tlmath::jsonCorrectorStr(alphaErr);
 	tlmath::jsonCorrectorStr(rgbErr);
 
-    tlmath::ExprtkCorrectorStr(redErr);
-    tlmath::ExprtkCorrectorStr(greenErr);
-    tlmath::ExprtkCorrectorStr(blueErr);
-    tlmath::ExprtkCorrectorStr(rgbErr);
-
     //A_long compId,layerIndex, effectIndex;
     //ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
     arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
@@ -346,6 +341,9 @@ tlmath::SetupGetDataBack(
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		ERR(tlmath::copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
+        if (seqP->exprModeB){
+            ERR(tlmath::embedExprInShaders(seqP));
+        }
         ERR(tlmath::updateParamsValue(in_data, params, resultStr));
         ERR(tlmath::evalScripts(seqP));
 		out_data->sequence_data = seq_dataH;
@@ -361,58 +359,181 @@ tlmath::SetupGetDataBack(
 }
 
 
+static void
+AppendGlslInput2dText(std::string& newSh,
+                     std::string  expr,
+                     std::string varStr,
+					 bool*  hasTexture){
+    const std::size_t found = expr.find(varStr);
+    if (found!=std::string::npos){
+        newSh.append(import2dTextGlStr+ varStr+ endLineStr);
+		*hasTexture = true;
+    }
+}
+
+static void
+AppendGlslInputFloat(std::string& newSh,
+                     std::string  expr,
+                std::string varStr){
+    const std::size_t found = expr.find(varStr);
+    if (found!=std::string::npos){
+        newSh.append(importFloatGlStr+ varStr+ endLineStr);
+    }
+}
+static void
+AppendGlslInputVec2d(std::string& newSh,
+                     std::string  expr,
+                     std::string varStr){
+    const std::size_t found = expr.find(varStr);
+    if (found!=std::string::npos){
+        newSh.append(importVec2GlStr+varStr+endLineStr );
+    }
+}
+static void
+AppendGlslInputVec3d(std::string& newSh,
+                     std::string  expr,
+                     std::string varStr){
+    const std::size_t found = expr.find(varStr);
+    if (found!=std::string::npos){
+        newSh.append(importVec3GlStr+ varStr+ endLineStr);
+    }
+}
+static void
+AppendGlslInputBool (std::string& newSh,
+                     std::string  expr,
+                     std::string varStr){
+    const std::size_t found = expr.find(varStr);
+    if (found!=std::string::npos){
+        newSh.append(importBoolGlStr+ varStr+ endLineStr);
+    }
+}
+
+
+PF_Err
+tlmath::embedExprInShaders (seqData  *seqP){
+    PF_Err err = PF_Err_NONE;
+    std::string redExprStr = redFunctionStr+seqP->redExAc+endFunctionStr ;
+    std::string greenExprStr = greenFunctionStr+seqP->greenExAc+endFunctionStr;
+    std::string blueExprStr = blueFunctionStr+seqP->blueExAc+endFunctionStr;
+    std::string alphaExprStr = alphaFunctionStr+seqP->alphaExAc+endFunctionStr;
+    std::string rgbExprStr = rgbFunctionStr+ seqP->rgbExprExAc +endFunctionStr;
+
+
+
+    std::string exprGrpStr =redExprStr+ greenExprStr+blueExprStr+alphaExprStr;
+    if (seqP->exprRGBModeB){
+        AEFX_CLR_STRUCT(exprGrpStr);
+        exprGrpStr =rgbExprStr;
+    }
+
+    //start new Shader as string
+    std::string fragShStr = gl33GeneriqueShInput; //get the classic input
+
+    //bool
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb01NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb02NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb03NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb04NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb05NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb06NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb07NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb08NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb09NameAc);
+    AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb10NameAc);
+
+    //1d
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->time_secNameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->time_frameNameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->frame_rateNameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider01NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider02NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider03NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider04NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider05NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider06NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider07NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider08NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider09NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot01NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot02NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot03NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot04NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot05NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot06NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot07NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot08NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot09NameAc);
+    AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot10NameAc);
+
+    //2d
+    AppendGlslInputVec2d(fragShStr,exprGrpStr, seqP->resolutionNameAc);
+    AppendGlslInputVec2d(fragShStr,exprGrpStr, seqP->compResolutionNameAc);
+
+    //3d
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->layerPositionNameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->layerScaleNameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->cameraPosNameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->cameraTargetNameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->cameraRotationNameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->cameraZoomNameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint01NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint02NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint03NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint04NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP-> paramPoint05NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint06NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint07NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint08NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint09NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramPoint10NameAc);
+
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor01NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor02NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor03NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor04NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP-> paramColor05NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor06NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor07NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor08NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor09NameAc);
+    AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor10NameAc);
+
+    //for texttures
+	bool hasTextureB = false;
+    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP->paramLayer00NameAc, &hasTextureB);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP->paramLayer01NameAc, &hasTextureB);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer02NameAc, &hasTextureB);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer03NameAc, &hasTextureB);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer04NameAc, &hasTextureB);
+
+
+    if (hasTextureB){
+        //add the function to load texture
+		exprGrpStr.append(gl33InputTexture);
+    }
+
+    /* 
+     //for expressions
+     seqP->expr_ColorChNameAc);
+     seqP->expr_lumaNameAc);
+     seqP->expr_pixNameAc);
+     seqP->expr_pix_offNameAc);
+     */
+
+    //embed expressions in shaders and add uniforms in shaders depending of expression.
+    //gl33InputMainGrp
+    //gl33InputMainSplit
+
+    return err;
+
+}
 
 PF_Err
 tlmath::evalScripts(seqData  *seqDataP)
 {
     PF_Err err = PF_Err_NONE;
-    std::string evalRedExpr, evalGreenExpr,evalBlueExpr, evalAlphaExpr, evalVertSh, evalFragSh, evalRgbCh;
+    std::string evalVertSh, evalFragSh;
 
-    evalRedExpr = tlmath::evalMathExprStr (seqDataP->redExAc, &seqDataP);
-    if (evalRedExpr != compile_success){
-        #ifdef AE_OS_WIN
-         strncpy_s(seqDataP->redExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #else
-         strncpy(seqDataP->redExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #endif
-
-    }
-
-    evalGreenExpr = tlmath::evalMathExprStr (seqDataP->greenExAc, &seqDataP);
-    if (evalGreenExpr != compile_success){
-        #ifdef AE_OS_WIN
-                strncpy_s(seqDataP->greenExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #else
-                strncpy(seqDataP->greenExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #endif
-    }
-
-    evalBlueExpr = tlmath::evalMathExprStr (seqDataP->blueExAc, &seqDataP);
-    if (evalBlueExpr != compile_success){
-        #ifdef AE_OS_WIN
-                strncpy_s(seqDataP->blueExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #else
-                strncpy(seqDataP->blueExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #endif
-    }
-
-	evalRgbCh = tlmath::evalMathExprStr(seqDataP->rgbExprExAc, &seqDataP);
-	if (evalRgbCh != compile_success) {
-	#ifdef AE_OS_WIN
-			strncpy_s(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
-	#else
-			strncpy(seqDataP->rgbExprExAc, safeExpr.c_str(), safeExpr.length() + 1);
-	#endif
-		}
-
-    evalAlphaExpr = tlmath::evalMathExprStr (seqDataP->alphaExAc, &seqDataP);
-    if ( evalAlphaExpr != compile_success){
-        #ifdef AE_OS_WIN
-                strncpy_s(seqDataP->alphaExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #else
-                strncpy(seqDataP->alphaExAc, safeExpr.c_str(),  safeExpr.length() + 1);
-        #endif
-    }
 
     tlmath::evalVertShader (seqDataP->Glsl33_VertexShAc, evalVertSh);
     if (evalVertSh != compile_success){
@@ -438,19 +559,10 @@ tlmath::evalScripts(seqData  *seqDataP)
      #ifdef AE_OS_WIN
         strncpy_s(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
         strncpy_s(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
-        strncpy_s(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
-        strncpy_s(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
-        strncpy_s(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
-        strncpy_s(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
-		strncpy_s(seqDataP->rgbError, evalRgbCh.c_str(), evalRgbCh.length() + 1);
      #else
-        strncpy(seqDataP->redError, evalRedExpr.c_str(),  evalRedExpr.length() + 1);
-        strncpy(seqDataP->greenError, evalGreenExpr.c_str(),  evalGreenExpr.length() + 1);
-        strncpy(seqDataP->blueError,evalBlueExpr.c_str(), evalBlueExpr.length() + 1);
-        strncpy(seqDataP->alphaError,evalAlphaExpr.c_str(), evalAlphaExpr.length() + 1);
+
     strncpy(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
     strncpy(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
-		strncpy(seqDataP->rgbError, evalRgbCh.c_str(), evalRgbCh.length() + 1);
      #endif
 
 

@@ -12,7 +12,59 @@
 //GLSL SCRIPTS
 
 static std::string compile_success = "compiled successfully";
-static std::string safeExpr ="0";
+static std::string endLineStr = " ;\n";
+static std::string importFloatGlStr = "uniform float ";
+static std::string importVec2GlStr = "uniform vec3 ";
+static std::string importVec3GlStr = "uniform vec3 ";
+static std::string importBoolGlStr = "uniform bool ";
+static std::string import2dTextGlStr = "uniform sampler2D ";
+
+static std::string  endFunctionStr ="\n }; \n";
+static std::string redFunctionStr= "float redExpr (vec2 fragCoord){ \n";
+static std::string greenFunctionStr= "float greenExpr (vec2 fragCoord){ \n";
+static std::string blueFunctionStr= "float blueExpr (vec2 fragCoord){ \n";
+static std::string alphaFunctionStr= "float alphaExpr (vec2 fragCoord){ \n";
+static std::string rgbFunctionStr= "float rgbExpr (vec2 fragCoord){ \n";
+
+
+
+static std::string gl33GeneriqueShInput= R"=====(
+     uniform float multiplier16bit; //proper to AE 16 bits depth.
+     out vec4 fragColorOut;
+     vec2 uv;
+     uniform vec2 resolution;
+)=====";
+
+static std::string gl33InputTexture =R"=====(
+vec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)
+{
+    vec4 textureIn = texture( tex2d, uv.xy);
+    textureIn =  textureIn * multiplier16bit;
+    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);
+    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);
+    return  textureIn ;
+})=====";
+
+
+
+static std::string gl33InputMainGrp =R"=====(
+void main(void)
+{
+    fragCoord = gl_FragCoord;
+    gl_coord.y = (resolution.y - out_uvs.y)-gl_FragCoord.y;
+    fragColorOut = (ExprGrp(fragCoord);
+})=====";
+
+static std::string gl33InputMainSplit =R"=====(
+void main(void)
+{
+    gl_coord = gl_FragCoord;
+    gl_coord.y = (resolution.y - out_uvs.y)-gl_FragCoord.y;
+    fragColorOut = (ExprSplitR(fragCoord),ExprSplitG(fragCoord), ExprSplitB(fragCoord), ExprSplitA(fragCoord));
+})=====";
+
+
+
 static std::string glvertstr = "#version 330 \n\
 in vec4 Position;\n\
 in vec2 UVs;\n\
@@ -47,7 +99,6 @@ static std::string glErrorMessageStr = R"=====(
 // based on http://glslsandbox.com/e#53346.0
 #version 330 // glsls version for opengl 3.3
 uniform float multiplier16bit; //proper to AE 16 bits depth.
-
 out vec4 fragColorOut;
 vec2 uv;
 uniform vec2 resolution;
@@ -138,7 +189,6 @@ void main( void )
     fragColorOut = vec4(1.-pow(length(color)-0.25, 4.)*vec3(.5,.5,.5), 1.0);
 }
 )=====";
-static std::string exprErrorMessageStr ="0";
 
 
 #endif /* tl_defaultShaders_h*/

@@ -191,174 +191,6 @@ tlmath::ExtLayerInput(void *refcon,
 }
 
 PF_Err
-tlmath::ExprRender(PF_OutData     *out_data,
-	PF_PixelFormat format,
-	PF_EffectWorld *inputP,
-	PF_EffectWorld *outputP,
-	PF_EffectWorld *extLW,
-	AEGP_SuiteHandler &suites,
-	void    *refcon,
-	void    *refconFlags,
-	void    *refconExpr)
-{
-	PF_Err err = PF_Err_NONE;
-	MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
-	MathInfo    miPP;
-	AEFX_CLR_STRUCT(miPP); //new pointer wich can be modified in iterations
-	miPP = *miP;
-	FlagsInfoP         *flagsP = reinterpret_cast<FlagsInfo*>(refconFlags);
-	FlagsInfoP flagsPP;
-	AEFX_CLR_STRUCT(flagsPP);
-	flagsPP = *flagsP;
-	ExprInfoP          *exprP = reinterpret_cast<ExprInfoP*>(refconExpr);
-	funcTransfertInfo fiP;
-	AEFX_CLR_STRUCT(fiP);
-	seqDataP            seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
-
-
-	WorldTransfertInfo   wtiP;
-	AEFX_CLR_STRUCT(wtiP);
-	wtiP.inW = *inputP;
-	wtiP.outW = *outputP;
-	if (flagsPP.PixelsCallExternalInputB[0]) { //&extLW->data &&
-		wtiP.extLW = *extLW;
-	}
-
-	std::string exprErrStr = "Error \n";
-	PF_Boolean returnExprErrB = false;
-
-    if (flagsP->exprRGBModeB){
-        fiP.rgbExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->rgbstr, seqP);
-        if (fiP.hasErrorB)
-        {
-            fiP.channelErrorstr = "RGB errors";
-            returnExprErrB = true;
-            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-        }
-
-    }
-    else{
-        fiP.redExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->redstr, seqP);
-        if (fiP.hasErrorB)
-        {
-            fiP.channelErrorstr = "red channel expression";
-            returnExprErrB = true;
-            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-        }
-        fiP.greenExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->greenstr, seqP);
-        if (fiP.hasErrorB)
-        {
-            fiP.channelErrorstr = "green channel expression";
-            returnExprErrB = true;
-            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-
-        }
-        fiP.blueExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->bluestr, seqP);
-        if (fiP.hasErrorB)
-        {
-            fiP.channelErrorstr = "blue channel expression";
-            returnExprErrB = true;
-            exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-
-        }
-    }
-	fiP.alphaExpr = parseExpr<PF_FpShort>((void*)&miPP, &fiP, *exprP->alphastr, seqP);
-	if (fiP.hasErrorB)
-	{
-		fiP.channelErrorstr = "alpha channel expression";
-		returnExprErrB = true;
-		exprErrStr.append(fiP.channelErrorstr).append(": ").append(fiP.errorstr).append("\n");
-	}
-
-	if (returnExprErrB) {
-		suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-			exprErrStr.c_str());
-	}
-
-	std::vector<std::thread> workers_thrds;
-	A_long part_length, lastPart_length, num_thrd;
-	AEFX_CLR_STRUCT(part_length);
-	AEFX_CLR_STRUCT(num_thrd);
-	AEFX_CLR_STRUCT(lastPart_length);
-	ERR(suites.IterateSuite1()->AEGP_GetNumThreads(&num_thrd));
-	part_length = A_long((outputP->height / (float)num_thrd));
-	lastPart_length = part_length + (outputP->height - (part_length*num_thrd));
-	thSafeExpr_render* thRenderPtr = new thSafeExpr_render();
-	switch (format) {
-
-	case PF_PixelFormat_ARGB128:
-		AEFX_CLR_STRUCT(workers_thrds);
-		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&thSafeExpr_render::render_32,
-				thRenderPtr,
-				(void*)&miPP,
-				(void*)&fiP,
-				(void*)&flagsPP,
-				(void*)&wtiP,
-				thrd_id,
-				num_thrd,
-				part_length,
-				lastPart_length));
-		}
-		for (auto& t : workers_thrds) {
-			t.join();
-		}
-		delete thRenderPtr;
-		outputP = &wtiP.outW;
-		break;
-
-	case PF_PixelFormat_ARGB64:
-		AEFX_CLR_STRUCT(workers_thrds);
-		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&thSafeExpr_render::render_16,
-				thRenderPtr,
-				(void*)&miPP,
-				(void*)&fiP,
-				(void*)&flagsPP,
-				(void*)&wtiP,
-				thrd_id,
-				num_thrd,
-				part_length,
-				lastPart_length));
-		}
-		for (auto& t : workers_thrds) {
-			t.join();
-		}
-		delete thRenderPtr;
-		outputP = &wtiP.outW;
-		break;
-
-	case PF_PixelFormat_ARGB32:
-		AEFX_CLR_STRUCT(workers_thrds);
-		for (A_long thrd_id = 0; thrd_id < num_thrd; ++thrd_id) {
-			workers_thrds.emplace_back(std::thread(&thSafeExpr_render::render_8,
-				thRenderPtr,
-				(void*)&miPP,
-				(void*)&fiP,
-				(void*)&flagsPP,
-				(void*)&wtiP,
-				thrd_id,
-				num_thrd,
-				part_length,
-				lastPart_length));
-		}
-		for (auto& t : workers_thrds) {
-			t.join();
-		}
-		delete thRenderPtr;
-		outputP = &wtiP.outW;
-
-		break;
-
-	default:
-		err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-		break;
-	}
-	return err;
-}
-
-
-PF_Err
 tlmath::PreRender(PF_InData                *in_data,
 	PF_OutData                *out_data,
 	PF_PreRenderExtra        *extraP)
@@ -827,7 +659,7 @@ tlmath::SmartRender(
                 copyPointsParam(point_param[i], &miP->inPoints[i]);
                 }
              for (int i =0; i<10; i++){
-                 miP->inCboxF[i] = PF_FpShort (cb_param[i].u.bd.value);
+                 miP->inCboxF[i] = bool (cb_param[i].u.bd.value);
                 }
 			 for (int i = 0; i < 10; i++) {
 				 miP->inRotF[i] = PF_FpShort(rot_param[i].u.ad.value);
@@ -842,8 +674,6 @@ tlmath::SmartRender(
                  miP->inColors[i].color[1] =tempFloat.green;
                  miP->inColors[i].color[2] =tempFloat.blue;
                 }
-            miP->pixF[0] = 0;
-            miP->pixF[1] = 0;
 			//CALL SEQP
 			std::string redExprStr, greenExprStr, blueExprStr, alphaExprStr, frag1Str, vertStr, rgbstr;
 			if (seqP && !err) {
@@ -859,7 +689,6 @@ tlmath::SmartRender(
                     flagsP.PixelsCallExternalInputB[i] = seqP->pixelsCallExternalInputB[i];
                 }
 				flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
-				flagsP.NeedsPixelAroundB = seqP->needsPixelAroundB;
 				flagsP.NeedsLumaB = seqP->needsLumaB;
 				flagsP.parserModeB = seqP->exprModeB;
                 flagsP.exprRGBModeB = seqP->exprRGBModeB;
@@ -927,16 +756,7 @@ tlmath::SmartRender(
                                           suites,
                                           format));
             }
-			//CALL PARSER MODE
-			if (!err && flagsP.parserModeB) {
-				ERR(tlmath::ExprRender(out_data, format, inputP, outputP, &extL1W, suites,
-					(void*)miP,
-					(void*)&flagsP,
-					(void*)&ExprP));
-
-			}
-			// CALL GLSL
-			else if (!err) {
+            if (!err) {
                 ERR(tlmath::Render_GLSL(in_data,
 					out_data,
 					inputP,

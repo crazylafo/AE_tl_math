@@ -37,19 +37,6 @@ void tlmath::scriptCorrectorStr(std::string& str)
 	strReplace(str, "\\t", "  ");
 	strReplace(str, "\\'", "\'");
 }
-
-void tlmath::ExprtkCorrectorStr(std::string& str)
-{
-	scriptCorrectorStr(str);
-	//convert some AE javascript operator to exprtk operators
-	strReplace(str, "&&", "&");
-	strReplace(str, "||", "|");
-	strReplace(str, "++", "+=1");
-	strReplace(str, "--", "-=1");
-	strReplace(str, " = ", " := ");
-	strReplace(str, "\t", "    ");
-	strReplace(str, "\"", " '");
-}
  void tlmath::jsonCorrectorStr(std::string& str)
 {
 	//strReplace(str, "\\", " ");
