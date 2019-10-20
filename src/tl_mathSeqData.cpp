@@ -225,16 +225,13 @@ tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::stri
 	tlmath::scriptCorrectorStr(new_vert);
     if (curr_fragSh.compare(new_frag) != 0 || curr_vertSh.compare(new_vert) != 0)
     {
-        seqDataP->resetShaderB = true;
         //copy shaders
 		std::size_t  fragLength = new_frag.copy(seqDataP->Glsl33_FragmentShAc, new_frag.length());
 		seqDataP->Glsl33_FragmentShAc[fragLength] = '\0';
 		std::size_t  vertLength = new_vert.copy(seqDataP->Glsl33_VertexShAc, new_vert.length());
-		 seqDataP->Glsl33_VertexShAc[vertLength] = '\0';
+		seqDataP->Glsl33_VertexShAc[vertLength] = '\0';
     }
-    else {
-        seqDataP->resetShaderB = false;
-    }
+
      //copy expressions params name
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_current_channel",seqDataP->expr_ColorChNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix",seqDataP->expr_pixNameAc);
@@ -405,7 +402,8 @@ tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::stri
 	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/8/name", seqDataP->paramRot09NameAc);
 	seqDataP->paramRot10VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/9/visibleB");
 	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/9/name", seqDataP->paramRot10NameAc);
-    
+
+
     return err;
 }
 

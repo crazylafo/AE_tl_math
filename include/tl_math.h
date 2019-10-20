@@ -262,7 +262,6 @@ typedef struct {
     bool pixelsCallExternalInputB[4];
     PF_Boolean needsLumaB;
     PF_Boolean presetHasWideInputB;
-	PF_Boolean resetShaderB;
 
 } seqData, *seqDataP, **seqDataH;
 
@@ -548,7 +547,6 @@ private:
                 PF_PixelFormat format,
                 AEGP_SuiteHandler &suites,
                 void  *refcon,
-                PF_Boolean ShaderResetB,
                 const std::string& vertexShstr,
                 const std::string& fragSh1str,
                 const std::string&        fragSh2str);

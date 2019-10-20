@@ -768,14 +768,15 @@ tlmath::SmartRender(
 					format,
 					suites,
 					(void*)miP,
-					seqP->resetShaderB,
 					*ExprP.vertexstr,
 					*ExprP.frag1str,
 					*ExprP.frag2str));
+
 			}
 
 			//CHECKIN PARAMS
 			PF_UNLOCK_HANDLE(arbH);
+
 			ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &description_param));
 			ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));

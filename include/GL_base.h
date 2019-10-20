@@ -137,7 +137,7 @@ enum { PositionSlot, UVSlot };
 void AESDK_OpenGL_Startup(AESDK_OpenGL_EffectCommonData& inData, const AESDK_OpenGL_EffectCommonData* inRootContext = nullptr);
 void AESDK_OpenGL_Shutdown(AESDK_OpenGL_EffectCommonData& inData);
 
-void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData, PF_OutData *out_data, AEGP_SuiteHandler &suites, u_short inBufferWidth, u_short inBufferHeight, PF_Boolean ShaderResetB, const std::string& vert1Str, const std::string& frag1Str, const std::string& frag2Str);
+void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData, PF_OutData *out_data, AEGP_SuiteHandler &suites, u_short inBufferWidth, u_short inBufferHeight,  const std::string& vert1Str, const std::string& frag1Str, const std::string& frag2Str);
 void AESDK_OpenGL_MakeReadyToRender(AESDK_OpenGL_EffectRenderData& inData, gl::GLuint textureHandle);
 void AESDK_OpenGL_InitShader(gl::GLuint *ObjSu, PF_OutData *out_data, AEGP_SuiteHandler &suites, std::string inVertexShaderStr, std::string inFragmentShaderStr);
 void AESDK_OpenGL_BindTexture0ToTarget(gl::GLuint program, gl::GLint inTexture, std::string inTargetName);

@@ -444,10 +444,10 @@ namespace {
 		AESDK_OpenGL_BindTexture3ToTarget(renderContext->mProgramObjSu, inputExtFrame3Texture, seqP->paramLayer03NameAc);
         AESDK_OpenGL_BindTexture4ToTarget(renderContext->mProgramObjSu, inputExtFrame4Texture, seqP->paramLayer04NameAc);
 		// render
+
 		glBindVertexArray(renderContext->vao);
 		RenderQuad(renderContext->quad);
 		glBindVertexArray(0);
-
 		glUseProgram(0);
 		glDisable(GL_BLEND);
 	}
@@ -710,11 +710,9 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 			PF_PixelFormat           format,
 			AEGP_SuiteHandler        &suites,
 			void                    *refcon, 
-			PF_Boolean              ShaderResetB,
 			const std::string&		vertexShstr,
 			const std::string&		fragSh1str,
-			const std::string&		fragSh2str
-)
+			const std::string&		fragSh2str)
 {
 	PF_Err err = PF_Err_NONE;
 	MathInfo           *miP = reinterpret_cast<MathInfo*>(refcon);
@@ -750,7 +748,6 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 			suites,
 			widthL,
 			heightL,
-			ShaderResetB,
 			vertexShstr,
 			fragSh1str,
 			fragSh2str);
@@ -798,7 +795,7 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		// swizzle using the previous output
+		//swizzle using the previous output
 		SwizzleGL(renderContext, widthL, heightL, renderContext->mOutputFrameTexture, multiplier16bit);
 		/*
 		if (hasGremedy) {

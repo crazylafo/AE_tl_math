@@ -438,6 +438,7 @@ AESDK_OpenGL_EffectRenderData::~AESDK_OpenGL_EffectRenderData()
 	if (mProgramObjSu) {
 		glDeleteProgram(mProgramObjSu);
 	}
+	
 	if (mProgramObj2Su) {
 		glDeleteProgram(mProgramObj2Su);
 	}
@@ -505,11 +506,11 @@ void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData,
 	AEGP_SuiteHandler &suites,
 	u_short inBufferWidth,
 	u_short inBufferHeight,
-	PF_Boolean ShaderResetB,
 	const std::string& vert1Str,
 	const std::string& frag1Str,
 	const std::string& frag2Str)
 {
+
 	bool sizeChangedB = inData.mRenderBufferWidthSu != inBufferWidth || inData.mRenderBufferHeightSu != inBufferHeight;
 	
 	inData.mRenderBufferWidthSu = inBufferWidth;
@@ -579,7 +580,7 @@ void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData,
 		glTexImage2D(GL_TEXTURE_2D, 0, (GLint)GL_RGBA32F, inData.mRenderBufferWidthSu, inData.mRenderBufferHeightSu, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 	}
 
-	if (inData.mProgramObjSu == 0 || ShaderResetB) {
+	if (inData.mProgramObjSu == 0) {
 		//initialize and compile the shader objects
 		 AESDK_OpenGL_InitShader(&inData.mProgramObjSu,
 								out_data,
@@ -587,6 +588,7 @@ void AESDK_OpenGL_InitResources(AESDK_OpenGL_EffectRenderData& inData,
 								vert1Str,
 								frag1Str);
 	}
+	
 	if (inData.mProgramObj2Su == 0) {
 		//initialize and compile the shader objects
 		 AESDK_OpenGL_InitShader(&inData.mProgramObj2Su,
