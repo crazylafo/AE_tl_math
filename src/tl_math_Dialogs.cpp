@@ -287,7 +287,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     jsonDump.append("'''");
 
 
-s	AEFX_CLR_STRUCT(scriptAC);
+	AEFX_CLR_STRUCT(scriptAC);
         sprintf(scriptAC,
 		script_sendToMathCEP.c_str(),
 		jsonDump.c_str());

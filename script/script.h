@@ -16,7 +16,12 @@ std::string script_callMathCEP = R"=====(
         mathEventCEPCall.dispatch();
         pluginId = [compId, layerIndex, effectIndex]; //global variable to communicate between plugin and CEP, when cep is opened.
         }
+try{
     callCEP(%s, %d, %d, %d);
+}catch(e){
+    alert ("error calling cep: "+e)
+}
+
     )=====";
 
 
@@ -34,6 +39,10 @@ std::string script_sendToMathCEP = R"=====(
         mathEventToCEPObj.type="tlmath.arbSentfromPlugin";
         mathEventToCEPObj.data=arbData;
         mathEventToCEPObj.dispatch();
+    }
+    try{
+    }catch(e){
+        alert("error sending Data To CEP: "+e);
     }
     sendToMathCEP(%s);
 )=====";
@@ -53,7 +62,12 @@ function getDataFromCEP(){
     tlmathDataFromSetup = null;//delte the variable to free the memory (poor AE memory)
 	return result;
 }
-getDataFromCEP();
+try{
+    getDataFromCEP();
+}catch(e){
+    alert ("error getting Data From CEP: " +e);
+}
+
 
 
 )=====";
