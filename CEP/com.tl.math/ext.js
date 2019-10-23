@@ -29,7 +29,11 @@ function onLoaded() {
 	var arbdefaultStr = loadDefaultArb();
 	
 	var arbData = JSON.parse(arbdefaultStr);
-	copyDataToGUI (arbData, editors,numParams);
+	try{
+		copyDataToGUI (arbData, editors,numParams);
+	}catch(e){
+		alert(e)
+	}
 	
 	//presets loading
 	var presetsList;
@@ -47,13 +51,21 @@ function onLoaded() {
 			arbData = fromArbEvent.data;
 			alert("test")
 			pluginVersion = parseInt(arbData.effectInfo.pluginVersion);
-			copyDataToGUI (arbData, editors,numParams);
+			try{
+				copyDataToGUI (arbData, editors,numParams);
+			}catch(e){
+				alert(e)
+			}
 	});
 	csInterface.addEventListener("tlmath.arbSentfromPreset", function(fromArbEvent){
 		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
 		if (parseInt(pluginVersion)<parseInt(fromArbEvent.data.effectInfo.minimalPluginVersion)) {alert (err.pluginVersion); return}
-			arbData = fromArbEvent.data; 
-			copyDataToGUI (arbData, editors,numParams);
+			arbData = fromArbEvent.data;
+			try{
+				copyDataToGUI (arbData, editors,numParams);
+			}catch(e){
+				alert(e)
+			} 
 		});
 	$("#seachBarInput").on("keyup", function(){
 		var filter = $("#seachBarInput").val().toUpperCase();
@@ -94,11 +106,16 @@ function onLoaded() {
 		tooglePresets();
 	});
 	$("#btnApply").on("click", function() {
-		var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
-		if (arbDataToSend){
-			var arbDataStr = JSON.stringify(arbDataToSend);
-			evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
-			}
+		try{
+			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
+			if (arbDataToSend){
+				var arbDataStr = JSON.stringify(arbDataToSend);
+				evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+				}
+		}catch(e){
+			alert ("error exporting from panel to plugin: "+e)
+		}
+
 		});
 	}
 function sendMessageToPlugin(){
@@ -128,7 +145,12 @@ function loadPresetFromMenu(presetsList, editors, numParams){
 		return
 		}
 	var jsonDataObj = JSON.parse(presetsList.preset[selectedPreset].str);
-	copyDataToGUI (jsonDataObj,  editors, numParams);
+	try{
+		copyDataToGUI (jsonDataObj,  editors, numParams);
+	}catch(e){
+		alert (e)
+	}
+	
 	}
 function loadPresetJSONFile(){
 	 evalScript("$._ext.loadJSONFile()");
@@ -317,12 +339,9 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#camera_rot").text(arbData.composition.camera_rotation.toString());
 	$("#camera_zoom").text(arbData.composition.camera_zoom.toString());
 	$("#expr_current_channelName").text(arbData.math_expression.expr_current_channel.toString());
-	$("#expr_pixName").text(arbData.math_expression.expr_pix.toString());
 	$("#expr_lumaName").text(arbData.math_expression.expr_luma.toString());
-	$("#expr_red_offName").text(arbData.math_expression.expr_red_off.toString());
-	$("#expr_green_offName").text(arbData.math_expression.expr_green_off.toString());
-	$("#expr_blue_offName").text(arbData.math_expression.expr_blue_off.toString());
-	$("#expr_alpha_offName").text(arbData.math_expression.expr_alpha_off.toString());
+	$("#expr_pixName").text(arbData.math_expression.expr_pix.toString());
+	$("#expr_pix_offName").text(arbData.math_expression.expr_pix_off.toString());
 	getParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	getParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	getParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
@@ -366,14 +385,14 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.composition.camera_rotation = $("#camera_rot").val().toString();
 	arbData.composition.camera_zoom = $("#camera_zoom").val().toString();
 	//copy settings for expr
+	
 	arbData.math_expression.exprRGBModeB = $("#rgbmodeB").is(':checked');
 	arbData.math_expression.expr_current_channel = $("#expr_current_channelName").val().toString();
-	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
 	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
-	arbData.math_expression.expr_red_off =$("#expr_red_offName").val().toString();
-	arbData.math_expression.expr_green_off =$("#expr_green_offName").val().toString();
-	arbData.math_expression.expr_blue_off =$("#expr_blue_offName").val().toString();
-	arbData.math_expression.expr_alpha_off=$("#expr_alpha_offName").val().toString();
+	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
+	alert ("step1")
+	arbData.math_expression.expr_pix_off =$("#expr_pix_offName").val().toString();
+	alert ("step2")
 	sendParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	sendParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	sendParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
