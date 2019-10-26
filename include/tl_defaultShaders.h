@@ -78,15 +78,18 @@ gl_Position = out_pos; \n\
 out_uvs = UVs;\n\
 }";
 
-static std::string glfrag2str ="#version 330\n\
+static std::string glfrag2str = "#version 330\n\
 uniform sampler2D layerTex;\n\
 uniform float multiplier16bit;\n\
-in vec4 out_pos;\n\
-in vec2 out_uvs;\n\
-out vec4 colourOut;\n\
+uniform vec2 resolution;\n\
+in vec4 out_pos; \n\
+in vec2 out_uvs; \n\
+out vec4 colourOut; \n\
 void main(void)\n\
 {\n\
-colourOut = texture( layerTex, out_uvs.xy ); \n\
+vec2 uv_AE = out_uvs;\n\
+uv_AE.y = 1. - out_uvs.y;\n\
+colourOut = texture2D(layerTex, uv_AE);\n\
 if (colourOut.a == 0) {\n\
 colourOut = vec4(0, 0, 0, 0);\n\
 } else {\n\
@@ -175,9 +178,7 @@ vec3 hsv2rgb_smooth( in vec3 c )
 void main( void )
 {
     vec2 aspect = resolution.xy / resolution.y;
-    vec2 fragCoord = gl_FragCoord.xy;
-    fragCoord.y =  resolution.y -gl_FragCoord.y;
-    uv =  ( fragCoord.xy / resolution.y ) - aspect / 2.0;
+    uv =  ( gl_FragCoord.xy / resolution.y ) - aspect / 2.0;
     float _d =  1.0-length(uv);
     uv *= 18.0 ;
     uv.y -= 3.;

@@ -137,6 +137,8 @@ namespace {
 
 		glTexImage2D(GL_TEXTURE_2D, 0, (GLint)GL_RGBA32F, input_worldP->width, input_worldP->height, 0, GL_RGBA, GL_FLOAT, nullptr);
 
+		
+
 		multiplier16bitOut = 1.0f;
 		switch (format)
 		{
@@ -197,6 +199,7 @@ namespace {
 		//unbind all textures
 		glBindTexture(GL_TEXTURE_2D, textureNum);
 
+
 		return inputFrameTexture;
 	}
 
@@ -230,6 +233,8 @@ namespace {
 		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
 		location = glGetUniformLocation(renderContext->mProgramObj2Su, "multiplier16bit");
 		glUniform1f(location, multiplier16bit);
+		location = glGetUniformLocation(renderContext->mProgramObj2Su, "resolution");
+		glUniform2f(location, widthL, heightL);
 
 		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObj2Su, inputFrameTexture, std::string("videoTexture"));
 
@@ -767,7 +772,6 @@ PF_Err tlmath::Render_GLSL(PF_InData                *in_data,
 		// Set up the frame-buffer object just like a window.
 		AESDK_OpenGL_MakeReadyToRender(*renderContext.get(), renderContext->mOutputFrameTexture);
 		ReportIfErrorFramebuffer(in_data, out_data);
-
 		glViewport(0, 0, widthL, heightL);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
