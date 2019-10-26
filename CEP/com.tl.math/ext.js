@@ -205,6 +205,10 @@ function cleanJsonFromArbStr (str){
 
     return str;
 	}
+function setConsoleStr (consoleName, strRepport){
+	var newStr = consoleName.toString()+"<br/>"+ cleanJsonFromArbStr(strRepport).replace("\\n", "<br/>");
+	return newStr
+}
 function setflagFromGL (arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
@@ -281,11 +285,11 @@ function getParamsSettings(arbData, paramName, numParams, paramDimension, paramG
 	}
 function sendParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
 	
-	arbData.gui_settings[paramGroupId].grpName =$("#"+paramName+"GrpName").val().toString();	
+	arbData.gui_settings[paramGroupId].grpName =safeCharsForName ($("#"+paramName+"GrpName").val().toString());	
 	arbData.gui_settings[paramGroupId].grpVisibleB =$("#"+paramName+"GrpVisible").is(':checked');
 	
 	for (var i=0; i<numParams; i++){
-		arbData.gui_settings[paramGroupId].params[i].name =$("#"+paramName+i+"_name").val().toString();
+		arbData.gui_settings[paramGroupId].params[i].name =safeCharsForName ($("#"+paramName+i+"_name").val().toString());
 		arbData.gui_settings[paramGroupId].params[i].visibleB= $("#"+paramName+i+"_visible").is(':checked');
 		for(var j=0; j<paramDimension; j++){
 			arbData.gui_settings[paramGroupId].params[i].defaultVal[j]=parseFloat($("#"+paramName+i+'_defaultVal'+j).val());
@@ -294,14 +298,18 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 	return arbData;
 
 }
+function safeCharsForName (nameStr){
+	var safeName = nameStr.toString().replace(/[^\w\s]/gi, '');
+	return safeName
+	}
 function copyDataToGUI (arbData, editors, numParams) {
-	$("#gl33_frag_tab_console").html(cleanJsonFromArbStr(arbData.gl_expression.gl33_frag_error.toString()).replace("\\n", "<br/>"));
-	$("#gl33_vert_tab_console").html(cleanJsonFromArbStr(arbData.gl_expression.gl33_vert_error.toString()).replace("\\n", "<br/>"));
-	$("#expr_red_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.red_error.toString()).replace("\\n", "<br/>"));	
-	$("#expr_green_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.green_error.toString()).replace("\\n", "<br/>"));
-	$("#expr_blue_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.blue_error.toString()).replace("\\n", "<br/>"));
-	$("#expr_rgb_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.rgb_error.toString()).replace("\\n", "<br/>"));
-	$("#expr_alpha_tab_console").html(cleanJsonFromArbStr(arbData.math_expression.alpha_error.toString()).replace("\\n", "<br/>"));
+	$("#gl33_frag_tab_console").html(setConsoleStr ("Console - Fragment Shader", arbData.gl_expression.gl33_frag_error.toString()));
+	$("#gl33_vert_tab_console").html(setConsoleStr ("Console - Vertex Shader",arbData.gl_expression.gl33_vert_error.toString()));
+	$("#expr_red_tab_console").html(setConsoleStr ("Console - Red Channel",arbData.math_expression.red_error.toString()));	
+	$("#expr_green_tab_console").html(setConsoleStr ("Console - Green Channel",arbData.math_expression.green_error.toString()));
+	$("#expr_blue_tab_console").html(setConsoleStr ("Console - Blue Channel",(arbData.math_expression.blue_error.toString())));
+	$("#expr_rgb_tab_console").html(setConsoleStr ("Console - RGB Channels",arbData.math_expression.rgb_error.toString()));
+	$("#expr_alpha_tab_console").html(setConsoleStr ("Console - Alpha Channel",arbData.math_expression.alpha_error.toString()));
 	if (arbData.gl_expression.gl33_frag_sh){
 		editors.gl33_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl33_frag_sh.toString()), -1);
 	}
@@ -333,21 +341,21 @@ function copyDataToGUI (arbData, editors, numParams) {
 		$("#langSelec").val("mExpr");
 	}
 	$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
-	$("#resolutionName").text(arbData.composition.resolution.toString());
-	$("layerPositionName").text(arbData.composition.layerPosition.toString());
-	$("layerScaleName").text(arbData.composition.layerScale.toString());
-	$("compResolutionName").text(arbData.composition.compResolution.toString());
-	$("#tsecName").text(arbData.composition.time_sec.toString());
-	$("#tframeName").text(arbData.composition.time_frame.toString());
-	$("#fpsName").text(arbData.composition.frame_rate.toString());
-	$("#camera_pos").text(arbData.composition.camera_position.toString());
-	$("#camera_targ").text(arbData.composition.camera_target.toString());
-	$("#camera_rot").text(arbData.composition.camera_rotation.toString());
-	$("#camera_zoom").text(arbData.composition.camera_zoom.toString());
-	$("#expr_current_channelName").text(arbData.math_expression.expr_current_channel.toString());
-	$("#expr_lumaName").text(arbData.math_expression.expr_luma.toString());
-	$("#expr_pixName").text(arbData.math_expression.expr_pix.toString());
-	$("#expr_pix_offName").text(arbData.math_expression.expr_pix_off.toString());
+	$("#resolutionName").val(arbData.composition.resolution.toString());
+	$("#layerPositionName").val(arbData.composition.layerPosition.toString());
+	$("#layerScaleName").val(arbData.composition.layerScale.toString());
+	$("#compResolutionName").val(arbData.composition.compResolution.toString());
+	$("#tsecName").val(arbData.composition.time_sec.toString());
+	$("#tframeName").val(arbData.composition.time_frame.toString());
+	$("#fpsName").val(arbData.composition.frame_rate.toString());
+	$("#camera_pos").val(arbData.composition.camera_position.toString());
+	$("#camera_targ").val(arbData.composition.camera_target.toString());
+	$("#camera_rot").val(arbData.composition.camera_rotation.toString());
+	$("#camera_zoom").val(arbData.composition.camera_zoom.toString());
+	$("#expr_current_channelName").val(arbData.math_expression.expr_current_channel.toString());
+	$("#expr_lumaName").val(arbData.math_expression.expr_luma.toString());
+	$("#expr_pixName").val(arbData.math_expression.expr_pix.toString());
+	$("#expr_pix_offName").val(arbData.math_expression.expr_pix_off.toString());
 	getParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	getParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	getParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
@@ -359,19 +367,63 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
 	$("#layer01_name").val(arbData.gui_settings.layerGrp.extLayer_1.name.toString());
 	$("input[name=layer01Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_1.visibleB);
+	$("#layer02_name").val(arbData.gui_settings.layerGrp.extLayer_2.name.toString());
+	$("input[name=layer02Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_2.visibleB);
+	$("#layer03_name").val(arbData.gui_settings.layerGrp.extLayer_3.name.toString());
+	$("input[name=layer03Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_3.visibleB);
+	$("#layer04_name").val(arbData.gui_settings.layerGrp.extLayer_4.name.toString());
+	$("input[name=layer04Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_4.visibleB);
 	}
+
 function sendDataToPlugin(editors, arbData, numParams) {
+	var fragLimit = 25000;
+	var VertLimit = 25000;
+	var exprLimit = 4096;
+	var descriptionLimit = 2048;
 	//copy  expressions
-	arbData.gl_expression.gl33_frag_sh = cleanJsonToArbStr((editors.gl33_frag_editor.getValue()).toString());
-	arbData.gl_expression.gl33_vert_sh = cleanJsonToArbStr(( editors.gl33_vert_editor.getValue()).toString());
-	arbData.math_expression.redExpr= cleanJsonToArbStr((editors.expr_red_editor.getValue()).toString());
-	arbData.math_expression.greenExpr =cleanJsonToArbStr(( editors.expr_green_editor.getValue()).toString())
-	arbData.math_expression.blueExpr =  cleanJsonToArbStr((editors.expr_blue_editor.getValue()).toString());
-	arbData.math_expression.rgbExpr =  cleanJsonToArbStr((editors.expr_rgb_editor.getValue()).toString());
-	arbData.math_expression.alphaExpr = cleanJsonToArbStr(( editors.expr_alpha_editor.getValue()).toString());
-	arbData.effectInfo.presetName = $("#presetName").val().toString();
-	arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
-	arbData.effectInfo.tags =  ($("#presetTags").val().split(","));
+	if (editors.gl33_frag_editor.getValue().toString().length <fragLimit){
+		arbData.gl_expression.gl33_frag_sh = cleanJsonToArbStr((editors.gl33_frag_editor.getValue()).toString());
+	}else{
+		alert ("Fragment Shader text is tool long");
+	}
+	if (editors.gl33_vert_editor.getValue().toString().length <VertLimit){
+		arbData.gl_expression.gl33_vert_sh = cleanJsonToArbStr(( editors.gl33_vert_editor.getValue()).toString());
+	}else{
+		alert ("Vertex Shader text is tool long");
+	}
+	if (editors.expr_red_editor.getValue().toString().length <exprLimit){
+		arbData.math_expression.redExpr = cleanJsonToArbStr(( editors.expr_red_editor.getValue()).toString());
+	}else{
+		alert ("red expression text is tool long");
+	}
+	if (editors.expr_green_editor.getValue().toString().length <exprLimit){
+		arbData.math_expression.greenExpr= cleanJsonToArbStr(( editors.expr_green_editor.getValue()).toString());
+	}else{
+		alert ("green expression text is tool long");
+	}
+	if (editors.expr_blue_editor.getValue().toString().length <exprLimit){
+		arbData.math_expression.blueExpr= cleanJsonToArbStr(( editors.expr_blue_editor.getValue()).toString());
+	}else{
+		alert ("blue expression text is tool long");
+	}
+	if (editors.expr_rgb_editor.getValue().toString().length <exprLimit){
+		arbData.math_expression.rgbExpr= cleanJsonToArbStr(( editors.expr_rgb_editor.getValue()).toString());
+	}else{
+		alert ("rgb expression text is tool long");
+	}
+	if (editors.expr_alpha_editor.getValue().toString().length <exprLimit){
+		arbData.math_expression.alphaExpr= cleanJsonToArbStr(( editors.expr_alpha_editor.getValue()).toString());
+	}else{
+		alert ("alpha expression text is tool long");
+	}
+	if ($("#descriptionText").val().toString().length <descriptionLimit){
+		arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
+	}else{
+		alert ("description text is too long")
+	}
+
+	arbData.effectInfo.presetName = safeCharsForName ($("#presetName").val().toString());
+	arbData.effectInfo.tags = safeCharsForName (($("#presetTags").val().split(",")));
 	//detect if flags are active or not    
 	
 	//copy  mode settings
@@ -379,24 +431,24 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	($("#langSelec").val() ==("mExpr")? arbData.effectMode.expr_modeB=true : arbData.effectMode.expr_modeB = false);
 	
 	//copy compo settings	
-	arbData.composition.resolution = $("#resolutionName").val().toString();
-	arbData.composition.layerPosition= $("#layerPositionName").val().toString();
-	arbData.composition.layerScale= $("#layerScaleName").val().toString();
-	arbData.composition.compResolution = $("#compResolutionName").val().toString();
-	arbData.composition.time_sec = $("#tsecName").val().toString();
-	arbData.composition.time_frame = $("#tframeName").val().toString();
-	arbData.composition.frame_rate = $("#fpsName").val().toString();
-	arbData.composition.camera_position = $("#camera_pos").val().toString();
-	arbData.composition.camera_target = $("#camera_targ").val().toString();
-	arbData.composition.camera_rotation = $("#camera_rot").val().toString();
-	arbData.composition.camera_zoom = $("#camera_zoom").val().toString();
+	arbData.composition.resolution =safeCharsForName ( $("#resolutionName").val().toString());
+	arbData.composition.layerPosition= safeCharsForName ($("#layerPositionName").val().toString());
+	arbData.composition.layerScale= safeCharsForName ($("#layerScaleName").val().toString());
+	arbData.composition.compResolution = safeCharsForName ($("#compResolutionName").val().toString());
+	arbData.composition.time_sec =safeCharsForName ( $("#tsecName").val().toString());
+	arbData.composition.time_frame =safeCharsForName ($("#tframeName").val().toString());
+	arbData.composition.frame_rate = safeCharsForName ($("#fpsName").val().toString());
+	arbData.composition.camera_position = safeCharsForName ($("#camera_pos").val().toString());
+	arbData.composition.camera_target = safeCharsForName ($("#camera_targ").val().toString());
+	arbData.composition.camera_rotation = safeCharsForName ($("#camera_rot").val().toString());
+	arbData.composition.camera_zoom =safeCharsForName ( $("#camera_zoom").val().toString());
 	//copy settings for expr
 	
 	arbData.math_expression.exprRGBModeB = $("#rgbmodeB").is(':checked');
-	arbData.math_expression.expr_current_channel = $("#expr_current_channelName").val().toString();
-	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
-	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
-	arbData.math_expression.expr_pix_off =$("#expr_pix_offName").val().toString();
+	arbData.math_expression.expr_current_channel = safeCharsForName ($("#expr_current_channelName").val().toString());
+	arbData.math_expression.expr_luma =safeCharsForName ($("#expr_lumaName").val().toString());
+	arbData.math_expression.expr_pix =safeCharsForName ($("#expr_pixName").val().toString());
+	arbData.math_expression.expr_pix_off =safeCharsForName ($("#expr_pix_offName").val().toString());
 	sendParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	sendParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	sendParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
@@ -404,16 +456,16 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	sendParamsSettings(arbData, "rotation", numParams, 1, "rotationGrp");
 
 	//copy layer settings
-	arbData.gui_settings.layerGrp.grpName =$("#layerGrpName").val().toString();
+	arbData.gui_settings.layerGrp.grpName =safeCharsForName ($("#layerGrpName").val().toString());
 	arbData.gui_settings.layerGrp.grpVisibleB =$("#layerGrpVisible").is(':checked');
-	arbData.gui_settings.layerGrp.current_layer.name = $("#layer00_name").val().toString();
-	arbData.gui_settings.layerGrp.extLayer_1.name =$("#layer01_name").val().toString();
+	arbData.gui_settings.layerGrp.current_layer.name =safeCharsForName ( $("#layer00_name").val().toString());
+	arbData.gui_settings.layerGrp.extLayer_1.name= safeCharsForName ($("#layer01_name").val().toString());
 	arbData.gui_settings.layerGrp.extLayer_1.visibleB= $("#layer01Visible").is(':checked');
-	arbData.gui_settings.layerGrp.extLayer_2.name =$("#layer02_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_2.name =safeCharsForName ($("#layer02_name").val().toString());
 	arbData.gui_settings.layerGrp.extLayer_2.visibleB= $("#layer02Visible").is(':checked');
-	arbData.gui_settings.layerGrp.extLayer_3.name =$("#layer03_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_3.name =safeCharsForName ($("#layer03_name").val().toString());
 	arbData.gui_settings.layerGrp.extLayer_3.visibleB= $("#layer03Visible").is(':checked');
-	arbData.gui_settings.layerGrp.extLayer_4.name =$("#layer04_name").val().toString();
+	arbData.gui_settings.layerGrp.extLayer_4.name =safeCharsForName ($("#layer04_name").val().toString());
 	arbData.gui_settings.layerGrp.extLayer_4.visibleB= $("#layer04Visible").is(':checked');
 	if (arbData.effectMode.gl33_modeB){
 		arbData.flags.needsPixelAroundB = false;// only for expr mode
@@ -591,14 +643,16 @@ function glslEditor(glMode){
 		var editor = ace.edit(glMode);
 		editor.setTheme("ace/theme/chrome");
 		editor.session.setMode("ace/mode/glsl");
-		editor.resize();
+		editor.setAutoScrollEditorIntoView(true);
+		//editor.resize();
 		return editor;
 	}
 function exprEditor(exprChan){
 		var editor = ace.edit(exprChan);
 		editor.setTheme("ace/theme/chrome");
-		editor.session.setMode("ace/mode/javascript");
-		editor.resize();
+		editor.session.setMode("ace/mode/glsl");
+		editor.setAutoScrollEditorIntoView(true);
+		//editor.resize();
 		return editor;
 	}
 /**
