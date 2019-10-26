@@ -20,6 +20,7 @@ function onLoaded() {
 	loadJSX();
 	sendMessageToPlugin();
 	
+
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
 	csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, onAppThemeColorChanged);
@@ -46,15 +47,19 @@ function onLoaded() {
     
 	//evt listener from plugin
 	csInterface.addEventListener("tlmath.arbSentfromPlugin", function(fromArbEvent) {
-		alert (fromArbEvent.data.effectInfo.effectName)
-		if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
-			arbData = fromArbEvent.data;
-			alert("test")
-			pluginVersion = parseInt(arbData.effectInfo.pluginVersion);
+			try{
+				dataStr =JSON.stringify(fromArbEvent.data);
+				var newArbData = JSON.parse(dataStr); //fromArbEvent.data;
+				if (fromArbEvent.data.effectInfo.effectName !=pluginName) {alert (err.PresetFile); return};
+				arbData = newArbData;
+			}catch(e){
+				alert ("error in copy from plugin: "+e)
+				return;
+			}
 			try{
 				copyDataToGUI (arbData, editors,numParams);
 			}catch(e){
-				alert(e)
+				alert("error in data to copy "+e)
 			}
 	});
 	csInterface.addEventListener("tlmath.arbSentfromPreset", function(fromArbEvent){
@@ -108,14 +113,18 @@ function onLoaded() {
 	$("#btnApply").on("click", function() {
 		try{
 			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
+			}catch(e){
+				alert("error collecting data for plugin: "+e);
+			}
 			if (arbDataToSend){
 				var arbDataStr = JSON.stringify(arbDataToSend);
-				evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+				try{
+					evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+				}catch(e){
+					alert ("error exporting from panel to plugin: "+e)
+					}
 				}
-		}catch(e){
-			alert ("error exporting from panel to plugin: "+e)
-		}
-
+		
 		});
 	}
 function sendMessageToPlugin(){
@@ -149,8 +158,7 @@ function loadPresetFromMenu(presetsList, editors, numParams){
 		copyDataToGUI (jsonDataObj,  editors, numParams);
 	}catch(e){
 		alert (e)
-	}
-	
+		}
 	}
 function loadPresetJSONFile(){
 	 evalScript("$._ext.loadJSONFile()");
@@ -176,7 +184,6 @@ function cleanJsonToArbStr (str){
 	str = str.replace(/\n/g, "\\n")
                .replace(/\'/g, "\\' ")
                .replace(/\"/g, '\\"')
-               .replace(/\&/g, "\\&")
                .replace(/\r/g, "\\r")
                .replace(/\t/g, "\\t")
 			   .replace(/\f/g, "\\f");
@@ -192,7 +199,6 @@ function cleanJsonFromArbStr (str){
 	str = str.replace(/\\n/g, "\n")
                .replace(/\\'/g, "\'")
                .replace(/\\"/g, '\"')
-               .replace(/\\&/g, "\&")
                .replace(/\\r/g, "\r")
                .replace(/\\t/g, "\t")
 			   .replace(/\\f/g, "\f");
@@ -390,9 +396,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.math_expression.expr_current_channel = $("#expr_current_channelName").val().toString();
 	arbData.math_expression.expr_luma =$("#expr_lumaName").val().toString();
 	arbData.math_expression.expr_pix =$("#expr_pixName").val().toString();
-	alert ("step1")
 	arbData.math_expression.expr_pix_off =$("#expr_pix_offName").val().toString();
-	alert ("step2")
 	sendParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	sendParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	sendParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");

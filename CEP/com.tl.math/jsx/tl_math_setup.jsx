@@ -78,7 +78,7 @@ $._ext = {
   sendMessageToPlugin : function(){
     //try{ pluginId} catch(e){return};
     if ( typeof pluginId==="undefined" || !pluginId || pluginId ==null ){return};
-    app.project.activeItem.layer(pluginId[0]).effect(pluginId[1]).property("arb received").setValue(1);
+    app.project.activeItem.layer(pluginId[1]).effect(pluginId[2]).property("arb received").setValue(1);
     pluginId = undefined;
   }, 
   sendDataToPlugin : function(arbData){
