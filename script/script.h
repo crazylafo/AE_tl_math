@@ -13,7 +13,7 @@ std::string script_callMathCEP = R"=====(
         var mathEventCEPCall = new CSXSEvent();
         mathEventCEPCall.type="tlmath.setupOpeningFromPlugin";
         mathEventCEPCall.data= plugIdObj;
-        mathEventCEPCall.dispatch();
+        mathEventCEPCall.dispatch();	
         pluginId = [compId, layerIndex, effectIndex]; //global variable to communicate between plugin and CEP, when cep is opened.
         }
 try{
@@ -32,7 +32,7 @@ std::string script_sendToMathCEP = R"=====(
     //
     //
     function sendToMathCEP(arbData){
-        //send the arb value
+        //send the arb data in a event
 		var externalObjectName = "PlugPlugExternalObject"; 
 		var csxslib = new ExternalObject( "lib:" + externalObjectName);
 		var mathEventToCEPObj = new CSXSEvent();
@@ -41,10 +41,11 @@ std::string script_sendToMathCEP = R"=====(
         mathEventToCEPObj.dispatch();
     }
     try{
+		sendToMathCEP(%s);
     }catch(e){
         alert("error sending Data To CEP: "+e);
     }
-    sendToMathCEP(%s);
+    
 )=====";
 
 

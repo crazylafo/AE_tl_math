@@ -2,7 +2,6 @@
 //  tl_defaultArb.h
 //  tlMath
 //
-// Created by Hercules on 20/05/2019.
 //
 
 #ifndef tl_defaultArb_h
@@ -45,11 +44,10 @@ static std::string defaultArb = R"=====(
         "expr_pix":"pix",
         "expr_luma":"luma",
         "expr_pix_off":"pix_off"
-
-    },
+        },
     "flags":{
         "needsPixelAroundB":false,
-        "pixelsCallExternalInputB":[0,0,0,0],
+        "pixelsCallExternalInputB":[false,false,false,false],
         "needsLumaB":false,
         "presetHasWideInputB":false,
         "usesCameraB":false
@@ -356,27 +354,19 @@ static std::string defaultArb = R"=====(
             },
             "extLayer_1":{
                 "visibleB":true,
-                "name":"texture1",
-                "poffName":"layer1_position_off",
-                "toffName":"layer1_time_off"
+                "name":"texture1"
             },
-            "extLayer_2":{
+			"extLayer_2":{
                 "visibleB":true,
-                "name":"texture2",
-                "poffName":"layer2_position_off",
-                "toffName":"layer2_time_off"
+                "name":"texture2"
             },
             "extLayer_3":{
                 "visibleB":true,
-                "name":"texture3",
-                "poffName":"layer3_position_off",
-                "toffName":"layer3_time_off"
+                "name":"texture3"
             },
             "extLayer_4":{
                 "visibleB":true,
-                "name":"texture4",
-                "poffName":"layer4_position_off",
-                "toffName":"layer4_time_off"
+                "name":"texture4"
             }
         }
     }

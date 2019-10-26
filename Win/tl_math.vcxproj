@@ -362,13 +362,13 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClInclude Include="..\..\..\Util\AEFX_SuiteHelper.h" />
     <ClInclude Include="..\..\..\Util\Smart_Utils.h" />
     <ClInclude Include="..\include\tl_defaultArb.h" />
+    <ClInclude Include="..\include\tl_defaultShaders.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\callbacks_private.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\glrevision.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\logging_private.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\Meta_Maps.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\RingBuffer.h" />
     <ClInclude Include="..\lib\GL\glbinding\source\glbinding\source\RingBuffer.hpp" />
-    <ClInclude Include="..\lib\exprtk.hpp" />
     <ClInclude Include="..\include\tl_math.h" />
     <ClInclude Include="..\include\tl_math_Strings.h" />
     <ClInclude Include="..\..\..\Headers\A.h" />

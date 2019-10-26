@@ -251,6 +251,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     fragErr = seqP->Glsl33_fragError;
     AEFX_CLR_STRUCT(vertErr);
     vertErr = seqP-> Glsl33_VertError;
+	/*
     AEFX_CLR_STRUCT(redErr);
     redErr = seqP->redError;
     AEFX_CLR_STRUCT(greenErr);
@@ -260,7 +261,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     AEFX_CLR_STRUCT(alphaErr);
     alphaErr =seqP->alphaError;
     AEFX_CLR_STRUCT (rgbErr);
-    rgbErr = seqP->rgbError;
+    rgbErr = seqP->rgbError;*/
 
     tlmath::jsonCorrectorStr(fragErr);
     tlmath::jsonCorrectorStr(vertErr);
@@ -271,20 +272,19 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     tlmath::jsonCorrectorStr(alphaErr);
 	tlmath::jsonCorrectorStr(rgbErr);
 
-    //A_long compId,layerIndex, effectIndex;
-    //ERR(GetLayerData(in_data,out_data, &compId, &layerIndex, &effectIndex));
+
     arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
     arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
 	arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
-    //arbDataJS["math_expression"]["red_error"] =   redErr;
-    //arbDataJS["math_expression"]["green_error"] = greenErr;
-    //arbDataJS["math_expression"]["blue_error"] =  blueErr;
-    //arbDataJS["math_expression"]["alpha_error"] = alphaErr;
-	//arbDataJS["math_expression"]["rgb_error"] =   rgbErr;
-	std::string resultStr;
+	arbDataJS["math_expression"]["red_error"] = compile_success; // redErr;
+    arbDataJS["math_expression"]["green_error"] = compile_success; //greenErr;
+    arbDataJS["math_expression"]["blue_error"] = compile_success; //blueErr;
+    arbDataJS["math_expression"]["alpha_error"] = compile_success; // alphaErr;
+	arbDataJS["math_expression"]["rgb_error"] = compile_success; //rgbErr;
     std::string jsonDump = "'''";
     jsonDump.append(arbDataJS.dump());
-    jsonDump.append("'''");
+	jsonDump.append("'''");
+
 
 
 	AEFX_CLR_STRUCT(scriptAC);

@@ -94,9 +94,6 @@
     <ClInclude Include="..\lib\json.hpp">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\lib\exprtk.hpp">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\tl_math.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -134,6 +131,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\script\script.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\tl_defaultShaders.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>

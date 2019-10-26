@@ -45,6 +45,8 @@ void tlmath::scriptCorrectorStr(std::string& str)
 	strReplace(str, "\f", "\\f");
 	strReplace(str, "\r", "\\r");
 	strReplace(str, "\t", "\\t");
+	//strReplace(str, "\&", "\\&");
+
 }
 
 PF_Boolean tlmath::strToBoolean(std::string str)
