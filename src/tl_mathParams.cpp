@@ -1419,6 +1419,10 @@ tlmath::UserChangedParam(
                                                                 MATH_CEP_GET_ARB_DATA,
                                                                 params[MATH_CEP_GET_ARB_DATA]));
 			ERR(SetupDialogSend(in_data, out_data, params));
+
+			if (!err) {
+				out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
+			}
 		}
 
 	}

@@ -286,10 +286,8 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_scale,
 				&extlayer_poff_param[3]));
 
-
-
             PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
-            PF_Boolean   initB = true;
+            bool   initB = true;
 
             if (seq_dataH) {
                 seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
@@ -297,14 +295,14 @@ tlmath::PreRender(PF_InData                *in_data,
                     initB = false;
                     m_ArbData *arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
                     ERR(tlmath::copyFromArbToSeqData( in_data, out_data, arbOutP->arbDataAc , seqP));
-                    seqP->initializedB = true;
+						seqP->initializedB = true;
                     out_data->sequence_data = seq_dataH;
                 }
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
                 if (!initB){
                       ERR(tlmath::evalScripts  (seqP));
                 }
-                if (seqP->cameraB ==true){
+                if (seqP->cameraB){
                     cameraModeB = true;
                 }
             }

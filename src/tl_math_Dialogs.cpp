@@ -344,10 +344,10 @@ tlmath::SetupGetDataBack(
         if (seqP->exprModeB){
             ERR(tlmath::embedExprInShaders(seqP));
         }
-        ERR(tlmath::updateParamsValue(in_data, params, resultStr));
         ERR(tlmath::evalScripts(seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
+		ERR(tlmath::updateParamsValue(in_data, params, resultStr));
 
 	}
 	else {    // whoa, we couldn't allocate sequence data; bail!
@@ -412,6 +412,9 @@ AppendGlslInputBool (std::string& newSh,
 PF_Err
 tlmath::embedExprInShaders (seqData  *seqP){
     PF_Err err = PF_Err_NONE;
+
+	//float rgbExpr(seqP->expr_pixNameAc,  seqP->expr_ColorChNameAc,vec4 seqP->paramLayer00NameAc,  vec4 seqP->paramLayer01NameAc, vec4 seqP-> paramLayer02NameAc, vec4 seqP-> paramLayer03NameAc, vec4 seqP-> paramLayer04NameAc){
+
     std::string redExprStr = redFunctionStr+seqP->redExAc+endFunctionStr ;
     std::string greenExprStr = greenFunctionStr+seqP->greenExAc+endFunctionStr;
     std::string blueExprStr = blueFunctionStr+seqP->blueExAc+endFunctionStr;
@@ -499,24 +502,41 @@ tlmath::embedExprInShaders (seqData  *seqP){
     AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor10NameAc);
 
     //for texttures
-	bool hasTextureB = false;
-    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP->paramLayer00NameAc, &hasTextureB);
-    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP->paramLayer01NameAc, &hasTextureB);
-    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer02NameAc, &hasTextureB);
-    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer03NameAc, &hasTextureB);
-    AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer04NameAc, &hasTextureB);
-
-
-    if (hasTextureB){
+	bool hasTexture0B, hasTexture1B, hasTexture2B, hasTexture3B, hasTexture4B = false;
+    AppendGlslInput2dText (fragShStr,exprGrpStr, "text0", &hasTexture0B);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, "text1", &hasTexture1B);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, "text2", &hasTexture2B);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, "text3", &hasTexture3B);
+    AppendGlslInput2dText (fragShStr,exprGrpStr, "text4", &hasTexture4B);
+    if (hasTexture0B || hasTexture1B, hasTexture2B, hasTexture3B, hasTexture4B){
         //add the function to load texture
 		exprGrpStr.append(gl33InputTexture);
     }
 
-    /* 
+    /*
+	float seqP->expr_lumaNameAc (vec4 text) {
+	return 0.3*text.r+0.59*text.g+0.11*text.b;
+	}
+	//indexer le numero de ligne de chaque expression.
+
+	}
+
+void main(void)
+{
+	vec4 text0= loadTextureFromAE(texture1, out_uvs.xy);
+	vec4 text1, text2, text3, text4;
+	fragColorOut.r = rgbExpr(gl_FragCoord.xy, text0.r, text0, text1, text2, text3, text4);
+	fragColorOut.g = rgbExpr(gl_FragCoord.xy, text0.g, text0, text1, text2, text3, text4);
+	fragColorOut.b = rgbExpr(gl_FragCoord.xy, text0.b, text0, text1, text2, text3, text4);
+	fragColorOut.a = 1; //rgbExpr(gl_FragCoord.xy, text0.a, text0, text1, text2, text3, text4);
+}
+
+	
+	
      //for expressions
-     seqP->expr_ColorChNameAc);
-     seqP->expr_lumaNameAc);
-     seqP->expr_pixNameAc);
+    );
+     );
+     );
      seqP->expr_pix_offNameAc);
      */
 

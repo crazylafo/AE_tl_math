@@ -23,7 +23,7 @@ static std::string defaultArb = R"=====(
         "evalModeB":false
     },
     "gl_expression":{
-        "gl33_frag_sh":"#version 330 // glsls version for opengl 3.3\\nuniform sampler2D texture0; //call the layer source\\nuniform float slider_1;// call somes variables from the ui\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec2 uv_AE = uv;\\n    uv_AE.y = 1.- uv.y;\\n    vec4 textureIn = texture2D( tex2d, uv_AE);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n\\nvoid main(void)\\n{\\n    fragColorOut= loadTextureFromAE(texture0, out_uvs.xy);\\n    fragColorOut.r *=slider_1/100; \\n}",
+       "gl33_frag_sh":"#version 330 // glsls version for opengl 3.3\\nuniform sampler2D texture0; //call the layer source\\nuniform float slider_1;// call somes variables from the ui\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n// to use instead of texture2D(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d)\\n{\\n    vec2 uv_AE = out_uvs;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture2D( tex2d, uv_AE);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\nvec4 loadTextureOffset (sampler2D tex2d,  vec2 off){\\n    vec2 uv_AE = out_uvs;\\n    uv_AE.x = out_uvs.x +off.x;\\n    uv_AE.y = 1.- (out_uvs.y+off.y);\\n    vec4 textureIn = texture2D( tex2d, uv_AE);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n\\n}\\n\\nvoid main(void)\\n{\\n    fragColorOut= loadTextureFromAE(texture0);\\n    fragColorOut.r *=slider_1/100; \\n}",
         "gl33_vert_sh":"#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}",
         "gl33_frag_error" :  "compiled successfully",
         "gl33_vert_error" :  "compiled successfully"
@@ -46,7 +46,6 @@ static std::string defaultArb = R"=====(
         "expr_pix_off":"pix_off"
         },
     "flags":{
-        "needsPixelAroundB":false,
         "pixelsCallExternalInputB":[false,false,false,false],
         "needsLumaB":false,
         "presetHasWideInputB":false,
@@ -354,19 +353,27 @@ static std::string defaultArb = R"=====(
             },
             "extLayer_1":{
                 "visibleB":true,
-                "name":"texture1"
+                "name":"texture1",
+                "poffName":"layer1_position_off",
+                "toffName":"layer1_time_off"
             },
-			"extLayer_2":{
+            "extLayer_2":{  
                 "visibleB":true,
-                "name":"texture2"
+                "name":"texture2",
+                "poffName":"layer2_position_off",
+                "toffName":"layer2_time_off"
             },
             "extLayer_3":{
                 "visibleB":true,
-                "name":"texture3"
+                "name":"texture3",
+                "poffName":"layer3_position_off",
+                "toffName":"layer3_time_off"
             },
             "extLayer_4":{
                 "visibleB":true,
-                "name":"texture4"
+                "name":"texture4",
+                "poffName":"layer4_position_off",
+                "toffName":"layer4_time_off"
             }
         }
     }

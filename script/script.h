@@ -7,21 +7,21 @@ std::string script_callMathCEP = R"=====(
     //  tlMath
     //
     //
+
 	function callCEP(plugIdObj, compId, layerIndex, effectIndex){
         var externalObjectName = "PlugPlugExternalObject";
         var csxslib = new ExternalObject( "lib:" + externalObjectName);
         var mathEventCEPCall = new CSXSEvent();
         mathEventCEPCall.type="tlmath.setupOpeningFromPlugin";
         mathEventCEPCall.data= plugIdObj;
-        mathEventCEPCall.dispatch();	
+        mathEventCEPCall.dispatch();
         pluginId = [compId, layerIndex, effectIndex]; //global variable to communicate between plugin and CEP, when cep is opened.
         }
-try{
-    callCEP(%s, %d, %d, %d);
-}catch(e){
-    alert ("error calling cep: "+e)
-}
-
+		try{
+			callCEP(%s, %d, %d, %d);	
+		}catch(e){
+			alert ("error calling cep: "+e)
+		}
     )=====";
 
 
