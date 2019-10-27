@@ -18,8 +18,7 @@ function onLoaded() {
 	setParamsSettings("color", numParams, 3, "colorGrp");
 	setParamsSettings("rotation", numParams, 1, "rotationGrp");
 	loadJSX();
-	sendMessageToPlugin();
-	
+	sendMessageToPlugin();	
 
     updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
 	// Update the color of the panel when the theme color of the product changed.
@@ -423,7 +422,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	}
 
 	arbData.effectInfo.presetName = safeCharsForName ($("#presetName").val().toString());
-	arbData.effectInfo.tags = safeCharsForName (($("#presetTags").val().split(",")));
+	arbData.effectInfo.tags = ($("#presetTags").val().split(","));
 	//detect if flags are active or not    
 	
 	//copy  mode settings
@@ -467,23 +466,16 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.gui_settings.layerGrp.extLayer_3.visibleB= $("#layer03Visible").is(':checked');
 	arbData.gui_settings.layerGrp.extLayer_4.name =safeCharsForName ($("#layer04_name").val().toString());
 	arbData.gui_settings.layerGrp.extLayer_4.visibleB= $("#layer04Visible").is(':checked');
-	if (arbData.effectMode.gl33_modeB){
-		arbData.flags.needsPixelAroundB = false;// only for expr mode
-		arbData.flags.needsLumaB = false; // only for expr mode
-		var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
-		for (var i=0; i<listLayers.length; i++){			
-			arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
-		}
-		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+
+
+	arbData.flags.needsLumaB = false; // only for expr mode
+	var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
+	for (var i=0; i<listLayers.length; i++){			
+		arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
 	}
-	else{
-		arbData.flags.presetHasWideInputB  =  setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-		arbData.flags.needsPixelAroundB =  setflagFromExpr (arbData, 	[arbData.math_expression.expr_red_off, arbData.math_expression.expr_green_off, arbData.math_expression.expr_blue_off,arbData.math_expression.expr_alpha_off]);
-		arbData.flags.pixelsCallExternalInputB  =  setflagFromExpr (arbData, [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name]);
-		arbData.flags.needsLumaB  =  setflagFromExpr (arbData,[arbData.math_expression.expr_luma]);		
-		arbData.flags.usesCameraB =  setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);
-		}
+	arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+	arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+
 	return arbData;
 	}
 function toogleCheckbox(className, currId){
