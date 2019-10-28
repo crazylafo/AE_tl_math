@@ -560,8 +560,9 @@ tlmath::UpdateParameterUI(
 	PF_ParamDef		param_copy[MATH_NUM_PARAMS];
 	ERR(MakeParamCopy(params, param_copy));
 	ERR(tlmath::updateSeqData(in_data, out_data, params));
-	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 	seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+
 
 	AEGP_StreamRefH		MATH_TOPIC_SLIDER_streamH = NULL,
 		MATH_SLIDER_ONE_streamH = NULL,
@@ -638,732 +639,759 @@ tlmath::UpdateParameterUI(
 		MATH_INP_POFF_FOUR_streamH = NULL;
 	if (seqP) {
 
-		strcpy(param_copy[MATH_ARB_DATA].name, seqP->presetNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ARB_DATA,
-			&param_copy[MATH_ARB_DATA]));
-
-		strcpy(param_copy[MATH_TOPIC_SLIDER].name, seqP->sliderGrpNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_TOPIC_SLIDER,
-			&param_copy[MATH_TOPIC_SLIDER]));
-
-        strcpy(param_copy[MATH_SLIDER_ONE].name, seqP->paramSlider01NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_ONE,
-                                                        &param_copy[MATH_SLIDER_ONE]));
-
-        strcpy(param_copy[MATH_SLIDER_TWO].name, seqP->paramSlider02NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_TWO,
-                                                        &param_copy[MATH_SLIDER_TWO]));
-
-        strcpy(param_copy[MATH_SLIDER_THREE].name, seqP->paramSlider03NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_THREE,
-                                                        &param_copy[MATH_SLIDER_THREE]));
-
-        strcpy(param_copy[MATH_SLIDER_FOUR].name, seqP->paramSlider04NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_FOUR,
-                                                        &param_copy[MATH_SLIDER_FOUR]));
-
-        strcpy(param_copy[MATH_SLIDER_FIVE].name, seqP->paramSlider05NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_FIVE,
-                                                        &param_copy[MATH_SLIDER_FIVE]));
-
-        strcpy(param_copy[MATH_SLIDER_SIX].name, seqP->paramSlider06NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_SIX,
-                                                        &param_copy[MATH_SLIDER_SIX]));
-
-        strcpy(param_copy[MATH_SLIDER_SEVEN].name, seqP->paramSlider07NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_SEVEN,
-                                                        &param_copy[MATH_SLIDER_SEVEN]));
-
-        strcpy(param_copy[MATH_SLIDER_HEIGHT].name, seqP->paramSlider08NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_HEIGHT,
-                                                        &param_copy[MATH_SLIDER_HEIGHT]));
-
-        strcpy(param_copy[MATH_SLIDER_NINE].name, seqP->paramSlider09NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_NINE,
-                                                        &param_copy[MATH_SLIDER_NINE]));
-
-        strcpy(param_copy[MATH_SLIDER_TEN].name, seqP->paramSlider10NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_SLIDER_TEN,
-                                                        &param_copy[MATH_SLIDER_TEN]));
-
-
-		strcpy(param_copy[MATH_TOPIC_POINTS].name, seqP->pointGrpNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_TOPIC_POINTS,
-			&param_copy[MATH_TOPIC_POINTS]));
-		strcpy(param_copy[MATH_POINT_ONE].name, seqP->paramPoint01NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_POINT_ONE,
-			&param_copy[MATH_POINT_ONE]));
-		strcpy(param_copy[MATH_POINT_TWO].name, seqP->paramPoint02NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_POINT_TWO,
-			&param_copy[MATH_POINT_TWO]));
-
-        strcpy(param_copy[MATH_POINT_THREE].name, seqP->paramPoint03NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_THREE,
-                                                        &param_copy[MATH_POINT_THREE]));
-
-        strcpy(param_copy[MATH_POINT_FOUR].name, seqP->paramPoint04NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_FOUR,
-                                                        &param_copy[MATH_POINT_FOUR]));
-
-        strcpy(param_copy[MATH_POINT_FIVE].name, seqP->paramPoint05NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_FIVE,
-                                                        &param_copy[MATH_POINT_FIVE]));
-
-        strcpy(param_copy[MATH_POINT_SIX].name, seqP->paramPoint06NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_SIX,
-                                                        &param_copy[MATH_POINT_SIX]));
-
-        strcpy(param_copy[MATH_POINT_SEVEN].name, seqP->paramPoint07NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_SEVEN,
-                                                        &param_copy[MATH_POINT_SEVEN]));
-
-        strcpy(param_copy[MATH_POINT_HEIGHT].name, seqP->paramPoint08NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_HEIGHT,
-                                                        &param_copy[MATH_POINT_HEIGHT]));
-
-        strcpy(param_copy[MATH_POINT_NINE].name, seqP->paramPoint09NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_NINE,
-                                                        &param_copy[MATH_POINT_NINE]));
-
-        strcpy(param_copy[MATH_POINT_TEN].name, seqP->paramPoint10NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_POINT_TEN,
-                                                        &param_copy[MATH_POINT_TEN]));
-
-
-        strcpy(param_copy[MATH_TOPIC_CB].name, seqP->cbGrpNameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_TOPIC_CB,
-                                                        &param_copy[MATH_TOPIC_CB]));
-
-        strcpy(param_copy[MATH_CB_ONE].name, seqP->paramCb01NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_ONE,
-                                                        &param_copy[MATH_CB_ONE]));
-        strcpy(param_copy[MATH_CB_TWO].name, seqP->paramCb02NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_TWO,
-                                                        &param_copy[MATH_CB_TWO]));
-
-        strcpy(param_copy[MATH_CB_THREE].name, seqP->paramCb03NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_THREE,
-                                                        &param_copy[MATH_CB_THREE]));
-
-        strcpy(param_copy[MATH_CB_FOUR].name, seqP->paramCb04NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_FOUR,
-                                                        &param_copy[MATH_CB_FOUR]));
-
-        strcpy(param_copy[MATH_CB_FIVE].name, seqP->paramCb05NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_FIVE,
-                                                        &param_copy[MATH_CB_FIVE]));
-
-        strcpy(param_copy[MATH_CB_SIX].name, seqP->paramCb06NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_SIX,
-                                                        &param_copy[MATH_CB_SIX]));
-
-        strcpy(param_copy[MATH_CB_SEVEN].name, seqP->paramCb07NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_SEVEN,
-                                                        &param_copy[MATH_CB_SEVEN]));
-
-        strcpy(param_copy[MATH_CB_HEIGHT].name, seqP->paramCb08NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_HEIGHT,
-                                                        &param_copy[MATH_CB_HEIGHT]));
-
-        strcpy(param_copy[MATH_CB_NINE].name, seqP->paramCb09NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_NINE,
-                                                        &param_copy[MATH_CB_NINE]));
-
-        strcpy(param_copy[MATH_CB_TEN].name, seqP->paramCb10NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_CB_TEN,
-                                                        &param_copy[MATH_CB_TEN]));
-
-
-		strcpy(param_copy[MATH_TOPIC_COLORS].name, seqP->colorGrpNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_TOPIC_COLORS,
-			&param_copy[MATH_TOPIC_COLORS]));
-
-		strcpy(param_copy[MATH_COLOR_ONE].name, seqP->paramColor01NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_COLOR_ONE,
-			&param_copy[MATH_COLOR_ONE]));
-
-		strcpy(param_copy[MATH_COLOR_TWO].name, seqP->paramColor02NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_COLOR_TWO,
-			&param_copy[MATH_COLOR_TWO]));
-
-
-        strcpy(param_copy[MATH_COLOR_THREE].name, seqP->paramColor03NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_THREE,
-                                                        &param_copy[MATH_COLOR_THREE]));
-
-        strcpy(param_copy[MATH_COLOR_FOUR].name, seqP->paramColor04NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_FOUR,
-                                                        &param_copy[MATH_COLOR_FOUR]));
-
-        strcpy(param_copy[MATH_COLOR_FIVE].name, seqP->paramColor05NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_FIVE,
-                                                        &param_copy[MATH_COLOR_FIVE]));
-
-        strcpy(param_copy[MATH_COLOR_SIX].name, seqP->paramColor06NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_SIX,
-                                                        &param_copy[MATH_COLOR_SIX]));
-
-        strcpy(param_copy[MATH_COLOR_SEVEN].name, seqP->paramColor07NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_SEVEN,
-                                                        &param_copy[MATH_COLOR_SEVEN]));
-
-        strcpy(param_copy[MATH_COLOR_HEIGHT].name, seqP->paramColor08NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_HEIGHT,
-                                                        &param_copy[MATH_COLOR_HEIGHT]));
-
-        strcpy(param_copy[MATH_COLOR_NINE].name, seqP->paramColor09NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_NINE,
-                                                        &param_copy[MATH_COLOR_NINE]));
-
-        strcpy(param_copy[MATH_COLOR_TEN].name, seqP->paramColor10NameAc);
-        ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-                                                        MATH_COLOR_TEN,
-                                                        &param_copy[MATH_COLOR_TEN]));
-
-		strcpy(param_copy[MATH_TOPIC_ROTS].name, seqP->rotGrpNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_TOPIC_ROTS,
-			&param_copy[MATH_TOPIC_ROTS]));
-
-		strcpy(param_copy[MATH_ROT_ONE].name, seqP->paramRot01NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_ONE,
-			&param_copy[MATH_ROT_ONE]));
-
-		strcpy(param_copy[MATH_ROT_TWO].name, seqP->paramRot02NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_TWO,
-			&param_copy[MATH_ROT_TWO]));
-
-
-		strcpy(param_copy[MATH_ROT_THREE].name, seqP->paramRot03NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_THREE,
-			&param_copy[MATH_ROT_THREE]));
-
-		strcpy(param_copy[MATH_ROT_FOUR].name, seqP->paramRot04NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_FOUR,
-			&param_copy[MATH_ROT_FOUR]));
-
-		strcpy(param_copy[MATH_ROT_FIVE].name, seqP->paramRot05NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_FIVE,
-			&param_copy[MATH_ROT_FIVE]));
-
-		strcpy(param_copy[MATH_ROT_SIX].name, seqP->paramRot06NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_SIX,
-			&param_copy[MATH_ROT_SIX]));
-
-		strcpy(param_copy[MATH_ROT_SEVEN].name, seqP->paramRot07NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_SEVEN,
-			&param_copy[MATH_ROT_SEVEN]));
-
-		strcpy(param_copy[MATH_ROT_HEIGHT].name, seqP->paramRot08NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_HEIGHT,
-			&param_copy[MATH_ROT_HEIGHT]));
-
-		strcpy(param_copy[MATH_ROT_NINE].name, seqP->paramRot09NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_NINE,
-			&param_copy[MATH_ROT_NINE]));
-
-		strcpy(param_copy[MATH_ROT_TEN].name, seqP->paramRot10NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_ROT_TEN,
-			&param_copy[MATH_ROT_TEN]));
-
-		strcpy(param_copy[MATH_TOPIC_INPUTS].name, seqP->layerGrpNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_TOPIC_INPUTS,
-			&param_copy[MATH_TOPIC_INPUTS]));
-		strcpy(param_copy[MATH_INP_LAYER_ONE].name, seqP->paramLayer01NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_LAYER_ONE,
-			&param_copy[MATH_INP_LAYER_ONE]));
-		strcpy(param_copy[MATH_INP_TOFF_ONE].name, seqP->paramLayer01ToffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_TOFF_ONE,
-			&param_copy[MATH_INP_TOFF_ONE]));
-		strcpy(param_copy[MATH_INP_POFF_ONE].name, seqP->paramLayer01PoffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_POFF_ONE,
-			&param_copy[MATH_INP_POFF_ONE]));
-		strcpy(param_copy[MATH_INP_LAYER_TWO].name, seqP->paramLayer02NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_LAYER_TWO,
-			&param_copy[MATH_INP_LAYER_TWO]));
-		strcpy(param_copy[MATH_INP_TOFF_TWO].name, seqP->paramLayer02ToffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_TOFF_TWO,
-			&param_copy[MATH_INP_TOFF_TWO]));
-		strcpy(param_copy[MATH_INP_POFF_TWO].name, seqP->paramLayer02PoffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_POFF_TWO,
-			&param_copy[MATH_INP_POFF_TWO]));
-
-		strcpy(param_copy[MATH_INP_LAYER_THREE].name, seqP->paramLayer03NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_LAYER_THREE,
-			&param_copy[MATH_INP_LAYER_THREE]));
-		strcpy(param_copy[MATH_INP_TOFF_THREE].name, seqP->paramLayer03ToffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_TOFF_THREE,
-			&param_copy[MATH_INP_TOFF_THREE]));
-		strcpy(param_copy[MATH_INP_POFF_THREE].name, seqP->paramLayer03PoffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_POFF_THREE,
-			&param_copy[MATH_INP_POFF_THREE]));
-
-		strcpy(param_copy[MATH_INP_LAYER_FOUR].name, seqP->paramLayer04NameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_LAYER_FOUR,
-			&param_copy[MATH_INP_LAYER_FOUR]));
-		strcpy(param_copy[MATH_INP_TOFF_FOUR].name, seqP->paramLayer04ToffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_TOFF_FOUR,
-			&param_copy[MATH_INP_TOFF_FOUR]));
-		strcpy(param_copy[MATH_INP_POFF_FOUR].name, seqP->paramLayer04PoffNameAc);
-		ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-			MATH_INP_POFF_FOUR,
-			&param_copy[MATH_INP_POFF_FOUR]));
-
-
-
-
-		ERR(suites.PFInterfaceSuite1()->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &meH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_SLIDER, &MATH_TOPIC_SLIDER_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_ONE, &MATH_SLIDER_ONE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TWO, &MATH_SLIDER_TWO_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_THREE, &MATH_SLIDER_THREE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FOUR, &MATH_SLIDER_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FIVE, &MATH_SLIDER_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_SIX, &MATH_SLIDER_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_SEVEN, &MATH_SLIDER_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_HEIGHT, &MATH_SLIDER_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_NINE, &MATH_SLIDER_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TEN, &MATH_SLIDER_TEN_streamH));
-
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_POINTS, &MATH_TOPIC_POINTS_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_ONE, &MATH_POINT_ONE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TWO, &MATH_POINT_TWO_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_THREE, &MATH_POINT_THREE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FOUR, &MATH_POINT_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FIVE, &MATH_POINT_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_SIX, &MATH_POINT_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_SEVEN, &MATH_POINT_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_HEIGHT, &MATH_POINT_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_NINE, &MATH_POINT_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TEN, &MATH_POINT_TEN_streamH));
-
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_CB, &MATH_TOPIC_CB_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_ONE, &MATH_CB_ONE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_TWO, &MATH_CB_TWO_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_THREE, &MATH_CB_THREE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FOUR, &MATH_CB_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FIVE, &MATH_CB_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_SIX, &MATH_CB_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_SEVEN, &MATH_CB_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_HEIGHT, &MATH_CB_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_NINE, &MATH_CB_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_TEN, &MATH_CB_TEN_streamH));
-
-
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_COLORS, &MATH_TOPIC_COLORS_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_ONE, &MATH_COLOR_ONE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TWO, &MATH_COLOR_TWO_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_THREE, &MATH_COLOR_THREE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FOUR, &MATH_COLOR_FOUR_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FIVE, &MATH_COLOR_FIVE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_SIX, &MATH_COLOR_SIX_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_SEVEN, &MATH_COLOR_SEVEN_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_HEIGHT, &MATH_COLOR_HEIGHT_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_NINE, &MATH_COLOR_NINE_streamH));
-        ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TEN, &MATH_COLOR_TEN_streamH));
-
-
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_ROTS, &MATH_TOPIC_ROTS_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_ONE, &MATH_ROT_ONE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_TWO, &MATH_ROT_TWO_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_THREE, &MATH_ROT_THREE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_FOUR, &MATH_ROT_FOUR_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_FIVE, &MATH_ROT_FIVE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_SIX, &MATH_ROT_SIX_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_SEVEN, &MATH_ROT_SEVEN_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_HEIGHT, &MATH_ROT_HEIGHT_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_NINE, &MATH_ROT_NINE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_TEN, &MATH_ROT_TEN_streamH));
-
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_INPUTS, &MATH_TOPIC_INPUTS_streamH));
-
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_ONE, &MATH_INP_LAYER_ONE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_ONE, &MATH_INP_TOFF_ONE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_ONE, &MATH_INP_POFF_ONE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_TWO, &MATH_INP_LAYER_TWO_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_TWO, &MATH_INP_TOFF_TWO_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_TWO, &MATH_INP_POFF_TWO_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_THREE, &MATH_INP_LAYER_THREE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_THREE, &MATH_INP_TOFF_THREE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_THREE, &MATH_INP_POFF_THREE_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_FOUR, &MATH_INP_LAYER_FOUR_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_FOUR, &MATH_INP_TOFF_FOUR_streamH));
-		ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_FOUR, &MATH_INP_POFF_FOUR_streamH));
-
-
-        //ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH,MATH_CEP_GET_ARB_DATA, &MATH_CEP_GET_ARB_DATA_streamH));
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_SLIDER_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->sliderGrpVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider01VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider02VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider03VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider04VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider05VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider06VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider07VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider08VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider09VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider10VisibleB));
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_POINTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->pointGrpVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint01VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint02VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint03VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint04VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint05VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint06VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint07VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint08VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint09VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint10VisibleB));
-
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_CB_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->cbGrpVisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb01VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb02VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb03VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb04VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb05VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb06VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb07VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb08VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb09VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb10VisibleB));
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_COLORS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->colorGrpVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor01VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor02VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor03VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor04VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor05VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor06VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor07VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor08VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor09VisibleB));
-        ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor10VisibleB));
-
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_ROTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->rotGrpVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot01VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot02VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot03VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot04VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot05VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot06VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot07VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot08VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot09VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot10VisibleB));
-
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_INPUTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->layerGrpVisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_ONE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_ONE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_TWO_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_TWO_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_THREE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_THREE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_THREE_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
-
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_FOUR_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
-		ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_FOUR_streamH,  AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
-
-        //ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CEP_GET_ARB_DATA_streamH,AEGP_DynStreamFlag_HIDDEN, FALSE, TRUE));
-
-
-		if (meH) {
-			ERR2(suites.EffectSuite2()->AEGP_DisposeEffect(meH));
-		}
-		if (MATH_TOPIC_SLIDER_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_SLIDER_streamH));
-		}
-		if (MATH_SLIDER_ONE_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_ONE_streamH));
-		}
-		if (MATH_SLIDER_TWO_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_TWO_streamH));
-		}
-		if (MATH_SLIDER_THREE_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_THREE_streamH));
-		}
-		if (MATH_SLIDER_FOUR_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_FOUR_streamH));
-		}
-        if (MATH_SLIDER_FIVE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_FIVE_streamH));
-        }
-        if (MATH_SLIDER_SIX_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_SIX_streamH));
-        }
-        if (MATH_SLIDER_SEVEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_SEVEN_streamH));
-        }
-        if (MATH_SLIDER_HEIGHT_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_HEIGHT_streamH));
-        }
-        if (MATH_SLIDER_NINE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_NINE_streamH));
-        }
-        if (MATH_SLIDER_TEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_TEN_streamH));
-        }
-
-		if (MATH_TOPIC_POINTS_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_POINTS_streamH));
-		}
-        if (MATH_POINT_ONE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_ONE_streamH));
-        }
-        if (MATH_POINT_TWO_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_TWO_streamH));
-        }
-        if (MATH_POINT_THREE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_THREE_streamH));
-        }
-        if (MATH_POINT_FOUR_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_FOUR_streamH));
-        }
-        if (MATH_POINT_FIVE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_FIVE_streamH));
-        }
-        if (MATH_POINT_SIX_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_SIX_streamH));
-        }
-        if (MATH_POINT_SEVEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_SEVEN_streamH));
-        }
-        if (MATH_POINT_HEIGHT_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_HEIGHT_streamH));
-        }
-        if (MATH_POINT_NINE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_NINE_streamH));
-        }
-        if (MATH_POINT_TEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_TEN_streamH));
-        }
-
-        if (MATH_TOPIC_CB_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_CB_streamH));
-        }
-        if (MATH_CB_ONE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_ONE_streamH));
-        }
-        if (MATH_CB_TWO_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_TWO_streamH));
-        }
-        if (MATH_CB_THREE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_THREE_streamH));
-        }
-        if (MATH_CB_FOUR_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_FOUR_streamH));
-        }
-        if (MATH_CB_FIVE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_FIVE_streamH));
-        }
-        if (MATH_CB_SIX_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_SIX_streamH));
-        }
-        if (MATH_CB_SEVEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_SEVEN_streamH));
-        }
-        if (MATH_CB_HEIGHT_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_HEIGHT_streamH));
-        }
-        if (MATH_CB_NINE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_NINE_streamH));
-        }
-        if (MATH_CB_TEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_TEN_streamH));
-        }
-
-		if (MATH_TOPIC_COLORS_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_COLORS_streamH));
-		}
-        if (MATH_COLOR_ONE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_ONE_streamH));
-        }
-        if (MATH_COLOR_TWO_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_TWO_streamH));
-        }
-        if (MATH_COLOR_THREE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_THREE_streamH));
-        }
-        if (MATH_COLOR_FOUR_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_FOUR_streamH));
-        }
-        if (MATH_COLOR_FIVE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_FIVE_streamH));
-        }
-        if (MATH_COLOR_SIX_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_SIX_streamH));
-        }
-        if (MATH_COLOR_SEVEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_SEVEN_streamH));
-        }
-        if (MATH_COLOR_HEIGHT_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_HEIGHT_streamH));
-        }
-        if (MATH_COLOR_NINE_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_NINE_streamH));
-        }
-        if (MATH_COLOR_TEN_streamH) {
-            ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_TEN_streamH));
-        }
-
-		if (MATH_TOPIC_ROTS_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_ROTS_streamH));
-		}
-		if (MATH_ROT_ONE_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_ONE_streamH));
-		}
-		if (MATH_ROT_TWO_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_TWO_streamH));
-		}
-		if (MATH_ROT_THREE_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_THREE_streamH));
-		}
-		if (MATH_ROT_FOUR_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_FOUR_streamH));
-		}
-		if (MATH_ROT_FIVE_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_FIVE_streamH));
-		}
-		if (MATH_ROT_SIX_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_SIX_streamH));
-		}
-		if (MATH_ROT_SEVEN_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_SEVEN_streamH));
-		}
-		if (MATH_ROT_HEIGHT_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_HEIGHT_streamH));
-		}
-		if (MATH_ROT_NINE_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_NINE_streamH));
-		}
-		if (MATH_ROT_TEN_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_TEN_streamH));
-		}
-
-		if (MATH_TOPIC_INPUTS_streamH) {
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_INPUTS_streamH));
-		}
-		if (MATH_INP_LAYER_ONE_streamH){
-			ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_ONE_streamH));
+		PF_State		new_state;
+		A_Boolean		something_changedB = FALSE;
+
+		//access to global data with read/write
+
+			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
+				MATH_ARB_DATA,
+				NULL,
+				NULL,
+				&new_state));
+
+			ERR(suites.ParamUtilsSuite3()->PF_AreStatesIdentical(in_data->effect_ref,
+				&seqP->state,
+				&new_state,
+				&something_changedB));
+
+			if (something_changedB) {
+				//	If something changed (or it's the first time we're being called),
+				//	get the new state and store it in our sequence data
+				ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
+					MATH_ARB_DATA,
+					NULL,
+					NULL,
+					&seqP->state));
 			}
-		if (MATH_INP_TOFF_ONE_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_ONE_streamH));
-		}
-		if (MATH_INP_POFF_ONE_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_ONE_streamH));
-		}
-		if (MATH_INP_LAYER_TWO_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_TWO_streamH));
-		}
-		if (MATH_INP_TOFF_TWO_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_TWO_streamH));
-		}
-		if (MATH_INP_POFF_TWO_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_TWO_streamH));
-		}
-		if (MATH_INP_LAYER_THREE_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_THREE_streamH));
-		}
-		if (MATH_INP_TOFF_THREE_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_THREE_streamH));
-		}
-		if (MATH_INP_POFF_THREE_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_THREE_streamH));
-		}
-		if (MATH_INP_LAYER_FOUR_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_FOUR_streamH));
-		}
-		if (MATH_INP_TOFF_FOUR_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_FOUR_streamH));
-		}
-		if (MATH_INP_POFF_FOUR_streamH){
-		ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_FOUR_streamH));
+
+
+			strcpy(param_copy[MATH_ARB_DATA].name, seqP->presetNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ARB_DATA,
+				&param_copy[MATH_ARB_DATA]));
+
+			strcpy(param_copy[MATH_TOPIC_SLIDER].name, seqP->sliderGrpNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_TOPIC_SLIDER,
+				&param_copy[MATH_TOPIC_SLIDER]));
+
+			strcpy(param_copy[MATH_SLIDER_ONE].name, seqP->paramSlider01NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_ONE,
+				&param_copy[MATH_SLIDER_ONE]));
+
+			strcpy(param_copy[MATH_SLIDER_TWO].name, seqP->paramSlider02NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_TWO,
+				&param_copy[MATH_SLIDER_TWO]));
+
+			strcpy(param_copy[MATH_SLIDER_THREE].name, seqP->paramSlider03NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_THREE,
+				&param_copy[MATH_SLIDER_THREE]));
+
+			strcpy(param_copy[MATH_SLIDER_FOUR].name, seqP->paramSlider04NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_FOUR,
+				&param_copy[MATH_SLIDER_FOUR]));
+
+			strcpy(param_copy[MATH_SLIDER_FIVE].name, seqP->paramSlider05NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_FIVE,
+				&param_copy[MATH_SLIDER_FIVE]));
+
+			strcpy(param_copy[MATH_SLIDER_SIX].name, seqP->paramSlider06NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_SIX,
+				&param_copy[MATH_SLIDER_SIX]));
+
+			strcpy(param_copy[MATH_SLIDER_SEVEN].name, seqP->paramSlider07NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_SEVEN,
+				&param_copy[MATH_SLIDER_SEVEN]));
+
+			strcpy(param_copy[MATH_SLIDER_HEIGHT].name, seqP->paramSlider08NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_HEIGHT,
+				&param_copy[MATH_SLIDER_HEIGHT]));
+
+			strcpy(param_copy[MATH_SLIDER_NINE].name, seqP->paramSlider09NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_NINE,
+				&param_copy[MATH_SLIDER_NINE]));
+
+			strcpy(param_copy[MATH_SLIDER_TEN].name, seqP->paramSlider10NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_SLIDER_TEN,
+				&param_copy[MATH_SLIDER_TEN]));
+
+
+			strcpy(param_copy[MATH_TOPIC_POINTS].name, seqP->pointGrpNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_TOPIC_POINTS,
+				&param_copy[MATH_TOPIC_POINTS]));
+			strcpy(param_copy[MATH_POINT_ONE].name, seqP->paramPoint01NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_ONE,
+				&param_copy[MATH_POINT_ONE]));
+			strcpy(param_copy[MATH_POINT_TWO].name, seqP->paramPoint02NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_TWO,
+				&param_copy[MATH_POINT_TWO]));
+
+			strcpy(param_copy[MATH_POINT_THREE].name, seqP->paramPoint03NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_THREE,
+				&param_copy[MATH_POINT_THREE]));
+
+			strcpy(param_copy[MATH_POINT_FOUR].name, seqP->paramPoint04NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_FOUR,
+				&param_copy[MATH_POINT_FOUR]));
+
+			strcpy(param_copy[MATH_POINT_FIVE].name, seqP->paramPoint05NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_FIVE,
+				&param_copy[MATH_POINT_FIVE]));
+
+			strcpy(param_copy[MATH_POINT_SIX].name, seqP->paramPoint06NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_SIX,
+				&param_copy[MATH_POINT_SIX]));
+
+			strcpy(param_copy[MATH_POINT_SEVEN].name, seqP->paramPoint07NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_SEVEN,
+				&param_copy[MATH_POINT_SEVEN]));
+
+			strcpy(param_copy[MATH_POINT_HEIGHT].name, seqP->paramPoint08NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_HEIGHT,
+				&param_copy[MATH_POINT_HEIGHT]));
+
+			strcpy(param_copy[MATH_POINT_NINE].name, seqP->paramPoint09NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_NINE,
+				&param_copy[MATH_POINT_NINE]));
+
+			strcpy(param_copy[MATH_POINT_TEN].name, seqP->paramPoint10NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_POINT_TEN,
+				&param_copy[MATH_POINT_TEN]));
+
+
+			strcpy(param_copy[MATH_TOPIC_CB].name, seqP->cbGrpNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_TOPIC_CB,
+				&param_copy[MATH_TOPIC_CB]));
+
+			strcpy(param_copy[MATH_CB_ONE].name, seqP->paramCb01NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_ONE,
+				&param_copy[MATH_CB_ONE]));
+			strcpy(param_copy[MATH_CB_TWO].name, seqP->paramCb02NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_TWO,
+				&param_copy[MATH_CB_TWO]));
+
+			strcpy(param_copy[MATH_CB_THREE].name, seqP->paramCb03NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_THREE,
+				&param_copy[MATH_CB_THREE]));
+
+			strcpy(param_copy[MATH_CB_FOUR].name, seqP->paramCb04NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_FOUR,
+				&param_copy[MATH_CB_FOUR]));
+
+			strcpy(param_copy[MATH_CB_FIVE].name, seqP->paramCb05NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_FIVE,
+				&param_copy[MATH_CB_FIVE]));
+
+			strcpy(param_copy[MATH_CB_SIX].name, seqP->paramCb06NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_SIX,
+				&param_copy[MATH_CB_SIX]));
+
+			strcpy(param_copy[MATH_CB_SEVEN].name, seqP->paramCb07NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_SEVEN,
+				&param_copy[MATH_CB_SEVEN]));
+
+			strcpy(param_copy[MATH_CB_HEIGHT].name, seqP->paramCb08NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_HEIGHT,
+				&param_copy[MATH_CB_HEIGHT]));
+
+			strcpy(param_copy[MATH_CB_NINE].name, seqP->paramCb09NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_NINE,
+				&param_copy[MATH_CB_NINE]));
+
+			strcpy(param_copy[MATH_CB_TEN].name, seqP->paramCb10NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_CB_TEN,
+				&param_copy[MATH_CB_TEN]));
+
+
+			strcpy(param_copy[MATH_TOPIC_COLORS].name, seqP->colorGrpNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_TOPIC_COLORS,
+				&param_copy[MATH_TOPIC_COLORS]));
+
+			strcpy(param_copy[MATH_COLOR_ONE].name, seqP->paramColor01NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_ONE,
+				&param_copy[MATH_COLOR_ONE]));
+
+			strcpy(param_copy[MATH_COLOR_TWO].name, seqP->paramColor02NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_TWO,
+				&param_copy[MATH_COLOR_TWO]));
+
+
+			strcpy(param_copy[MATH_COLOR_THREE].name, seqP->paramColor03NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_THREE,
+				&param_copy[MATH_COLOR_THREE]));
+
+			strcpy(param_copy[MATH_COLOR_FOUR].name, seqP->paramColor04NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_FOUR,
+				&param_copy[MATH_COLOR_FOUR]));
+
+			strcpy(param_copy[MATH_COLOR_FIVE].name, seqP->paramColor05NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_FIVE,
+				&param_copy[MATH_COLOR_FIVE]));
+
+			strcpy(param_copy[MATH_COLOR_SIX].name, seqP->paramColor06NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_SIX,
+				&param_copy[MATH_COLOR_SIX]));
+
+			strcpy(param_copy[MATH_COLOR_SEVEN].name, seqP->paramColor07NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_SEVEN,
+				&param_copy[MATH_COLOR_SEVEN]));
+
+			strcpy(param_copy[MATH_COLOR_HEIGHT].name, seqP->paramColor08NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_HEIGHT,
+				&param_copy[MATH_COLOR_HEIGHT]));
+
+			strcpy(param_copy[MATH_COLOR_NINE].name, seqP->paramColor09NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_NINE,
+				&param_copy[MATH_COLOR_NINE]));
+
+			strcpy(param_copy[MATH_COLOR_TEN].name, seqP->paramColor10NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_COLOR_TEN,
+				&param_copy[MATH_COLOR_TEN]));
+
+			strcpy(param_copy[MATH_TOPIC_ROTS].name, seqP->rotGrpNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_TOPIC_ROTS,
+				&param_copy[MATH_TOPIC_ROTS]));
+
+			strcpy(param_copy[MATH_ROT_ONE].name, seqP->paramRot01NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_ONE,
+				&param_copy[MATH_ROT_ONE]));
+
+			strcpy(param_copy[MATH_ROT_TWO].name, seqP->paramRot02NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_TWO,
+				&param_copy[MATH_ROT_TWO]));
+
+
+			strcpy(param_copy[MATH_ROT_THREE].name, seqP->paramRot03NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_THREE,
+				&param_copy[MATH_ROT_THREE]));
+
+			strcpy(param_copy[MATH_ROT_FOUR].name, seqP->paramRot04NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_FOUR,
+				&param_copy[MATH_ROT_FOUR]));
+
+			strcpy(param_copy[MATH_ROT_FIVE].name, seqP->paramRot05NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_FIVE,
+				&param_copy[MATH_ROT_FIVE]));
+
+			strcpy(param_copy[MATH_ROT_SIX].name, seqP->paramRot06NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_SIX,
+				&param_copy[MATH_ROT_SIX]));
+
+			strcpy(param_copy[MATH_ROT_SEVEN].name, seqP->paramRot07NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_SEVEN,
+				&param_copy[MATH_ROT_SEVEN]));
+
+			strcpy(param_copy[MATH_ROT_HEIGHT].name, seqP->paramRot08NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_HEIGHT,
+				&param_copy[MATH_ROT_HEIGHT]));
+
+			strcpy(param_copy[MATH_ROT_NINE].name, seqP->paramRot09NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_NINE,
+				&param_copy[MATH_ROT_NINE]));
+
+			strcpy(param_copy[MATH_ROT_TEN].name, seqP->paramRot10NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_ROT_TEN,
+				&param_copy[MATH_ROT_TEN]));
+
+			strcpy(param_copy[MATH_TOPIC_INPUTS].name, seqP->layerGrpNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_TOPIC_INPUTS,
+				&param_copy[MATH_TOPIC_INPUTS]));
+			strcpy(param_copy[MATH_INP_LAYER_ONE].name, seqP->paramLayer01NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_LAYER_ONE,
+				&param_copy[MATH_INP_LAYER_ONE]));
+			strcpy(param_copy[MATH_INP_TOFF_ONE].name, seqP->paramLayer01ToffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_TOFF_ONE,
+				&param_copy[MATH_INP_TOFF_ONE]));
+			strcpy(param_copy[MATH_INP_POFF_ONE].name, seqP->paramLayer01PoffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_POFF_ONE,
+				&param_copy[MATH_INP_POFF_ONE]));
+			strcpy(param_copy[MATH_INP_LAYER_TWO].name, seqP->paramLayer02NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_LAYER_TWO,
+				&param_copy[MATH_INP_LAYER_TWO]));
+			strcpy(param_copy[MATH_INP_TOFF_TWO].name, seqP->paramLayer02ToffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_TOFF_TWO,
+				&param_copy[MATH_INP_TOFF_TWO]));
+			strcpy(param_copy[MATH_INP_POFF_TWO].name, seqP->paramLayer02PoffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_POFF_TWO,
+				&param_copy[MATH_INP_POFF_TWO]));
+
+			strcpy(param_copy[MATH_INP_LAYER_THREE].name, seqP->paramLayer03NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_LAYER_THREE,
+				&param_copy[MATH_INP_LAYER_THREE]));
+			strcpy(param_copy[MATH_INP_TOFF_THREE].name, seqP->paramLayer03ToffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_TOFF_THREE,
+				&param_copy[MATH_INP_TOFF_THREE]));
+			strcpy(param_copy[MATH_INP_POFF_THREE].name, seqP->paramLayer03PoffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_POFF_THREE,
+				&param_copy[MATH_INP_POFF_THREE]));
+
+			strcpy(param_copy[MATH_INP_LAYER_FOUR].name, seqP->paramLayer04NameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_LAYER_FOUR,
+				&param_copy[MATH_INP_LAYER_FOUR]));
+			strcpy(param_copy[MATH_INP_TOFF_FOUR].name, seqP->paramLayer04ToffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_TOFF_FOUR,
+				&param_copy[MATH_INP_TOFF_FOUR]));
+			strcpy(param_copy[MATH_INP_POFF_FOUR].name, seqP->paramLayer04PoffNameAc);
+			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
+				MATH_INP_POFF_FOUR,
+				&param_copy[MATH_INP_POFF_FOUR]));
+
+
+
+
+			ERR(suites.PFInterfaceSuite1()->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &meH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_SLIDER, &MATH_TOPIC_SLIDER_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_ONE, &MATH_SLIDER_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TWO, &MATH_SLIDER_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_THREE, &MATH_SLIDER_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FOUR, &MATH_SLIDER_FOUR_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_FIVE, &MATH_SLIDER_FIVE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_SIX, &MATH_SLIDER_SIX_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_SEVEN, &MATH_SLIDER_SEVEN_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_HEIGHT, &MATH_SLIDER_HEIGHT_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_NINE, &MATH_SLIDER_NINE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_SLIDER_TEN, &MATH_SLIDER_TEN_streamH));
+
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_POINTS, &MATH_TOPIC_POINTS_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_ONE, &MATH_POINT_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TWO, &MATH_POINT_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_THREE, &MATH_POINT_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FOUR, &MATH_POINT_FOUR_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_FIVE, &MATH_POINT_FIVE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_SIX, &MATH_POINT_SIX_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_SEVEN, &MATH_POINT_SEVEN_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_HEIGHT, &MATH_POINT_HEIGHT_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_NINE, &MATH_POINT_NINE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_POINT_TEN, &MATH_POINT_TEN_streamH));
+
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_CB, &MATH_TOPIC_CB_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_ONE, &MATH_CB_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_TWO, &MATH_CB_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_THREE, &MATH_CB_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FOUR, &MATH_CB_FOUR_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_FIVE, &MATH_CB_FIVE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_SIX, &MATH_CB_SIX_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_SEVEN, &MATH_CB_SEVEN_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_HEIGHT, &MATH_CB_HEIGHT_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_NINE, &MATH_CB_NINE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_CB_TEN, &MATH_CB_TEN_streamH));
+
+
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_COLORS, &MATH_TOPIC_COLORS_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_ONE, &MATH_COLOR_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TWO, &MATH_COLOR_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_THREE, &MATH_COLOR_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FOUR, &MATH_COLOR_FOUR_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_FIVE, &MATH_COLOR_FIVE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_SIX, &MATH_COLOR_SIX_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_SEVEN, &MATH_COLOR_SEVEN_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_HEIGHT, &MATH_COLOR_HEIGHT_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_NINE, &MATH_COLOR_NINE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_COLOR_TEN, &MATH_COLOR_TEN_streamH));
+
+
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_ROTS, &MATH_TOPIC_ROTS_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_ONE, &MATH_ROT_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_TWO, &MATH_ROT_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_THREE, &MATH_ROT_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_FOUR, &MATH_ROT_FOUR_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_FIVE, &MATH_ROT_FIVE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_SIX, &MATH_ROT_SIX_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_SEVEN, &MATH_ROT_SEVEN_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_HEIGHT, &MATH_ROT_HEIGHT_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_NINE, &MATH_ROT_NINE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_ROT_TEN, &MATH_ROT_TEN_streamH));
+
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_TOPIC_INPUTS, &MATH_TOPIC_INPUTS_streamH));
+
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_ONE, &MATH_INP_LAYER_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_ONE, &MATH_INP_TOFF_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_ONE, &MATH_INP_POFF_ONE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_TWO, &MATH_INP_LAYER_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_TWO, &MATH_INP_TOFF_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_TWO, &MATH_INP_POFF_TWO_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_THREE, &MATH_INP_LAYER_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_THREE, &MATH_INP_TOFF_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_THREE, &MATH_INP_POFF_THREE_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_FOUR, &MATH_INP_LAYER_FOUR_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_FOUR, &MATH_INP_TOFF_FOUR_streamH));
+			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_FOUR, &MATH_INP_POFF_FOUR_streamH));
+
+
+			//ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH,MATH_CEP_GET_ARB_DATA, &MATH_CEP_GET_ARB_DATA_streamH));
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_SLIDER_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->sliderGrpVisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider01VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider02VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider03VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider04VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider05VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider06VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider07VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider08VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider09VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_SLIDER_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramSlider10VisibleB));
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_POINTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->pointGrpVisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint01VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint02VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint03VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint04VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint05VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint06VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint07VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint08VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint09VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_POINT_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramPoint10VisibleB));
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_CB_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->cbGrpVisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb01VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb02VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb03VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb04VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb05VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb06VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb07VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb08VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb09VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CB_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramCb10VisibleB));
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_COLORS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->colorGrpVisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor01VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor02VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor03VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor04VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor05VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor06VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor07VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor08VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor09VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_COLOR_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramColor10VisibleB));
+
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_ROTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->rotGrpVisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot01VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot02VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot03VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot04VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_FIVE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot05VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_SIX_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot06VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_SEVEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot07VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_HEIGHT_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot08VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot09VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot10VisibleB));
+
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_INPUTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->layerGrpVisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
+
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
+			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
+
+			//ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CEP_GET_ARB_DATA_streamH,AEGP_DynStreamFlag_HIDDEN, FALSE, TRUE));
+
+
+			if (meH) {
+				ERR2(suites.EffectSuite2()->AEGP_DisposeEffect(meH));
+			}
+			if (MATH_TOPIC_SLIDER_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_SLIDER_streamH));
+			}
+			if (MATH_SLIDER_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_ONE_streamH));
+			}
+			if (MATH_SLIDER_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_TWO_streamH));
+			}
+			if (MATH_SLIDER_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_THREE_streamH));
+			}
+			if (MATH_SLIDER_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_FOUR_streamH));
+			}
+			if (MATH_SLIDER_FIVE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_FIVE_streamH));
+			}
+			if (MATH_SLIDER_SIX_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_SIX_streamH));
+			}
+			if (MATH_SLIDER_SEVEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_SEVEN_streamH));
+			}
+			if (MATH_SLIDER_HEIGHT_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_HEIGHT_streamH));
+			}
+			if (MATH_SLIDER_NINE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_NINE_streamH));
+			}
+			if (MATH_SLIDER_TEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_SLIDER_TEN_streamH));
+			}
+
+			if (MATH_TOPIC_POINTS_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_POINTS_streamH));
+			}
+			if (MATH_POINT_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_ONE_streamH));
+			}
+			if (MATH_POINT_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_TWO_streamH));
+			}
+			if (MATH_POINT_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_THREE_streamH));
+			}
+			if (MATH_POINT_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_FOUR_streamH));
+			}
+			if (MATH_POINT_FIVE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_FIVE_streamH));
+			}
+			if (MATH_POINT_SIX_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_SIX_streamH));
+			}
+			if (MATH_POINT_SEVEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_SEVEN_streamH));
+			}
+			if (MATH_POINT_HEIGHT_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_HEIGHT_streamH));
+			}
+			if (MATH_POINT_NINE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_NINE_streamH));
+			}
+			if (MATH_POINT_TEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_POINT_TEN_streamH));
+			}
+
+			if (MATH_TOPIC_CB_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_CB_streamH));
+			}
+			if (MATH_CB_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_ONE_streamH));
+			}
+			if (MATH_CB_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_TWO_streamH));
+			}
+			if (MATH_CB_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_THREE_streamH));
+			}
+			if (MATH_CB_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_FOUR_streamH));
+			}
+			if (MATH_CB_FIVE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_FIVE_streamH));
+			}
+			if (MATH_CB_SIX_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_SIX_streamH));
+			}
+			if (MATH_CB_SEVEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_SEVEN_streamH));
+			}
+			if (MATH_CB_HEIGHT_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_HEIGHT_streamH));
+			}
+			if (MATH_CB_NINE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_NINE_streamH));
+			}
+			if (MATH_CB_TEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CB_TEN_streamH));
+			}
+
+			if (MATH_TOPIC_COLORS_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_COLORS_streamH));
+			}
+			if (MATH_COLOR_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_ONE_streamH));
+			}
+			if (MATH_COLOR_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_TWO_streamH));
+			}
+			if (MATH_COLOR_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_THREE_streamH));
+			}
+			if (MATH_COLOR_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_FOUR_streamH));
+			}
+			if (MATH_COLOR_FIVE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_FIVE_streamH));
+			}
+			if (MATH_COLOR_SIX_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_SIX_streamH));
+			}
+			if (MATH_COLOR_SEVEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_SEVEN_streamH));
+			}
+			if (MATH_COLOR_HEIGHT_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_HEIGHT_streamH));
+			}
+			if (MATH_COLOR_NINE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_NINE_streamH));
+			}
+			if (MATH_COLOR_TEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_COLOR_TEN_streamH));
+			}
+
+			if (MATH_TOPIC_ROTS_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_ROTS_streamH));
+			}
+			if (MATH_ROT_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_ONE_streamH));
+			}
+			if (MATH_ROT_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_TWO_streamH));
+			}
+			if (MATH_ROT_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_THREE_streamH));
+			}
+			if (MATH_ROT_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_FOUR_streamH));
+			}
+			if (MATH_ROT_FIVE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_FIVE_streamH));
+			}
+			if (MATH_ROT_SIX_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_SIX_streamH));
+			}
+			if (MATH_ROT_SEVEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_SEVEN_streamH));
+			}
+			if (MATH_ROT_HEIGHT_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_HEIGHT_streamH));
+			}
+			if (MATH_ROT_NINE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_NINE_streamH));
+			}
+			if (MATH_ROT_TEN_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_ROT_TEN_streamH));
+			}
+
+			if (MATH_TOPIC_INPUTS_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_TOPIC_INPUTS_streamH));
+			}
+			if (MATH_INP_LAYER_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_ONE_streamH));
+			}
+			if (MATH_INP_TOFF_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_ONE_streamH));
+			}
+			if (MATH_INP_POFF_ONE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_ONE_streamH));
+			}
+			if (MATH_INP_LAYER_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_TWO_streamH));
+			}
+			if (MATH_INP_TOFF_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_TWO_streamH));
+			}
+			if (MATH_INP_POFF_TWO_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_TWO_streamH));
+			}
+			if (MATH_INP_LAYER_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_THREE_streamH));
+			}
+			if (MATH_INP_TOFF_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_THREE_streamH));
+			}
+			if (MATH_INP_POFF_THREE_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_THREE_streamH));
+			}
+			if (MATH_INP_LAYER_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_FOUR_streamH));
+			}
+			if (MATH_INP_TOFF_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_FOUR_streamH));
+			}
+			if (MATH_INP_POFF_FOUR_streamH) {
+				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_FOUR_streamH));
+			}
+			seqP->initializedB = true;
 		}
         /*
         if (MATH_CEP_GET_ARB_DATA_streamH){
             ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_CEP_GET_ARB_DATA_streamH));
         }*/
 
-		if (!err) {
+
+	if (!err) {
 			out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
 		}
-
-	}
-
 	return err;
 }
 
@@ -1413,11 +1441,14 @@ tlmath::UserChangedParam(
 		if (params[MATH_CEP_GET_ARB_DATA]->u.bd.value == TRUE) {
 
             ERR(SetupGetDataBack(in_data, out_data, params));
+			
 			//deselect checkbox
             params[MATH_CEP_GET_ARB_DATA]->u.bd.value = FALSE;
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
                                                                 MATH_CEP_GET_ARB_DATA,
                                                                 params[MATH_CEP_GET_ARB_DATA]));
+			
+
 			ERR(SetupDialogSend(in_data, out_data, params));
 
 			if (!err) {

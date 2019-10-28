@@ -354,6 +354,7 @@ tlmath::SetupGetDataBack(
 		err = PF_Err_OUT_OF_MEMORY;
 	}
     PF_UNLOCK_HANDLE(arbOutH);
+
     return err;
 
 }

@@ -207,7 +207,6 @@ tlmath::PreRender(PF_InData                *in_data,
 	AEGP_ItemH      itemH;
 	MathInfo        * miP = NULL;
     PF_Boolean     cameraModeB = false;
-
 	if (infoH) {
 		miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(infoH));
 		if (miP) {

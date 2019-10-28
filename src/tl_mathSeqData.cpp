@@ -443,6 +443,11 @@ tlmath::updateSeqData(PF_InData            *in_data,
         if (seqP->initializedB == false) {
             tlmath::copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
             seqP->initializedB = true;
+			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
+				MATH_ARB_DATA,
+				NULL,
+				NULL,
+				&seqP->state));
             out_data->sequence_data = seq_dataH;
 
         }
@@ -484,6 +489,11 @@ tlmath::SequenceSetup (
             seqP->initializedB = false;
             tlmath::copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
             ERR(tlmath::evalScripts(seqP));
+			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
+				MATH_ARB_DATA,
+				NULL,
+				NULL,
+				&seqP->state));
             out_data->sequence_data = seq_dataH;
             suites.HandleSuite1()->host_unlock_handle(seq_dataH);
         } else {    // whoa, we couldn't allocate sequence data; bail!

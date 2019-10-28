@@ -568,8 +568,8 @@ GlobalSetup (
 {
     PF_Err 				err 		= PF_Err_NONE;
     
-    PF_Handle			globH		= NULL;
-    my_global_dataP		globP		= NULL;
+    PF_Handle			globH		= nullptr;
+    my_global_dataP		globP		= nullptr;
     AEGP_SuiteHandler		suites(in_data->pica_basicP);
     
 	out_data->my_version = PF_VERSION(	MAJOR_VERSION, 

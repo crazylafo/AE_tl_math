@@ -70,6 +70,7 @@ typedef struct {
     A_char arbDataAc[250000];
 } m_ArbData;
 typedef struct {
+	PF_State		state;
 	bool    initializedB;
 	A_char  descriptionAc[2048];
 	A_char  presetNameAc[32];
