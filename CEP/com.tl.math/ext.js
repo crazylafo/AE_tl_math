@@ -475,7 +475,6 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	}
 	arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
 	arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
-
 	return arbData;
 	}
 function toogleCheckbox(className, currId){
