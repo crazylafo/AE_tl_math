@@ -352,9 +352,7 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#camera_rot").val(arbData.composition.camera_rotation.toString());
 	$("#camera_zoom").val(arbData.composition.camera_zoom.toString());
 	$("#expr_current_channelName").val(arbData.math_expression.expr_current_channel.toString());
-	$("#expr_lumaName").val(arbData.math_expression.expr_luma.toString());
 	$("#expr_pixName").val(arbData.math_expression.expr_pix.toString());
-	$("#expr_pix_offName").val(arbData.math_expression.expr_pix_off.toString());
 	getParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	getParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	getParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
@@ -445,9 +443,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	
 	arbData.math_expression.exprRGBModeB = $("#rgbmodeB").is(':checked');
 	arbData.math_expression.expr_current_channel = safeCharsForName ($("#expr_current_channelName").val().toString());
-	arbData.math_expression.expr_luma =safeCharsForName ($("#expr_lumaName").val().toString());
 	arbData.math_expression.expr_pix =safeCharsForName ($("#expr_pixName").val().toString());
-	arbData.math_expression.expr_pix_off =safeCharsForName ($("#expr_pix_offName").val().toString());
 	sendParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	sendParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	sendParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
