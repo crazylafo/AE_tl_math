@@ -440,7 +440,7 @@ tlmath::ParamsSetup  (
     def.flags        |=    PF_ParamFlag_SUPERVISE |
     PF_ParamFlag_CANNOT_TIME_VARY;
 
-    def.ui_flags    = PF_PUI_STD_CONTROL_ONLY|PF_PUI_INVISIBLE |PF_PUI_NO_ECW_UI;
+    def.ui_flags    = PF_PUI_INVISIBLE |PF_PUI_NO_ECW_UI;
 
     PF_ADD_CHECKBOX(STR(StrID_CEP_GETARB_Param_Name),
                     STR(StrID_CEP_GETARB_Param_Name),
@@ -1390,6 +1390,7 @@ tlmath::UpdateParameterUI(
 
 
 	if (!err) {
+            out_data->out_flags |= PF_OutFlag_REFRESH_UI;
 			out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
 		}
 	return err;
@@ -1450,6 +1451,7 @@ tlmath::UserChangedParam(
 			
 
 			ERR(SetupDialogSend(in_data, out_data, params));
+            ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
 
 			if (!err) {
 				out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;

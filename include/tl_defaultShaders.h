@@ -40,7 +40,7 @@ vec4 loadTextureFromAE (sampler2D tex2d)
 {
     vec2 uv_AE = out_uvs;
     uv_AE.y = 1.- out_uvs.y;
-    vec4 textureIn = texture2D( tex2d, uv_AE);
+    vec4 textureIn = texture( tex2d, uv_AE);
     textureIn =  textureIn * multiplier16bit;
     textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);
     textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);
@@ -51,7 +51,7 @@ vec4 loadTextureOffset(sampler2D tex2d, vec2 off) {
 	vec2 uv_AE = out_uvs;
 	uv_AE.x = out_uvs.x + off.x;
 	uv_AE.y = 1. - (out_uvs.y + off.y);
-	vec4 textureIn = texture2D(tex2d, uv_AE);
+	vec4 textureIn = texture(tex2d, uv_AE);
 	textureIn = textureIn * multiplier16bit;
 	textureIn = vec4(textureIn.g, textureIn.b, textureIn.a, textureIn.r);
 	textureIn = vec4(textureIn.a * textureIn.r, textureIn.a * textureIn.g, textureIn.a * textureIn.b, textureIn.a);
@@ -60,12 +60,16 @@ vec4 loadTextureOffset(sampler2D tex2d, vec2 off) {
 })=====";
 
 
+
 static std::string gl33InputMainGrp =R"=====(
 void main(void)
 {
-    fragCoord = gl_FragCoord;
-    gl_coord.y = (resolution.y - out_uvs.y)-gl_FragCoord.y;
-    fragColorOut = (ExprGrp(fragCoord);
+    vec4 text0= loadTextureFromAE(inputLayer0, out_uvs.xy);
+    fragColorOut.r = rgbExpr(gl_FragCoord.xy, text0.r);
+    fragColorOut.g = rgbExpr(gl_FragCoord.xy, text0.g);
+    fragColorOut.b = rgbExpr(gl_FragCoord.xy, text0.b);
+    fragColorOut.a = 1;
+
 })=====";
 
 static std::string gl33InputMainSplit =R"=====(
@@ -102,7 +106,7 @@ void main(void)\n\
 {\n\
 vec2 uv_AE = out_uvs;\n\
 uv_AE.y = 1. - out_uvs.y;\n\
-colourOut = texture2D(layerTex, uv_AE);\n\
+colourOut = texture(layerTex, uv_AE);\n\
 if (colourOut.a == 0) {\n\
 colourOut = vec4(0, 0, 0, 0);\n\
 } else {\n\

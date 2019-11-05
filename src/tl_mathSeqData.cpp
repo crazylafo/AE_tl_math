@@ -4,8 +4,6 @@
 //
 // 
 //
-
-
 #include    "tl_math.h"
 
 
@@ -120,16 +118,12 @@ static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_a
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
-
 static void   copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target){
 	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
-
-static void updateSliderParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)
-{
-	params[indexOffsetI]->u.fs_d.value = ABS(params[indexOffsetI]->u.fs_d.value - 1);  // little crapy solution to force the render thread to re render  
+static void updateSliderParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI){
 	for (int index = 0; index < numParamsI; index++) {
 		int paramIndex = index + indexOffsetI;
 		params[paramIndex]->u.fs_d.value = getFloatFromJsonAdress(arbDataJS, "/gui_settings/sliderGrp/params/"+ std::to_string(index) +"/defaultVal/0", params[paramIndex]->u.fs_d.value);
@@ -143,33 +137,28 @@ static void updatePointParams(PF_InData* in_data, PF_ParamDef* params[], nlohman
 		params[paramIndex]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 		}
 	}
-static void updateCbParams(PF_ParamDef * params[],nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)
-{
+static void updateCbParams(PF_ParamDef * params[],nlohmann::json arbDataJS, int indexOffsetI, int numParamsI){
 	for (int index = 0; index < numParamsI; index++) {
 		int paramIndex = index + indexOffsetI;
 		params[paramIndex]->u.bd.value = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/gui_settings/cboxGrp/params/" + std::to_string(index) + "/defaultVal/0", params[paramIndex]->u.bd.value));
 		params[paramIndex]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 	}
 }
-static void updateRotParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)
-{
+static void updateRotParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI){
 	for (int index = 0; index < numParamsI; index++) {
 		int paramIndex = index + indexOffsetI;
 		params[paramIndex]->u.ad.value = INT2FIX(getFloatFromJsonAdress(arbDataJS, "/gui_settings/rotationGrp/params/" + std::to_string(index) + "/defaultVal/0", params[paramIndex]->u.ad.value));
 		params[paramIndex]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 	}
 }
-static void updateColorParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI)
-{
+static void updateColorParams(PF_ParamDef* params[], nlohmann::json arbDataJS, int indexOffsetI, int numParamsI){
 	for (int index = 0; index < numParamsI; index++) {
 		int paramIndex = index + indexOffsetI;
 		params[paramIndex]->u.cd.value = (getColorFromJsonAdress(arbDataJS, "/gui_settings/colorGrp/params/" + std::to_string(index) + "/defaultVal/", params[paramIndex]->u.cd.value));
 		params[paramIndex]->uu.change_flags = PF_ChangeFlag_CHANGED_VALUE;
 	}
 }
-
-PF_Err
-tlmath::updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[],std::string     arbStr){
+PF_Err tlmath::updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[],std::string     arbStr){
     PF_Err err = PF_Err_NONE;
     nlohmann::json arbDataJS;
     try {
@@ -190,10 +179,7 @@ tlmath::updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[],std::str
     return err;
 
 }
-
-PF_Err
-tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::string       arbStr, seqData* seqDataP)
-{
+PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::string       arbStr, seqData* seqDataP){
 	PF_Err err = PF_Err_NONE;
 	nlohmann::json arbDataJS;
 	try {
@@ -410,12 +396,7 @@ tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, std::stri
 
     return err;
 }
-
-PF_Err
-tlmath::updateSeqData(PF_InData            *in_data,
-                     PF_OutData            *out_data,
-                     PF_ParamDef            *params[])
-{
+PF_Err tlmath::updateSeqData(PF_InData *in_data,  PF_OutData  *out_data,  PF_ParamDef *params[]){
     PF_Err                err = PF_Err_NONE;
     AEGP_SuiteHandler        suites(in_data->pica_basicP);
     PF_ParamDef arb_param;
@@ -458,12 +439,7 @@ tlmath::updateSeqData(PF_InData            *in_data,
     }
     return err;
 }
-
-PF_Err
-tlmath::SequenceSetdown (
-                        PF_InData        *in_data,
-                        PF_OutData        *out_data)
-{
+PF_Err tlmath::SequenceSetdown ( PF_InData        *in_data, PF_OutData        *out_data){
     PF_Err err = PF_Err_NONE;
 
     if (in_data->sequence_data){
@@ -472,11 +448,7 @@ tlmath::SequenceSetdown (
     }
     return err;
 }
-PF_Err
-tlmath::SequenceSetup (
-                      PF_InData        *in_data,
-                      PF_OutData        *out_data)
-{
+PF_Err tlmath::SequenceSetup (PF_InData        *in_data,  PF_OutData        *out_data){
     PF_Err err = PF_Err_NONE;
     AEGP_SuiteHandler suites(in_data->pica_basicP);
     err = SequenceSetdown(in_data, out_data);
