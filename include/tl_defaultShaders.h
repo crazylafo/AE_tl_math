@@ -19,19 +19,25 @@ static std::string importVec3GlStr = "uniform vec3 ";
 static std::string importBoolGlStr = "uniform bool ";
 static std::string import2dTextGlStr = "uniform sampler2D ";
 
-static std::string  endFunctionStr ="\n }; \n";
-static std::string redFunctionStr= "float redExpr (vec2 fragCoord){ \n";
-static std::string greenFunctionStr= "float greenExpr (vec2 fragCoord){ \n";
-static std::string blueFunctionStr= "float blueExpr (vec2 fragCoord){ \n";
-static std::string alphaFunctionStr= "float alphaExpr (vec2 fragCoord){ \n";
-static std::string rgbFunctionStr= "float rgbExpr (vec2 fragCoord){ \n";
+static std::string  endFunctionStr ="\n } \n";
+static std::string redFunctionStr= "float redExpr (vec2 fragCoord, float colorCh){ \n";
+static std::string greenFunctionStr= "float greenExpr (vec2 fragCoord, float colorCh){ \n";
+static std::string blueFunctionStr= "float blueExpr (vec2 fragCoord, float colorCh){ \n";
+static std::string alphaFunctionStr= "float alphaExpr (vec2 fragCoord, float colorCh){ \n";
+static std::string rgbFunctionStr= "float rgbExpr (vec2 fragCoord, float colorCh){ \n";
 
 
+static std::string gl33getLuma = R"=====(
+float getLuma(vec4 text) {
+	return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b;
+	}
+)=====";
 
 static std::string gl33GeneriqueShInput= R"=====(
+	 #version 330 // glsls version for opengl 3.3
      uniform float multiplier16bit; //proper to AE 16 bits depth.
      out vec4 fragColorOut;
-     vec2 uv;
+     in vec2 out_uvs;
      uniform vec2 resolution;
 )=====";
 
@@ -64,20 +70,23 @@ vec4 loadTextureOffset(sampler2D tex2d, vec2 off) {
 static std::string gl33InputMainGrp =R"=====(
 void main(void)
 {
-    vec4 text0= loadTextureFromAE(inputLayer0, out_uvs.xy);
+    vec4 text0= loadTextureFromAE(inputLayer0);
     fragColorOut.r = rgbExpr(gl_FragCoord.xy, text0.r);
     fragColorOut.g = rgbExpr(gl_FragCoord.xy, text0.g);
     fragColorOut.b = rgbExpr(gl_FragCoord.xy, text0.b);
-    fragColorOut.a = 1;
+    fragColorOut.a = alphaExpr(gl_FragCoord.xy, text0.a);
 
 })=====";
 
 static std::string gl33InputMainSplit =R"=====(
 void main(void)
 {
-    gl_coord = gl_FragCoord;
-    gl_coord.y = (resolution.y - out_uvs.y)-gl_FragCoord.y;
-    fragColorOut = (ExprSplitR(fragCoord),ExprSplitG(fragCoord), ExprSplitB(fragCoord), ExprSplitA(fragCoord));
+	vec4 text0= loadTextureFromAE(inputLayer0);
+	fragColorOut.r =  redExpr(gl_FragCoord.xy, text0.r);
+    fragColorOut.g =  greenExpr(gl_FragCoord.xy, text0.g);
+    fragColorOut.b = blueExpr (gl_FragCoord.xy, text0.b);
+	fragColorOut.a= alphaExpr(gl_FragCoord.xy, text0.a);
+
 })=====";
 
 

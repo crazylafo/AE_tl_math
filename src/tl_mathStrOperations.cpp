@@ -39,7 +39,7 @@ void tlmath::scriptCorrectorStr(std::string& str)
 }
  void tlmath::jsonCorrectorStr(std::string& str)
 {
-	//strReplace(str, "\\", " ");
+	strReplace(str, "(\\)", " ");
 	strReplace(str, "\n", "\\n");
 	strReplace(str, "\b", "\\b");
 	strReplace(str, "\f", "\\f");

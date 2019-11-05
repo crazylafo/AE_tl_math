@@ -686,7 +686,6 @@ tlmath::SmartRender(
                     flagsP.PixelsCallExternalInputB[i] = seqP->pixelsCallExternalInputB[i];
                 }
 				flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
-				flagsP.NeedsLumaB = seqP->needsLumaB;
 				flagsP.parserModeB = seqP->exprModeB;
                 flagsP.exprRGBModeB = seqP->exprRGBModeB;
 			}

@@ -113,13 +113,14 @@ static PF_Pixel getColorFromJsonAdress(nlohmann::json arbDataJS, std::string jso
 	}
 	return dataColorCh;
 }
-static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress, char* target){
+static void copyStrFromJsonToSeqData(nlohmann::json arbDataJS, std::string json_adress, char* target) {
 	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
-static void   copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target){
-	std::string dataStr = getStringFromJsonAdress(arbDataJS, json_adress, target);
+ void   tlmath::copyExprFromJsonToSeqData(nlohmann::json arbDataJS,std::string json_adress,A_char* target){
+	std::string dataStr =  getStringFromJsonAdress(arbDataJS, json_adress, target);
+	tlmath::scriptCorrectorStr(dataStr);
 	std::size_t length = dataStr.copy(target, dataStr.size());
 	target[length] = '\0';
 }
@@ -198,32 +199,50 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	copyStrFromJsonToSeqData(arbDataJS, "/effectInfo/presetName", seqDataP->presetNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/effectInfo/description", seqDataP->descriptionAc);
 
-	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/redExpr", seqDataP->redExAc);
-	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/greenExpr", seqDataP->greenExAc);
-	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/blueExpr", seqDataP->blueExAc);
-	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alphaExpr", seqDataP->alphaExAc);
-	copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgbExpr", seqDataP->rgbExprExAc);
+	//copy flags
+	seqDataP->glsl33ModeB = getBoolFromJsonToSeqData(arbDataJS, "/effectMode/gl33_modeB");
+	seqDataP->exprModeB = getBoolFromJsonToSeqData(arbDataJS, "/effectMode/expr_modeB");
+	seqDataP->evalModeB = getBoolFromJsonToSeqData(arbDataJS, "/effectMode/evalModeB");
+	seqDataP->exprRGBModeB = getBoolFromJsonToSeqData(arbDataJS, "/math_expression/exprRGBModeB");
+	seqDataP->pixelsCallExternalInputB[0] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/0", 0));
+	seqDataP->pixelsCallExternalInputB[1] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/1", 0));
+	seqDataP->pixelsCallExternalInputB[2] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/2", 0));
+	seqDataP->pixelsCallExternalInputB[3] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/3", 0));
+	seqDataP->presetHasWideInputB = getBoolFromJsonToSeqData(arbDataJS, "/flags/presetHasWideInputB");
+	seqDataP->cameraB = getBoolFromJsonToSeqData(arbDataJS, "/flags/usesCameraB");
 
-	std::string curr_fragSh = seqDataP->Glsl33_FragmentShAc;
-	std::string curr_vertSh = seqDataP->Glsl33_VertexShAc;
-	std::string  new_frag = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_frag_sh", seqDataP->Glsl33_FragmentShAc);
-	std::string  new_vert = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_vert_sh",seqDataP->Glsl33_VertexShAc);
-	tlmath::scriptCorrectorStr(new_frag);
-	tlmath::scriptCorrectorStr(new_vert);
-    if (curr_fragSh.compare(new_frag) != 0 || curr_vertSh.compare(new_vert) != 0)
-    {
-        //copy shaders
-		std::size_t  fragLength = new_frag.copy(seqDataP->Glsl33_FragmentShAc, new_frag.length());
-		seqDataP->Glsl33_FragmentShAc[fragLength] = '\0';
-		std::size_t  vertLength = new_vert.copy(seqDataP->Glsl33_VertexShAc, new_vert.length());
+
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/redExpr", seqDataP->redExAc);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/greenExpr", seqDataP->greenExAc);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/blueExpr", seqDataP->blueExAc);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alphaExpr", seqDataP->alphaExAc);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgbExpr", seqDataP->rgbExprExAc);
+
+	if (seqDataP->exprModeB) {
+		ERR(tlmath::embedExprInShaders(seqDataP));
+		//keep the default vertex shader
+		std::size_t  vertLength = glvertstr.copy(seqDataP->Glsl33_VertexShAc, glvertstr.length());
 		seqDataP->Glsl33_VertexShAc[vertLength] = '\0';
-    }
-
+	}
+	else {
+		std::string curr_fragSh = seqDataP->Glsl33_FragmentShAc;
+		std::string curr_vertSh = seqDataP->Glsl33_VertexShAc;
+		std::string  new_frag = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_frag_sh", seqDataP->Glsl33_FragmentShAc);
+		std::string  new_vert = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_vert_sh", seqDataP->Glsl33_VertexShAc);
+		tlmath::scriptCorrectorStr(new_frag);
+		tlmath::scriptCorrectorStr(new_vert);
+		if (curr_fragSh.compare(new_frag) != 0 || curr_vertSh.compare(new_vert) != 0)
+		{
+			//copy shaders
+			std::size_t  fragLength = new_frag.copy(seqDataP->Glsl33_FragmentShAc, new_frag.length());
+			seqDataP->Glsl33_FragmentShAc[fragLength] = '\0';
+			std::size_t  vertLength = new_vert.copy(seqDataP->Glsl33_VertexShAc, new_vert.length());
+			seqDataP->Glsl33_VertexShAc[vertLength] = '\0';
+		}
+	}
      //copy expressions params name
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_current_channel",seqDataP->expr_ColorChNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix",seqDataP->expr_pixNameAc);
-	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_luma",seqDataP->expr_lumaNameAc);
-    copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix_off",seqDataP->expr_pix_offNameAc);
     // copy compositions params
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_position",seqDataP->cameraPosNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_target",seqDataP->cameraTargetNameAc);
@@ -237,18 +256,6 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/time_frame",seqDataP->time_frameNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/frame_rate",seqDataP->frame_rateNameAc);
 	 
-    //copy flags
-    seqDataP->glsl33ModeB =getBoolFromJsonToSeqData (arbDataJS, "/effectMode/gl33_modeB");
-    seqDataP->exprModeB =  getBoolFromJsonToSeqData (arbDataJS, "/effectMode/expr_modeB");
-    seqDataP->evalModeB = getBoolFromJsonToSeqData (arbDataJS, "/effectMode/evalModeB");
-    seqDataP->exprRGBModeB = getBoolFromJsonToSeqData (arbDataJS, "/math_expression/exprRGBModeB");
-    seqDataP->pixelsCallExternalInputB[0] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/0", 0));
-    seqDataP->pixelsCallExternalInputB[1] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/1",0));
-    seqDataP->pixelsCallExternalInputB[2] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/2",0));
-    seqDataP->pixelsCallExternalInputB[3] = convertIntToBool(getIntFromJsonAdress(arbDataJS, "/flags/pixelsCallExternalInputB/3",0));
-    seqDataP->needsLumaB = getBoolFromJsonToSeqData (arbDataJS, "/flags/needsLumaB");
-    seqDataP->presetHasWideInputB = getBoolFromJsonToSeqData (arbDataJS, "/flags/presetHasWideInputB");
-    seqDataP->cameraB = getBoolFromJsonToSeqData (arbDataJS, "/flags/usesCameraB");
 
     //copy layers
 

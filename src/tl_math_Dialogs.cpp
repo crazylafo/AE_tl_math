@@ -266,21 +266,17 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     tlmath::jsonCorrectorStr(fragErr);
     tlmath::jsonCorrectorStr(vertErr);
 
-    tlmath::jsonCorrectorStr(redErr);
-    tlmath::jsonCorrectorStr(greenErr);
-    tlmath::jsonCorrectorStr(blueErr);
-    tlmath::jsonCorrectorStr(alphaErr);
-	tlmath::jsonCorrectorStr(rgbErr);
+
 
 
     arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
     arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
 	arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
-	arbDataJS["math_expression"]["red_error"] = compile_success; // redErr;
-    arbDataJS["math_expression"]["green_error"] = compile_success; //greenErr;
-    arbDataJS["math_expression"]["blue_error"] = compile_success; //blueErr;
-    arbDataJS["math_expression"]["alpha_error"] = compile_success; // alphaErr;
-	arbDataJS["math_expression"]["rgb_error"] = compile_success; //rgbErr;
+	arbDataJS["math_expression"]["red_error"] =  fragErr;// redErr;
+    arbDataJS["math_expression"]["green_error"] = fragErr;//greenErr;
+    arbDataJS["math_expression"]["blue_error"] = fragErr; //blueErr;
+    arbDataJS["math_expression"]["alpha_error"] = fragErr; // alphaErr;
+	arbDataJS["math_expression"]["rgb_error"] = fragErr; //rgbErr;
     std::string jsonDump = "'''";
     jsonDump.append(arbDataJS.dump());
 	jsonDump.append("'''");
@@ -341,9 +337,7 @@ tlmath::SetupGetDataBack(
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		ERR(tlmath::copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
-        if (seqP->exprModeB){
-            ERR(tlmath::embedExprInShaders(seqP));
-        }
+
         ERR(tlmath::evalScripts(seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
@@ -412,7 +406,6 @@ PF_Err
 tlmath::embedExprInShaders (seqData  *seqP){
     PF_Err err = PF_Err_NONE;
 
-    //float rgbExpr(seqP->expr_pixNameAc,  seqP->expr_ColorChNameAc
 
     std::string redExprStr = redFunctionStr+seqP->redExAc+endFunctionStr ;
     std::string greenExprStr = greenFunctionStr+seqP->greenExAc+endFunctionStr;
@@ -420,13 +413,13 @@ tlmath::embedExprInShaders (seqData  *seqP){
     std::string alphaExprStr = alphaFunctionStr+seqP->alphaExAc+endFunctionStr;
     std::string rgbExprStr = rgbFunctionStr+ seqP->rgbExprExAc +endFunctionStr;
 
-
-
     std::string exprGrpStr =redExprStr+ greenExprStr+blueExprStr+alphaExprStr;
     if (seqP->exprRGBModeB){
         AEFX_CLR_STRUCT(exprGrpStr);
-        exprGrpStr =rgbExprStr;
+        exprGrpStr =rgbExprStr + alphaExprStr;
     }
+	strReplace(exprGrpStr, "fragCoord", seqP->expr_pixNameAc);
+	strReplace(exprGrpStr, "colorCh", seqP->expr_ColorChNameAc);
 
     //start new Shader as string
     std::string fragShStr = gl33GeneriqueShInput; //get the classic input
@@ -501,8 +494,10 @@ tlmath::embedExprInShaders (seqData  *seqP){
     AppendGlslInputVec3d(fragShStr,exprGrpStr, seqP->paramColor10NameAc);
 
     //for texttures
-	bool hasTexture0B, hasTexture1B, hasTexture2B, hasTexture3B, hasTexture4B  = false;
-    AppendGlslInput2dText (fragShStr,exprGrpStr, "text0", &hasTexture0B);
+	//we force to import texture0, alias current layer
+	fragShStr.append(import2dTextGlStr + seqP->paramLayer00NameAc + endLineStr);
+	//the other only if they are called
+	bool  hasTexture1B = false, hasTexture2B = false , hasTexture3B = false, hasTexture4B  = false;
     AppendGlslInput2dText (fragShStr,exprGrpStr, seqP->paramLayer01NameAc, &hasTexture1B);
     AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer02NameAc, &hasTexture2B);
     AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer03NameAc, &hasTexture3B);
@@ -510,24 +505,26 @@ tlmath::embedExprInShaders (seqData  *seqP){
 
 
     fragShStr.append(gl33InputTexture);
-
+	fragShStr.append(gl33getLuma);
 
     /*
-	float seqP->expr_lumaNameAc (vec4 text) {
-	return 0.3*text.r+0.59*text.g+0.11*text.b;
-	}
-	//indexer le numero de ligne de chaque expression.
 
-	}
+	//index each expr number
+
      */
      //embed expressions in shaders and add uniforms in shaders depending of expression.
+	fragShStr.append(exprGrpStr);
     if (seqP->exprRGBModeB){
         strReplace(gl33InputMainGrp,"inputLayer0", seqP->paramLayer00NameAc);
         fragShStr.append (gl33InputMainGrp);
     }else{
-        //gl33InputMainSplit
+		strReplace(gl33InputMainSplit, "inputLayer0", seqP->paramLayer00NameAc);
+		fragShStr.append(gl33InputMainSplit);
 
     }
+	std::size_t length = fragShStr.copy(seqP->Glsl33_FragmentShAc, fragShStr.size());
+	seqP->Glsl33_FragmentShAc[length] = '\0';
+	
     return err;
 
 }

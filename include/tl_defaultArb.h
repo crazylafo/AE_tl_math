@@ -29,11 +29,11 @@ static std::string defaultArb = R"=====(
         "gl33_vert_error" :  "compiled successfully"
     },
     "math_expression":{
-        "redExpr":"texture0[0]",
-        "greenExpr":"texture0[1]",
-        "blueExpr":"texture0[2]",
-        "rgbExpr":"inChannel",
-        "alphaExpr":"1",
+        "redExpr":"return inChannel;",
+        "greenExpr":"return inChannel;",
+        "blueExpr":"return inChannel;",
+        "rgbExpr":"return inChannel;",
+        "alphaExpr":"return inChannel;",
         "red_error":  "compiled successfully",
         "green_error" :  "compiled successfully",
         "blue_error" :  "compiled successfully",
@@ -41,9 +41,7 @@ static std::string defaultArb = R"=====(
         "rgb_error" :  "compiled successfully",
         "exprRGBModeB":true,
         "expr_current_channel":"inChannel",
-        "expr_pix":"pix",
-        "expr_luma":"luma",
-        "expr_pix_off":"pix_off"
+        "expr_pix":"pix"
         },
     "flags":{
         "pixelsCallExternalInputB":[false,false,false,false],

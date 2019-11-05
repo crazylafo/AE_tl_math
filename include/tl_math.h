@@ -102,8 +102,7 @@ typedef struct {
 
     A_char expr_ColorChNameAc[32];
 	A_char	expr_pixNameAc[32];
-	A_char expr_lumaNameAc[32];
-	A_char expr_pix_offNameAc[32];
+
 
     A_char   cameraPosNameAc[32];
     A_char   cameraTargetNameAc[32];
@@ -261,7 +260,6 @@ typedef struct {
 	PF_Boolean  exprModeB;
 	PF_Boolean  evalModeB;
     bool pixelsCallExternalInputB[4];
-    PF_Boolean needsLumaB;
     PF_Boolean presetHasWideInputB;
 
 } seqData, *seqDataP, **seqDataH;
@@ -445,7 +443,6 @@ enum {
 };
 typedef struct  FlagsInfo {
         PF_Boolean PixelsCallExternalInputB[4];
-        PF_Boolean NeedsLumaB;
         PF_Boolean PresetHasWideInput;
 		PF_Boolean parserModeB;
         PF_Boolean exprRGBModeB; //for expression mode only
@@ -513,6 +510,8 @@ PF_Err ShiftImage32 (void *refcon, A_long xL, A_long yL, PF_Pixel32 *inP, PF_Pix
 PF_Err ShiftImage16 ( void *refcon,A_long xL, A_long yL, PF_Pixel16 *inP, PF_Pixel16 *outP);
 PF_Err ShiftImage8 ( void *refcon, A_long xL, A_long yL, PF_Pixel *inP, PF_Pixel *outP);
 
+
+
 class tlmath{
 private:
     std::string evalMathExprStr(std::string expr, seqDataP    *seqP);
@@ -525,8 +524,8 @@ private:
     void jsonCorrectorStr(std::string& str); //to json
     void scriptCorrectorStr(std::string& str); //from json
     void descriptionCorrectorStr (std::string& str);
+	void copyExprFromJsonToSeqData(nlohmann::json arbDataJS, std::string json_adress, A_char* target);
     PF_Err evalScripts (seqData  *seqDataP);
-
     PF_Err CallCepDialog(PF_InData  *in_data, PF_OutData  *out_data);
     PF_Err SetupGetDataBack(PF_InData *in_data, PF_OutData  *out_data, PF_ParamDef *params[]);
     PF_Err copyFromArbToSeqData(PF_InData *in_data, PF_OutData   *out_data, std::string arbStr, seqData   *seqDataP);
