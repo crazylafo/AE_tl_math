@@ -160,6 +160,7 @@ tlmath::CreateDefaultArb(
             #else
                 strncpy(arbP->arbDataAc,  defaultArb.c_str(), 100000);
             #endif
+			arbP->hasChangedB = false;
 
 
 			*dephault = arbH;
@@ -275,7 +276,9 @@ tlmath::Arb_Compare(
 		else {
 			*resultP = PF_ArbCompare_EQUAL;
             total_aV.emplace_back (strlen(first_arbP->arbDataAc));
-            total_aV.emplace_back (strlen(second_arbP->arbDataAc));
+			total_aV.emplace_back(first_arbP->hasChangedB);
+            total_bV.emplace_back (strlen(second_arbP->arbDataAc));
+			total_bV.emplace_back(second_arbP->hasChangedB);
 			total_aL = std::accumulate(total_aV.begin(), total_aV.end(), (size_t)0);
 			total_bL =std::accumulate(total_bV.begin(), total_bV.end(), (size_t)0);
 			if(total_aL > total_bL)	{

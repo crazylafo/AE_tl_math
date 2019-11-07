@@ -68,6 +68,7 @@ using namespace gl33core;
 #define ARB_REFCON            (void*)0xDEADBEEFDEADBEEF
 typedef struct {
     A_char arbDataAc[250000];
+	bool hasChangedB;
 } m_ArbData;
 typedef struct {
 	PF_State		state;
@@ -505,12 +506,9 @@ typedef struct {
 	AEGP_PluginID	my_id;
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
-
 PF_Err ShiftImage32 (void *refcon, A_long xL, A_long yL, PF_Pixel32 *inP, PF_Pixel32 *outP);
 PF_Err ShiftImage16 ( void *refcon,A_long xL, A_long yL, PF_Pixel16 *inP, PF_Pixel16 *outP);
 PF_Err ShiftImage8 ( void *refcon, A_long xL, A_long yL, PF_Pixel *inP, PF_Pixel *outP);
-
-
 
 class tlmath{
 private:
@@ -534,6 +532,7 @@ private:
     PF_Err SetupDialogSend( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[]);
     PF_Err updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[], std::string     arbStr);
     PF_Err embedExprInShaders  (seqData  *seqP);
+	PF_Err AEGP_SetParamStreamValue(PF_InData* in_data, PF_OutData* out_data, AEGP_PluginID   PlugId, PF_ParamIndex   param_index, PF_Handle* ArbH);
 
 
     PF_Err Render_GLSL(PF_InData  *in_data,
@@ -588,7 +587,6 @@ public:
     PF_Err SequenceSetup (PF_InData  *in_data, PF_OutData *out_data);
     PF_Err  HandleArbitrary( PF_InData *in_data, PF_OutData *out_data, PF_ParamDef *params[], PF_LayerDef *output, PF_ArbParamsExtra    *extra);
 };
-
 
 //glsl helper func
 inline u_char AlphaLookup(u_int16 inValSu, u_int16 inMaxSu)

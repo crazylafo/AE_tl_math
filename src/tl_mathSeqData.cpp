@@ -218,13 +218,8 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alphaExpr", seqDataP->alphaExAc);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgbExpr", seqDataP->rgbExprExAc);
 
-	if (seqDataP->exprModeB) {
-		ERR(tlmath::embedExprInShaders(seqDataP));
-		//keep the default vertex shader
-		std::size_t  vertLength = glvertstr.copy(seqDataP->Glsl33_VertexShAc, glvertstr.length());
-		seqDataP->Glsl33_VertexShAc[vertLength] = '\0';
-	}
-	else {
+	if (!seqDataP->exprModeB) {
+
 		std::string curr_fragSh = seqDataP->Glsl33_FragmentShAc;
 		std::string curr_vertSh = seqDataP->Glsl33_VertexShAc;
 		std::string  new_frag = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_frag_sh", seqDataP->Glsl33_FragmentShAc);
@@ -430,6 +425,9 @@ PF_Err tlmath::updateSeqData(PF_InData *in_data,  PF_OutData  *out_data,  PF_Par
         seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
         if (seqP->initializedB == false) {
             tlmath::copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
+			if (seqP->exprModeB) {
+				ERR(tlmath::embedExprInShaders(seqP));
+			}
             seqP->initializedB = true;
 			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
 				MATH_ARB_DATA,
@@ -467,6 +465,9 @@ PF_Err tlmath::SequenceSetup (PF_InData        *in_data,  PF_OutData        *out
             seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             seqP->initializedB = false;
             tlmath::copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
+			if (seqP->exprModeB) {
+				ERR(tlmath::embedExprInShaders(seqP));
+			}
             ERR(tlmath::evalScripts(seqP));
 			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
 				MATH_ARB_DATA,

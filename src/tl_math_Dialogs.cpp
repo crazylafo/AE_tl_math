@@ -93,8 +93,8 @@ static void jsonStrToArb (std::string resultStr,
 
 }
 
-static PF_Err
-AEGP_SetParamStreamValue(PF_InData            *in_data,
+ PF_Err
+tlmath::AEGP_SetParamStreamValue(PF_InData            *in_data,
                          PF_OutData            *out_data,
                          AEGP_PluginID        PlugId,
                          PF_ParamIndex        param_index,
@@ -326,6 +326,7 @@ tlmath::SetupGetDataBack(
     if (resultAC){  
         resultStr = resultAC;
         jsonStrToArb(resultStr, arbOutP);
+		arbOutP->hasChangedB = true;
     }
 	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 	arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
@@ -337,7 +338,9 @@ tlmath::SetupGetDataBack(
 	if (seq_dataH) {
 		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		ERR(tlmath::copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
-
+		if (seqP->exprModeB) {
+			ERR(tlmath::embedExprInShaders(seqP));
+		}
         ERR(tlmath::evalScripts(seqP));
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
@@ -461,7 +464,6 @@ tlmath::embedExprInShaders (seqData  *seqP){
     AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot10NameAc);
 
     //2d
-    AppendGlslInputVec2d(fragShStr,exprGrpStr, seqP->resolutionNameAc);
     AppendGlslInputVec2d(fragShStr,exprGrpStr, seqP->compResolutionNameAc);
 
     //3d
@@ -524,7 +526,9 @@ tlmath::embedExprInShaders (seqData  *seqP){
     }
 	std::size_t length = fragShStr.copy(seqP->Glsl33_FragmentShAc, fragShStr.size());
 	seqP->Glsl33_FragmentShAc[length] = '\0';
-	
+	//keep the default vertex shader
+	std::size_t  vertLength = glvertstr.copy(seqP->Glsl33_VertexShAc, glvertstr.length());
+	seqP->Glsl33_VertexShAc[vertLength] = '\0';
     return err;
 
 }

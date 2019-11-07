@@ -1453,6 +1453,7 @@ tlmath::UserChangedParam(
 			ERR(SetupDialogSend(in_data, out_data, params));
             ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
 
+
 			if (!err) {
 				out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
 			}
