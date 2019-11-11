@@ -239,7 +239,6 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_poff_param[0]));
-
 			AEFX_CLR_STRUCT(extlayer_toff_param[1]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_TWO,
@@ -254,7 +253,6 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_poff_param[1]));
-
 			AEFX_CLR_STRUCT(extlayer_toff_param[2]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_THREE,
@@ -269,7 +267,6 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_poff_param[2]));
-
 			AEFX_CLR_STRUCT(extlayer_toff_param[3]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_FOUR,
@@ -284,16 +281,13 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_poff_param[3]));
-
-
-			
             PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
             if (seq_dataH) {
-                seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-				m_ArbData* arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
-                if (seqP->initializedB == false || arbOutP->hasChangedB){
-					my_global_dataP globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-					PF_Handle        arbOutH = NULL;
+                seqData      *seqP = static_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
+				m_ArbData* arbOutP = static_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+                //if (seqP->initializedB == false || arbOutP->hasChangedB){
+					my_global_dataP globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+					
                     ERR(tlmath::copyFromArbToSeqData( in_data, out_data, arbOutP->arbDataAc , seqP));
 					seqP->initializedB = true;
                     out_data->sequence_data = seq_dataH;
@@ -301,13 +295,9 @@ tlmath::PreRender(PF_InData                *in_data,
 						ERR(tlmath::embedExprInShaders(seqP));
 					}
 					ERR(tlmath::evalScripts(seqP));
-					arbOutP->hasChangedB = false;
-					arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
-					ERR(AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
-					PF_UNLOCK_HANDLE(arbOutH);
-                }
+                //}
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
-                if (seqP->cameraB){
+                if (seqP->cameraB){  
                     cameraModeB = true;
                 }
             }

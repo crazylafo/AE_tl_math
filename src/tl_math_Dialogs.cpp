@@ -82,8 +82,6 @@ GetLayerData(PF_InData     *in_data,
 static void jsonStrToArb (std::string resultStr,
                           m_ArbData    *arbOutP)
 {
-
-
     //copy to flat ARB (keeping /n and other speical char from js
     #ifdef AE_OS_WIN
 	strncpy_s(arbOutP->arbDataAc, resultStr.c_str(), resultStr.length() + 1);
@@ -266,22 +264,19 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     tlmath::jsonCorrectorStr(fragErr);
     tlmath::jsonCorrectorStr(vertErr);
 
-
-
-
-    arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
-    arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
+	arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
+	arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
 	arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
+
 	arbDataJS["math_expression"]["red_error"] =  fragErr;// redErr;
     arbDataJS["math_expression"]["green_error"] = fragErr;//greenErr;
     arbDataJS["math_expression"]["blue_error"] = fragErr; //blueErr;
     arbDataJS["math_expression"]["alpha_error"] = fragErr; // alphaErr;
 	arbDataJS["math_expression"]["rgb_error"] = fragErr; //rgbErr;
-    std::string jsonDump = "'''";
+
+	std::string jsonDump = "'''";
     jsonDump.append(arbDataJS.dump());
 	jsonDump.append("'''");
-
-
 
 	AEFX_CLR_STRUCT(scriptAC);
         sprintf(scriptAC,

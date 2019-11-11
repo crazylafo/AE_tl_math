@@ -991,7 +991,7 @@ PF_Err
             case PF_Cmd_SEQUENCE_RESETUP:
                 err = tlmath.SequenceSetup(in_data,out_data);
                 break;
-                
+
             
             case PF_Cmd_COMPLETELY_GENERAL:
                 err = RespondtoAEGP(in_data,

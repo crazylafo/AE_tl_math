@@ -1396,6 +1396,33 @@ tlmath::UpdateParameterUI(
 	return err;
 }
 
+PF_Err
+tlmath::updateArbState(PF_InData* in_data, PF_OutData* out_data) {
+
+	PF_Err				err = PF_Err_NONE, err2 = PF_Err_NONE;
+	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+
+	PF_ParamDef arb_param;
+	AEFX_CLR_STRUCT(arb_param);
+	ERR(PF_CHECKOUT_PARAM(in_data,
+		MATH_ARB_DATA,
+		in_data->current_time,
+		in_data->time_step,
+		in_data->time_scale,
+		&arb_param));
+	m_ArbData* arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+	if (arbOutP->hasChangedB) {
+		arbOutP->hasChangedB = false;
+		PF_Handle        arbOutH = nullptr;
+		arbOutH = reinterpret_cast <PF_Handle>(arbOutP);
+		ERR(tlmath::AEGP_SetParamStreamValue(in_data, out_data, globP->my_id, MATH_ARB_DATA, &arbOutH));
+		PF_UNLOCK_HANDLE(arbOutH);
+	}
+	ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
+
+	return err;
+
+}
 
 
 PF_Err
@@ -1408,7 +1435,9 @@ tlmath::UserChangedParam(
 {
 	PF_Err				err = PF_Err_NONE;
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
+
     seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+	
 
     if(which_hitP->param_index == MATH_EFFECT_DESCRIPTION){
 
@@ -1451,15 +1480,12 @@ tlmath::UserChangedParam(
 			
 
 			ERR(SetupDialogSend(in_data, out_data, params));
-            ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
-
-
-			if (!err) {
-				out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
-			}
 		}
-
 	}
+	/*
+	else {
+		tlmath::updateArbState(in_data, out_data);
+	}*/
 
 	return err;
 }

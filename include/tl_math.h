@@ -533,6 +533,7 @@ private:
     PF_Err updateParamsValue(PF_InData* in_data, PF_ParamDef     *params[], std::string     arbStr);
     PF_Err embedExprInShaders  (seqData  *seqP);
 	PF_Err AEGP_SetParamStreamValue(PF_InData* in_data, PF_OutData* out_data, AEGP_PluginID   PlugId, PF_ParamIndex   param_index, PF_Handle* ArbH);
+	PF_Err updateArbState(PF_InData* in_data, PF_OutData* out_data);
 
 
     PF_Err Render_GLSL(PF_InData  *in_data,
