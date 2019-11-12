@@ -22,15 +22,21 @@
 
 <body onLoad="onLoaded()">
 		<div id="mainToolbar">
-			<button id="btnApply">Apply</button>
-			<td><input type="text"   id="presetName" value="preset_Name" maxlength="31"></td>
-			<button id="btnExport">Export</button>
+			<button id="btnApply">Apply</button>			
 			<button id="btnLoad">Load File</button>
-			<input type="text" id="presetTags" placeholder = "effect skeleton someTags" title="tags">
-			<button id="btnSavePreset">Save Preset</button>
-			<button id="settingsGUI" style="float:right" onClick= "toggleSettings()" >GUI Settings</button>
-			<button id="descriptionGUI" style="float:right" onClick= "toggleDescription()">Description</button>
-			<button id="presetGUI" style="float:right"  onCLick="tooglePresets()" >Presets</button>
+			<button id="presetGUI"  onCLick="tooglePresets()" >Presets library</button>
+			</br>
+			<td>Preset Name</td>
+			<td><input type="text"   id="presetName" value="preset_Name" maxlength="31"></td></br>
+			</br>
+			<td>Preset Tags</td>
+			<input type="text" id="presetTags" placeholder = "effect skeleton someTags" title="tags"></br>
+			</br>
+			<button id="btnExport">Export As JSON</button>
+			<button id="btnSavePreset">Save as Preset</button>
+			</br>
+			<button id="settingsGUI"  onClick= "toggleSettings()" >GUI Settings</button>
+			<button id="descriptionGUI"  onClick= "toggleDescription()">Description</button></br>
 		</div>
 	<br />
 	<div id="descriptionId">Description </br>
