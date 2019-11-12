@@ -1,0 +1,26 @@
+
+label.presetsBlock{
+    vertical-align: top;
+    display: inline-block;
+    text-align:center;
+}
+#presetIconImgsId{
+    padding: 5px;
+    margin: 5px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
+    
+}
+
+input[id*="presetIconRadio"]:checked+img{
+    box-shadow: 0 0 0 5px grey;
+}
+input[id*="presetIconRadio"]{
+    display: none;
+}
+
+
+
+
