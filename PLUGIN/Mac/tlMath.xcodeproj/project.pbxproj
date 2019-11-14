@@ -52,7 +52,6 @@
 
 /* Begin PBXFileReference section */
 		040A7FD9222FFBC600E7E6D2 /* vmath.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vmath.hpp; sourceTree = "<group>"; };
-		040A7FDA222FFBC700E7E6D2 /* exprtk.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = exprtk.hpp; sourceTree = "<group>"; };
 		040A7FDB222FFBC700E7E6D2 /* json.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
 		040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_mathArb_Handler.cpp; path = ../src/tl_mathArb_Handler.cpp; sourceTree = SOURCE_ROOT; };
 		040A7FDD222FFC8A00E7E6D2 /* tl_math_Dialogs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_Dialogs.cpp; path = ../src/tl_math_Dialogs.cpp; sourceTree = SOURCE_ROOT; };
@@ -135,7 +134,6 @@
 		04017B90223009A4004E26C6 /* lib */ = {
 			isa = PBXGroup;
 			children = (
-				040A7FDA222FFBC700E7E6D2 /* exprtk.hpp */,
 				040A7FDB222FFBC700E7E6D2 /* json.hpp */,
 				040A7FD9222FFBC600E7E6D2 /* vmath.hpp */,
 			);

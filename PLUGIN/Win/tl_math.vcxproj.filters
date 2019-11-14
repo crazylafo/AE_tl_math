@@ -130,11 +130,11 @@
     <ClInclude Include="..\include\tl_defaultArb.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\script\script.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\tl_defaultShaders.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\script\script.h">
+      <Filter>script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
