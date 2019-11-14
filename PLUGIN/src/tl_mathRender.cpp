@@ -284,9 +284,9 @@ tlmath::PreRender(PF_InData                *in_data,
             PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
             if (seq_dataH) {
                 seqData      *seqP = static_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-				m_ArbData* arbOutP = static_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+				m_ArbData* arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
                 //if (seqP->initializedB == false || arbOutP->hasChangedB){
-					my_global_dataP globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+					my_global_dataP globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 					
                     ERR(tlmath::copyFromArbToSeqData( in_data, out_data, arbOutP->arbDataAc , seqP));
 					seqP->initializedB = true;
