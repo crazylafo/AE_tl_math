@@ -181,11 +181,11 @@ function savePresetAsJSON(arbDataToSend){
  */
 function cleanJsonToArbStr (str){
 	str = str.replace(/\n/g, "\\n")
-               .replace(/\'/g, "\\' ")
                .replace(/\"/g, '\\"')
                .replace(/\r/g, "\\r")
                .replace(/\t/g, "\\t")
 			   .replace(/\f/g, "\\f");
+			   //.replace(/\'/g, "\\' ")
 
     return str;
 	}
@@ -196,11 +196,11 @@ function cleanJsonToArbStr (str){
  */
 function cleanJsonFromArbStr (str){
 	str = str.replace(/\\n/g, "\n")
-               .replace(/\\'/g, "\'")
                .replace(/\\"/g, '\"')
                .replace(/\\r/g, "\r")
                .replace(/\\t/g, "\t")
 			   .replace(/\\f/g, "\f");
+			   //.replace(/\\'/g, "\'")
 
     return str;
 	}
