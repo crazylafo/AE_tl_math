@@ -9,12 +9,13 @@ function getLastDotOfFile (scannedFile){
   return dot;
   }
 function createUserDataFolder(plugIdStr){
-      var userLibFolder = new Folder (Folder.userData);
-    var tlFolder =  new Folder (userLibFolder.absoluteURI+"\\tl");
+    var userLibFolder = new Folder (Folder.userData);
+    var folderStr = userLibFolder.absoluteURI.toString()+"/tl";
+    var tlFolder =  new Folder (folderStr);
     if (!tlFolder.exists){
       tlFolder.create();
     }
-    var thisPluginFolder =  new Folder (tlFolder.absoluteURI+"\\"+plugIdStr);
+    var thisPluginFolder =  new Folder (tlFolder.absoluteURI.toString()+"/"+plugIdStr);
     if (!thisPluginFolder.exists){
       thisPluginFolder.create();
       }
@@ -22,7 +23,8 @@ function createUserDataFolder(plugIdStr){
 }
 function createUserPresetFolder(plugIdStr){
     var userFolder = createUserDataFolder(plugIdStr);
-    var userPresetsFolder =new Folder (userFolder.absoluteURI+"\\presets");
+    var userPresetsFolder =new Folder (userFolder.absoluteURI.toString()+"/presets");
+    alert ( userPresetsFolder)
     if(!userPresetsFolder.exists){
       userPresetsFolder .create();
       }
