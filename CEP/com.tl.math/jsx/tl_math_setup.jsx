@@ -76,10 +76,13 @@ if ( ! $._ext )
 }
 $._ext = {
   sendMessageToPlugin : function(){
-    //try{ pluginId} catch(e){return};
-    if ( typeof pluginId==="undefined" || !pluginId || pluginId ==null ){return};
-    app.project.activeItem.layer(pluginId[1]).effect(pluginId[2]).property("arb received").setValue(1);
-    pluginId = undefined;
+    try{
+      if ( typeof tlmathPluginId==="undefined" || !tlmathPluginId || tlmathPluginId ==null ){return};
+      app.project.activeItem.layer(tlmathPluginId[1]).effect(tlmathPluginId[2]).property("arb received").setValue(1);
+      tlmathPluginId = undefined;
+    }catch(e){
+      return
+    }
   }, 
   sendDataToPlugin : function(arbData){
     if (!arbData){return};
