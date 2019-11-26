@@ -98,8 +98,14 @@ function onLoaded() {
 		loadPresetJSONFile();
 		});
 	$("#btnExport").on("click", function() {
-		var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);		
-		exportPresetAsJSON(arbDataToSend);
+		try{
+			var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);	
+			exportPresetAsJSON(arbDataToSend);
+		}catch(e){
+			alert(err.collectingDataForPlugin+e);
+		}
+			
+		
 		});
 	$("#btnSavePreset").on("click", function() {
 		var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);		
@@ -113,14 +119,14 @@ function onLoaded() {
 		try{
 			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
 			}catch(e){
-				alert("error collecting data for plugin: "+e);
+				alert(err.collectingDataForPlugin+e);
 			}
 			if (arbDataToSend){
 				var arbDataStr = JSON.stringify(arbDataToSend);
 				try{
 					evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
 				}catch(e){
-					alert ("error exporting from panel to plugin: "+e)
+					alert (err.exportToPlugin+e)
 					}
 				}
 		
@@ -134,6 +140,8 @@ function defineErr(){
 	err.PresetFile = "Error: the tlMath Preset is not recognized";
 	err.pluginVersion ="Error: the plugin Version is not compatible with this preset";
 	err.selectPreset = "Please, select a preset";
+	err.exportToPlugin = "error exporting from panel to plugin: ";
+	err.collectingDataForPlugin ="error collecting data for plugin: ";
 	return err;
 	}
 function updatePresetMenu (presetsList){
@@ -273,10 +281,10 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 	}
 function getParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
 	$("#"+paramName+"GrpName").val(arbData.gui_settings[paramGroupId].grpName.toString());
-	$("#input[name="+paramName+"GrpVisible]").prop('checked', arbData.gui_settings[paramGroupId].grpVisibleB);
+	$("input[name="+paramName+"GrpVisible]").prop('checked', arbData.gui_settings[paramGroupId].grpVisibleB);
 	for (var i=0; i<numParams; i++){
 		$("#"+paramName+i+"_name").val(arbData.gui_settings[paramGroupId].params[i].name.toString());
-		$("input[names"+paramName+i+"Visible]").prop('checked', arbData.gui_settings[paramGroupId].params[i].visibleB);
+		$("input[id="+paramName+i+"_visible]").prop('checked', arbData.gui_settings[paramGroupId].params[i].visibleB);
 		for (var j=0; j<paramDimension; j++){
 			$("#"+paramName+i+'_defaultVal'+j).val(parseFloat(arbData.gui_settings[paramGroupId].params[i].defaultVal[j]));
 			}
@@ -371,7 +379,6 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#layer04_name").val(arbData.gui_settings.layerGrp.extLayer_4.name.toString());
 	$("input[name=layer04Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_4.visibleB);
 	}
-
 function sendDataToPlugin(editors, arbData, numParams) {
 	var fragLimit = 25000;
 	var VertLimit = 25000;
@@ -586,8 +593,6 @@ function mathGuiModeFunc(){
 		$(glslGui[i]).hide();
 	}
 	mathGUIRgbModeFunc();
-	
-
 	}
 function mathGUIRgbModeFunc(){
 	if ($("#rgbmodeB").is(':checked')){
