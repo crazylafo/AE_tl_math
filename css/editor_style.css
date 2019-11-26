@@ -1,0 +1,64 @@
+
+
+#gl33_frag_tab, #gl33_vert_tab{
+    width:97%;
+    height: 600px;
+    display:inline-block;
+    position:relative
+}
+
+
+#expr_red_tab, #expr_green_tab,#expr_blue_tab, #expr_alpha_tab, #expr_rgb_tab {
+    width:97%;
+    height: 600px;
+    display:inline-block;
+    position:relative
+}
+
+
+#gl33_frag_editor, #gl33_vert_editor{
+    position: absolute;
+    margin: 1%;
+    top: 5%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#expr_red_editor, #expr_green_editor, #expr_blue_editor, #expr_rgb_editor, #expr_alpha_editor{
+    position: absolute;
+    margin: 1%;
+    top: 5%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+
+
+#editor_name{
+    color: #ddd;
+    margin: 1%;
+}
+
+#gl33_frag_tab_console, #gl33_vert_tab_console{
+    background: black;
+    color: #ddd;
+    width:90%;
+    margin: 1%;
+    top: 5%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#expr_red_tab_console, #expr_green_tab_console, #expr_blue_tab_console, #expr_alpha_tab_console,#expr_rgb_tab_console{
+    background: black;
+    color: #ddd;
+    width:90%;
+    margin: 1%;
+    top: 5%;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+}
