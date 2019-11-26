@@ -2,7 +2,11 @@
 * tl math plugin and CEP
 *thomas laforge  Copyright 2019
 **************************************************************************/
-
+/**
+ * load panel function when opening. Also contain event listener
+ * input : void
+ * return void
+ */
 function onLoaded() {
 	var pluginName = "tlMath";
 	var pluginVersion =115;
@@ -19,10 +23,6 @@ function onLoaded() {
 	setParamsSettings("rotation", numParams, 1, "rotationGrp");
 	loadJSX();
 	sendMessageToPlugin();	
-
-    updateThemeWithAppSkinInfo(csInterface.hostEnvironment.appSkinInfo);
-	// Update the color of the panel when the theme color of the product changed.
-	csInterface.addEventListener(CSInterface.THEME_COLOR_CHANGED_EVENT, onAppThemeColorChanged);
 	defaultVal(); //load default ddl val
 	var editors = setEditors();
 	//laod default arb
@@ -132,9 +132,19 @@ function onLoaded() {
 		
 		});
 	}
+/**
+ * send a messag to plugin (if selected)
+ * input : void
+ * return void
+ */
 function sendMessageToPlugin(){
 	evalScript("$._ext.sendMessageToPlugin()");
 	}
+/**
+ * create object with error warnings
+ * input : void
+ * return  object err
+ */
 function defineErr(){
 	var err = {};
 	err.PresetFile = "Error: the tlMath Preset is not recognized";
@@ -144,6 +154,11 @@ function defineErr(){
 	err.collectingDataForPlugin ="error collecting data for plugin: ";
 	return err;
 	}
+/**
+ * update the preset menu with info from a preset list. append direct to html
+ * input : obj presetList with presetList.preset[] array containing the data
+ * return  void
+ */
 function updatePresetMenu (presetsList){
 	for (var i =0; i< presetsList.preset.length; i++){
 		var inputStr = '<label  id="'+presetsList.preset[i].name+'"  class="presetsBlock">'+
@@ -154,6 +169,11 @@ function updatePresetMenu (presetsList){
 		$("#presetsListAccess").append(inputStr);
 		}
 	}
+/**
+ * copy data from preset file to panel GUI
+ * input : (obj presetList, obj editors, int num params)
+ * return  void
+ */
 function loadPresetFromMenu(presetsList, editors, numParams){
 	var selectedPreset = parseInt($("input[name='presetListRb']:checked").val());
 	if (typeof(selectedPreset) === "undefined"){
@@ -167,15 +187,30 @@ function loadPresetFromMenu(presetsList, editors, numParams){
 		alert (e)
 		}
 	}
+/**
+ * call jsx function to load a json preset file
+ * input : void
+ * return  void
+ */
 function loadPresetJSONFile(){
 	 evalScript("$._ext.loadJSONFile()");
 	}
+/**
+ * stringify arbData and call jsx to export json
+ * input : obj arbdata
+ * return  void
+ */
 function exportPresetAsJSON(arbDataToSend){
 	if (arbDataToSend){
 		var arbDataStr = JSON.stringify(arbDataToSend);
 		evalScript("$._ext.exportPresetFile("+arbDataStr+")");
 		}
 	}
+/**
+ * stringify arbData and call jsx to export json in  preset folder
+ * input : obj arbdata
+ * return  void
+ */
 function savePresetAsJSON(arbDataToSend){
 	if (arbDataToSend){
 		var arbDataStr = JSON.stringify(arbDataToSend);
@@ -212,10 +247,20 @@ function cleanJsonFromArbStr (str){
 
     return str;
 	}
+/**
+ * structure console text
+ * input : str consoleName, str repport (repport to print on console)
+ * return  str nexStr (for the console)
+ */
 function setConsoleStr (consoleName, strRepport){
 	var newStr = consoleName.toString()+"<br/>"+ cleanJsonFromArbStr(strRepport).replace("\\n", "<br/>");
 	return newStr
 }
+/**
+ * set flags from shaders str 
+ * input : obj arbdata, array strArr (with strings to find)
+ * return  bool boolResultB
+ */
 function setflagFromGL (arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
@@ -226,6 +271,11 @@ function setflagFromGL (arbData, strArr){
 	}
 	return boolResultB;
 	}
+/**
+ * set flags from expr str 
+ * input : obj arbdata, array strArr (with strings to find)
+ * return  bool boolResultB
+ */
 function setflagFromExpr (arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
@@ -633,7 +683,7 @@ function langSelecFunc() {
 	 }
 function glslEditor(glMode){
 		var editor = ace.edit(glMode);
-		editor.setTheme("ace/theme/chrome");
+		editor.setTheme("ace/theme/ambiance");
 		editor.session.setMode("ace/mode/glsl");
 		editor.setAutoScrollEditorIntoView(true);
 		//editor.resize();
@@ -641,96 +691,11 @@ function glslEditor(glMode){
 	}
 function exprEditor(exprChan){
 		var editor = ace.edit(exprChan);
-		editor.setTheme("ace/theme/chrome");
+		editor.setTheme("ace/theme/ambiance");
 		editor.session.setMode("ace/mode/glsl");
 		editor.setAutoScrollEditorIntoView(true);
 		//editor.resize();
 		return editor;
-	}
-/**
- * Update the theme with the AppSkinInfo retrieved from the host product.
- */
-function updateThemeWithAppSkinInfo(appSkinInfo) {
-	
-    //Update the background color of the panel
-    var panelBackgroundColor = appSkinInfo.panelBackgroundColor.color;
-    document.body.bgColor = toHex(panelBackgroundColor);
-        
-    var styleId = "ppstyle";
-    
-    var csInterface = new CSInterface();
-	var appName = csInterface.hostEnvironment.appName;
-    
-    if(appName == "PHXS"){
-	    addRule(styleId, "button, select, input[type=button], input[type=submit]", "border-radius:3px;");
-	}
-	if(appName == "PHXS" || appName == "AEFT" || appName == "PRLD") {
-		////////////////////////////////////////////////////////////////////////////////////////////////
-		// NOTE: Below theme related code are only suitable for Photoshop.                            //
-		// If you want to achieve same effect on other products please make your own changes here.    //
-		////////////////////////////////////////////////////////////////////////////////////////////////
-		
-	    
-	    var gradientBg = "background-image: -webkit-linear-gradient(top, " + toHex(panelBackgroundColor, 40) + " , " + toHex(panelBackgroundColor, 10) + ");";
-	    var gradientDisabledBg = "background-image: -webkit-linear-gradient(top, " + toHex(panelBackgroundColor, 15) + " , " + toHex(panelBackgroundColor, 5) + ");";
-	    var boxShadow = "-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);";
-	    var boxActiveShadow = "-webkit-box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);";
-	    
-	    var isPanelThemeLight = panelBackgroundColor.red > 127;
-	    var fontColor, disabledFontColor;
-	    var borderColor;
-	    var inputBackgroundColor;
-	    var gradientHighlightBg;
-	    if(isPanelThemeLight) {
-	    	fontColor = "#000000;";
-	    	disabledFontColor = "color:" + toHex(panelBackgroundColor, -70) + ";";
-	    	borderColor = "border-color: " + toHex(panelBackgroundColor, -90) + ";";
-	    	inputBackgroundColor = toHex(panelBackgroundColor, 54) + ";";
-	    	gradientHighlightBg = "background-image: -webkit-linear-gradient(top, " + toHex(panelBackgroundColor, -40) + " , " + toHex(panelBackgroundColor,-50) + ");";
-	    } else {
-	    	fontColor = "#ffffff;";
-	    	disabledFontColor = "color:" + toHex(panelBackgroundColor, 100) + ";";
-	    	borderColor = "border-color: " + toHex(panelBackgroundColor, -45) + ";";
-	    	inputBackgroundColor = toHex(panelBackgroundColor, -20) + ";";
-	    	gradientHighlightBg = "background-image: -webkit-linear-gradient(top, " + toHex(panelBackgroundColor, -20) + " , " + toHex(panelBackgroundColor, -30) + ");";
-	    }
-	    
-	
-	    //Update the default text style with pp values
-	    
-	    addRule(styleId, ".default", "font-size:" + appSkinInfo.baseFontSize + "px" + "; color:" + fontColor + "; background-color:" + toHex(panelBackgroundColor) + ";");
-	    addRule(styleId, "button, select, input[type=text], input[type=button], input[type=submit]", borderColor);    
-	    addRule(styleId, "button, select, input[type=button], input[type=submit]", gradientBg);    
-	    addRule(styleId, "button, select, input[type=button], input[type=submit]", boxShadow);
-	    addRule(styleId, "button:enabled:active, input[type=button]:enabled:active, input[type=submit]:enabled:active", gradientHighlightBg);
-	    addRule(styleId, "button:enabled:active, input[type=button]:enabled:active, input[type=submit]:enabled:active", boxActiveShadow);
-	    addRule(styleId, "[disabled]", gradientDisabledBg);
-	    addRule(styleId, "[disabled]", disabledFontColor);
-	    addRule(styleId, "input[type=text]", "padding:1px 3px;");
-	    addRule(styleId, "input[type=text]", "background-color: " + inputBackgroundColor) + ";";
-	    addRule(styleId, "input[type=text]:focus", "background-color: #ffffff;");
-	    addRule(styleId, "input[type=text]:	", "color: #000000;");
-	    
-	} else {
-		// For AI, ID and FL use old implementation	
-		addRule(styleId, ".default", "font-size:" + appSkinInfo.baseFontSize + "px" + "; color:" + reverseColor(panelBackgroundColor) + "; background-color:" + toHex(panelBackgroundColor, 20));
-	    addRule(styleId, "button", "border-color: " + toHex(panelBgColor, -50));
-		}
-	}
-function addRule(stylesheetId, selector, rule) {
-    var stylesheet = document.getElementById(stylesheetId);
-    
-    if (stylesheet) {
-        stylesheet = stylesheet.sheet;
-           if( stylesheet.addRule ){
-               stylesheet.addRule(selector, rule);
-           } else if( stylesheet.insertRule ){
-               stylesheet.insertRule(selector + ' { ' + rule + ' }', stylesheet.cssRules.length);
-           }
-    }
-	}
-function reverseColor(color, delta) {
-    return toHex({red:Math.abs(255-color.red), green:Math.abs(255-color.green), blue:Math.abs(255-color.blue)}, delta);
 	}
 /**
  * Convert the Color object to string in hexadecimal format;
@@ -754,14 +719,7 @@ function toHex(color, delta) {
              hex = computeValue(red, delta) + computeValue(green, delta) + computeValue(blue, delta);
         };
     }
-    return "#" + hex;
-	}
-function onAppThemeColorChanged(event) {
-    // Should get a latest HostEnvironment object from application.
-    var skinInfo = JSON.parse(window.__adobe_cep__.getHostEnvironment()).appSkinInfo;
-    // Gets the style information such as color info from the skinInfo, 
-    // and redraw all UI controls of your extension according to the style info.
-    updateThemeWithAppSkinInfo(skinInfo);
+	return "#" + hex;
 	}
 function loadPluginPresets(arbData){
 	var csInterface = new CSInterface();
@@ -797,11 +755,7 @@ function loadJSX() {
 function evalScript(script, callback) {
     new CSInterface().evalScript(script, callback);
 	}
-/*
-function onClickButton(ppid) {
-	var extScript = "$._ext_" + ppid + ".run()";
-	evalScript(extScript);
-}*/
+
 
 
 

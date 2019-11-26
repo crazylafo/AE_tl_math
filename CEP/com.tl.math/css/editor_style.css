@@ -1,7 +1,7 @@
 
 
 #gl33_frag_tab, #gl33_vert_tab{
-    width:90%;
+    width:97%;
     height: 600px;
     display:inline-block;
     position:relative
@@ -9,7 +9,7 @@
 
 
 #expr_red_tab, #expr_green_tab,#expr_blue_tab, #expr_alpha_tab, #expr_rgb_tab {
-    width:90%;
+    width:97%;
     height: 600px;
     display:inline-block;
     position:relative
@@ -44,7 +44,7 @@
 #gl33_frag_tab_console, #gl33_vert_tab_console{
     background: black;
     color: #ddd;
-    width:50%;
+    width:90%;
     margin: 1%;
     top: 5%;
     bottom: 0;
@@ -55,7 +55,7 @@
 #expr_red_tab_console, #expr_green_tab_console, #expr_blue_tab_console, #expr_alpha_tab_console,#expr_rgb_tab_console{
     background: black;
     color: #ddd;
-    width:50%;
+    width:90%;
     margin: 1%;
     top: 5%;
     bottom: 0;

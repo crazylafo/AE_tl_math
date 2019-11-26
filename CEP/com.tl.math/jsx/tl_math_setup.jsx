@@ -24,7 +24,6 @@ function createUserDataFolder(plugIdStr){
 function createUserPresetFolder(plugIdStr){
     var userFolder = createUserDataFolder(plugIdStr);
     var userPresetsFolder =new Folder (userFolder.absoluteURI.toString()+"/presets");
-    alert ( userPresetsFolder)
     if(!userPresetsFolder.exists){
       userPresetsFolder .create();
       }
