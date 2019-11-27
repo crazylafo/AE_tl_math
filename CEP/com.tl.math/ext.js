@@ -559,6 +559,7 @@ function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
 	langSelec.value = "GLSL";
 	langSelecFunc();
+
 	toogleFile();
 	tooglePresetSettings();
 	toggleSettings();
@@ -566,14 +567,41 @@ function defaultVal(){
 	toggleDescription();
 	openSettingsMenu("settingsGrp")
 	}
+function toogleSideBar(){
+	var fileMenu = document.getElementById("fileId");
+	var presetsSettingMenu = document.getElementById("presetSettingId");
+	var Presetslib = document.getElementById("presetId");
+	var settingsMenu = document.getElementById("paramSettingsId");
+	var sidebar = document.getElementById("SettingsCol");
+	var tabCl = document.getElementsByClassName("tabEditors");
+	
+
+	if (fileMenu.style.display === "none"&&
+	presetsSettingMenu.style.display === "none"&&
+	Presetslib.style.display === "none"&& 
+	settingsMenu.style.display === "none"){
+
+		sidebar.style.display = "none";
+		tabCl[0].style.marginLeft = "160px";
+		
+	}
+	else{
+		sidebar.style.display = "block";
+		tabCl[0].style.marginLeft = "450px";
+	}
+
+
+}
 function toogleFile(){
 	var presetsMenu = document.getElementById("fileId");
 	if (presetsMenu.style.display === "none"){
 		presetsMenu.style.display = "block";
+
 		}
 	else{
 		presetsMenu.style.display = "none";
 		}
+	toogleSideBar();
 	}
 function tooglePresetSettings(){
 	var presetsMenu = document.getElementById("presetSettingId");
@@ -583,6 +611,7 @@ function tooglePresetSettings(){
 	else{
 		presetsMenu.style.display = "none";
 		}
+	toogleSideBar();
 	}
 function tooglePresets(){
 	var presetsMenu = document.getElementById("presetId");
@@ -592,6 +621,7 @@ function tooglePresets(){
 	else{
 		presetsMenu.style.display = "none";
 		}
+	toogleSideBar();	
 	}
 function toggleSettings(){
 	var settingsMenu = document.getElementById("paramSettingsId");
@@ -601,6 +631,7 @@ function toggleSettings(){
 	else{
 		settingsMenu.style.display = "none";
 		}
+	toogleSideBar();
 	}
 function toggleDescription(){
 	var descrMenu = document.getElementById("descriptionId");

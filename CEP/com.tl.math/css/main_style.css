@@ -54,12 +54,10 @@ background:  #141414;
     background-color: #ddd;
   }
   
-.tabEditors button:active {
-background-color: #aaa;
-}
 
 
-#descriptionId, #presetTxtId, #presetTagId{
+
+#descriptionId, #presetSettingId{
     color : #aaa; 
 }
 
