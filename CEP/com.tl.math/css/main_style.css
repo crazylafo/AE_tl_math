@@ -1,24 +1,54 @@
 
 body {
 text-align:left;
+
+min-height: 100%;
 overflow: auto;
 background:  #141414;
 }
-#mainRowid{
-    display: box;
-    clear: both;
+
+#MenuColId{
+    height: 100%;
+    width: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+#MenuColId a{
+    padding: 6px 8px 6px 16px;
+    text-decoration:none;
+    font-size: 20px;
+    color: #818181;
+    display: block;
+}
+#MenuCpmId a:hover{
+    color: #f1f1f1
 }
 
-#SettingsColum{
-    width: 20%;
-    resize: both;
-    float: left;
+.sidebar{
+    height: 100%;
+    width: 290px;
+    margin-left: 160px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    padding-top: 10px;
 }
-
-#codingColumn{
-    width: 80%;
-    float:right;
-    overflow: auto;
+.sidebar a{
+    font-size: 20px;
+    color: #818181;
+    display: block;
+}
+.tabEditors{
+    margin-left: 450px;
+    height: 100%;
 }
 .tabEditors button:hover {
     background-color: #ddd;
@@ -28,12 +58,7 @@ background:  #141414;
 background-color: #aaa;
 }
 
-#mainToolbar{
-    margin: 0%;
-    left: 25%;
-    right: 25%;
 
-}
 #descriptionId, #presetTxtId, #presetTagId{
     color : #aaa; 
 }

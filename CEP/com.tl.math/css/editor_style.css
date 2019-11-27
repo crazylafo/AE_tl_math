@@ -2,17 +2,17 @@
 
 #gl33_frag_tab, #gl33_vert_tab{
     width:97%;
-    height: 600px;
-    display:inline-block;
-    position:relative
+    min-height: 600px;
+    height: 100%;
+    position:relative;
 }
 
 
 #expr_red_tab, #expr_green_tab,#expr_blue_tab, #expr_alpha_tab, #expr_rgb_tab {
     width:97%;
-    height: 600px;
-    display:inline-block;
-    position:relative
+    min-height: 600px;
+    max-height: 100%;
+    position:relative;
 }
 
 

@@ -559,10 +559,30 @@ function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
 	langSelec.value = "GLSL";
 	langSelecFunc();
+	toogleFile();
+	tooglePresetSettings();
 	toggleSettings();
 	tooglePresets();
 	toggleDescription();
 	openSettingsMenu("settingsGrp")
+	}
+function toogleFile(){
+	var presetsMenu = document.getElementById("fileId");
+	if (presetsMenu.style.display === "none"){
+		presetsMenu.style.display = "block";
+		}
+	else{
+		presetsMenu.style.display = "none";
+		}
+	}
+function tooglePresetSettings(){
+	var presetsMenu = document.getElementById("presetSettingId");
+	if (presetsMenu.style.display === "none"){
+		presetsMenu.style.display = "block";
+		}
+	else{
+		presetsMenu.style.display = "none";
+		}
 	}
 function tooglePresets(){
 	var presetsMenu = document.getElementById("presetId");
@@ -574,7 +594,7 @@ function tooglePresets(){
 		}
 	}
 function toggleSettings(){
-	var settingsMenu = document.getElementById("settingsId");
+	var settingsMenu = document.getElementById("paramSettingsId");
 	if (settingsMenu.style.display === "none"){
 		settingsMenu.style.display = "block";
 		}
@@ -685,16 +705,18 @@ function glslEditor(glMode){
 		var editor = ace.edit(glMode);
 		editor.setTheme("ace/theme/ambiance");
 		editor.session.setMode("ace/mode/glsl");
-		editor.setAutoScrollEditorIntoView(true);
-		//editor.resize();
+		//editor.setAutoScrollEditorIntoView(true);
+		editor.session.setUseSoftTabs(true);
+		editor.resize();
 		return editor;
 	}
 function exprEditor(exprChan){
 		var editor = ace.edit(exprChan);
 		editor.setTheme("ace/theme/ambiance");
 		editor.session.setMode("ace/mode/glsl");
-		editor.setAutoScrollEditorIntoView(true);
-		//editor.resize();
+		//editor.setAutoScrollEditorIntoView(true);
+		editor.session.setUseSoftTabs(true);
+		editor.resize();
 		return editor;
 	}
 /**

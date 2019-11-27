@@ -3,6 +3,7 @@ label.presetsBlock{
     vertical-align: top;
     display: inline-block;
     text-align:center;
+    color:  #fff;
 }
 #presetIconImgsId{
     padding: 5px;
