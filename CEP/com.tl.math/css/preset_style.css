@@ -5,14 +5,22 @@ label.presetsBlock{
     text-align:center;
     color:  #fff;
 }
-#presetIconImgsId{
-    padding: 5px;
+#presetDescr{
     margin: 5px;
-    width: 100px;
-    height: 100px;
+    color:  #fff;
+}
+#presetIconImgsId{
+    margin: 10px;
+    width: 50x;
+    height: 50px;
     object-fit: cover;
     border-radius: 50%;
     
+}
+
+#presetsListAccess{
+    column-count: 2;
+    float: left;
 }
 
 input[id*="presetIconRadio"]:checked+img{

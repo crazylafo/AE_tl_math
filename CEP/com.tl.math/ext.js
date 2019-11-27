@@ -471,7 +471,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 		alert ("alpha expression text is tool long");
 	}
 	if ($("#descriptionText").val().toString().length <descriptionLimit){
-		arbData.effectInfo.description = cleanJsonToArbStr($("#descriptionText").val().toString());
+		arbData.effectInfo.description = $("#descriptionText").val().toString();
 	}else{
 		alert ("description text is too long")
 	}
