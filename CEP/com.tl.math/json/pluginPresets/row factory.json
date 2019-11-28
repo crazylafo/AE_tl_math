@@ -1176,10 +1176,6 @@ false
 
 
 
-"poffName": "layer1_position_off",
-
-
-
 
 "toffName": "layer1_time_off",
 
@@ -1201,10 +1197,6 @@ false
 
 "name": "texture2",
 
-
-
-
-"poffName": "layer2_position_off",
 
 
 
@@ -1232,10 +1224,6 @@ false
 
 
 
-"poffName": "layer3_position_off",
-
-
-
 
 "toffName": "layer3_time_off",
 
@@ -1257,10 +1245,6 @@ false
 
 "name": "texture4",
 
-
-
-
-"poffName": "layer4_position_off",
 
 
 

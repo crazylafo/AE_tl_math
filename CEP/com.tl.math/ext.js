@@ -544,17 +544,7 @@ function toogleCheckbox(className, currId){
 			}
 		}
 	}
-function setEditors(){
-	var editors = {};
-	editors.gl33_frag_editor = glslEditor("gl33_frag_editor");
-	editors.gl33_vert_editor= glslEditor("gl33_vert_editor");
-	editors.expr_red_editor = exprEditor("expr_red_editor");
-	editors.expr_green_editor = exprEditor("expr_green_editor");
-	editors.expr_blue_editor = exprEditor("expr_blue_editor");
-	editors.expr_rgb_editor = exprEditor("expr_rgb_editor");
-	editors.expr_alpha_editor  = exprEditor ("expr_alpha_editor");
-	return editors;
-	}
+
 function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
 	langSelec.value = "GLSL";
@@ -565,7 +555,7 @@ function defaultVal(){
 	toggleSettings();
 	tooglePresets();
 	toggleDescription();
-	openSettingsMenu("settingsGrp")
+	openSettingsMenu("settingsGrp");
 	}
 function toogleSideBar(){
 	var fileMenu = document.getElementById("fileId");
@@ -655,6 +645,17 @@ function openSettingsMenu (settingIdName){
 			}
 		}
 	}
+function setEditors(){
+	var editors = {};
+	editors.gl33_frag_editor = glslEditor("gl33_frag_editor");
+	editors.gl33_vert_editor= glslEditor("gl33_vert_editor");
+	editors.expr_red_editor = glslEditor("expr_red_editor");
+	editors.expr_green_editor = glslEditor("expr_green_editor");
+	editors.expr_blue_editor = glslEditor("expr_blue_editor");
+	editors.expr_rgb_editor = glslEditor("expr_rgb_editor");
+	editors.expr_alpha_editor  = glslEditor("expr_alpha_editor");
+	return editors;
+	}
 function openEditor(evt, tabName) {
 		// Declare all variables
 		var i, tabEditorList, glslGUILinks, consoleList;
@@ -734,15 +735,6 @@ function langSelecFunc() {
 	 }
 function glslEditor(glMode){
 		var editor = ace.edit(glMode);
-		editor.setTheme("ace/theme/ambiance");
-		editor.session.setMode("ace/mode/glsl");
-		//editor.setAutoScrollEditorIntoView(true);
-		editor.session.setUseSoftTabs(true);
-		editor.resize();
-		return editor;
-	}
-function exprEditor(exprChan){
-		var editor = ace.edit(exprChan);
 		editor.setTheme("ace/theme/ambiance");
 		editor.session.setMode("ace/mode/glsl");
 		//editor.setAutoScrollEditorIntoView(true);

@@ -341,27 +341,19 @@
             },
             "extLayer_1":{
                 "visibleB":true,
-                "name":"texture1",
-                "poffName":"layer1_position_off",
-                "toffName":"layer1_time_off"
+                "name":"texture1"
             },
             "extLayer_2":{  
                 "visibleB":true,
-                "name":"texture2",
-                "poffName":"layer2_position_off",
-                "toffName":"layer2_time_off"
+                "name":"texture2"
             },
             "extLayer_3":{
                 "visibleB":true,
-                "name":"texture3",
-                "poffName":"layer3_position_off",
-                "toffName":"layer3_time_off"
+                "name":"texture3"
             },
             "extLayer_4":{
                 "visibleB":true,
-                "name":"texture4",
-                "poffName":"layer4_position_off",
-                "toffName":"layer4_time_off"
+                "name":"texture4"
             }
         }
     }
