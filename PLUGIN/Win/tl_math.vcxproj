@@ -404,7 +404,6 @@ cl /D "MSWindows" /EP $(IntDir)%(Filename).rrc &gt;               "$(ProjectDir)
     <ClCompile Include="..\src\tl_mathSeqData.cpp" />
     <ClCompile Include="..\src\tl_mathStrOperations.cpp" />
     <ClCompile Include="..\src\tl_math_Dialogs.cpp" />
-    <ClCompile Include="..\src\tl_math_iterators.cpp" />
     <ClCompile Include="..\src\tl_math_Strings.cpp" />
     <ClCompile Include="..\src\tl_mathArb_Handler.cpp" />
     <ClCompile Include="..\lib\GL\glbinding\source\glbinding\source\AbstractFunction.cpp" />
