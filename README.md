@@ -4,10 +4,8 @@ Free  use  of  tl_math  is
 permitted under the guidelines and in accordance with the most current
 version of the https://opensource.org/licenses/gpl-3.0.html.
 
-The plugin uses JSON for Modern C++
-
-https://nlohmann.github.io/json/
-
+The plugin uses JSON for Modern C++ https://nlohmann.github.io/json/
+The plugin uses ACE.js https://ace.c9.io/#nav=higlighter&api=search
 
 An After Effect plugin project.
 The user can write math expression for each pixels and by channels (RGBA) or GLSL Shaders.
