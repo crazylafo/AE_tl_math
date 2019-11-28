@@ -75,20 +75,12 @@ TableString		g_strs[StrID_NUMTYPES] = {
     StrID_TOPIC_INPUTS_Param_Name,      "Inputs",
     StrID_LAYER_ONE_Param_Name,         "Layer1 input",
     StrID_TOFF_ONE_Param_Name,          "layer1 Frames Offset",
-    StrID_POFF_ONE_Param_Name,          "Shift Layer1 Center to",
-
 	StrID_LAYER_TWO_Param_Name,         "Layer2 input",
 	StrID_TOFF_TWO_Param_Name,          "layer2 Frames Offset",
-	StrID_POFF_TWO_Param_Name,          "Shift Layer2 Center to",
-
 	StrID_LAYER_THREE_Param_Name,         "Layer3 input",
 	StrID_TOFF_THREE_Param_Name,          "layer3 Frames Offset",
-	StrID_POFF_THREE_Param_Name,          "Shift Layer3 Center to",
-
 	StrID_LAYER_FOUR_Param_Name,         "Layer4 input",
 	StrID_TOFF_FOUR_Param_Name,          "layer4 Frames Offset",
-	StrID_POFF_FOUR_Param_Name,          "Shift Layer4 Center to",
-
 	StrID_CEP_GETARB_Param_Name,         "get arb",
     StrID_CEP_REturnMessage_Param_Name,  "arb received",
     StrID_VersionError,                 "Error : your plugin version is lower than the preset",

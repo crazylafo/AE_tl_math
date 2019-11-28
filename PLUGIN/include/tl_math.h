@@ -238,20 +238,12 @@ typedef struct {
 
 	A_char   paramLayer00NameAc[32];
     A_char   paramLayer01NameAc[32];
-    A_char   paramLayer01PoffNameAc[32];
-    A_char   paramLayer01ToffNameAc[32];
     PF_Boolean  paramLayer01VisibleB;
     A_char   paramLayer02NameAc[32];
-    A_char   paramLayer02PoffNameAc[32];
-    A_char   paramLayer02ToffNameAc[32];
     PF_Boolean  paramLayer02VisibleB;
     A_char   paramLayer03NameAc[32];
-    A_char   paramLayer03PoffNameAc[32];
-    A_char   paramLayer03ToffNameAc[32];
     PF_Boolean  paramLayer03VisibleB;
     A_char   paramLayer04NameAc[32];
-    A_char   paramLayer04PoffNameAc[32];
-    A_char   paramLayer04ToffNameAc[32];
     PF_Boolean  paramLayer04VisibleB;
 
     //Mode
@@ -260,9 +252,8 @@ typedef struct {
     PF_Boolean  glsl33ModeB;
 	PF_Boolean  exprModeB;
 	PF_Boolean  evalModeB;
+    PF_Boolean  presetHasWideInputB;
     bool pixelsCallExternalInputB[4];
-    PF_Boolean presetHasWideInputB;
-
 } seqData, *seqDataP, **seqDataH;
 
 
@@ -346,16 +337,12 @@ enum {
     MATH_TOPIC_INPUTS,
     MATH_INP_LAYER_ONE,
     MATH_INP_TOFF_ONE,
-    MATH_INP_POFF_ONE,
 	MATH_INP_LAYER_TWO,
 	MATH_INP_TOFF_TWO,
-	MATH_INP_POFF_TWO,
 	MATH_INP_LAYER_THREE,
 	MATH_INP_TOFF_THREE,
-	MATH_INP_POFF_THREE,
 	MATH_INP_LAYER_FOUR,
 	MATH_INP_TOFF_FOUR,
-	MATH_INP_POFF_FOUR,
     MATH_END_TOPIC_INPUTS,
 	MATH_CEP_GET_ARB_DATA,
     MATH_CEP_RETURN_MESSAGE,
@@ -428,16 +415,12 @@ enum {
     MATH_TOPIC_INPUTS_DISK_ID,
     MATH_INP_LAYER_ONE_DISK_ID,
     MATH_INP_TOFF_ONE_DISK_ID,
-    MATH_INP_POFF_ONE_DISK_ID,
 	MATH_INP_LAYER_TWO_DISK_ID,
 	MATH_INP_TOFF_TWO_DISK_ID,
-	MATH_INP_POFF_TWO_DISK_ID,
 	MATH_INP_LAYER_THREE_DISK_ID,
 	MATH_INP_TOFF_THREE_DISK_ID,
-	MATH_INP_POFF_THREE_DISK_ID,
 	MATH_INP_LAYER_FOUR_DISK_ID,
 	MATH_INP_TOFF_FOUR_DISK_ID,
-	MATH_INP_POFF_FOUR_DISK_ID,
     MATH_END_TOPIC_INPUTS_DISK_ID,
     MATH_CEP_GET_ARB_DATA_DISK_ID,
     MATH_CEP_RETURN_MESSAGE_DISK_ID
@@ -492,23 +475,24 @@ typedef struct MathInfo{
     color_3d        inColors[10];
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP;
-    PF_Fixed    x_offFi[4];
-    PF_Fixed    y_offFi[4];
+    //PF_Fixed    x_offFi[4];
+    //PF_Fixed    y_offFi[4];
 
 } MathInfoP, *MathinfoP, **MathinfoH;
+/*
 typedef struct {
     PF_Fixed    x_offFi;
     PF_Fixed    y_offFi;
     PF_SampPB    samp_pb;
     PF_InData    in_data;
-} OffInfo;
+} OffInfo;*/
 typedef struct {
 	AEGP_PluginID	my_id;
 } my_global_data, *my_global_dataP, **my_global_dataH;
 
-PF_Err ShiftImage32 (void *refcon, A_long xL, A_long yL, PF_Pixel32 *inP, PF_Pixel32 *outP);
-PF_Err ShiftImage16 ( void *refcon,A_long xL, A_long yL, PF_Pixel16 *inP, PF_Pixel16 *outP);
-PF_Err ShiftImage8 ( void *refcon, A_long xL, A_long yL, PF_Pixel *inP, PF_Pixel *outP);
+//PF_Err ShiftImage32 (void *refcon, A_long xL, A_long yL, PF_Pixel32 *inP, PF_Pixel32 *outP);
+//PF_Err ShiftImage16 ( void *refcon,A_long xL, A_long yL, PF_Pixel16 *inP, PF_Pixel16 *outP);
+//PF_Err ShiftImage8 ( void *refcon, A_long xL, A_long yL, PF_Pixel *inP, PF_Pixel *outP);
 
 class tlmath{
 private:
@@ -552,8 +536,7 @@ private:
                 const std::string&        fragSh2str);
 
     PF_Err
-    ExtLayerInput(void *refcon,
-                  PF_InData       *in_data,
+    ExtLayerInput(PF_InData       *in_data,
                   PF_EffectWorld *inputP,
                   PF_EffectWorld *extLP,
                   PF_EffectWorld *extLW,

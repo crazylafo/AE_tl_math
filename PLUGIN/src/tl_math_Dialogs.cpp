@@ -249,24 +249,42 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     fragErr = seqP->Glsl33_fragError;
     AEFX_CLR_STRUCT(vertErr);
     vertErr = seqP-> Glsl33_VertError;
-	/*
-    AEFX_CLR_STRUCT(redErr);
-    redErr = seqP->redError;
-    AEFX_CLR_STRUCT(greenErr);
-    greenErr = seqP->greenError;
-    AEFX_CLR_STRUCT(blueErr);
-    blueErr = seqP->blueError;
-    AEFX_CLR_STRUCT(alphaErr);
-    alphaErr =seqP->alphaError;
-    AEFX_CLR_STRUCT (rgbErr);
-    rgbErr = seqP->rgbError;*/
-
-    tlmath::jsonCorrectorStr(fragErr);
-    tlmath::jsonCorrectorStr(vertErr);
-
 	arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
-	arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
-	arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
+
+	if (seqP->glsl33ModeB) {
+		tlmath::jsonCorrectorStr(fragErr);
+		strReplace(fragErr, "ERROR:", "\\n-ERROR:");
+		tlmath::jsonCorrectorStr(vertErr);
+		strReplace(vertErr, "ERROR:", "\\n-ERROR:");
+		arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
+		arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
+	}
+
+	else if (seqP->exprRGBModeB) {
+		size_t index = fragErr.find(rgbFunctionStr);
+		size_t nlignSt = std::count(fragErr.begin(), index ,'\n');
+		size_t numErrSt = std::count(fragErr.begin(), fragErr.end(), "ERROR:");
+		std::string exprRGBErrStr = fragErr; 
+		if (numErrSt > 0){
+			std::string tmpStr = fragErr;
+			for (int i = 0; i < numErrSt; i++) {
+				unsigned first = tmpStr.find("ERROR: 0 :");
+				unsigned last = tmpStr.find(": '");
+			    std::string errLignStr = tmpStr.substr(first, last - first);
+				int errlignInt = atoi(errLignStr.c_str())-;
+				std::string toReplace = std::to_string(first) + errLignStr + std::to_string(last);
+
+				exprRGBErrStr.replace(toReplace, std::to_string(first) + errLignStr + std::to_string(last));
+				tmpStr = tmpStr.substr(last+1);
+			}
+		}
+
+	}
+
+
+
+	
+
 
 	arbDataJS["math_expression"]["red_error"] =  fragErr;// redErr;
     arbDataJS["math_expression"]["green_error"] = fragErr;//greenErr;
@@ -418,6 +436,7 @@ tlmath::embedExprInShaders (seqData  *seqP){
     }
 	strReplace(exprGrpStr, "fragCoord", seqP->expr_pixNameAc);
 	strReplace(exprGrpStr, "colorCh", seqP->expr_ColorChNameAc);
+	strReplace(exprGrpStr, "inputLayer0", seqP->paramLayer00NameAc);
 
     //start new Shader as string
     std::string fragShStr = gl33GeneriqueShInput; //get the classic input
@@ -504,11 +523,7 @@ tlmath::embedExprInShaders (seqData  *seqP){
     fragShStr.append(gl33InputTexture);
 	fragShStr.append(gl33getLuma);
 
-    /*
 
-	//index each expr number
-
-     */
      //embed expressions in shaders and add uniforms in shaders depending of expression.
 	fragShStr.append(exprGrpStr);
     if (seqP->exprRGBModeB){

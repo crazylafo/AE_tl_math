@@ -29,8 +29,7 @@ copyPointsParam(PF_ParamDef  point_param,
 }
 
 PF_Err
-tlmath::ExtLayerInput(void *refcon,
-	PF_InData       *in_data,
+tlmath::ExtLayerInput(PF_InData       *in_data,
 	PF_EffectWorld *inputP,
 	PF_EffectWorld *extLP,
 	PF_EffectWorld *extLW,
@@ -38,8 +37,6 @@ tlmath::ExtLayerInput(void *refcon,
 	PF_PixelFormat   format)
 {
 	PF_Err err = PF_Err_NONE, err2 = PF_Err_NONE;
-	OffInfo    *oiP = (OffInfo*)refcon;
-	PF_Point            origin;
 	PF_PixelFloat empty32 = { 0,0,0,0 };
 	PF_Pixel16 empty16 = { 0,0,0,0 };
 	PF_Pixel empty8 = { 0,0,0,0 };
@@ -98,88 +95,22 @@ tlmath::ExtLayerInput(void *refcon,
 		}
 
 	}
-	if (!err && (oiP->x_offFi != 0 || oiP->y_offFi != 0)) {
-		oiP->in_data = *in_data;
-		oiP->samp_pb.src = &Externalworld;
-		origin.h = (A_short)(in_data->output_origin_x);
-		origin.v = (A_short)(in_data->output_origin_y);
-		switch (format) {
-		case PF_PixelFormat_ARGB128:
-			ERR(suites.IterateFloatSuite1()->iterate_origin(in_data,
-				0,
-				Externalworld.height,
-				&Externalworld,
-				NULL,
-				&origin,
-				(void*)(oiP),
-                ShiftImage32,
-				&ExternalWorldTransform));
-			break;
 
-		case PF_PixelFormat_ARGB64:
+    if (PF_Quality_HI == in_data->quality) {
+        ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
+            &Externalworld,
+            extLW,
+            NULL,
+            NULL));
+    }
+    else {
+        ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
+            &Externalworld,
+            extLW,
+            NULL,
+            NULL));
+    }
 
-			ERR(suites.Iterate16Suite1()->iterate_origin(in_data,
-				0,
-				Externalworld.height,
-				&Externalworld,
-				NULL,
-				&origin,
-				(void*)(oiP),
-                ShiftImage16,
-				&ExternalWorldTransform));
-			break;
-
-		case PF_PixelFormat_ARGB32:
-
-			ERR(suites.Iterate8Suite1()->iterate_origin(in_data,
-				0,
-				Externalworld.height,
-				&Externalworld,
-				NULL,
-				&origin,
-				(void*)(oiP),
-                ShiftImage8,
-				&ExternalWorldTransform));
-
-			break;
-
-		default:
-			err = PF_Err_INTERNAL_STRUCT_DAMAGED;
-			break;
-		}
-
-
-		if (PF_Quality_HI == in_data->quality) {
-			ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
-				&ExternalWorldTransform,
-				extLW,
-				NULL,
-				NULL));
-		}
-		else {
-			ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-				&ExternalWorldTransform,
-				extLW,
-				NULL,
-				NULL));
-		}
-	}
-	else {
-		if (PF_Quality_HI == in_data->quality) {
-			ERR(suites.WorldTransformSuite1()->copy_hq(in_data->effect_ref,
-				&Externalworld,
-				extLW,
-				NULL,
-				NULL));
-		}
-		else {
-			ERR(suites.WorldTransformSuite1()->copy(in_data->effect_ref,
-				&Externalworld,
-				extLW,
-				NULL,
-				NULL));
-		}
-	}
 
 	if (Externalworld.data) {
 		ERR2(suites.WorldSuite1()->dispose_world(in_data->effect_ref, &Externalworld));
@@ -223,7 +154,7 @@ tlmath::PreRender(PF_InData                *in_data,
 
 
 			PF_ParamDef extlayer_toff_param[4];
-			PF_ParamDef extlayer_poff_param[4];
+
 
 			AEFX_CLR_STRUCT(extlayer_toff_param[0]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
@@ -232,13 +163,7 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_toff_param[0]));
-			AEFX_CLR_STRUCT(extlayer_poff_param[0]);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_INP_POFF_ONE,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&extlayer_poff_param[0]));
+
 			AEFX_CLR_STRUCT(extlayer_toff_param[1]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_TWO,
@@ -246,13 +171,6 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_toff_param[1]));
-			AEFX_CLR_STRUCT(extlayer_poff_param[1]);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_INP_POFF_TWO,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&extlayer_poff_param[1]));
 			AEFX_CLR_STRUCT(extlayer_toff_param[2]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_THREE,
@@ -260,13 +178,6 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_toff_param[2]));
-			AEFX_CLR_STRUCT(extlayer_poff_param[2]);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_INP_POFF_THREE,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&extlayer_poff_param[2]));
 			AEFX_CLR_STRUCT(extlayer_toff_param[3]);
 			ERR(PF_CHECKOUT_PARAM(in_data,
 				MATH_INP_TOFF_FOUR,
@@ -274,20 +185,12 @@ tlmath::PreRender(PF_InData                *in_data,
 				in_data->time_step,
 				in_data->time_scale,
 				&extlayer_toff_param[3]));
-			AEFX_CLR_STRUCT(extlayer_poff_param[3]);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_INP_POFF_FOUR,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&extlayer_poff_param[3]));
             PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
             if (seq_dataH) {
                 seqData      *seqP = static_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 				m_ArbData* arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
                 //if (seqP->initializedB == false || arbOutP->hasChangedB){
-					my_global_dataP globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-					
+
                     ERR(tlmath::copyFromArbToSeqData( in_data, out_data, arbOutP->arbDataAc , seqP));
 					seqP->initializedB = true;
                     out_data->sequence_data = seq_dataH;
@@ -456,8 +359,6 @@ tlmath::PreRender(PF_InData                *in_data,
 					UnionLRect(&in_result.max_result_rect, &extraP->output->max_result_rect);
 
 
-					PF_Fixed     widthFi[4], heightFi[4];
-
 					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
 						MATH_INP_LAYER_ONE,
 						MATH_INP_LAYER_ONE,
@@ -466,10 +367,7 @@ tlmath::PreRender(PF_InData                *in_data,
 						in_data->time_step,
 						in_data->time_scale,
 						&extL_result[0]));
-					widthFi[0] = INT2FIX(ABS(extL_result[0].max_result_rect.right - extL_result[0].max_result_rect.left));
-					heightFi[0] = INT2FIX(ABS(extL_result[0].max_result_rect.bottom - extL_result[0].max_result_rect.top));
-					miP->x_offFi[0] = PF_Fixed(widthFi[0] / 2 - extlayer_poff_param[0].u.td.x_value);
-					miP->y_offFi[0] = PF_Fixed(heightFi[0] / 2 - extlayer_poff_param[0].u.td.y_value);
+
 
 
 					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
@@ -480,10 +378,6 @@ tlmath::PreRender(PF_InData                *in_data,
 						in_data->time_step,
 						in_data->time_scale,
 						&extL_result[1]));
-					widthFi[1] = INT2FIX(ABS(extL_result[1].max_result_rect.right - extL_result[1].max_result_rect.left));
-					heightFi[1] = INT2FIX(ABS(extL_result[1].max_result_rect.bottom - extL_result[1].max_result_rect.top));
-					miP->x_offFi[1] = PF_Fixed(widthFi[1] / 2 - extlayer_poff_param[1].u.td.x_value);
-					miP->y_offFi[1] = PF_Fixed(heightFi[1] / 2 - extlayer_poff_param[1].u.td.y_value);
 
 					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
 						MATH_INP_LAYER_THREE,
@@ -493,10 +387,7 @@ tlmath::PreRender(PF_InData                *in_data,
 						in_data->time_step,
 						in_data->time_scale,
 						&extL_result[2]));
-					widthFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.right - extL_result[2].max_result_rect.left));
-					heightFi[2] = INT2FIX(ABS(extL_result[2].max_result_rect.bottom - extL_result[2].max_result_rect.top));
-					miP->x_offFi[2] = PF_Fixed(widthFi[2] / 2 - extlayer_poff_param[2].u.td.x_value);
-					miP->y_offFi[2] = PF_Fixed(heightFi[2] / 2 - extlayer_poff_param[2].u.td.y_value);
+
 
 					ERR(extraP->cb->checkout_layer(in_data->effect_ref,
 						MATH_INP_LAYER_FOUR,
@@ -506,11 +397,6 @@ tlmath::PreRender(PF_InData                *in_data,
 						in_data->time_step,
 						in_data->time_scale,
 						&extL_result[3]));
-					widthFi[3] = INT2FIX(ABS(extL_result[3].max_result_rect.right - extL_result[3].max_result_rect.left));
-					heightFi[3] = INT2FIX(ABS(extL_result[3].max_result_rect.bottom - extL_result[3].max_result_rect.top));
-					miP->x_offFi[3] = PF_Fixed(widthFi[3] / 2 - extlayer_poff_param[3].u.td.x_value);
-					miP->y_offFi[3] = PF_Fixed(heightFi[3] / 2 - extlayer_poff_param[3].u.td.y_value);
-
 
 
 				}
@@ -518,7 +404,6 @@ tlmath::PreRender(PF_InData                *in_data,
 			ERR(PF_CHECKIN_PARAM(in_data, &arb_param));
             for (int i=0; i<4; i++){
                 ERR(PF_CHECKIN_PARAM(in_data,&extlayer_toff_param[i]));
-                ERR(PF_CHECKIN_PARAM(in_data,&extlayer_poff_param[i]));
             }
             suites.HandleSuite1()->host_unlock_handle(infoH);
 		}
@@ -557,8 +442,6 @@ tlmath::SmartRender(
 		MathInfo *miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data)));
 		//flagInfo
 		if (miP) {
-			OffInfo         oiP;
-			AEFX_CLR_STRUCT(oiP);
 			FlagsInfo      flagsP;
 			AEFX_CLR_STRUCT(flagsP);
 			PF_Handle arbH = NULL;
@@ -697,12 +580,7 @@ tlmath::SmartRender(
 			//CALL EXTERNAL LAYER AND TRANSFORM WORLD IF NEEDED
 
             if (flagsP.PixelsCallExternalInputB[0]) {
-                AEFX_CLR_STRUCT(oiP.x_offFi);
-                AEFX_CLR_STRUCT(oiP.y_offFi);
-				oiP.x_offFi = miP->x_offFi[0];
-				oiP.y_offFi = miP->y_offFi[0];
-				ERR(tlmath::ExtLayerInput((void*)&oiP,
-					in_data,
+				ERR(tlmath::ExtLayerInput(in_data,
 					inputP,
 					extL1P,
 					&extL1W,
@@ -710,12 +588,7 @@ tlmath::SmartRender(
 					format));
 			}
             if (flagsP.PixelsCallExternalInputB[1]) {
-                AEFX_CLR_STRUCT(oiP.x_offFi);
-                AEFX_CLR_STRUCT(oiP.y_offFi);
-                oiP.x_offFi = miP->x_offFi[1];
-                oiP.y_offFi = miP->y_offFi[1];
-                ERR(tlmath::ExtLayerInput((void*)&oiP,
-                                          in_data,
+                ERR(tlmath::ExtLayerInput(in_data,
                                           inputP,
                                           extL2P,
                                           &extL2W,
@@ -723,12 +596,7 @@ tlmath::SmartRender(
                                           format));
             }
             if (flagsP.PixelsCallExternalInputB[2]) {
-                AEFX_CLR_STRUCT(oiP.x_offFi);
-                AEFX_CLR_STRUCT(oiP.y_offFi);
-                oiP.x_offFi = miP->x_offFi[2];
-                oiP.y_offFi = miP->y_offFi[2];
-                ERR(tlmath::ExtLayerInput((void*)&oiP,
-                                          in_data,
+                ERR(tlmath::ExtLayerInput(in_data,
                                           inputP,
                                           extL3P,
                                           &extL3W,
@@ -736,12 +604,7 @@ tlmath::SmartRender(
                                           format));
             }
             if (flagsP.PixelsCallExternalInputB[3]) {
-                AEFX_CLR_STRUCT(oiP.x_offFi);
-                AEFX_CLR_STRUCT(oiP.y_offFi);
-                oiP.x_offFi = miP->x_offFi[3];
-                oiP.y_offFi = miP->y_offFi[3];
-                ERR(tlmath::ExtLayerInput((void*)&oiP,
-                                          in_data,
+                ERR(tlmath::ExtLayerInput(in_data,
                                           inputP,
                                           extL4P,
                                           &extL4W,

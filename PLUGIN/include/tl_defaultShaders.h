@@ -24,7 +24,7 @@ static std::string redFunctionStr= "float redExpr (vec2 fragCoord, float colorCh
 static std::string greenFunctionStr= "float greenExpr (vec2 fragCoord, float colorCh){ \n";
 static std::string blueFunctionStr= "float blueExpr (vec2 fragCoord, float colorCh){ \n";
 static std::string alphaFunctionStr= "float alphaExpr (vec2 fragCoord, float colorCh){ \n";
-static std::string rgbFunctionStr= "float rgbExpr (vec2 fragCoord, float colorCh){ \n";
+static std::string rgbFunctionStr= "vec3 rgbExpr (vec2 fragCoord, vec3 inputLayer0){ \n";
 
 
 static std::string gl33getLuma = R"=====(
@@ -71,9 +71,7 @@ static std::string gl33InputMainGrp =R"=====(
 void main(void)
 {
     vec4 text0= loadTextureFromAE(inputLayer0);
-    fragColorOut.r = rgbExpr(gl_FragCoord.xy, text0.r);
-    fragColorOut.g = rgbExpr(gl_FragCoord.xy, text0.g);
-    fragColorOut.b = rgbExpr(gl_FragCoord.xy, text0.b);
+    fragColorOut.rgb = rgbExpr(gl_FragCoord.xy, text0.rgb);
     fragColorOut.a = alphaExpr(gl_FragCoord.xy, text0.a);
 
 })=====";
