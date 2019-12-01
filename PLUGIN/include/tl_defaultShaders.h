@@ -23,8 +23,8 @@ static std::string  endFunctionStr ="\n } \n";
 static std::string redFunctionStr= "float redExpr (vec2 fragCoord, float colorCh){ \n";
 static std::string greenFunctionStr= "float greenExpr (vec2 fragCoord, float colorCh){ \n";
 static std::string blueFunctionStr= "float blueExpr (vec2 fragCoord, float colorCh){ \n";
-static std::string alphaFunctionStr= "float alphaExpr (vec2 fragCoord, float colorCh){ \n";
-static std::string rgbFunctionStr= "vec3 rgbExpr (vec2 fragCoord, vec3 inputLayer0){ \n";
+static std::string alphaFunctionStr= "float alphaExpr(vec2 fragCoord, float colorCh){ \n";
+static std::string rgbFunctionStr= "vec3 rgbExpr(vec2 fragCoord, vec3 inputLayer0){ \n";
 
 
 static std::string gl33getLuma = R"=====(
@@ -33,12 +33,11 @@ float getLuma(vec4 text) {
 	}
 )=====";
 
-static std::string gl33GeneriqueShInput= R"=====(
-	 #version 330 // glsls version for opengl 3.3
-     uniform float multiplier16bit; //proper to AE 16 bits depth.
-     out vec4 fragColorOut;
-     in vec2 out_uvs;
-     uniform vec2 resolution;
+static std::string gl33GeneriqueShInput= R"=====(#version 330 // glsls version for opengl 3.3
+uniform float multiplier16bit; //proper to AE 16 bits depth.
+out vec4 fragColorOut;
+in vec2 out_uvs;
+uniform vec2 resolution;
 )=====";
 
 static std::string gl33InputTexture =R"=====(
