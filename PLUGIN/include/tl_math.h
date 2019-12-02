@@ -518,7 +518,7 @@ private:
     PF_Err embedExprInShaders  (seqData  *seqP);
 	PF_Err AEGP_SetParamStreamValue(PF_InData* in_data, PF_OutData* out_data, AEGP_PluginID   PlugId, PF_ParamIndex   param_index, PF_Handle* ArbH);
 	PF_Err updateArbState(PF_InData* in_data, PF_OutData* out_data);
-	int getOccurenceFromStr(std::string src, std::string target);
+	std::vector<int> getOccurenceFromStr(std::string src, std::string target);
 	std::string ReIndexErrorInExpr(std::string originalfragSh, std::string  evalFragSh, std::string errIndex, size_t index, size_t delimiter);
 
 
