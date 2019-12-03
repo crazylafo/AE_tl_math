@@ -20,9 +20,9 @@ static std::string importBoolGlStr = "uniform bool ";
 static std::string import2dTextGlStr = "uniform sampler2D ";
 
 static std::string  endFunctionStr ="\n } \n";
-static std::string redFunctionStr= "float redExpr (vec2 fragCoord, float colorCh){ \n";
-static std::string greenFunctionStr= "float greenExpr (vec2 fragCoord, float colorCh){ \n";
-static std::string blueFunctionStr= "float blueExpr (vec2 fragCoord, float colorCh){ \n";
+static std::string redFunctionStr= "float redExpr(vec2 fragCoord, float colorCh){ \n";
+static std::string greenFunctionStr= "float greenExpr(vec2 fragCoord, float colorCh){ \n";
+static std::string blueFunctionStr= "float blueExpr(vec2 fragCoord, float colorCh){ \n";
 static std::string alphaFunctionStr= "float alphaExpr(vec2 fragCoord, float colorCh){ \n";
 static std::string rgbFunctionStr= "vec3 rgbExpr(vec2 fragCoord, vec3 inputLayer0){ \n";
 

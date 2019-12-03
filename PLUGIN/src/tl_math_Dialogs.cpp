@@ -254,7 +254,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
 
 	//if (seqP->glsl33ModeB) {
 		tlmath::jsonCorrectorStr(fragErr);
-		strReplace(fragErr, "ERROR:", "\\n-ERROR:");
+		strReplace(fragErr, "ERROR:", "\\nERROR:");
 		tlmath::jsonCorrectorStr(vertErr);
 		strReplace(vertErr, "ERROR:", "\\n-ERROR:");
 		arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
@@ -263,22 +263,26 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
 	if (seqP->exprRGBModeB) {
 		std::string exprRGBErrStr = seqP->rgbError;
 		tlmath::jsonCorrectorStr(exprRGBErrStr);
-		strReplace(exprRGBErrStr, "ERROR:", "\\n-ERROR:");
+		strReplace(exprRGBErrStr, "ERROR:", "\\nERROR:");
 		arbDataJS["math_expression"]["rgb_error"] = exprRGBErrStr;
 	}
 	else {
 		std::string exprRedErrStr = seqP->redError;
-		std::string exprGreenErrStr = seqP->blueError;
+		std::string exprGreenErrStr = seqP->greenError;
 		std::string exprBlueErrStr = seqP->blueError;
-		strReplace(exprRedErrStr, "ERROR:", "\\n-ERROR:");
-		strReplace(exprGreenErrStr, "ERROR:", "\\n-ERROR:");
-		strReplace(exprBlueErrStr, "ERROR:", "\\n-ERROR:");
+        tlmath::jsonCorrectorStr(exprRedErrStr);
+        tlmath::jsonCorrectorStr(exprGreenErrStr);
+        tlmath::jsonCorrectorStr(exprBlueErrStr);
+		strReplace(exprRedErrStr, "ERROR:", "\\nERROR:");
+		strReplace(exprGreenErrStr, "ERROR:", "\\nERROR:");
+		strReplace(exprBlueErrStr, "ERROR:", "\\nERROR:");
 		arbDataJS["math_expression"]["red_error"] = exprRedErrStr;
 		arbDataJS["math_expression"]["green_error"] = exprGreenErrStr;
 		arbDataJS["math_expression"]["blue_error"] = exprBlueErrStr;
 	}
 	std::string exprAlphaErrStr = seqP->alphaError;
-	strReplace(exprAlphaErrStr, "ERROR:", "\\n-ERROR:");
+    tlmath::jsonCorrectorStr(exprAlphaErrStr);
+	strReplace(exprAlphaErrStr, "ERROR:", "\\nERROR:");
 	arbDataJS["math_expression"]["alpha_error"] = exprAlphaErrStr;
 
 
@@ -564,18 +568,18 @@ tlmath::evalScripts(seqData  *seqDataP)
         #endif
 
     }
-     #ifdef AE_OS_WIN
-        strncpy_s(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-        strncpy_s(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
-     #else
+         #ifdef AE_OS_WIN
+            strncpy_s(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+            strncpy_s(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+         #else
 
-    strncpy(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-    strncpy(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+        strncpy(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+        strncpy(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
      #endif
 
 	if (seqDataP->exprModeB) {
 		std::string errIndex = "ERROR: 0:";
-		size_t alphaExprIndex = originalfragSh.find("vec3 float alphaExpr");
+		size_t alphaExprIndex = originalfragSh.find("float alphaExpr");
 		if (seqDataP->exprRGBModeB) {
 			size_t rgbExprIndex = originalfragSh.find("vec3 rgbExpr");
 			std::string exprRGBErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, rgbExprIndex, alphaExprIndex);
@@ -587,9 +591,9 @@ tlmath::evalScripts(seqData  *seqDataP)
 			#endif
 		}
 		else {
-			size_t redExprIndex = originalfragSh.find("float redExpr(vec2 fragCoord, float colorCh) {");
-			size_t greenExprIndex = originalfragSh.find("float greenExpr(vec2 fragCoord, float colorCh) {");
-			size_t blueExprIndex = originalfragSh.find("float blueExpr(vec2 fragCoord, float colorCh) {");
+			size_t redExprIndex = originalfragSh.find("float redExpr(");
+			size_t greenExprIndex = originalfragSh.find("float greenExpr(");
+			size_t blueExprIndex = originalfragSh.find("float blueExpr(");
 			//redExprStr
 			std::string exprRedErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, redExprIndex, greenExprIndex);
 			//greenExprStr
@@ -597,13 +601,13 @@ tlmath::evalScripts(seqData  *seqDataP)
 			// blueExprStr
 			std::string exprBlueErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, blueExprIndex, alphaExprIndex);
 			#ifdef AE_OS_WIN
-					strncpy_s(seqDataP->alphaError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
-					strncpy_s(seqDataP->alphaError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
-					strncpy_s(seqDataP->alphaError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
+					strncpy_s(seqDataP->redError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
+					strncpy_s(seqDataP->greenError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
+					strncpy_s(seqDataP->blueError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
 			#else
-					strncpy(seqDataP->alphaError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
-					strncpy(seqDataP->alphaError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
-					strncpy(seqDataP->alphaError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
+					strncpy(seqDataP->redError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
+					strncpy(seqDataP->greenError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
+					strncpy(seqDataP->blueError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
 			#endif
 		}
 		//alphaExprStr

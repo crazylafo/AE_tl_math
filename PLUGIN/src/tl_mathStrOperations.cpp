@@ -78,25 +78,43 @@ std::string tlmath::ReIndexErrorInExpr(std::string originalfragSh,
 	std::string errIndex,
 	size_t index,
 	size_t delimiter) {
-	std::string reducedStr = originalfragSh.substr(0, index);
-	size_t nlignSt = tlmath::getOccurenceFromStr(reducedStr, "\n")[0];
-	size_t numErrSt = tlmath::getOccurenceFromStr(evalFragSh, errIndex)[0];
-	std::string exprStr = evalFragSh;
+	std::string reducedStr = originalfragSh.substr(0, index); //from begining of current shader to the begening of the expr
+    std::string startToDelimiter =originalfragSh.substr(0, delimiter); // from begining of shader to the end the expr
+	size_t nlignSt = tlmath::getOccurenceFromStr(reducedStr, "\n")[0]; // how many line breaks before the current shader
+    size_t nlignDelimiterSt = tlmath::getOccurenceFromStr( startToDelimiter, "\n")[0]; // how many line breaks before the end of the cirrent shader
+	size_t numErrSt = tlmath::getOccurenceFromStr(evalFragSh, errIndex)[0]; // how manny error in shader.
+	std::string exprStr = evalFragSh; // start from original error repport
 	if (numErrSt > 0) {
 		std::string tmpStr = evalFragSh;
+        int numErrChInt = 0;
 		for (int i = 0; i < numErrSt; i++) {
 			size_t first = tmpStr.find(errIndex);
-			size_t last = tmpStr.find(": '");
+			size_t last = (first+6)+tmpStr.substr(first+first+6).find(": ");
 			std::string errLignStr = tmpStr.substr(first + errIndex.length(), last - (first + errIndex.length()));
-			int errlignInt = atoi(errLignStr.c_str()) - int(nlignSt + 2); //+2 because we add first lign of the programm and the first lign of the expr function
-            //if error position > delimiter break because the error appens in an other epxression
-            if ( tlmath::getOccurenceFromStr(evalFragSh, errIndex)[numErrSt]> delimiter) {
-				break;
-			}
-			std::string toReplaceStr = errIndex.append(errLignStr);
-			std::string newStr = errIndex + std::to_string(errlignInt);
+            int originalErrLignInt =atoi(errLignStr.c_str());
+
+            if (originalErrLignInt< nlignSt || // if the error is before current expression channel or after. break
+                originalErrLignInt>nlignDelimiterSt ) {
+                if (numErrChInt ==0){
+                    exprStr = compile_success;
+                }
+                break;
+            }
+			int errlignInt =  originalErrLignInt- int(nlignSt + 1); //+1 because we add first lign of the programm and the first lign of the expr function
+
+            std::string toReplaceStr;
+            AEFX_CLR_STRUCT(toReplaceStr);
+            toReplaceStr = errIndex;
+            toReplaceStr.append(errLignStr);
+
+            std::string newStr;
+            AEFX_CLR_STRUCT(newStr);
+            newStr = errIndex;
+            newStr.append(std::to_string(errlignInt));
+            
 			strReplace(exprStr, toReplaceStr, newStr);
 			tmpStr = tmpStr.substr(last + 1);
+            numErrChInt ++;
 		}
 	}
 	return exprStr;
