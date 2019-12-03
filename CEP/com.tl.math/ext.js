@@ -547,7 +547,7 @@ function toogleCheckbox(className, currId){
 
 function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
-	langSelec.value = "GLSL";
+	langSelec.value = "mExpr";
 	langSelecFunc();
 
 	toogleFile();
