@@ -252,38 +252,40 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
 	arbDataJS["effectInfo"]["pluginVersion"] = plugVersionA;
 
 
-	//if (seqP->glsl33ModeB) {
+	if (seqP->glsl33ModeB) {
 		tlmath::jsonCorrectorStr(fragErr);
 		strReplace(fragErr, "ERROR:", "\\nERROR:");
 		tlmath::jsonCorrectorStr(vertErr);
-		strReplace(vertErr, "ERROR:", "\\n-ERROR:");
+		strReplace(vertErr, "ERROR:", "\\nERROR:");
 		arbDataJS["gl_expression"]["gl33_frag_error"] = fragErr;
 		arbDataJS["gl_expression"]["gl33_vert_error"] = vertErr;
-	//}
-	if (seqP->exprRGBModeB) {
-		std::string exprRGBErrStr = seqP->rgbError;
-		tlmath::jsonCorrectorStr(exprRGBErrStr);
-		strReplace(exprRGBErrStr, "ERROR:", "\\nERROR:");
-		arbDataJS["math_expression"]["rgb_error"] = exprRGBErrStr;
 	}
 	else {
-		std::string exprRedErrStr = seqP->redError;
-		std::string exprGreenErrStr = seqP->greenError;
-		std::string exprBlueErrStr = seqP->blueError;
-        tlmath::jsonCorrectorStr(exprRedErrStr);
-        tlmath::jsonCorrectorStr(exprGreenErrStr);
-        tlmath::jsonCorrectorStr(exprBlueErrStr);
-		strReplace(exprRedErrStr, "ERROR:", "\\nERROR:");
-		strReplace(exprGreenErrStr, "ERROR:", "\\nERROR:");
-		strReplace(exprBlueErrStr, "ERROR:", "\\nERROR:");
-		arbDataJS["math_expression"]["red_error"] = exprRedErrStr;
-		arbDataJS["math_expression"]["green_error"] = exprGreenErrStr;
-		arbDataJS["math_expression"]["blue_error"] = exprBlueErrStr;
-	}
-	std::string exprAlphaErrStr = seqP->alphaError;
-    tlmath::jsonCorrectorStr(exprAlphaErrStr);
-	strReplace(exprAlphaErrStr, "ERROR:", "\\nERROR:");
-	arbDataJS["math_expression"]["alpha_error"] = exprAlphaErrStr;
+		if (seqP->exprRGBModeB) {
+			std::string exprRGBErrStr = seqP->rgbError;
+			tlmath::jsonCorrectorStr(exprRGBErrStr);
+			strReplace(exprRGBErrStr, "ERROR:", "\\nERROR:");
+			arbDataJS["math_expression"]["rgb_error"] = exprRGBErrStr;
+		}
+		else {
+			std::string exprRedErrStr = seqP->redError;
+			std::string exprGreenErrStr = seqP->greenError;
+			std::string exprBlueErrStr = seqP->blueError;
+			tlmath::jsonCorrectorStr(exprRedErrStr);
+			tlmath::jsonCorrectorStr(exprGreenErrStr);
+			tlmath::jsonCorrectorStr(exprBlueErrStr);
+			strReplace(exprRedErrStr, "ERROR:", "\\nERROR:");
+			strReplace(exprGreenErrStr, "ERROR:", "\\nERROR:");
+			strReplace(exprBlueErrStr, "ERROR:", "\\nERROR:");
+			arbDataJS["math_expression"]["red_error"] = exprRedErrStr;
+			arbDataJS["math_expression"]["green_error"] = exprGreenErrStr;
+			arbDataJS["math_expression"]["blue_error"] = exprBlueErrStr;
+			}
+		std::string exprAlphaErrStr = seqP->alphaError;
+		tlmath::jsonCorrectorStr(exprAlphaErrStr);
+		strReplace(exprAlphaErrStr, "ERROR:", "\\nERROR:");
+		arbDataJS["math_expression"]["alpha_error"] = exprAlphaErrStr;
+		}
 
 
 	std::string jsonDump = "'''";
