@@ -18,8 +18,8 @@ static std::string defaultArb = R"=====(
         "description":"simple skeleton_effect"
     },
     "effectMode":{
-        "gl33_modeB":true,
-        "expr_modeB":false,
+        "gl33_modeB":false,
+        "expr_modeB":true,
         "evalModeB":false
     },
     "gl_expression":{
