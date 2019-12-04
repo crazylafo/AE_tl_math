@@ -1,7 +1,6 @@
 
 body {
 text-align:left;
-
 min-height: 100%;
 overflow: auto;
 background:  #141414;
@@ -29,7 +28,7 @@ background:  #141414;
     color: #f1f1f1
 }
 
-.sidebar{
+#SettingsCol{
     height: 100%;
     width: 290px;
     margin-left: 160px;
@@ -41,20 +40,33 @@ background:  #141414;
     overflow-x: hidden;
     padding-top: 10px;
 }
-.sidebar a{
+#SettingsCol a{
     font-size: 20px;
     color: #818181;
     display: block;
 }
-.tabEditors{
+#tabEditsMenu{
+    position: sticky;
     margin-left: 450px;
     height: 100%;
 }
-.tabEditors button:hover {
+#tabEditsMenu button:hover {
     background-color: #ddd;
   }
   
+  #split-bar {
+    background-color:white;
+    height:100%;
+    width: 6px;
+    float: right;
+    /*
+    cursor: col-resize;*/
+}
 
+#grpSett{
+    position: sticky;
+    margin-right: 6px;
+}
 
 
 #descriptionId, #presetSettingId{

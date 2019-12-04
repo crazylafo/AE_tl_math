@@ -113,7 +113,29 @@ function onLoaded() {
 		});
 	$("#btnLoadPresetFromMenu").on("click", function(){
 		loadPresetFromMenu(presetsList, editors,numParams);
-		tooglePresets();
+		//force to open editor if not yet
+		var presetsMenu = document.getElementById("tabEditsMenu");
+		if (presetsMenu.style.display === "none"){
+			presetsMenu.style.display = "block";
+			$('#SettingsCol').css("width",  290);
+			}
+	});
+	$("#btnLoadAndApplyPresetFromMenu").on("click", function(){
+		loadPresetFromMenu(presetsList, editors,numParams);
+		try{
+			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
+			}catch(e){
+				alert(err.collectingDataForPlugin+e);
+			}
+		if (arbDataToSend){
+			var arbDataStr = JSON.stringify(arbDataToSend);
+			try{
+				evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+			}catch(e){
+				alert (err.exportToPlugin+e)
+				}
+			}
+
 	});
 	$("#btnApply").on("click", function() {
 		try{
@@ -121,16 +143,30 @@ function onLoaded() {
 			}catch(e){
 				alert(err.collectingDataForPlugin+e);
 			}
-			if (arbDataToSend){
-				var arbDataStr = JSON.stringify(arbDataToSend);
-				try{
-					evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
-				}catch(e){
-					alert (err.exportToPlugin+e)
-					}
+		if (arbDataToSend){
+			var arbDataStr = JSON.stringify(arbDataToSend);
+			try{
+				evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+			}catch(e){
+				alert (err.exportToPlugin+e)
 				}
+			}
 		
 		});
+	$('#split-bar').mousedown(function (e) {
+		e.preventDefault();
+		$(document).mousemove(function (e) {
+			e.preventDefault();
+			var x = e.pageX - $('#SettingsCol').offset().left;
+			if (x>160){
+				$('#SettingsCol').css("width", x);
+				resizeEditorsMarginLeft(x+$('#SettingsCol').offset().left);
+			}
+		})
+	});
+	$(document).mouseup(function (e) {
+		$(document).unbind('mousemove');
+	});
 	}
 /**
  * send a messag to plugin (if selected)
@@ -544,42 +580,55 @@ function toogleCheckbox(className, currId){
 			}
 		}
 	}
-
 function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
 	langSelec.value = "mExpr";
 	langSelecFunc();
-
 	toogleFile();
 	tooglePresetSettings();
 	toggleSettings();
-	tooglePresets();
 	toggleDescription();
+	toogleEditor();
 	openSettingsMenu("settingsGrp");
 	}
+function resizeEditorsMarginLeft (size){
+	var tabCl = document.getElementsByClassName("tabEditors");
+	var newSize = (size+"px").toString();
+	tabCl[0].style.marginLeft =  newSize;
+
+
+}
 function toogleSideBar(){
 	var fileMenu = document.getElementById("fileId");
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
 	var settingsMenu = document.getElementById("paramSettingsId");
 	var sidebar = document.getElementById("SettingsCol");
-	var tabCl = document.getElementsByClassName("tabEditors");
+	//var tabCl = document.getElementById("tabEditsMenu");
 	
-
 	if (fileMenu.style.display === "none"&&
 	presetsSettingMenu.style.display === "none"&&
 	Presetslib.style.display === "none"&& 
 	settingsMenu.style.display === "none"){
-
 		sidebar.style.display = "none";
-		tabCl[0].style.marginLeft = "160px";
-		
+		resizeEditorsMarginLeft (160);
 	}
 	else{
 		sidebar.style.display = "block";
-		tabCl[0].style.marginLeft = "450px";
-	}
+		resizeEditorsMarginLeft (450);
+		}
+}
 
+function toogleEditor(){
+	var presetsMenu = document.getElementById("tabEditsMenu");
+	if (presetsMenu.style.display === "none"){
+		presetsMenu.style.display = "block";
+		$('#SettingsCol').css("width",  290);
+		}
+	else{
+		presetsMenu.style.display = "none";
+		$('#SettingsCol').css("width", "100%");
+		}
 
 }
 function toogleFile(){
