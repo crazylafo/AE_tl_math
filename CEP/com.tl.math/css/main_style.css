@@ -1,75 +1,40 @@
 
 body {
 text-align:left;
-min-height: 100%;
 overflow: auto;
 background:  #141414;
 }
-
-#MenuColId{
-    height: 100%;
-    width: 160px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    padding-top: 20px;
-}
-#MenuColId a{
-    padding: 6px 8px 6px 16px;
-    text-decoration:none;
-    font-size: 20px;
-    color: #818181;
-    display: block;
-}
-#MenuCpmId a:hover{
-    color: #f1f1f1
+#mainRowid{
+    display: box;
+    clear: both;
 }
 
-#SettingsCol{
-    height: 100%;
-    width: 290px;
-    margin-left: 160px;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    padding-top: 10px;
+#SettingsColum{
+    width: 20%;
+    resize: both;
+    float: left;
 }
-#SettingsCol a{
-    font-size: 20px;
-    color: #818181;
-    display: block;
+
+#codingColumn{
+    width: 80%;
+    float:right;
+    overflow: auto;
 }
-#tabEditsMenu{
-    position: sticky;
-    margin-left: 450px;
-    height: 100%;
-}
-#tabEditsMenu button:hover {
+.tabEditors button:hover {
     background-color: #ddd;
   }
   
-  #split-bar {
-    background-color:white;
-    height:100%;
-    width: 6px;
-    float: right;
-    /*
-    cursor: col-resize;*/
+.tabEditors button:active {
+background-color: #aaa;
 }
 
-#grpSett{
-    position: sticky;
-    margin-right: 6px;
+#mainToolbar{
+    margin: 0%;
+    left: 25%;
+    right: 25%;
+
 }
-
-
-#descriptionId, #presetSettingId{
+#descriptionId, #presetTxtId, #presetTagId{
     color : #aaa; 
 }
 

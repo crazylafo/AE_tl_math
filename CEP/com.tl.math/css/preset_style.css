@@ -3,24 +3,15 @@ label.presetsBlock{
     vertical-align: top;
     display: inline-block;
     text-align:center;
-    color:  #fff;
-}
-#presetDescr{
-    margin: 5px;
-    color:  #fff;
 }
 #presetIconImgsId{
-    margin: 10px;
-    width: 50x;
-    height: 50px;
+    padding: 5px;
+    margin: 5px;
+    width: 100px;
+    height: 100px;
     object-fit: cover;
     border-radius: 50%;
     
-}
-
-#presetsListAccess{
-    column-count: 2;
-    float: left;
 }
 
 input[id*="presetIconRadio"]:checked+img{
