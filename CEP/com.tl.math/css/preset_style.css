@@ -3,6 +3,9 @@ label.presetsBlock{
     vertical-align: top;
     display: inline-block;
     text-align:center;
+    margin: 2%;
+    margin-right:10%;
+    color: #aaa;
 }
 #presetIconImgsId{
     padding: 5px;
@@ -11,7 +14,21 @@ label.presetsBlock{
     height: 100px;
     object-fit: cover;
     border-radius: 50%;
-    
+}
+
+#seachBarInput{
+    margin: 2%;
+    width: 150px;
+    height: 25px;   
+    border-radius: 10px;
+}
+#presetDescr{
+    background-color: #111;
+    color : #aaa;
+    margin: 2%;
+    width: 75%;
+    margin-right:10%;
+
 }
 
 input[id*="presetIconRadio"]:checked+img{

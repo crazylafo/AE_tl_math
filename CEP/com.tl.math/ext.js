@@ -91,8 +91,8 @@ function onLoaded() {
 		});
 	$("#presetsListAccess").on("change", function(){
 		var  presetSelectedIndex = $('input[name="presetListRb"]:checked').val();
-		var descriptionStr = "description : "+ presetsList.preset[presetSelectedIndex].description;
-		$("#presetDescr").text(descriptionStr);
+		var descriptionStr = "description : \n "+ presetsList.preset[presetSelectedIndex].description;
+		$("#presetDescr").val(cleanJsonFromArbStr(presetsList.preset[presetSelectedIndex].description.toString()));
 		});
 	$("#btnLoad").on("click", function() {		
 		loadPresetJSONFile();
@@ -344,7 +344,7 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 		'<tr>'+
 		'<td>'+paramName+' Group</td> \n'+
 		'<td><input type="checkbox" name="'+paramName+'GrpVisible" id="'+paramName+'GrpVisible"'+
-		'onClick= "toogleCheckbox(\'cb'+paramName+'\', \''+paramName+'GrpVisible\')" checked ></td> \n'+
+		'onClick= "toggleCheckbox(\'cb'+paramName+'\', \''+paramName+'GrpVisible\')" checked ></td> \n'+
 		'<td><input type="text"   id="'+paramName+'GrpName" value="'+paramName+'Grp" maxlength="31"></td> \n'+
 		'</tr> \n';
 	grp.innerHTML =paramGrpStr;
@@ -507,7 +507,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 		alert ("alpha expression text is tool long");
 	}
 	if ($("#descriptionText").val().toString().length <descriptionLimit){
-		arbData.effectInfo.description = $("#descriptionText").val().toString();
+		arbData.effectInfo.description =cleanJsonToArbStr( $("#descriptionText").val()).toString();
 	}else{
 		alert ("description text is too long")
 	}
@@ -559,14 +559,22 @@ function sendDataToPlugin(editors, arbData, numParams) {
 
 	arbData.flags.needsLumaB = false; // only for expr mode
 	var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
-	for (var i=0; i<listLayers.length; i++){			
-		arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
+	if(arbData.gl33_modeB){
+		for (var i=0; i<listLayers.length; i++){			
+			arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
+		}
+		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+	}else{
+		for (var i=0; i<listLayers.length; i++){			
+			arbData.flags.pixelsCallExternalInputB[i] = setflagFromExpr (arbData,[listLayers[i]]);
+		}
+		arbData.flags.presetHasWideInputB = setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
 	}
-	arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-	arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
 	return arbData;
 	}
-function toogleCheckbox(className, currId){
+function toggleCheckbox(className, currId){
 	var classItems = document.getElementsByClassName(className);
 	var parentItem =  document.getElementById(currId);
 	if (parentItem.checked ==true){
@@ -584,30 +592,23 @@ function defaultVal(){
 	var langSelec = document.getElementById("langSelec");
 	langSelec.value = "mExpr";
 	langSelecFunc();
-	toogleFile();
-	tooglePresetSettings();
-	toggleSettings();
+	toggleMenus("presetId");
+	toggleMenus("presetId");
 	toggleDescription();
-	toogleEditor();
+	toggleEditor();
 	openSettingsMenu("settingsGrp");
 	}
 function resizeEditorsMarginLeft (size){
 	var tabCl = document.getElementsByClassName("tabEditors");
 	var newSize = (size+"px").toString();
 	tabCl[0].style.marginLeft =  newSize;
-
-
 }
-function toogleSideBar(){
-	var fileMenu = document.getElementById("fileId");
+function toggleSideBar(){
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
 	var settingsMenu = document.getElementById("paramSettingsId");
 	var sidebar = document.getElementById("SettingsCol");
-	//var tabCl = document.getElementById("tabEditsMenu");
-	
-	if (fileMenu.style.display === "none"&&
-	presetsSettingMenu.style.display === "none"&&
+	if (presetsSettingMenu.style.display === "none"&&
 	Presetslib.style.display === "none"&& 
 	settingsMenu.style.display === "none"){
 		sidebar.style.display = "none";
@@ -618,8 +619,7 @@ function toogleSideBar(){
 		resizeEditorsMarginLeft (450);
 		}
 }
-
-function toogleEditor(){
+function toggleEditor(){
 	var presetsMenu = document.getElementById("tabEditsMenu");
 	if (presetsMenu.style.display === "none"){
 		presetsMenu.style.display = "block";
@@ -631,50 +631,33 @@ function toogleEditor(){
 		}
 
 }
-function toogleFile(){
-	var presetsMenu = document.getElementById("fileId");
-	if (presetsMenu.style.display === "none"){
-		presetsMenu.style.display = "block";
+function toggleMenus(id){
 
+	var idArr =  ['presetSettingId', 'presetId', 'paramSettingsId'];
+	for (var i=0; i<idArr.length; i++){
+		var menu = document.getElementById(idArr[i]);
+		if( id=== idArr[i]){
+			if (menu.style.display === "none"){
+				menu.style.display = "block";
+				}
+			else{
+				menu.style.display = "none";
+			}
 		}
-	else{
-		presetsMenu.style.display = "none";
+		else{
+			menu.style.display = "none";
 		}
-	toogleSideBar();
 	}
-function tooglePresetSettings(){
-	var presetsMenu = document.getElementById("presetSettingId");
-	if (presetsMenu.style.display === "none"){
-		presetsMenu.style.display = "block";
+	if (document.getElementById('presetSettingId').style.display==="none"){
+		var descrMenu = document.getElementById("descriptionId");
+		descrMenu.style.display = "none";
 		}
-	else{
-		presetsMenu.style.display = "none";
-		}
-	toogleSideBar();
-	}
-function tooglePresets(){
-	var presetsMenu = document.getElementById("presetId");
-	if (presetsMenu.style.display === "none"){
-		presetsMenu.style.display = "block";
-		}
-	else{
-		presetsMenu.style.display = "none";
-		}
-	toogleSideBar();	
-	}
-function toggleSettings(){
-	var settingsMenu = document.getElementById("paramSettingsId");
-	if (settingsMenu.style.display === "none"){
-		settingsMenu.style.display = "block";
-		}
-	else{
-		settingsMenu.style.display = "none";
-		}
-	toogleSideBar();
-	}
+	toggleSideBar();
+}
 function toggleDescription(){
+	var parentMenu = document.getElementById('presetSettingId');
 	var descrMenu = document.getElementById("descriptionId");
-	if (descrMenu.style.display === "none"){
+	if (descrMenu.style.display === "none" && parentMenu.style.display !="none"){
 		descrMenu.style.display = "block";
 		}
 	else{

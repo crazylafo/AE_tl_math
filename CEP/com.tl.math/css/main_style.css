@@ -1,56 +1,87 @@
-
 body {
-text-align:left;
-overflow: auto;
-background:  #141414;
-}
-#mainRowid{
-    display: box;
-    clear: both;
-}
-
-#SettingsColum{
-    width: 20%;
-    resize: both;
-    float: left;
-}
-
-#codingColumn{
-    width: 80%;
-    float:right;
+    text-align:left;
+    min-height: 100%;
     overflow: auto;
-}
-.tabEditors button:hover {
-    background-color: #ddd;
-  }
-  
-.tabEditors button:active {
-background-color: #aaa;
-}
-
-#mainToolbar{
-    margin: 0%;
-    left: 25%;
-    right: 25%;
-
-}
-#descriptionId, #presetTxtId, #presetTagId{
-    color : #aaa; 
-}
-
-#settingsId{
-    color : #aaa;
-    overflow-x: scroll;
-}
-
-#langSelecGrp{
-    color : #aaa; 
-}
-
-#editor_glsl_settings, #expr_editor_settings{
-    color : #aaa; 
-}
-
-
-
-
+    background:  #141414;
+    }
+    
+    #MenuColId{
+        height: 100%;
+        width: 160px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+    #MenuColId a{
+        padding: 6px 8px 6px 16px;
+        text-decoration:none;
+        font-size: 20px;
+        color: #818181;
+        display: block;
+    }
+    #MenuCpmId a:hover{
+        color: #f1f1f1
+    }
+    
+    #SettingsCol{
+        height: 100%;
+        width: 290px;
+        margin-left: 160px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        padding-top: 10px;
+    }
+    #SettingsCol a:active {
+        font-size: 20px;
+        color: #818181;
+        background-color: green;
+        display: block;
+    }
+    #tabEditsMenu{
+        position: sticky;
+        margin-left: 450px;
+        height: 100%;
+    }
+    #tabEditsMenu button:hover {
+        background-color: #ddd;
+      }
+      
+      #split-bar {
+        background-color:white;
+        height:100%;
+        width: 6px;
+        float: right;
+        cursor: col-resize;
+    }
+    
+    #grpSett{
+        position: sticky;
+        margin-right: 6px;
+    }
+    
+    
+    #descriptionId, #presetSettingId{
+        color : #aaa; 
+    }
+    
+    #settingsId{
+        color : #aaa;
+        overflow-x: scroll;
+    }
+    
+    #langSelecGrp{
+        color : #aaa; 
+    }
+    
+    #editor_glsl_settings, #expr_editor_settings{
+        color : #aaa; 
+    }
+    

@@ -23,21 +23,21 @@
 <body onLoad="onLoaded()">	
     <div id="MenuColId">
 		<a id="btnApply">Apply</a>
-		<a onClick="toogleFile()">file</a>
-		<a onClick="tooglePresetSettings()">preset settings</a>
-		<a onClick= "toggleSettings()" >param settings</a>
-		<a onCLick="tooglePresets()">library</a>
-		<a onCLick=" toogleEditor()">editor</a>
+		<a onClick="toggleMenus('presetSettingId')" >preset settings</a>
+		<a onClick= "toggleMenus('paramSettingsId')" >param settings</a>
+		<a onCLick="toggleMenus('presetId')">library</a>
+		<a onCLick=" toggleEditor()">editor</a>
 		</div>
 	<div id="SettingsCol" class="sidebar">
 		<div id="split-bar"></div>
 		<div id="grpSett">
 			<div id="fileId">
-				<button id="btnLoad">Load File</button></br>
-				<button id="btnExport">Export As JSON</button></br>
-				<button id="btnSavePreset">Save as Preset</button></br>
+
 				</div>
-			<div id="presetSettingId">	
+			<div id="presetSettingId">
+				<button id="btnLoad">Load File</button>
+				<button id="btnExport">Export As JSON</button>
+				<button id="btnSavePreset">Save as Preset</button></br>
 				<td>Preset Name</td>
 				<td><input type="text"   id="presetName" value="preset_Name" maxlength="31"></td></br>
 				</br>
@@ -50,24 +50,20 @@
 							<option   value="mExpr" >Math Expression Mode</option>
 							<option  value="GLSL">GLSL Mode</option>
 							</select>
-							</div>
+					</div>
 				<button id="descriptionGUI"  onClick= "toggleDescription()">Description</button></br>
-
 				</div>
 			<div id="descriptionId">Description</br>
-				<textarea  rows = "6" cols = "42" maxlength="256" id="descriptionText">describe here</textarea>
+				<textarea  rows = "30" cols = "60" maxlength="256" id="descriptionText">describe here</textarea>
 				</div>
 			<div id="presetId">
-					<td id="searchBar">tl Math Presets</td> </br>
 					<button id="btnLoadAndApplyPresetFromMenu">Load And Apply</button>
 					<button id="btnLoadPresetFromMenu">Open in Editor</button>
 					<input type="text" id="seachBarInput" placeholder = "search for presets or tags..." title="Type a preset or tag name"></br>
-					<div id="presetDescr">description : </div></br>
+					<textarea readonly rows = "6" cols = "10" maxlength="256" id="presetDescr">description : </textarea></br>
 					<form action="#">
 						<div  id="presetsListAccess"></div>
 					</form>
-				
-				
 				</div>
 			<div id="paramSettingsId">
 				<br />
