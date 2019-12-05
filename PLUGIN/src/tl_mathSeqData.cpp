@@ -45,13 +45,22 @@ static void getMiddleVal(PF_InData* in_data,  PF_Point3DDef *input){
 	if (input->x_value == 50.0) {
 		input->x_value = (PF_FpLong)in_data->width / 2;
 		}
+    else if(input->x_value == 100.0) {
+        input->x_value = (PF_FpLong)in_data->width;
+        }
 	if (input->y_value == 50.0) {
 		input->y_value = (PF_FpLong)in_data->height / 2;
 		}
+    else if (input->y_value == 100.0) {
+        input->y_value = (PF_FpLong)in_data->height;
+        }
+
 	if (input->z_value == 50.0) {
 		input->z_value = (PF_FpLong)in_data->height / 2;
 		}
-
+    else if (input->z_value == 100.0) {
+        input->z_value = (PF_FpLong)in_data->height;
+        }
 }
 static PF_Point3DDef getPointsFromJsonAdress(PF_InData* in_data, nlohmann::json arbDataJS, std::string json_adress, PF_Point3DDef  target){
 	//we input the target. in case of error in json pointer
@@ -211,7 +220,6 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	seqDataP->presetHasWideInputB = getBoolFromJsonToSeqData(arbDataJS, "/flags/presetHasWideInputB");
 	seqDataP->cameraB = getBoolFromJsonToSeqData(arbDataJS, "/flags/usesCameraB");
 
-
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/redExpr", seqDataP->redExAc);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/greenExpr", seqDataP->greenExAc);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/blueExpr", seqDataP->blueExAc);
@@ -219,7 +227,6 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgbExpr", seqDataP->rgbExprExAc);
 
 	if (!seqDataP->exprModeB) {
-
 		std::string curr_fragSh = seqDataP->Glsl33_FragmentShAc;
 		std::string curr_vertSh = seqDataP->Glsl33_VertexShAc;
 		std::string  new_frag = getStringFromJsonAdress(arbDataJS, "/gl_expression/gl33_frag_sh", seqDataP->Glsl33_FragmentShAc);
