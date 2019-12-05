@@ -182,7 +182,7 @@ $._ext = {
   exportPresetFileToUserLib : function(dataStr){
     var plugIdStr = dataStr.effectInfo.effectName.toString()+dataStr.effectInfo.pluginVersion; 
     var userPresetsFolder = createUserPresetFolder(plugIdStr);
-    var presetFile = new File (userPresetsFolder.absoluteURI+"\\"+dataStr.effectInfo.presetName+".JSON");
+    var presetFile = new File (userPresetsFolder.absoluteURI+"/"+dataStr.effectInfo.presetName+".JSON");
       if (presetFile.open("w")){
          presetFile.encoding ='UTF-8';
          presetFile.write(JSON.stringify(dataStr,undefined, '\r\n'));

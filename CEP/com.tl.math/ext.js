@@ -555,11 +555,13 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.gui_settings.layerGrp.extLayer_3.visibleB= $("#layer03Visible").is(':checked');
 	arbData.gui_settings.layerGrp.extLayer_4.name =safeCharsForName ($("#layer04_name").val().toString());
 	arbData.gui_settings.layerGrp.extLayer_4.visibleB= $("#layer04Visible").is(':checked');
-
-
-	arbData.flags.needsLumaB = false; // only for expr mode
+	arbData = setFlags (arbData);
+	arbData.effectInfo.minimalPluginVersion = setMinimalVersion (arbData);
+	return arbData;
+	}
+function setFlags (arbData){
 	var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
-	if(arbData.gl33_modeB){
+	if(arbData.effectMode.gl33_modeB){
 		for (var i=0; i<listLayers.length; i++){			
 			arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
 		}
@@ -571,9 +573,31 @@ function sendDataToPlugin(editors, arbData, numParams) {
 		}
 		arbData.flags.presetHasWideInputB = setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
 		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+		}
+	return arbData
+}
+function setVersion(minimalVersion, reqVersion){
+	if (parseInt(minimalVersion) < parseInt(reqVersion)){
+		return reqVersion
+	}else{
+		return minimalVersion;
 	}
-	return arbData;
+}
+function setMinimalVersion (arbData){
+	var minimalVersion = 115;
+	for (var i=0; i<arbData.flags.pixelsCallExternalInputB.length; i++){
+		if (arbData.flags.pixelsCallExternalInputB[i] == true){
+			minimalVersion = setVersion(minimalVersion, 115);
+		}
 	}
+	if (arbData.flags.presetHasWideInputB){
+		minimalVersion = setVersion(minimalVersion, 115);
+	}
+	if (arbData.flags.usesCameraB){
+		minimalVersion = setVersion(minimalVersion, 115);
+	}
+	return minimalVersion;
+}
 function toggleCheckbox(className, currId){
 	var classItems = document.getElementsByClassName(className);
 	var parentItem =  document.getElementById(currId);
