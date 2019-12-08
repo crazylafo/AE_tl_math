@@ -244,7 +244,9 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
         }
     auto  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
 
+
     std::string fragErr, vertErr ,redErr, greenErr , blueErr, alphaErr, rgbErr;
+
     AEFX_CLR_STRUCT(fragErr);
     fragErr = seqP->Glsl33_fragError;
     AEFX_CLR_STRUCT(vertErr);
@@ -350,7 +352,7 @@ tlmath::SetupGetDataBack(
 		if (seqP->exprModeB) {
 			ERR(tlmath::embedExprInShaders(seqP));
 		}
-        ERR(tlmath::evalScripts(seqP));
+        evalScripts(seqP);
 		out_data->sequence_data = seq_dataH;
 		suites.HandleSuite1()->host_unlock_handle(seq_dataH);
 		ERR(tlmath::updateParamsValue(in_data, params, resultStr));
@@ -541,55 +543,54 @@ tlmath::embedExprInShaders (seqData  *seqP){
 
 
 
-PF_Err
-tlmath::evalScripts(seqData  *seqDataP)
+void
+tlmath::evalScripts(seqData  *seqP)
 {
-    PF_Err err = PF_Err_NONE;
     std::string evalVertSh, evalFragSh;
 
 
-    tlmath::evalVertShader (seqDataP->Glsl33_VertexShAc, evalVertSh);
+    tlmath::evalVertShader (seqP->Glsl33_VertexShAc, evalVertSh);
     if (evalVertSh != compile_success){
         #ifdef AE_OS_WIN
-                strncpy_s(seqDataP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+                strncpy_s(seqP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
         #else
-        strncpy(seqDataP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+        strncpy(seqP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
         #endif
     }
 
-    tlmath::evalFragShader (seqDataP->Glsl33_FragmentShAc, evalFragSh);
-	std::string originalfragSh = seqDataP->Glsl33_FragmentShAc;
+    tlmath::evalFragShader (seqP->Glsl33_FragmentShAc, evalFragSh);
+	std::string originalfragSh = seqP->Glsl33_FragmentShAc;
     if (evalFragSh != compile_success){
         std::string setting_resolutionName = "resolution";
         #ifdef AE_OS_WIN
-                 strncpy_s(seqDataP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
-                 strncpy_s(seqDataP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+                 strncpy_s(seqP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
+                 strncpy_s(seqP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
         #else
-                strncpy(seqDataP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
-        strncpy(seqDataP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+                strncpy(seqP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
+        strncpy(seqP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
         #endif
 
     }
          #ifdef AE_OS_WIN
-            strncpy_s(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-            strncpy_s(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+            strncpy_s(seqP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+            strncpy_s(seqP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
          #else
 
-        strncpy(seqDataP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
-        strncpy(seqDataP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
+        strncpy(seqP->Glsl33_fragError , evalFragSh.c_str(),  evalFragSh.length() + 1);
+        strncpy(seqP->Glsl33_VertError , evalVertSh.c_str(),   evalVertSh.length() + 1);
      #endif
 
-	if (seqDataP->exprModeB) {
+	if (seqP->exprModeB) {
 		std::string errIndex = "ERROR: 0:";
 		size_t alphaExprIndex = originalfragSh.find("float alphaExpr");
-		if (seqDataP->exprRGBModeB) {
+		if (seqP->exprRGBModeB) {
 			size_t rgbExprIndex = originalfragSh.find("vec3 rgbExpr");
 			std::string exprRGBErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, rgbExprIndex, alphaExprIndex);
 
 			#ifdef AE_OS_WIN
-			strncpy_s(seqDataP->rgbError, exprRGBErrStr.c_str(), exprRGBErrStr.length() + 1);
+			strncpy_s(seqP->rgbError, exprRGBErrStr.c_str(), exprRGBErrStr.length() + 1);
 			#else
-			strncpy(seqDataP->rgbError, exprRGBErrStr.c_str(), exprRGBErrStr.length() + 1);
+			strncpy(seqP->rgbError, exprRGBErrStr.c_str(), exprRGBErrStr.length() + 1);
 			#endif
 		}
 		else {
@@ -603,27 +604,24 @@ tlmath::evalScripts(seqData  *seqDataP)
 			// blueExprStr
 			std::string exprBlueErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, blueExprIndex, alphaExprIndex);
 			#ifdef AE_OS_WIN
-					strncpy_s(seqDataP->redError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
-					strncpy_s(seqDataP->greenError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
-					strncpy_s(seqDataP->blueError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
+					strncpy_s(seqP->redError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
+					strncpy_s(seqP->greenError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
+					strncpy_s(seqP->blueError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
 			#else
-					strncpy(seqDataP->redError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
-					strncpy(seqDataP->greenError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
-					strncpy(seqDataP->blueError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
+					strncpy(seqP->redError, exprRedErrStr.c_str(), exprRedErrStr.length() + 1);
+					strncpy(seqP->greenError, exprGreenErrStr.c_str(), exprGreenErrStr.length() + 1);
+					strncpy(seqP->blueError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
 			#endif
 		}
 		//alphaExprStr
 		size_t mainFunIndex = originalfragSh.find("main(void)"); //to delimit the end of the alpha expr
 		std::string exprAlphaErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, alphaExprIndex, mainFunIndex);
 		#ifdef AE_OS_WIN
-			strncpy_s(seqDataP->alphaError, exprAlphaErrStr.c_str(), exprAlphaErrStr.length() + 1);
+			strncpy_s(seqP->alphaError, exprAlphaErrStr.c_str(), exprAlphaErrStr.length() + 1);
 		#else
-			strncpy(seqDataP->alphaError, exprAlphaErrStr.c_str(), exprAlphaErrStr.length() + 1);
+			strncpy(seqP->alphaError, exprAlphaErrStr.c_str(), exprAlphaErrStr.length() + 1);
 		#endif
 	 }
-	 
-
-    return err;
 }
 
 

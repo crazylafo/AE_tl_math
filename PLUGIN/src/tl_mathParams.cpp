@@ -623,31 +623,6 @@ tlmath::UpdateParameterUI(
     MATH_INP_TOFF_FOUR_streamH = NULL;
 	if (seqP) {
 
-		PF_State		new_state;
-		A_Boolean		something_changedB = FALSE;
-
-		//access to global data with read/write
-
-			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
-				MATH_ARB_DATA,
-				NULL,
-				NULL,
-				&new_state));
-
-			ERR(suites.ParamUtilsSuite3()->PF_AreStatesIdentical(in_data->effect_ref,
-				&seqP->state,
-				&new_state,
-				&something_changedB));
-
-			if (something_changedB) {
-				//	If something changed (or it's the first time we're being called),
-				//	get the new state and store it in our sequence data
-				ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
-					MATH_ARB_DATA,
-					NULL,
-					NULL,
-					&seqP->state));
-			}
 
 
 			strcpy(param_copy[MATH_ARB_DATA].name, seqP->presetNameAc);
@@ -1324,7 +1299,6 @@ tlmath::UpdateParameterUI(
 
 
 	if (!err) {
-            out_data->out_flags |= PF_OutFlag_REFRESH_UI;
 			out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
 		}
 	return err;

@@ -197,7 +197,7 @@ tlmath::PreRender(PF_InData                *in_data,
 					if (seqP->exprModeB) {
 						ERR(tlmath::embedExprInShaders(seqP));
 					}
-					ERR(tlmath::evalScripts(seqP));
+					evalScripts(seqP);
                 //}
                 suites.HandleSuite1()->host_unlock_handle(seq_dataH);
                 if (seqP->cameraB){  

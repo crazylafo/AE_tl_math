@@ -226,6 +226,12 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alphaExpr", seqDataP->alphaExAc);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgbExpr", seqDataP->rgbExprExAc);
 
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/red_error", seqDataP->redError);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/green_error", seqDataP->greenError);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/blue_error", seqDataP->blueError);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alpha_error", seqDataP->alphaError);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgb_error", seqDataP->rgbError);
+	
 	if (!seqDataP->exprModeB) {
 		std::string curr_fragSh = seqDataP->Glsl33_FragmentShAc;
 		std::string curr_vertSh = seqDataP->Glsl33_VertexShAc;
@@ -241,7 +247,11 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 			std::size_t  vertLength = new_vert.copy(seqDataP->Glsl33_VertexShAc, new_vert.length());
 			seqDataP->Glsl33_VertexShAc[vertLength] = '\0';
 		}
+
 	}
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/gl_expression/gl33_frag_error", seqDataP->Glsl33_fragError);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/gl_expression/gl33_vert_error", seqDataP->Glsl33_VertError);
+
      //copy expressions params name
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_current_channel",seqDataP->expr_ColorChNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix",seqDataP->expr_pixNameAc);
@@ -393,7 +403,6 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	seqDataP->paramRot10VisibleB = getBoolFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/9/visibleB");
 	copyStrFromJsonToSeqData(arbDataJS, "/gui_settings/rotationGrp/params/9/name", seqDataP->paramRot10NameAc);
 
-
     return err;
 }
 PF_Err tlmath::updateSeqData(PF_InData *in_data,  PF_OutData  *out_data,  PF_ParamDef *params[]){
@@ -421,20 +430,13 @@ PF_Err tlmath::updateSeqData(PF_InData *in_data,  PF_OutData  *out_data,  PF_Par
     }
     if (seq_dataH && !err) {
         seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
-        if (seqP->initializedB == false) {
-            tlmath::copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
-			if (seqP->exprModeB) {
-				ERR(tlmath::embedExprInShaders(seqP));
-			}
-            seqP->initializedB = true;
-			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
-				MATH_ARB_DATA,
-				NULL,
-				NULL,
-				&seqP->state));
-            out_data->sequence_data = seq_dataH;
-
-        }
+		seqP->initializedB = false;
+        tlmath::copyFromArbToSeqData(in_data, out_data,arbDataStr, seqP);
+		if (seqP->exprModeB) {
+			ERR(tlmath::embedExprInShaders(seqP));
+		}
+        seqP->initializedB = true;
+        out_data->sequence_data = seq_dataH;
         suites.HandleSuite1()->host_unlock_handle(seq_dataH);
     }
     else {    // whoa, we couldn't allocate sequence data; bail!
@@ -460,18 +462,13 @@ PF_Err tlmath::SequenceSetup (PF_InData        *in_data,  PF_OutData        *out
         PF_Handle    seq_dataH =    suites.HandleSuite1()->host_new_handle(sizeof(seqData));
 
         if (seq_dataH){
-            seqData      *seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
+            seqData      *seqP = static_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
             seqP->initializedB = false;
             tlmath::copyFromArbToSeqData(in_data, out_data, defaultArb, seqP);
 			if (seqP->exprModeB) {
 				ERR(tlmath::embedExprInShaders(seqP));
 			}
-            ERR(tlmath::evalScripts(seqP));
-			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
-				MATH_ARB_DATA,
-				NULL,
-				NULL,
-				&seqP->state));
+            evalScripts(seqP);
             out_data->sequence_data = seq_dataH;
             suites.HandleSuite1()->host_unlock_handle(seq_dataH);
         } else {    // whoa, we couldn't allocate sequence data; bail!

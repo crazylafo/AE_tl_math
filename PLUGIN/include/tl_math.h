@@ -51,6 +51,7 @@ typedef float				fpshort;
 #include "GL_base.h"
 #include "vmath.hpp"
 
+
 using namespace AESDK_OpenGL;
 using namespace gl33core;
 
@@ -71,7 +72,7 @@ typedef struct {
 	bool hasChangedB;
 } m_ArbData;
 typedef struct {
-	PF_State		state;
+	//PF_State		state;
 	bool    initializedB;
 	A_char  descriptionAc[2048];
 	A_char  presetNameAc[32];
@@ -84,7 +85,7 @@ typedef struct {
     A_char  Glsl33_VertexShAc[25000];
     A_char  Glsl33_FragmentShAc[50000];
 
-    A_char redError[2048];
+	A_char redError[2048];
     A_char greenError[4096];
     A_char blueError[4096];
     A_char alphaError[4096];
@@ -507,7 +508,7 @@ private:
     void scriptCorrectorStr(std::string& str); //from json
     void descriptionCorrectorStr (std::string& str);
 	void copyExprFromJsonToSeqData(nlohmann::json arbDataJS, std::string json_adress, A_char* target);
-    PF_Err evalScripts (seqData  *seqDataP);
+	void evalScripts (seqData  *seqDataP);
     PF_Err CallCepDialog(PF_InData  *in_data, PF_OutData  *out_data);
     PF_Err SetupGetDataBack(PF_InData *in_data, PF_OutData  *out_data, PF_ParamDef *params[]);
     PF_Err copyFromArbToSeqData(PF_InData *in_data, PF_OutData   *out_data, std::string arbStr, seqData   *seqDataP);
