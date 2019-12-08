@@ -57,6 +57,7 @@ function onLoaded() {
 			}
 			try{
 				copyDataToGUI (arbData, editors,numParams);
+				langSelecFunc();
 			}catch(e){
 				alert("error in data to copy "+e)
 			}
@@ -113,6 +114,7 @@ function onLoaded() {
 		});
 	$("#btnLoadPresetFromMenu").on("click", function(){
 		loadPresetFromMenu(presetsList, editors,numParams);
+		langSelecFunc();
 		//force to open editor if not yet
 		var presetsMenu = document.getElementById("tabEditsMenu");
 		if (presetsMenu.style.display === "none"){
@@ -122,6 +124,7 @@ function onLoaded() {
 	});
 	$("#btnLoadAndApplyPresetFromMenu").on("click", function(){
 		loadPresetFromMenu(presetsList, editors,numParams);
+		langSelecFunc();
 		try{
 			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
 			}catch(e){
@@ -613,8 +616,8 @@ function toggleCheckbox(className, currId){
 		}
 	}
 function defaultVal(){
-	var langSelec = document.getElementById("langSelec");
-	langSelec.value = "mExpr";
+
+	$("#langSelec").val("mExpr");
 	langSelecFunc();
 	toggleMenus("presetId");
 	toggleMenus("presetId");
