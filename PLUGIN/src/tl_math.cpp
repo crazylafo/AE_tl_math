@@ -140,6 +140,7 @@ namespace {
 		
 
 		multiplier16bitOut = 1.0f;
+        const GLint  SwizzleColorSpace[] = { (GLint)GL_RED,(GLint)GL_GREEN,(GLint)GL_BLUE,(GLint)GL_ALPHA };
 		switch (format)
 		{
 		case PF_PixelFormat_ARGB128:
@@ -160,6 +161,7 @@ namespace {
 				output_worldP));
 
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->width);
+            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, SwizzleColorSpace);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_FLOAT, bufferFloat.get());
 			break;
 		}
@@ -173,6 +175,7 @@ namespace {
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->rowbytes / sizeof(PF_Pixel16));
 			PF_Pixel16 *pixelDataStart = NULL;
 			PF_GET_PIXEL_DATA16(input_worldP, NULL, &pixelDataStart);
+            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, SwizzleColorSpace);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_SHORT, pixelDataStart);
 			break;
 		}
@@ -185,6 +188,7 @@ namespace {
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->rowbytes / sizeof(PF_Pixel8));
 			PF_Pixel8 *pixelDataStart = NULL;
 			PF_GET_PIXEL_DATA8(input_worldP, NULL, &pixelDataStart);
+            glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, SwizzleColorSpace);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_BYTE, pixelDataStart);
 			break;
 		}

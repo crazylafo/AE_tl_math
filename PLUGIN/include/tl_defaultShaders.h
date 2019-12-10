@@ -107,18 +107,16 @@ uniform float multiplier16bit;\n\
 uniform vec2 resolution;\n\
 in vec4 out_pos; \n\
 in vec2 out_uvs; \n\
-out vec4 colourOut; \n\
+out vec4 colorOut; \n\
 void main(void)\n\
 {\n\
-vec2 uv_AE = out_uvs;\n\
-uv_AE.y = 1. - out_uvs.y;\n\
-colourOut = texture(layerTex, uv_AE);\n\
-if (colourOut.a == 0) {\n\
-colourOut = vec4(0, 0, 0, 0);\n\
-} else {\n\
-colourOut = vec4(colourOut.a, colourOut.r / colourOut.a, colourOut.g / colourOut.a, colourOut.b / colourOut.a); \n\
-}\n\
-colourOut = colourOut / multiplier16bit;\n\
+    vec2 uv_AE = out_uvs;\n\
+    uv_AE.y = 1. - out_uvs.y;\n\
+    colorOut = texture(layerTex, uv_AE);\n\
+    if (colorOut.a == 0) {\n\
+        colorOut = vec4(0, 0, 0, 0);\n\
+    }\n\
+    colorOut = colorOut / multiplier16bit;\n\
 }";
 
 static std::string glErrorMessageStr = R"=====(
