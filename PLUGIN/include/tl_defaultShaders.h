@@ -113,9 +113,7 @@ void main(void)\n\
     vec2 uv_AE = out_uvs;\n\
     uv_AE.y = 1. - out_uvs.y;\n\
     colorOut = texture(layerTex, uv_AE);\n\
-    if (colorOut.a == 0) {\n\
-        colorOut = vec4(0, 0, 0, 0);\n\
-    }\n\
+    colorOut = vec4(colorOut.a, colorOut.r, colorOut.g, colorOut.b);\n\
     colorOut = colorOut / multiplier16bit;\n\
 }";
 
