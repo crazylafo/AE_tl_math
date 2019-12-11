@@ -105,6 +105,33 @@ namespace {
 		return PF_Err_NONE;
 	}
 
+    struct CopyPixel16_t {
+        PF_Pixel16        *BufferP;
+        PF_EffectWorld    *input_worldP;
+    };
+
+    PF_Err
+    CopyPixel16In(
+                      void            *refcon,
+                      A_long            x,
+                      A_long            y,
+                      PF_Pixel16    *inP,
+                      PF_Pixel16    *)
+    {
+       // CopyPixelFloat_t    *thiS = reinterpret_cast<CopyPixelFloat_t*>(refcon);
+       // PF_PixelFloat        *outP = thiS->floatBufferP + y * thiS->input_worldP->width + x;
+
+        CopyPixel16_t       *thiS = reinterpret_cast<CopyPixel16_t*>(refcon);
+        PF_Pixel16        *outP = thiS->BufferP + y * thiS->input_worldP->width + x;
+
+        float multiplier16bitOut = 65535.0f / 32768.0f;
+        outP->red = inP->red*multiplier16bitOut;
+        outP->green = inP->green*multiplier16bitOut;
+        outP->blue = inP->blue*multiplier16bitOut;
+        outP->alpha = inP->alpha*multiplier16bitOut;
+        return PF_Err_NONE;
+    }
+
 
 	gl::GLuint UploadTexture(AEGP_SuiteHandler& suites,					// >>
 		PF_PixelFormat			format,				// >>
@@ -172,11 +199,23 @@ namespace {
 			pixSizeOut = sizeof(PF_Pixel16);
 			multiplier16bitOut = 65535.0f / 32768.0f;
 
+            std::auto_ptr<PF_Pixel16> buffer16(new PF_Pixel16[input_worldP->width * input_worldP->height]);
+            CopyPixel16_t refcon = { buffer16.get(), input_worldP };
+
+            CHECK(suites.Iterate16Suite1()->iterate(in_data,
+                                                       0,
+                                                       input_worldP->height,
+                                                       input_worldP,
+                                                       nullptr,
+                                                       reinterpret_cast<void*>(&refcon),
+                                                       CopyPixel16In,
+                                                       output_worldP));
+
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->rowbytes / sizeof(PF_Pixel16));
-			PF_Pixel16 *pixelDataStart = NULL;
-			PF_GET_PIXEL_DATA16(input_worldP, NULL, &pixelDataStart);
+			//PF_Pixel16 *pixelDataStart = NULL;
+			//PF_GET_PIXEL_DATA16(input_worldP, NULL, &pixelDataStart);
             glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, SwizzleColorSpace);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_SHORT, pixelDataStart);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_SHORT,  buffer16.get());
 			break;
 		}
 
@@ -252,8 +291,7 @@ namespace {
 
 	PF_FpShort convertYCoordAEToGL( PF_FpShort ypt, PF_FpShort wHeight)
 	{
-		return wHeight - ypt; 
-
+		return wHeight - ypt;
 	}
 
 	void RenderGL(const AESDK_OpenGL::AESDK_OpenGL_EffectRenderDataPtr& renderContext,
