@@ -82,6 +82,7 @@ TableString		g_strs[StrID_NUMTYPES] = {
 	StrID_LAYER_FOUR_Param_Name,         "Layer4 input",
 	StrID_TOFF_FOUR_Param_Name,          "layer4 Frames Offset",
 	StrID_CEP_GETARB_Param_Name,         "get arb",
+	StrID_MATH_RESET_Param_Name,                "reset preset",
     StrID_CEP_REturnMessage_Param_Name,  "arb received",
     StrID_VersionError,                 "Error : your plugin version is lower than the preset",
     StrID_JSONError,                   "Error: error in JSON data reading"

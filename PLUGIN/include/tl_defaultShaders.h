@@ -34,7 +34,6 @@ float getLuma(vec4 text) {
 )=====";
 
 static std::string gl33GeneriqueShInput= R"=====(#version 330 // glsls version for opengl 3.3
-uniform float multiplier16bit; //proper to AE 16 bits depth.
 out vec4 fragColorOut;
 in vec2 out_uvs;
 uniform vec2 resolution;
@@ -43,23 +42,15 @@ uniform vec2 resolution;
 static std::string gl33InputTexture =R"=====(
 vec4 loadTextureFromAE (sampler2D tex2d)
 {
-    vec2 uv_AE = out_uvs;
-    uv_AE.y = 1.- out_uvs.y;
-    vec4 textureIn = texture( tex2d, uv_AE);
-    textureIn =  textureIn * multiplier16bit;
-    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);
-    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);
+    vec4 textureIn = texture( tex2d, out_uvs);
     return  textureIn ;
 }
 
 vec4 loadTextureOffset(sampler2D tex2d, vec2 off) {
 	vec2 uv_AE = out_uvs;
 	uv_AE.x = out_uvs.x + off.x;
-	uv_AE.y = 1. - (out_uvs.y + off.y);
+	uv_AE.y = out_uvs.y + off.y;
 	vec4 textureIn = texture(tex2d, uv_AE);
-	textureIn = textureIn * multiplier16bit;
-	textureIn = vec4(textureIn.g, textureIn.b, textureIn.a, textureIn.r);
-	textureIn = vec4(textureIn.a * textureIn.r, textureIn.a * textureIn.g, textureIn.a * textureIn.b, textureIn.a);
 	return  textureIn;
 
 })=====";
@@ -99,6 +90,7 @@ void main(void)\n\
 out_pos = ModelviewProjection * Position; \n\
 gl_Position = out_pos; \n\
 out_uvs = UVs;\n\
+out_uvs.y = 1- UVs.y;\n\
 }";
 
 static std::string glfrag2str = "#version 330\n\

@@ -212,7 +212,8 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
                   PF_OutData        *out_data,
                   PF_ParamDef        *params[])
 {
-    PF_Err err = PF_Err_NONE;
+    PF_Err err = PF_Err_NONE, err2 = PF_Err_NONE;
+	
     AEGP_SuiteHandler    suites(in_data->pica_basicP);
     my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
     seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
@@ -302,6 +303,8 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
 	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+
+	ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
 	return err;
 }
 

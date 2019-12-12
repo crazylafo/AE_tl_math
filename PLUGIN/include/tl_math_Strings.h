@@ -74,6 +74,7 @@ typedef enum {
 	StrID_LAYER_FOUR_Param_Name,
 	StrID_TOFF_FOUR_Param_Name,
 	StrID_CEP_GETARB_Param_Name,
+	StrID_MATH_RESET_Param_Name,
     StrID_CEP_REturnMessage_Param_Name,
     StrID_VersionError,
     StrID_JSONError,

@@ -62,6 +62,16 @@ tlmath::ParamsSetup  (
                   MATH_EFFECT_DESCRIPTION_DISK_ID);
 
     AEFX_CLR_STRUCT(def);
+
+	
+
+		PF_ADD_BUTTON("reset preset",
+			STR(StrID_MATH_RESET_Param_Name),
+			0,
+			PF_ParamFlag_SUPERVISE,
+			MATH_RESET_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
     def.flags= PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name),  MATH_TOPIC_SLIDER_DISK_ID);
 
@@ -1341,7 +1351,7 @@ tlmath::UserChangedParam(
 	PF_LayerDef						*outputP,
 	const PF_UserChangedParamExtra	*which_hitP)
 {
-	PF_Err				err = PF_Err_NONE;
+	PF_Err				err = PF_Err_NONE, err2 = PF_Err_NONE;
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
 
     seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
@@ -1389,6 +1399,22 @@ tlmath::UserChangedParam(
 
 			ERR(SetupDialogSend(in_data, out_data, params));
 		}
+	}
+	if (which_hitP->param_index == MATH_RESET) {
+		PF_ParamDef arb_param;
+		m_ArbData* arbInP = NULL;
+		AEFX_CLR_STRUCT(arb_param);
+		ERR(PF_CHECKOUT_PARAM(in_data,
+			MATH_ARB_DATA,
+			in_data->current_time,
+			in_data->time_step,
+			in_data->time_scale,
+			&arb_param));
+		AEFX_CLR_STRUCT(arbInP);
+		arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+		ERR(tlmath::updateParamsValue(in_data, params, arbInP->arbDataAc));
+		ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
+
 	}
 	/*
 	else {

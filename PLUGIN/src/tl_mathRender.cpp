@@ -477,7 +477,8 @@ tlmath::SmartRender(
 				cb_param[10],
 				color_param[10],
 				rot_param[10],
-				cb_getarb_param;
+				cb_getarb_param, 
+				math_reset_param;
 
 
 			AEFX_CLR_STRUCT(setup_param);
@@ -495,6 +496,14 @@ tlmath::SmartRender(
                   in_data->time_step,
                   in_data->time_scale,
                   &description_param));
+
+			AEFX_CLR_STRUCT(math_reset_param);
+			ERR(PF_CHECKOUT_PARAM(in_data,
+				MATH_RESET,
+				in_data->current_time,
+				in_data->time_step,
+				in_data->time_scale,
+				&math_reset_param));
 
 			AEFX_CLR_STRUCT(arb_param);
 			ERR(PF_CHECKOUT_PARAM(in_data,
@@ -635,6 +644,7 @@ tlmath::SmartRender(
 			ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
             ERR2(PF_CHECKIN_PARAM(in_data, &description_param));
 			ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
+			ERR2(PF_CHECKIN_PARAM(in_data, &math_reset_param));
 			for (int i = 0; i<10; i++) {
 				ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[i]));
 				ERR2(PF_CHECKIN_PARAM(in_data, &point_param[i]));
