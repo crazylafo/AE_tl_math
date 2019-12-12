@@ -104,13 +104,12 @@ function onLoaded() {
 			exportPresetAsJSON(arbDataToSend);
 		}catch(e){
 			alert(err.collectingDataForPlugin+e);
-		}
-			
-		
+			}
 		});
 	$("#btnSavePreset").on("click", function() {
 		var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);		
 		savePresetAsJSON(arbDataToSend);
+		csInterface.evalScript('$._ext.listJsonFiles('+objDataStr+')'); //reupdate list
 		});
 	$("#btnLoadPresetFromMenu").on("click", function(){
 		loadPresetFromMenu(presetsList, editors,numParams);

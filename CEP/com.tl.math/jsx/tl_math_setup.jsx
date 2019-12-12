@@ -2,7 +2,17 @@
 * tl math plugin and CEP
 *thomas laforge  Copyright 2019
 **************************************************************************/
-//global variables
+function getDate() {
+  var x = new Date();
+  var y = x.getFullYear().toString();
+  var m = (x.getMonth() + 1).toString();
+  var d = x.getDate().toString();
+  (d.length == 1) && (d = '0' + d);
+  (m.length == 1) && (m = '0' + m);
+  var yyyymmdd = y + m + d;
+  return yyyymmdd;
+}
+
 function getLastDotOfFile (scannedFile){
   var dot = 0;
   dot = scannedFile.fsName.lastIndexOf(".");
@@ -182,7 +192,16 @@ $._ext = {
   exportPresetFileToUserLib : function(dataStr){
     var plugIdStr = dataStr.effectInfo.effectName.toString()+dataStr.effectInfo.pluginVersion; 
     var userPresetsFolder = createUserPresetFolder(plugIdStr);
-    var presetFile = new File (userPresetsFolder.absoluteURI+"/"+dataStr.effectInfo.presetName+".JSON");
+    var presetFileStr =dataStr.effectInfo.presetName+".JSON";
+    var scanFolder =userPresetsFolder.getFiles(presetFileStr);
+     var presetFile;
+    if (scanFolder.length >0){
+      var date = getDate();
+      presetFile = new File (userPresetsFolder.absoluteURI+"/"+dataStr.effectInfo.presetName+date.toString()+".JSON");
+    }else{
+      presetFile = new File (userPresetsFolder.absoluteURI+"/"+dataStr.effectInfo.presetName+".JSON");
+    }
+    
       if (presetFile.open("w")){
          presetFile.encoding ='UTF-8';
          presetFile.write(JSON.stringify(dataStr,undefined, '\r\n'));
