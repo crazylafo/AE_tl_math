@@ -1358,15 +1358,35 @@ tlmath::UserChangedParam(
 	
 
     if(which_hitP->param_index == MATH_EFFECT_DESCRIPTION){
-
+		std::string script_description =
+R"=====(
+	//
+    //  scipt TO CALL THE CEP 
+    //  tlMath
+    //
+    //
+		try{
+			alert ('''+%s+''');	
+		}catch(e){
+			alert ("error in preset description: "+e)
+		}
+    )=====";
+		my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+		AEGP_MemHandle     resultMemH = NULL;
+		A_char* resultAC = NULL;
         AEGP_SuiteHandler suites(in_data->pica_basicP);
         std::string descrStr =seqP->descriptionAc;
         tlmath::descriptionCorrectorStr (descrStr);
+		A_char scriptAC[2100];
+		AEFX_CLR_STRUCT(scriptAC);
+		sprintf(scriptAC,
+			script_description.c_str(),
+			descrStr.c_str());
+		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+		AEFX_CLR_STRUCT(resultAC);
+		ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+		ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 
-        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-                                              "%s",
-                                              descrStr.c_str());
-        
     }
     if(which_hitP->param_index == MATH_CEP_RETURN_MESSAGE &&
        params[MATH_CEP_RETURN_MESSAGE]->u.bd.value == TRUE){
