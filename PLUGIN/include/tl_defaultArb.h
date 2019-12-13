@@ -50,7 +50,7 @@ static std::string defaultArb = R"=====(
     "effectInfo": {
 
 
-        "description": "simple skeleton_effect\\npeterre",
+        "description": "simple skeleton_effect in full glsl program\\n\\nthe effect do a simple mix between the layer source and a color or with an other layer and show in details how does it work. look at comments in the code.\\n\\n-slider_1: define the mix in percent between layer and color\\n-checkbox_1: if selected, mix with an other layer\\n-color_1: the color to mix with\\n-texture1: the layer to mix if the checkbox is selected",
 
 
         "effectName": "tlMath",
@@ -77,11 +77,11 @@ static std::string defaultArb = R"=====(
 
 
 
-                 "expr",
+                 "skeleton",
 
 
 
-                 "skeleton"
+                 " tuto"
 
 
                  ]
@@ -102,9 +102,6 @@ static std::string defaultArb = R"=====(
     },
 
     "flags": {
-
-
-        "needsLumaB": false,
 
 
         "pixelsCallExternalInputB": [
@@ -142,13 +139,13 @@ static std::string defaultArb = R"=====(
         "gl33_frag_error": "compiled successfully",
 
 
-        "gl33_frag_sh": "#version 330\\n//EXEMPE TO SHOW HOW THE PLUGIN WORKS\\n//A SHADER MUST START ITH A DEFINITION OF THE GLSL VERSION USED\\n// FOR NOW THE PLUGIN WORKS ONLY ITH 330 (for opengl 3.3)\\n\\n\\n\\n// let's call variables from After Effect\\n// THE PROCES IS uniform [TYPE] [variableName];\\n//uniform--> the function to call an external element in glsl\\n//type--> sampler2D for a texture from AE\\n// ------ float for a single dimention (time, slider or rotation param)\\n//-------- vec2  for a two dimension item (resolution)\\n//--------vec3 for a three dimension item (points/ color)\\n//--------bool  for checkbox\\n// Points are alayws defined as vec3 with this plugin. So if you have \\n// a shader with a 2D point, you can convert it latter.\\n// Slider are alays imported as float. if you want an integer you can convert\\n//on the fly: int(sliderName) \\n//variable Name: you define it in param setting.\\n//for this exemple we keep the default name\\nuniform sampler2D texture0; //get the layer source\\nuniform sampler2D texture1; // get an other layer\\nuniform float slider_1;// get  a slider from the UI\\nuniform vec3 point_1; // get  a pioint from the UI\\nuniform bool cbox_1; // get  a checkbox from the UI\\nuniform vec3 color_1; //get a color input\\nuniform vec2 resolution; //get  the resolution\\nin vec2 out_uvs; // get the uv (1,1) size of the layer\\nout vec4 fragColorOut; // the output varaible\\n// in glsl you can use gl_FragColorOut for the output but\\n// on some version of macos we have to define an out vec4 variable.\\n//if you develop on pc and want to share shaders, don't forget mac users...\\n// you can give it the name you want \\n\\n\\nvoid main(void)\\n{\\n    vec4 textureInput = texture(texture0, out_uvs); // call the orginal  layer with the orginal position\\n    vec4 premix =mix (textureInput,vec4(color_1, 1.0), slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        off.x =out_uvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =out_uvs.y +( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        fragColorOut = mix (textureInput,textureLayer, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         fragColorOut =premix; // if checkbox not selected return premix\\n\\n    }\\n             //if you want to play with pixel coordonate activate the alpha ramp\\n         //alpha ramp \\n         //fragColorOut.a = gl_FragCoord.x/resolution.x;\\n}",
+        "gl33_frag_sh": "\\n//EXEMPE TO SHOW HOW THE PLUGIN WORKS\\n//A SHADER MUST START ITH A DEFINITION OF THE GLSL VERSION USED\\n// FOR NOW THE PLUGIN WORKS ONLY ITH 330 (for opengl 3.3)\\n// the same effect is written in expression rgb mode. \\n#version 330 \\n// let's call variables from After Effect\\n// THE PROCES IS uniform [TYPE] [variableName];\\n//uniform--> the function to call an external element in glsl\\n//type--> sampler2D for a texture from AE\\n// ------ float for a single dimention (time, slider or rotation param)\\n//-------- vec2  for a two dimension item (resolution)\\n//--------vec3 for a three dimension item (points/ color)\\n//--------bool  for checkbox\\n// Points are alayws defined as vec3 with this plugin. So if you have \\n// a shader with a 2D point, you can convert it latter.\\n// Slider are alays imported as float. if you want an integer you can convert\\n//on the fly: int(sliderName) \\n//variable Name: you define it in param setting.\\n//for the exemple we keep the default name\\nuniform sampler2D texture0; //get the layer source\\nuniform sampler2D texture1; // get an other layer\\nuniform float slider_1;// get  a slider from the UI\\nuniform vec3 point_1; // get  a pioint from the UI\\nuniform bool cbox_1; // get  a checkbox from the UI\\nuniform vec3 color_1; //get a color input\\nuniform vec2 resolution; //get  the resolution\\nin vec2 outUvs; // get the uv (1,1) size of the layer\\nin vec2 textUvs;  // get the uv  to laod the texture. \\nout vec4 fragColorOut; // the output varaible\\n// in glsl you can use gl_FragColorOut for the output but\\n// on some version of macos we have to define an out vec4 variable.\\n//if you develop on pc and want to share shaders, don't forget mac users...\\n// you can give it the name you want \\n\\n\\n// void main is the main part of the glsl program.\\n//here you make the main work of the effect.\\nvoid main(void)\\n{\\n    vec4 textureInput = texture(texture0, textUvs); // call the orginal  layer with the orginal position\\n    vec4 premix =mix (textureInput,vec4(color_1, 1.0), slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        fragColorOut = mix (textureInput,textureLayer, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         fragColorOut =premix; // if checkbox not selected return premix\\n\\n    }\\n             //if you want to play with pixel coordonate activate the alpha ramp\\n         //alpha ramp \\n         //fragColorOut.a = gl_FragCoord.x/resolution.x;\\n}\\n\\n\\n\\n",
 
 
         "gl33_vert_error": "compiled successfully",
 
 
-        "gl33_vert_sh": "#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}"
+        "gl33_vert_sh": "#version 330 \\nin vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 outUvs;\\nout vec2 textUvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\noutUvs = UVs;\\ntextUvs = vec2 (outUvs.x, 1-outUvs.y);\\n}\\n"
 
     },
 
@@ -185,7 +182,7 @@ static std::string defaultArb = R"=====(
 
 
 
-                               0
+                               1
 
 
 
@@ -2292,7 +2289,7 @@ static std::string defaultArb = R"=====(
 
 
 
-                               0
+                               50
 
 
 
@@ -2707,7 +2704,7 @@ static std::string defaultArb = R"=====(
         "blueExpr": "return inChannel;",
 
 
-        "blue_error": "compiled successfully",
+        "blue_error": " compiled successfully",
 
 
         "exprRGBModeB": true,
@@ -2731,7 +2728,7 @@ static std::string defaultArb = R"=====(
         "red_error": "compiled successfully",
 
 
-        "rgbExpr": "return texture0;",
+        "rgbExpr": "    vec3 result;\\n    //in this mode the channel0 texture is automatically a rgb channel\\n    vec3 premix =mix (texture0,color_1, slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        vec2 textUvs = gl_FragCoord.xy/resolution.xy; //ho to calculate a uv coordonate\\n        //gl_FragCoord returns the coordonate of the current pixel.\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        result = mix (texture0,textureLayer.rgb, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         result =premix; // if checkbox not selected return premix\\n\\n    }\\n    return result;",
 
 
         "rgb_error": "compiled successfully"
