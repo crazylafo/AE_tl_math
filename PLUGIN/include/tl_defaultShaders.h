@@ -90,7 +90,6 @@ void main(void)\n\
 out_pos = ModelviewProjection * Position; \n\
 gl_Position = out_pos; \n\
 out_uvs = UVs;\n\
-out_uvs.y = 1- UVs.y;\n\
 }";
 
 static std::string glfrag2str = "#version 330\n\
@@ -102,9 +101,7 @@ in vec2 out_uvs; \n\
 out vec4 colorOut; \n\
 void main(void)\n\
 {\n\
-    vec2 uv_AE = out_uvs;\n\
-    uv_AE.y = 1. - out_uvs.y;\n\
-    colorOut = texture(layerTex, uv_AE);\n\
+    colorOut = texture(layerTex, out_uvs);\n\
     colorOut = vec4(colorOut.a, colorOut.r, colorOut.g, colorOut.b);\n\
     colorOut = colorOut / multiplier16bit;\n\
 }";

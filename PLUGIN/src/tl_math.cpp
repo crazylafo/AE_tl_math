@@ -287,7 +287,8 @@ namespace {
 
 	PF_FpShort convertYCoordAEToGL( PF_FpShort ypt, PF_FpShort wHeight)
 	{
-		return wHeight - ypt; 
+        //return ypt;
+		return wHeight - ypt;
 
 	}
 
