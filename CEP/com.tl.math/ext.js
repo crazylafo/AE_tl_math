@@ -27,7 +27,6 @@ function onLoaded() {
 	var editors = setEditors();
 	//laod default arb
 	var arbdefaultStr = loadDefaultArb();
-	
 	var arbData = JSON.parse(arbdefaultStr);
 	try{
 		copyDataToGUI (arbData, editors,numParams);

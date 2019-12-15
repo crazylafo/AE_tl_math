@@ -162,7 +162,7 @@ $._ext = {
           preset.parentFolder = preset.jsonPath.fsName.substr (0, slash);
           preset.name = jsonObj.effectInfo.presetName;
           preset.tags = jsonObj.effectInfo.tags;
-          preset.tags.unshift (preset.name);
+          preset.tags.unshift (preset.jsonPath);
           preset.description = jsonObj.effectInfo.description;
          
           preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder, objData.extensionPath);
@@ -204,7 +204,7 @@ $._ext = {
     
       if (presetFile.open("w")){
          presetFile.encoding ='UTF-8';
-         presetFile.write(JSON.stringify(dataStr,undefined, '\r\n'));
+         presetFile.write(JSON.stringify(dataStr,undefined,'\r\n'));
          presetFile.close();
       } 
      

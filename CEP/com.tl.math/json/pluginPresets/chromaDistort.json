@@ -27,7 +27,7 @@
 "layerScale": "layerScale",
 
 
-"resolution": "resolution",
+"resolution": "iResolution",
 
 
 "time_frame": "timef",
@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "beer particule effet\\nbased on http://glslsandbox.com/e#15616\\nand flame matchbox adaptation https://logik-matchbook.org/shader/crok_beer\\n\\nGenerates a  beer texture by default, bu can be transform to other  liquid with gaz or light effects.\\n\\n",
+"description": "based on  https://www.shadertoy.com/view/XssGz\\n\\nand k_chroma https://logik-matchbook.org/shader/K_Chroma\\n\\ndistort the chromas channels with distortion.",
 
 
 "effectName": "tlMath",
@@ -52,26 +52,38 @@
 "pluginVersion": 115,
 
 
-"presetName": "beer_generator",
+"presetName": "chroma_distort",
 
 
 "tags": [
 
 
 
-"particules",
+"shadertoy",
 
 
 
-" beer",
+" chroma",
 
 
 
-" generator",
+"warp",
 
 
 
-" glslsandbox"
+" distort",
+
+
+
+" distortion",
+
+
+
+" color",
+
+
+
+"  "
 
 
 ]
@@ -98,7 +110,7 @@
 
 
 
-true,
+false,
 
 
 
@@ -116,7 +128,7 @@ false
 ],
 
 
-"presetHasWideInputB": true,
+"presetHasWideInputB": false,
 
 
 "usesCameraB": false
@@ -129,7 +141,7 @@ false
 "gl33_frag_error": "compiled successfully",
 
 
-"gl33_frag_sh": "#version 330 // glsls version for opengl 3.3\\n\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n\\nuniform float time;\\nuniform vec2 resolution;\\nuniform sampler2D u_texture;\\n\\n\\n\\nuniform float sphere_ietrations; // planet size\\nuniform float depth; // distance for glow and distortion\\nuniform float perturb; // distortion amount of the flow around the planet\\nuniform float glow; // glow amount, mainly on hit side\\nuniform  float step_size; \\nuniform  float brightness;\\nuniform  float fade_distance; //fade by distance\\nuniform float wind_speed_x;\\nuniform float wind_speed_y;\\nuniform float wind_speed_z;\\nuniform vec3 tint;\\nuniform bool alpha;\\n\\n\\nfloat dist = depth/10;\\nfloat fade = fade_distance/1000;\\nfloat windspeed_x= wind_speed_x/10;\\nfloat windspeed_y= wind_speed_y/10;\\nfloat windspeed_z= wind_speed_z/10;\\nfloat stepsize = step_size/100;\\nfloat glowF = glow/10;\\n\\n\\n// const params\\nconst float displacement=1.0; // hot air effect// speed of wind flow\\nconst float steps=15.3; // number of steps for the volumetric rendering\\nconst int iterations=9; \\nconst float fractparam=0.9;\\nconst vec3 offset=vec3(20.54,142.,-1.55);\\n\\n\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\n\\n\\n\\n\\nfloat wind(vec3 p) {\\n    float sphereS =sphere_ietrations/10;\\n\\tfloat d=max(0.,dist-max(0.,length(p)-sphereS)/sphereS)/dist; // for distortion and glow area\\n\\tfloat x=max(0.2,p.x*2.); // to increase glow on left side\\n\\tp.y*=1.+max(0.,-p.x-(sphereS)*.25)*1.5; // left side distortion (cheesy)\\n\\tp-=d*normalize(p)*perturb; // spheric distortion of flow\\n\\tp+=vec3(time*windspeed_x,time*windspeed_y,time*windspeed_z); // flow movement\\n\\tp=abs(fract((p+offset)*.1)-.5); // tile folding \\n\\tfor (int i=0; i<iterations; i++) {  \\n\\t\\tp=abs(p)/dot(p,p)-fractparam; // the magic formula for the hot flow\\n\\t}\\n\\treturn length(p)*(1.2+d*glowF*x)+d*glowF*x; // return the result with glow applied\\n}\\n\\nvoid main(void)\\n{\\n\\t// invert UV for AE\\n\\n\\tvec2 uv = 0.33 * ( 2.0 * gl_FragCoord.xy - resolution.xy ) / (0.5 * (resolution.x + resolution.y));\\n\\tvec3 dir=vec3(uv,1.);\\n\\tdir.x*=resolution.x/resolution.y;\\n\\tvec3 from=vec3(0.,0.,-2.+texture(u_texture,uv*.5+time).x*stepsize); //from+dither\\n\\t// volumetric rendering\\n\\tfloat v=0., l=-0.0001, t=time*windspeed_x*.2;\\n    vec3 p;\\n    float tx;\\n\\tfor (float r=10.;r<steps;r++) {\\n\\t\\tp=from+r*dir*stepsize;\\n\\t\\t//tx=loadTextureFromAE_UV(u_texture,uv*.2+vec2(t,0.)).x*displacement; // hot air effect\\n\\t\\t\\n        v+=min(50.,wind(p))*max(0.,1.-r*fade); \\n\\t}\\n\\t\\n    v/=steps; v*=brightness/50; // average values and apply bright factor\\n\\tvec3 col=vec3(v*tint.r,v*tint.g,v*tint.b);\\n    col *= (0.75-length(sqrt(3.0 * uv*uv)));\\n\\tcol *= length(col) * 50.0;\\n    float alphaF = 1.0;\\n    if (alpha){\\n        float mc =max(col.r, max(col.g, col.b));\\n        if (mc>0.5){\\n            alphaF =1.0;\\n        }else if(mc>0 && mc<0.5){\\n            alphaF = mc;\\n            }\\n        else {\\n            alphaF =0.;\\n        }\\n    }\\n\\tfragColorOut = vec4(col,alphaF);\\n}\\n",
+"gl33_frag_sh": "#version 330 // glsls version for opengl 3.3\\n//based on  https://www.shadertoy.com/view/XssGz\\\" and k_chroma from https://logik-matchbook.org/\\nuniform sampler2D image;\\nuniform float  chromatic_abb;\\nuniform float d_amount;\\nuniform float num_iter;\\nuniform float s4;\\nuniform bool add_distortion;\\nuniform vec3 center;\\n\\n\\nuniform vec2 iResolution;\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\n\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec2 uv_AE = uv;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n\\n\\n\\n\\nvec2 barrelDistortion(vec2 coord, float amt) {\\n\\t\\n\\tvec2 cc = ((gl_FragCoord.xy/iResolution.xy) - (center.xy/iResolution.xy));\\n\\tfloat distortion = dot(cc * d_amount * .3, cc);\\n\\n    if ( add_distortion )\\n\\t\\treturn coord + cc * distortion * -1. * amt;\\n\\telse\\n\\t\\treturn coord + cc * amt * -.05;\\n}\\n\\nfloat sat( float t )\\n{\\n\\treturn clamp( t, 0.0, 1.0 );\\n}\\n\\nfloat linterp( float t ) {\\n\\treturn sat( 1.0 - abs( 2.0*t - 1.0 ) );\\n}\\n\\nfloat remap( float t, float a, float b ) {\\n\\treturn sat( (t - a) / (b - a) );\\n}\\n\\nvec3 spectrum_offset( float t ) {\\n\\tvec3 ret;\\n\\tfloat lo = step(t,0.5);\\n\\tfloat hi = (1.0-lo);\\n\\tfloat w = linterp( remap( t, 1.0/6.0, 5.0/6.0 ) );\\n\\tret = vec3(lo,1.0,hi) *vec3(1.0-w, w, 1.0-w);\\n\\n\\treturn pow( ret, vec3(1.0/2.2) );\\n}\\n\\nvoid main()\\n{\\t\\n\\tvec2 uv=(gl_FragCoord.xy/iResolution.xy);\\n\\tvec3 sumcol = vec3(0.0);\\n\\tvec3 sumw = vec3(0.0);\\t\\n\\tfor ( int i=0; i<int(num_iter);++i )\\n\\t{\\n\\t\\tfloat t = float(i) * (1.0 / num_iter);\\n\\t\\tvec3 w = spectrum_offset( t );\\n\\t\\tsumw += w;\\n\\t\\tsumcol += w * loadTextureFromAE( image, barrelDistortion(uv, chromatic_abb * t ) ).rgb;\\n\\t}\\n\\t\\t\\n\\tfragColorOut= vec4(sumcol.rgb / sumw, 1.0);\\n}",
 
 
 "gl33_vert_error": "compiled successfully",
@@ -146,7 +158,7 @@ false
 
 
 
-"grpName": "alphaMode",
+"grpName": "check box Group",
 
 
 
@@ -184,7 +196,7 @@ false
 
 
 
-"name": "alpha",
+"name": "add_distortion",
 
 
 
@@ -578,11 +590,11 @@ false
 
 
 
-"grpName": "tint",
+"grpName": "3d color Group",
 
 
 
-"grpVisibleB": true,
+"grpVisibleB": false,
 
 
 
@@ -630,7 +642,7 @@ false
 
 
 
-"name": "color",
+"name": "tint",
 
 
 
@@ -659,21 +671,21 @@ false
 
 
 
-0.8,
+1,
 
 
 
 
 
 
-0.35,
+1,
 
 
 
 
 
 
-0.1
+1
 
 
 
@@ -685,13 +697,13 @@ false
 
 
 
-"name": "tint",
+"name": "color_2",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -1155,7 +1167,7 @@ false
 
 
 
-"name": "texture0"
+"name": "image"
 
 
 
@@ -1168,12 +1180,12 @@ false
 
 
 
-"name": "u_texture",
+"name": "texture1",
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -1235,11 +1247,11 @@ false
 
 
 
-"grpName": "additional texture",
+"grpName": "Layer Group",
 
 
 
-"grpVisibleB": true
+"grpVisibleB": false
 
 
 },
@@ -1253,7 +1265,7 @@ false
 
 
 
-"grpVisibleB": false,
+"grpVisibleB": true,
 
 
 
@@ -1307,7 +1319,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1821,7 +1833,7 @@ false
 
 
 
-"grpName": "speed",
+"grpName": "rotation Group",
 
 
 
@@ -1847,7 +1859,7 @@ false
 
 
 
-10
+0
 
 
 
@@ -1859,7 +1871,7 @@ false
 
 
 
-"name": "speed_x",
+"name": "rotation_1",
 
 
 
@@ -1900,7 +1912,7 @@ false
 
 
 
-"name": "speed_y",
+"name": "rotation_2",
 
 
 
@@ -1941,7 +1953,7 @@ false
 
 
 
-"name": "speed_z",
+"name": "rotation_3",
 
 
 
@@ -2253,7 +2265,7 @@ false
 
 
 
-"grpName": "fractal settings",
+"grpName": "Slider Group",
 
 
 
@@ -2279,7 +2291,7 @@ false
 
 
 
-10
+1
 
 
 
@@ -2291,7 +2303,7 @@ false
 
 
 
-"name": "sphere_ietrations",
+"name": "chromatic_abb",
 
 
 
@@ -2320,7 +2332,7 @@ false
 
 
 
-13
+20
 
 
 
@@ -2332,212 +2344,7 @@ false
 
 
 
-"name": "depth",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "perturb",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-7
-
-
-
-
-
-],
-
-
-
-
-
-"name": "step_size",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "brightness",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "fade_distance",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-10
-
-
-
-
-
-],
-
-
-
-
-
-"name": "glow",
+"name": "num_iter",
 
 
 
@@ -2578,7 +2385,7 @@ false
 
 
 
-"name": "wind_speed_x",
+"name": "d_amount",
 
 
 
@@ -2607,7 +2414,7 @@ false
 
 
 
-9
+1
 
 
 
@@ -2619,13 +2426,13 @@ false
 
 
 
-"name": "wind_speed_y",
+"name": "s4",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2660,13 +2467,218 @@ false
 
 
 
-"name": "wind_speed_z",
+"name": "slider_5",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+0
+
+
+
+
+
+],
+
+
+
+
+
+"name": "slider_6",
+
+
+
+
+
+"visibleB": false
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+0
+
+
+
+
+
+],
+
+
+
+
+
+"name": "slider_7",
+
+
+
+
+
+"visibleB": false
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+0
+
+
+
+
+
+],
+
+
+
+
+
+"name": "slider_8",
+
+
+
+
+
+"visibleB": false
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+0
+
+
+
+
+
+],
+
+
+
+
+
+"name": "slider_9",
+
+
+
+
+
+"visibleB": false
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+0
+
+
+
+
+
+],
+
+
+
+
+
+"name": "slider_10",
+
+
+
+
+
+"visibleB": false
 
 
 
