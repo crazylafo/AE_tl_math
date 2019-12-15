@@ -32,7 +32,7 @@ static std::string defaultArb = R"=====(
         "redExpr":"return inChannel;",
         "greenExpr":"return inChannel;",
         "blueExpr":"return inChannel;",
-        "rgbExpr":"return texture0;",
+        "rgbExpr":"return inputRgb;",
         "alphaExpr":"return inChannel;",
         "red_error":  "compiled successfully",
         "green_error" :  "compiled successfully",

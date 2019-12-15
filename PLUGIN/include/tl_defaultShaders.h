@@ -36,20 +36,21 @@ float getLuma(vec4 text) {
 static std::string gl33GeneriqueShInput= R"=====(#version 330 // glsls version for opengl 3.3
 out vec4 fragColorOut;
 in vec2 out_uvs;
+vec2 textUvs = vec2(out_uvs.x, 1-out_uvs.y);
 uniform vec2 resolution;
 )=====";
 
 static std::string gl33InputTexture =R"=====(
-vec4 loadTextureFromAE (sampler2D tex2d)
+vec4 textureAE (sampler2D tex2d)
 {
-    vec4 textureIn = texture( tex2d, out_uvs);
+    vec4 textureIn = texture( tex2d, textUvs);
     return  textureIn ;
 }
 
-vec4 loadTextureOffset(sampler2D tex2d, vec2 off) {
+vec4 textureOffset(sampler2D tex2d, vec2 off) {
 	vec2 uv_AE = out_uvs;
-	uv_AE.x = out_uvs.x + off.x;
-	uv_AE.y = out_uvs.y + off.y;
+	uv_AE.x =textUvs.x + off.x;
+	uv_AE.y = textUvs.y + off.y;
 	vec4 textureIn = texture(tex2d, uv_AE);
 	return  textureIn;
 
@@ -60,7 +61,7 @@ vec4 loadTextureOffset(sampler2D tex2d, vec2 off) {
 static std::string gl33InputMainGrp =R"=====(
 void main(void)
 {
-    vec4 text0= loadTextureFromAE(inputLayer0);
+    vec4 text0= textureAE(inputLayer0);
     fragColorOut.rgb = rgbExpr(gl_FragCoord.xy, text0.rgb);
     fragColorOut.a = alphaExpr(gl_FragCoord.xy, text0.a);
 
@@ -69,7 +70,7 @@ void main(void)
 static std::string gl33InputMainSplit =R"=====(
 void main(void)
 {
-	vec4 text0= loadTextureFromAE(inputLayer0);
+	vec4 text0= textureAE(inputLayer0);
 	fragColorOut.r =  redExpr(gl_FragCoord.xy, text0.r);
     fragColorOut.g =  greenExpr(gl_FragCoord.xy, text0.g);
     fragColorOut.b = blueExpr (gl_FragCoord.xy, text0.b);
@@ -101,7 +102,7 @@ in vec2 out_uvs; \n\
 out vec4 colorOut; \n\
 void main(void)\n\
 {\n\
-    colorOut = texture(layerTex, out_uvs);\n\
+    colorOut = texture(layerTex, vec2(out_uvs.x, 1-out_uvs.y));\n\
     colorOut = vec4(colorOut.a, colorOut.r, colorOut.g, colorOut.b);\n\
     colorOut = colorOut / multiplier16bit;\n\
 }";
