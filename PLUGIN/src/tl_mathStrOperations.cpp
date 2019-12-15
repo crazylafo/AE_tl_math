@@ -81,7 +81,7 @@ std::string tlmath::ReIndexErrorInExpr(std::string originalfragSh,
 	std::string reducedStr = originalfragSh.substr(0, index); //from begining of current shader to the begening of the expr
     std::string startToDelimiter =originalfragSh.substr(0, delimiter); // from begining of shader to the end the expr
 	size_t nlignSt = tlmath::getOccurenceFromStr(reducedStr, "\n")[0]; // how many line breaks before the current shader
-    size_t nlignDelimiterSt = tlmath::getOccurenceFromStr( startToDelimiter, "\n")[0]; // how many line breaks before the end of the cirrent shader
+    size_t nlignDelimiterSt = tlmath::getOccurenceFromStr( startToDelimiter, "\n")[0]; // how many line breaks before the end of the current shader
 	size_t numErrSt = tlmath::getOccurenceFromStr(evalFragSh, errIndex)[0]; // how manny error in shader.
 	std::string exprStr = evalFragSh; // start from original error repport
 	if (numErrSt > 0) {
@@ -103,12 +103,12 @@ std::string tlmath::ReIndexErrorInExpr(std::string originalfragSh,
 			int errlignInt =  originalErrLignInt- int(nlignSt + 1); //+1 because we add first lign of the programm and the first lign of the expr function
 
             std::string toReplaceStr;
-            AEFX_CLR_STRUCT(toReplaceStr);
-            toReplaceStr = errIndex;
+            //AEFX_CLR_STRUCT(toReplaceStr);
+            toReplaceStr.append(errIndex);
             toReplaceStr.append(errLignStr);
 
             std::string newStr;
-            AEFX_CLR_STRUCT(newStr);
+            //AEFX_CLR_STRUCT(newStr);
             newStr = errIndex;
             newStr.append(std::to_string(errlignInt));
             
