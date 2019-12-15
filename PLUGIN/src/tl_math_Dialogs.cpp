@@ -587,7 +587,7 @@ tlmath::evalScripts(seqData  *seqP)
 		std::string errIndex = "ERROR: 0:";
 		size_t alphaExprIndex = originalfragSh.find("float alphaExpr");
 		if (seqP->exprRGBModeB) {
-			size_t rgbExprIndex = originalfragSh.find("vec3 rgbExpr");
+			size_t rgbExprIndex = originalfragSh.find("vec3 rgbExpr(");
 			std::string exprRGBErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, rgbExprIndex, alphaExprIndex);
 
 			#ifdef AE_OS_WIN
