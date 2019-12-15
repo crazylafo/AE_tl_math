@@ -24,7 +24,7 @@ static std::string redFunctionStr= "float redExpr(vec2 fragCoord, float colorCh)
 static std::string greenFunctionStr= "float greenExpr(vec2 fragCoord, float colorCh){ \n";
 static std::string blueFunctionStr= "float blueExpr(vec2 fragCoord, float colorCh){ \n";
 static std::string alphaFunctionStr= "float alphaExpr(vec2 fragCoord, float colorCh){ \n";
-static std::string rgbFunctionStr= "vec3 rgbExpr(vec2 fragCoord, vec3 inputLayer0){ \n";
+static std::string rgbFunctionStr= "vec3 rgbExpr(vec2 fragCoord, vec3 inputRgb){ \n";
 
 
 static std::string gl33getLuma = R"=====(
