@@ -13,6 +13,14 @@ function getDate() {
   return yyyymmdd;
 }
 
+function copyArrayStr (arr){
+  var newArr = [];
+  for (var i=0; i< arr.length; i++){
+    newArr.push (arr[i].toString());
+  }
+  return newArr;
+}
+
 function getLastDotOfFile (scannedFile){
   var dot = 0;
   dot = scannedFile.fsName.lastIndexOf(".");
@@ -161,10 +169,9 @@ $._ext = {
           preset.fileName = preset.jsonPath.fsName.substr (slash+1, dot )
           preset.parentFolder = preset.jsonPath.fsName.substr (0, slash);
           preset.name = jsonObj.effectInfo.presetName;
-          preset.tags = jsonObj.effectInfo.tags;
-          preset.tags.unshift (preset.jsonPath);
+          preset.tags = copyArrayStr (jsonObj.effectInfo.tags);
+          preset.tags.unshift (preset.jsonPath.toString());
           preset.description = jsonObj.effectInfo.description;
-         
           preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder, objData.extensionPath);
           preset.str = jsonTemp.toString();
           listJsonFiles.preset[i] = preset;
