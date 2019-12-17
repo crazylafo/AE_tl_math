@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on AFX_DeSpill\\n\\nThis is a simple green, blue or red despiller, which great for keeping on the skintone looking natural.\\nSelect the layer source, the channel to despill and the amount of the  effect.",
+"description": "A shadertoy skeleton.\\nIt show how to copy and merge  a shadertoy shader inside thi plugin",
 
 
 "effectName": "tlMath",
@@ -52,22 +52,18 @@
 "pluginVersion": 115,
 
 
-"presetName": "default_preset",
+"presetName": "shadertoy_skeleton",
 
 
 "tags": [
 
 
 
-"default",
+"shadertoy",
 
 
 
-"glsl",
-
-
-
-"expr",
+"",
 
 
 
@@ -129,7 +125,7 @@ false
 "gl33_frag_error": "compiled successfully",
 
 
-"gl33_frag_sh": "//exemple to imoort  a  shader from www.shadertoy.com\\n// default shader https://www.shadertoy.com/new\\n#version 330 // glsls version for opengl 3.3\\nuniform float iTime; // call time in seconds iTime in shaderty\\nuniform vec2 iResolution; //resolution of the screen iResolution in shadertoy\\nuniform sampler2D iChannel0;//if you want to import a texture\\nuniform float multiplier16bit; // ae 16 bits world is not the same as glsl\\nuniform vec3 color_exemple; // lets import a color param to add it to shadertoy code\\n//if the sahder  call  vec2 iMouse. \\n//call uniform vec3 point_1  and set vec2 iMouse = point_1.xy;\\nin vec2 out_uvs; //uv coordonate of th screen\\nout vec4 fragColorOut;\\n\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec2 uv_AE = uv;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n//copy the shadertoy code  here\\n//the exemple works if the shader is written in one buffer only)\\n//for the exemple we copy only thr mainImage. in shadertoy.com this is the main function\\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\\n{\\n    // Normalized pixel coordinates (from 0 to 1)\\n    vec2 uv = fragCoord/iResolution.xy;\\n    vec4  layer =  loadTextureFromAE (iChannel0,out_uvs); //we use basic out_uvs but shaders often play with operation in this parameter\\n    // Time varying pixel color\\n    // original vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));\\n    vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+color_exemple);\\n    // Output to screen\\n    fragColor = vec4(col,1.0)*layer; // lets play with the original layer\\n}\\nvoid main(void)\\n{\\n    //in our main function lets call the shadertoy main image\\n    mainImage(fragColorOut, gl_FragCoord.xy); \\n}",
+"gl33_frag_sh": "//exemple to imoort  a  shader from www.shadertoy.com\\n// default shader https://www.shadertoy.com/new\\n#version 330 // glsls version for opengl 3.3\\nuniform float iTime; // call time in seconds iTime in shaderty\\nuniform vec2 iResolution; //resolution of the screen iResolution in shadertoy\\nuniform sampler2D iChannel0;//if you want to import a texture\\nuniform float multiplier16bit; // ae 16 bits world is not the same as glsl\\nuniform vec3 color_exemple; // lets import a color param to add it to shadertoy code\\n//if the sahder  call  vec2 iMouse. \\n//call uniform vec3 point_1  and set vec2 iMouse = point_1.xy;\\nin vec2 out_uvs; //uv coordonate of th screen\\nout vec4 fragColorOut;\\n\\nvec4 loadTextureFromAE (sampler2D tex2d, vec2 uv)\\n{\\n    vec2 uv_AE = uv;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    return textureIn;\\n\\n}\\n//copy the shadertoy code  here\\n//the exemple works if the shader is written in one buffer only)\\n//for the exemple we copy only thr mainImage. in shadertoy.com this is the main function\\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord )\\n{\\n    // Normalized pixel coordinates (from 0 to 1)\\n    vec2 uv = fragCoord/iResolution.xy;\\n    vec4  layer =  loadTextureFromAE (iChannel0,out_uvs); //we use basic out_uvs but shaders often play with operation in this parameter\\n    // Time varying pixel color\\n    // original vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));\\n    vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+color_exemple);\\n    // Output to screen\\n    fragColor = vec4(col,1.0)*layer; // lets play with the original layer\\n}\\n//end of copy from shadertoy.com\\nvoid main(void)\\n{\\n    //in our main function lets call the shadertoy main image\\n    mainImage(fragColorOut, gl_FragCoord.xy); \\n}",
 
 
 "gl33_vert_error": "compiled successfully",
