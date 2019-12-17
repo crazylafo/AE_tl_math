@@ -112,7 +112,7 @@ $._ext = {
     var listSelectedProps = app.project.activeItem.selectedProperties;
     if (!listSelectedProps[0]){alertSelecEffect(); return }
     for (var i=0; i<listSelectedProps.length; i++){
-      if (listSelectedProps[i].name == "tl_math-BETA"){
+      if (listSelectedProps[i].name.indexOf("tl_math") !=-1){
           propIndex = i;
           listSelectedProps[propIndex].property("get arb").setValue(1);
           break;
