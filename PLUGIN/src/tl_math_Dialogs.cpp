@@ -467,6 +467,7 @@ tlmath::embedExprInShaders (seqData  *seqP){
     AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider07NameAc);
     AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider08NameAc);
     AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramSlider09NameAc);
+	AppendGlslInputFloat(fragShStr, exprGrpStr, seqP->paramSlider10NameAc);
     AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot01NameAc);
     AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot02NameAc);
     AppendGlslInputFloat(fragShStr,exprGrpStr, seqP->paramRot03NameAc);

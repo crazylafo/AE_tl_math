@@ -63,7 +63,7 @@ using namespace gl33core;
 #define	MAJOR_VERSION	1
 #define	MINOR_VERSION	1
 #define	BUG_VERSION		5
-#define	STAGE_VERSION	PF_Stage_ALPHA
+#define	STAGE_VERSION	PF_Stage_BETA
 #define	BUILD_VERSION	5
 
 #define ARB_REFCON            (void*)0xDEADBEEFDEADBEEF

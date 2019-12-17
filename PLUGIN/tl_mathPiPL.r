@@ -13,7 +13,7 @@ resource 'PiPL' (16000) {
         },
         /* [2] */
         Name {
-            "tl_math-BETA"
+            "tl_maths"
         },
         /* [3] */
         Category {
@@ -44,7 +44,7 @@ resource 'PiPL' (16000) {
         },
         /* [8] */
         AE_Effect_Version {
-            567813//561665
+            568325//567813
         },
         /* [9] */
         AE_Effect_Info_Flags {
@@ -60,7 +60,7 @@ resource 'PiPL' (16000) {
         },
         /* [11] */
         AE_Effect_Match_Name {
-            "tl_math-BETA"
+            "tl_maths"
         },
         /* [12] */	
         AE_Reserved_Info {

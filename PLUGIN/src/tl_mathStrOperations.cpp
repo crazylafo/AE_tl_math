@@ -65,7 +65,7 @@ std::vector<int> tlmath::getOccurenceFromStr(std::string src, std::string target
     std::vector<int> indexVc;
 	std::string::size_type pos = 0;
 	while ((pos = src.find(target, pos)) != std::string::npos){
-        indexVc.emplace_back(pos);
+        indexVc.emplace_back((int)pos);
 		++occ;
         pos += target.length();
 	}
@@ -93,14 +93,14 @@ std::string tlmath::ReIndexErrorInExpr(std::string originalfragSh,
 			std::string errLignStr = tmpStr.substr(first + errIndex.length(), last - (first + errIndex.length()));
             int originalErrLignInt =atoi(errLignStr.c_str());
 
-            if (originalErrLignInt< nlignSt || // if the error is before current expression channel or after. break
-                originalErrLignInt>nlignDelimiterSt ) {
+            if (originalErrLignInt< int(nlignSt) || // if the error is before current expression channel or after. break
+                originalErrLignInt>int(nlignDelimiterSt)) {
                 if (numErrChInt ==0){
                     exprStr = compile_success;
                 }
                 break;
             }
-			int errlignInt =  originalErrLignInt- int(nlignSt + 1); //+1 because we add first lign of the programm and the first lign of the expr function
+			const int errlignInt =  originalErrLignInt- (int)nlignSt + 1; //+1 because we add first lign of the programm and the first lign of the expr function
 
             std::string toReplaceStr;
             //AEFX_CLR_STRUCT(toReplaceStr);
