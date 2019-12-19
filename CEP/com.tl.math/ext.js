@@ -573,7 +573,7 @@ function setFlags (arbData){
 			arbData.flags.pixelsCallExternalInputB[i] = setflagFromExpr (arbData,[listLayers[i]]);
 		}
 		arbData.flags.presetHasWideInputB = setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom, "c	ameraMat"]);	
 		}
 	return arbData
 }
