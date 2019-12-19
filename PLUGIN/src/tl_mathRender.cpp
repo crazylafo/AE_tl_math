@@ -247,6 +247,7 @@ tlmath::PreRender(PF_InData                *in_data,
 			miP->compSizeF[0] *= dsp.xS;
 			miP->compSizeF[1] *= dsp.yS;
 			PF_FpLong fpsF;
+			A_Matrix4  cameraMatrix;
 			compSuite->AEGP_GetCompFramerate(compH, &fpsF);
 			miP->compFpsF = static_cast<float>(fpsF);
 
@@ -314,9 +315,23 @@ tlmath::PreRender(PF_InData                *in_data,
                                                                             &stream_valRot,
                                                                             NULL));
 
+						ERR(suites.LayerSuite5()->AEGP_GetLayerToWorldXform(camera_layerH,
+																			&comp_timeT,
+																			&cameraMatrix));
+
 
 
                         if (!err) {
+
+							//convert AE matrix to Gl matrix
+							for (int i = 0; i < 4; i++)
+							{
+								miP->camMat[i][0] = cameraMatrix.mat[0][i];
+								miP->camMat[i][1] = cameraMatrix.mat[1][i];
+								miP->camMat[i][2] = cameraMatrix.mat[2][i];
+								miP->camMat[i][3] = cameraMatrix.mat[3][i];
+							}
+
                             miP->cameraZoom = stream_valZoom.one_d;
 
                             miP->cameraPos.point[0] = stream_valPos.three_d.x;

@@ -478,6 +478,7 @@ typedef struct MathInfo{
     color_3d        inColors[10];
 	PF_FpShort		luma;
 	PF_PixelFloat   PixelOFfP;
+	GLfloat          camMat[4][4];
     //PF_Fixed    x_offFi[4];
     //PF_Fixed    y_offFi[4];
 

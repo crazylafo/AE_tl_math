@@ -329,6 +329,8 @@ namespace {
 		// program uniforms
 		GLint location = glGetUniformLocation(renderContext->mProgramObjSu, "ModelviewProjection");
 		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "cameraMat");
+		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)& miP->camMat);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider01NameAc);
 		glUniform1f(location, miP->inSliderF[0]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider02NameAc);
@@ -480,8 +482,7 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->cameraZoomNameAc);
 		glUniform1f(location, miP->cameraZoom);
 
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
-		glUniform1f(location, multiplier16bit);
+
 		// Identify the texture to use and bind it to texture unit 0
 		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObjSu, inputFrameTexture, seqP->paramLayer00NameAc);
 		AESDK_OpenGL_BindTexture1ToTarget(renderContext->mProgramObjSu, inputExtFrame1Texture, seqP->paramLayer01NameAc);
@@ -948,9 +949,9 @@ QueryDynamicFlags(
 
 	if (seqP && !err) {
         if (seqP->cameraB){
-            out_data->out_flags2 &= ~PF_OutFlag2_I_USE_3D_CAMERA;
-        }else{
             out_data->out_flags2 &= PF_OutFlag2_I_USE_3D_CAMERA;
+        }else{
+            out_data->out_flags2 &= ~PF_OutFlag2_I_USE_3D_CAMERA;
         }
 		if (seqP->presetHasWideInputB) {
 			out_data->out_flags &= ~PF_OutFlag_WIDE_TIME_INPUT;
