@@ -509,7 +509,7 @@ namespace {
 	)
 	{
 		//download from texture memory onto the same surface
-		PF_Handle bufferH = NULL;
+		PF_Handle bufferH = nullptr;
 		bufferH = suites.HandleSuite1()->host_new_handle(((renderContext->mRenderBufferWidthSu * renderContext->mRenderBufferHeightSu)* pixSize));
 		if (!bufferH) {
 			CHECK(PF_Err_OUT_OF_MEMORY);

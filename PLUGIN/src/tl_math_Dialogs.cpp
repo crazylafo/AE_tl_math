@@ -521,9 +521,9 @@ tlmath::embedExprInShaders (seqData  *seqP){
     AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer03NameAc, &hasTexture3B);
     AppendGlslInput2dText (fragShStr,exprGrpStr,seqP-> paramLayer04NameAc, &hasTexture4B);
 
-
-    fragShStr.append(gl33InputTexture);
 	fragShStr.append(gl33getLuma);
+    fragShStr.append(gl33InputTexture);
+	
 
 
      //embed expressions in shaders and add uniforms in shaders depending of expression.
