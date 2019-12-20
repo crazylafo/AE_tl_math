@@ -7,7 +7,7 @@ body {
     
     #MenuColId{
         height: 100%;
-        width: 160px;
+        width: 70px;
         position: fixed;
         z-index: 1;
         top: 0;
@@ -30,7 +30,7 @@ body {
     #SettingsCol{
         height: 100%;
         width: 290px;
-        margin-left: 160px;
+        margin-left: 70px;
         position: fixed;
         z-index: 1;
         top: 0;
@@ -47,7 +47,7 @@ body {
     }
     #tabEditsMenu{
         position: sticky;
-        margin-left: 450px;
+        margin-left: 360px;
         height: 100%;
     }
     #tabEditsMenu button:hover {

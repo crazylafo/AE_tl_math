@@ -22,11 +22,10 @@
 
 <body onLoad="onLoaded()">	
     <div id="MenuColId">
-		<a id="btnApply">Apply</a>
-		<a onClick="toggleMenus('presetSettingId')" >preset settings</a>
-		<a onClick= "toggleMenus('paramSettingsId')" >param settings</a>
-		<a onCLick="toggleMenus('presetId')">library</a>
-		<a onCLick=" toggleEditor()">editor</a>
+		<input type="image" src="./imgs/preset_settings.png" onClick="toggleMenus('presetSettingId')" ></input>
+		<input type="image" src="./imgs/param_settings.png"onClick= "toggleMenus('paramSettingsId')" ></input>
+		<input type="image" src="./imgs/library.png"onCLick="toggleMenus('presetId')"></input>
+		<input type="image" src="./imgs/editor.png" onCLick=" toggleEditor()"></input>
 		</div>
 	<div id="SettingsCol" class="sidebar">
 		<div id="split-bar"></div>
@@ -210,11 +209,12 @@
 		</div>
 	
 	<div  id="tabEditsMenu" class="tabEditors">
+		<button id="btnApply">Apply</button><br/>
 		<div id ="expr_editor_settings" class="mathGUI">
 				<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
 				</div>
 		<br/>
-		<button class="mathGUI" id="redExpBtn" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
+		<button class="mathGUI" id="redExpBtn" onclickj="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
 		<button class="mathGUI" id="greenExpBtn" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
 		<button class="mathGUI" id="blueExpBtn" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
 		<button class="mathGUI" id="rgbExpBtn"  onclick="openEditor(event, 'expr_rgb_tab', 'expr_rgb_editor')" >rgb channels expression</button>
