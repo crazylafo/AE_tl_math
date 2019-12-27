@@ -219,6 +219,7 @@
 		<button class="mathGUI" id="blueExpBtn" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
 		<button class="mathGUI" id="rgbExpBtn"  onclick="openEditor(event, 'expr_rgb_tab', 'expr_rgb_editor')" >rgb channels expression</button>
 		<button class="mathGUI" id="alphaExpBtn"  onclick="openEditor(event, 'expr_alpha_tab', 'expr_alpha_editor')">Alpha channel expression</button>
+		<button class="mathGUI" id="commonExpBtn"  onclick="openEditor(event, 'expr_common_tab', 'expr_common_editor')">Common expression</button>
 		<button class="glslGUI" onclick="openEditor(event, 'gl33_frag_tab', 'gl33_frag_editor')" >GLSL Fragment Shader</button>
 		<button class="glslGUI" onclick="openEditor(event, 'gl33_vert_tab', 'gl33_vert_editor')">GLSL Vertex Shader</button>
 		<br/>
@@ -230,6 +231,7 @@
 			<div id="expr_blue_tab_console"class="console"> math blue channel console</div>
 			<div id="expr_rgb_tab_console"class="console"> math rgb channels console</div>
 			<div id="expr_alpha_tab_console"class="console"> math alpha channel console</div>
+			<div id="expr_common_tab_console"class="console"> math common console</div>
 		</div>
 		<div class="text_editor">
 			<div id="gl33_frag_tab" class="tabEditor">
@@ -262,6 +264,10 @@
 			<div id="expr_alpha_tab" class="tabEditor">
 				<h3 id="editor_name">alpha expression code</h3>	
 				<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
+				</div>
+			<div id="expr_common_tab" class="tabEditor">
+				<h3 id="editor_name">common expression code</h3>	
+				<pre id="expr_common_editor" class="textEditor">//write your common expression here</pre>
 				</div>
 			</div>
 	</div>

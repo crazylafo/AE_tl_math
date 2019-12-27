@@ -320,6 +320,10 @@ function setflagFromExpr (arbData, strArr){
 			boolResultB = true;
 			return boolResultB;
 		}
+		if (arbData.math_expression.commonExpr.indexOf(strArr[i]) !=-1){
+			boolResultB = true;
+			return boolResultB;
+		}
 		if (arbData.math_expression.exprRGBModeB &&
 			arbData.math_expression.rgbExpr.indexOf(strArr[i]) !=-1){
 				boolResultB = true;
@@ -404,6 +408,7 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#expr_blue_tab_console").html(setConsoleStr ("Console - Blue Channel",(arbData.math_expression.blue_error.toString())));
 	$("#expr_rgb_tab_console").html(setConsoleStr ("Console - RGB Channels",arbData.math_expression.rgb_error.toString()));
 	$("#expr_alpha_tab_console").html(setConsoleStr ("Console - Alpha Channel",arbData.math_expression.alpha_error.toString()));
+	$("#expr_common_tab_console").html(setConsoleStr ("Console - Common Channel",arbData.math_expression.common_error.toString()));
 	if (arbData.gl_expression.gl33_frag_sh){
 		editors.gl33_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl33_frag_sh.toString()), -1);
 	}
@@ -424,6 +429,9 @@ function copyDataToGUI (arbData, editors, numParams) {
 	}
 	if(arbData.math_expression.alphaExpr){
 		editors.expr_alpha_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.alphaExpr.toString(), -1));
+	}
+	if(arbData.math_expression.commonExpr){
+		editors.expr_common_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.commonExpr.toString(), -1));
 	}
 	$("#presetName").val( cleanJsonFromArbStr(arbData.effectInfo.presetName.toString()));
 	$("#descriptionText").val(cleanJsonFromArbStr(arbData.effectInfo.description.toString()));
@@ -506,6 +514,11 @@ function sendDataToPlugin(editors, arbData, numParams) {
 		arbData.math_expression.alphaExpr= cleanJsonToArbStr(( editors.expr_alpha_editor.getValue()).toString());
 	}else{
 		alert ("alpha expression text is tool long");
+	}
+	if (editors.expr_common_editor.getValue().toString().length <exprLimit){
+		arbData.math_expression.commonExpr= cleanJsonToArbStr(( editors.expr_common_editor.getValue()).toString());
+	}else{
+		alert ("common expression text is tool long");
 	}
 	if ($("#descriptionText").val().toString().length <descriptionLimit){
 		arbData.effectInfo.description =cleanJsonToArbStr( $("#descriptionText").val()).toString();
@@ -711,6 +724,7 @@ function setEditors(){
 	editors.expr_blue_editor = glslEditor("expr_blue_editor");
 	editors.expr_rgb_editor = glslEditor("expr_rgb_editor");
 	editors.expr_alpha_editor  = glslEditor("expr_alpha_editor");
+	editors.expr_common_editor  = glslEditor("expr_common_editor");
 	return editors;
 	}
 function openEditor(evt, tabName) {
