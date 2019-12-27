@@ -78,6 +78,7 @@ std::string tlmath::ReIndexErrorInExpr(std::string originalfragSh,
 	std::string errIndex,
 	size_t index,
 	size_t delimiter) {
+	tlmath_shaders tlms;
 	std::string reducedStr = originalfragSh.substr(0, index); //from begining of current shader to the begening of the expr
     std::string startToDelimiter =originalfragSh.substr(0, delimiter); // from begining of shader to the end the expr
 	size_t nlignSt = tlmath::getOccurenceFromStr(reducedStr, "\n")[0]+3; // how many line breaks before the current expr
@@ -96,7 +97,7 @@ std::string tlmath::ReIndexErrorInExpr(std::string originalfragSh,
             if (originalErrLignInt< int(nlignSt) || // if the error is before current expression channel or after. break
                 originalErrLignInt>int(nlignDelimiterSt)) {
                 if (numErrChInt ==0){
-                    exprStr = compile_success;
+                    exprStr = tlms.compile_success;
                 }
                 break;
             }

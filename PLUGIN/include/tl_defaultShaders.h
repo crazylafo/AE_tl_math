@@ -10,67 +10,49 @@
 
 
 //GLSL SCRIPTS
+class tlmath_shaders {
+public:
+	std::string compile_success = "compiled successfully";
+	std::string endLineStr = " ;\n";
+	std::string importFloatGlStr = "uniform float ";
+    std::string importVec2GlStr = "uniform vec3 ";
+	std::string importVec3GlStr = "uniform vec3 ";
+	std::string importBoolGlStr = "uniform bool ";
+	std::string import2dTextGlStr = "uniform sampler2D ";
+	std::string  endFunctionStr = "\n } \n";
+	std::string redFunctionStr = "float redExpr(vec2 fragCoord, float colorCh){ \n";
+	std::string greenFunctionStr = "float greenExpr(vec2 fragCoord, float colorCh){ \n";
+	std::string blueFunctionStr = "float blueExpr(vec2 fragCoord, float colorCh){ \n";
+	std::string alphaFunctionStr = "float alphaExpr(vec2 fragCoord, float colorCh){ \n";
+	std::string rgbFunctionStr = "vec3 rgbExpr(vec2 fragCoord, vec3 inputRgb){ \n";
 
-static std::string compile_success = "compiled successfully";
-static std::string endLineStr = " ;\n";
-static std::string importFloatGlStr = "uniform float ";
-static std::string importVec2GlStr = "uniform vec3 ";
-static std::string importVec3GlStr = "uniform vec3 ";
-static std::string importBoolGlStr = "uniform bool ";
-static std::string import2dTextGlStr = "uniform sampler2D ";
 
-static std::string  endFunctionStr ="\n } \n";
-static std::string redFunctionStr= "float redExpr(vec2 fragCoord, float colorCh){ \n";
-static std::string greenFunctionStr= "float greenExpr(vec2 fragCoord, float colorCh){ \n";
-static std::string blueFunctionStr= "float blueExpr(vec2 fragCoord, float colorCh){ \n";
-static std::string alphaFunctionStr= "float alphaExpr(vec2 fragCoord, float colorCh){ \n";
-static std::string rgbFunctionStr= "vec3 rgbExpr(vec2 fragCoord, vec3 inputRgb){ \n";
-
-
-static std::string gl33getLuma = R"=====(
-float getLuma(vec4 text) {
-	return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b;
-	}
-)=====";
-
-static std::string gl33GeneriqueShInput= R"=====(#version 330 // glsls version for opengl 3.3
+	 std::string gl33GeneriqueShInput = R"=====(#version 330 // glsls version for opengl 3.3
 out vec4 fragColorOut;
 in vec2 out_uvs;
 vec2 textUvs = vec2(out_uvs.x, 1-out_uvs.y);
 uniform vec2 resolution;
 )=====";
 
-static std::string gl33InputTexture =R"=====(
-vec4 textureAE (sampler2D tex2d)
-{
-    vec4 textureIn = texture( tex2d, textUvs);
-    return  textureIn ;
-}
-
-vec4 textureOffset(sampler2D tex2d, vec2 off) {
-	vec2 uv_AE = out_uvs;
-	uv_AE.x =textUvs.x + off.x;
-	uv_AE.y = textUvs.y + off.y;
-	vec4 textureIn = texture(tex2d, uv_AE);
-	return  textureIn;
-
-})=====";
 
 
 
-static std::string gl33InputMainGrp =R"=====(
+
+
+
+	 std::string gl33InputMainGrp = R"=====(
 void main(void)
 {
-    vec4 text0= textureAE(inputLayer0);
+    vec4 text0= texture(inputLayer0, textUvs);
     fragColorOut.rgb = rgbExpr(gl_FragCoord.xy, text0.rgb);
     fragColorOut.a = alphaExpr(gl_FragCoord.xy, text0.a);
 
 })=====";
 
-static std::string gl33InputMainSplit =R"=====(
+	std::string gl33InputMainSplit = R"=====(
 void main(void)
 {
-	vec4 text0= textureAE(inputLayer0);
+	vec4 text0= texture(inputLayer0, textUvs);
 	fragColorOut.r =  redExpr(gl_FragCoord.xy, text0.r);
     fragColorOut.g =  greenExpr(gl_FragCoord.xy, text0.g);
     fragColorOut.b = blueExpr (gl_FragCoord.xy, text0.b);
@@ -80,7 +62,7 @@ void main(void)
 
 
 
-static std::string glvertstr = "#version 330 \n\
+	 std::string glvertstr = "#version 330 \n\
 in vec4 Position;\n\
 in vec2 UVs;\n\
 out vec4 out_pos;\n\
@@ -93,7 +75,7 @@ gl_Position = out_pos; \n\
 out_uvs = UVs;\n\
 }";
 
-static std::string glfrag2str = "#version 330\n\
+	 std::string glfrag2str = "#version 330\n\
 uniform sampler2D layerTex;\n\
 uniform float multiplier16bit;\n\
 uniform vec2 resolution;\n\
@@ -107,7 +89,7 @@ void main(void)\n\
     colorOut = colorOut / multiplier16bit;\n\
 }";
 
-static std::string glErrorMessageStr = R"=====(
+	  std::string glErrorMessageStr = R"=====(
 // based on http://glslsandbox.com/e#53346.0
 #version 330 // glsls version for opengl 3.3
 uniform float multiplier16bit; //proper to AE 16 bits depth.
@@ -199,6 +181,8 @@ void main( void )
     fragColorOut = vec4(1.-pow(length(color)-0.25, 4.)*vec3(.5,.5,.5), 1.0);
 }
 )=====";
+
+};
 
 
 #endif /* tl_defaultShaders_h*/

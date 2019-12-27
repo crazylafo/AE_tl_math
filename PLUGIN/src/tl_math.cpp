@@ -703,7 +703,8 @@ void tlmath::evalVertShader(std::string inVertShaderStr, std::string& errReturn)
         errReturn = str;
     }
     else {
-        errReturn = compile_success;
+		tlmath_shaders tlms;
+        errReturn = tlms.compile_success;
     }
     glDeleteShader(vertShaderSu);
     glFlush();
@@ -739,7 +740,8 @@ void tlmath::evalFragShader(std::string inFragmentShaderStr, std::string& errRet
         errReturn = str;
     }
     else {
-        errReturn = compile_success;
+		tlmath_shaders tlms;
+        errReturn = tlms.compile_success;
     }
     glDeleteShader(fragmentShaderSu);
     glFlush();

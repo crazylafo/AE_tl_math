@@ -34,11 +34,13 @@ static std::string defaultArb = R"=====(
         "blueExpr":"return inChannel;",
         "rgbExpr":"return inputRgb;",
         "alphaExpr":"return inChannel;",
+		"commonExpr":	"float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
         "red_error":  "compiled successfully",
         "green_error" :  "compiled successfully",
         "blue_error" :  "compiled successfully",
         "alpha_error" :  "compiled successfully",
         "rgb_error" :  "compiled successfully",
+		"common_error": "compiled successfully",
         "exprRGBModeB":true,
         "expr_current_channel":"inChannel",
         "expr_pix":"pix"

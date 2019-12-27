@@ -438,12 +438,12 @@ tlmath::SmartRender(
 	PF_Err            err = PF_Err_NONE,
 		err2 = PF_Err_NONE;
 
-	PF_EffectWorld* inputP = NULL,
-		* outputP = NULL,
-		* extL1P = NULL,
-		* extL2P = NULL,
-		* extL3P = NULL,
-		* extL4P = NULL;
+	PF_EffectWorld* inputP = nullptr,
+		* outputP = nullptr,
+		* extL1P = nullptr,
+		* extL2P = nullptr,
+		* extL3P = nullptr,
+		* extL4P = nullptr;
 	PF_PixelFormat    format = PF_PixelFormat_INVALID;
 	AEGP_SuiteHandler suites(in_data->pica_basicP);
 	seqDataP            seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
@@ -453,7 +453,7 @@ tlmath::SmartRender(
 		out_data);
 
 	if (!err && seqP) {
-
+		tlmath_shaders tlmath_shaders;
 		MathInfo *miP = reinterpret_cast< MathInfo*>(suites.HandleSuite1()->host_lock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data)));
 		//flagInfo
 		if (miP) {
@@ -465,16 +465,14 @@ tlmath::SmartRender(
 			AEFX_CLR_STRUCT(ExprP);
 
 
-
+			ERR(PF_ABORT(in_data));
 			// checkout input & output buffers.
 			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INPUT, &inputP)));
 			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE, &extL1P)));
 			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_TWO, &extL2P)));
 			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_THREE, &extL3P)));
 			ERR((extraP->cb->checkout_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_FOUR, &extL4P)));
-
 			ERR(extraP->cb->checkout_output(in_data->effect_ref, &outputP));
-
 			// determine requested output depth
 			ERR(wsP->PF_GetPixelFormat(outputP, &format));
 			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extL1W));
@@ -482,213 +480,216 @@ tlmath::SmartRender(
 			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extL3W));
 			ERR(wsP->PF_NewWorld(in_data->effect_ref, inputP->width, inputP->height, FALSE, format, &extL4W));
 
+			if (!err) {
+				//CHECKOUT PARAMS
+				PF_ParamDef  setup_param,
+					description_param,
+					arb_param,
+					slider_param[10],
+					point_param[10],
+					cb_param[10],
+					color_param[10],
+					rot_param[10],
+					cb_getarb_param,
+					math_reset_param;
+				AEFX_CLR_STRUCT(setup_param);
+				ERR(PF_CHECKOUT_PARAM(in_data,
+					MATH_SETUP,
+					in_data->current_time,
+					in_data->time_step,
+					in_data->time_scale,
+					&setup_param));
 
-			//CHECKOUT PARAMS
-			PF_ParamDef  setup_param,
-                description_param,
-				arb_param,
-				slider_param[10],
-				point_param[10],
-				cb_param[10],
-				color_param[10],
-				rot_param[10],
-				cb_getarb_param, 
-				math_reset_param;
+				AEFX_CLR_STRUCT(description_param);
+				ERR(PF_CHECKOUT_PARAM(in_data,
+					MATH_SETUP,
+					in_data->current_time,
+					in_data->time_step,
+					in_data->time_scale,
+					&description_param));
+
+				AEFX_CLR_STRUCT(math_reset_param);
+				ERR(PF_CHECKOUT_PARAM(in_data,
+					MATH_RESET,
+					in_data->current_time,
+					in_data->time_step,
+					in_data->time_scale,
+					&math_reset_param));
+
+				AEFX_CLR_STRUCT(arb_param);
+				ERR(PF_CHECKOUT_PARAM(in_data,
+					MATH_ARB_DATA,
+					in_data->current_time,
+					in_data->time_step,
+					in_data->time_scale,
+					&arb_param));
+				for (int i = 0; i < 10; i++) {
+					ERR(checkoutParamsArray(in_data, &slider_param[i], MATH_SLIDER_ONE + i));
+					ERR(checkoutParamsArray(in_data, &point_param[i], MATH_POINT_ONE + i));
+					ERR(checkoutParamsArray(in_data, &cb_param[i], MATH_CB_ONE + i));
+					ERR(checkoutParamsArray(in_data, &color_param[i], MATH_COLOR_ONE + i));
+					ERR(checkoutParamsArray(in_data, &rot_param[i], MATH_ROT_ONE + i));
+				}
+				AEFX_CLR_STRUCT(cb_getarb_param);
+				ERR(PF_CHECKOUT_PARAM(in_data,
+					MATH_CEP_GET_ARB_DATA,
+					in_data->current_time,
+					in_data->time_step,
+					in_data->time_scale,
+					&cb_getarb_param));
+				//layer size
+				miP->scale_x = in_data->downsample_x.num * in_data->pixel_aspect_ratio.num / (float)in_data->downsample_x.den;
+				miP->scale_y = in_data->downsample_y.num * in_data->pixel_aspect_ratio.den / (float)in_data->downsample_y.den;
+				miP->layerSizeF[0] = PF_FpShort(in_data->width * miP->scale_x);
+				miP->layerSizeF[1] = PF_FpShort(in_data->height * miP->scale_y);
+				//time params
+				miP->layerTime_Sec = PF_FpShort(in_data->current_time) / PF_FpShort(in_data->time_scale);
+				miP->layerTime_Frame = PF_FpShort(in_data->current_time / (float)in_data->time_step);
+				miP->layerDuration = PF_FpShort(in_data->total_time / in_data->time_scale);
+				for (int i = 0; i < 10; i++) {
+					miP->inSliderF[i] = slider_param[i].u.fs_d.value;
+				}
+				//user param points
+				for (int i = 0; i < 10; i++) {
+					copyPointsParam(point_param[i], &miP->inPoints[i]);
+				}
+				for (int i = 0; i < 10; i++) {
+					miP->inCboxF[i] = bool(cb_param[i].u.bd.value);
+				}
+				for (int i = 0; i < 10; i++) {
+					miP->inRotF[i] = PF_FpShort(rot_param[i].u.ad.value);
+				}
+				//CONVERT COLOR PARAMS TO FLOAT BYSMART WAY
+				PF_PixelFloat tempFloat;
+				for (int i = 0; i < 10; i++) {
+					AEFX_CLR_STRUCT(tempFloat)
+						ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, &color_param[i], &tempFloat));
+					//user param color
+					miP->inColors[i].color[0] = tempFloat.red;
+					miP->inColors[i].color[1] = tempFloat.green;
+					miP->inColors[i].color[2] = tempFloat.blue;
+				}
+				//CALL SEQP
+				std::string redExprStr, greenExprStr, blueExprStr, alphaExprStr, frag1Str, vertStr, rgbstr;
+				ERR(PF_ABORT(in_data));
+				if (seqP && !err) {
+					redExprStr = seqP->redExAc;
+					greenExprStr = seqP->greenExAc;
+					blueExprStr = seqP->blueExAc;
+					alphaExprStr = seqP->alphaExAc;
+					rgbstr = seqP->rgbExprExAc;
+					frag1Str = seqP->Glsl33_FragmentShAc;
+					vertStr = seqP->Glsl33_VertexShAc;
+
+					for (int i = 0; i < 4; i++) {
+						flagsP.PixelsCallExternalInputB[i] = seqP->pixelsCallExternalInputB[i];
+					}
+					flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
+					flagsP.parserModeB = seqP->exprModeB;
+					flagsP.exprRGBModeB = seqP->exprRGBModeB;
+				}
+
+				ExprP.redstr = &redExprStr;
+				ExprP.greenstr = &greenExprStr;
+				ExprP.bluestr = &blueExprStr;
+				ExprP.alphastr = &alphaExprStr;
+				ExprP.frag1str = &frag1Str;
+				ExprP.vertexstr = &vertStr;
+				ExprP.frag2str = &tlmath_shaders.glfrag2str;
+				ExprP.rgbstr = &rgbstr;
+				//CALL EXTERNAL LAYER AND TRANSFORM WORLD IF NEEDED
+
+				if (flagsP.PixelsCallExternalInputB[0]) {
+					ERR(tlmath::ExtLayerInput(in_data,
+						inputP,
+						extL1P,
+						&extL1W,
+						suites,
+						format));
+				}
+				if (flagsP.PixelsCallExternalInputB[1]) {
+					ERR(tlmath::ExtLayerInput(in_data,
+						inputP,
+						extL2P,
+						&extL2W,
+						suites,
+						format));
+				}
+				if (flagsP.PixelsCallExternalInputB[2]) {
+					ERR(tlmath::ExtLayerInput(in_data,
+						inputP,
+						extL3P,
+						&extL3W,
+						suites,
+						format));
+				}
+				if (flagsP.PixelsCallExternalInputB[3]) {
+					ERR(tlmath::ExtLayerInput(in_data,
+						inputP,
+						extL4P,
+						&extL4W,
+						suites,
+						format));
+				}
+
+				if (!err) {
+					ERR(tlmath::Render_GLSL(in_data,
+						out_data,
+						inputP,
+						outputP,
+						&extL1W,
+						&extL2W,
+						&extL3W,
+						&extL4W,
+						format,
+						suites,
+						(void*)miP,
+						*ExprP.vertexstr,
+						*ExprP.frag1str,
+						*ExprP.frag2str));
 
 
-			AEFX_CLR_STRUCT(setup_param);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_SETUP,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&setup_param));
 
-            AEFX_CLR_STRUCT(description_param);
-            ERR(PF_CHECKOUT_PARAM(in_data,
-                  MATH_SETUP,
-                  in_data->current_time,
-                  in_data->time_step,
-                  in_data->time_scale,
-                  &description_param));
+				}
 
-			AEFX_CLR_STRUCT(math_reset_param);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_RESET,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&math_reset_param));
 
-			AEFX_CLR_STRUCT(arb_param);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_ARB_DATA,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&arb_param));
-            for (int i=0; i<10; i++){
-                 ERR(checkoutParamsArray(in_data, &slider_param[i], MATH_SLIDER_ONE+i));
-                 ERR(checkoutParamsArray(in_data, &point_param[i], MATH_POINT_ONE+i));
-                 ERR(checkoutParamsArray(in_data, &cb_param[i], MATH_CB_ONE+i));
-                 ERR(checkoutParamsArray(in_data, &color_param[i], MATH_COLOR_ONE+i));
-                 ERR(checkoutParamsArray(in_data, &rot_param[i], MATH_ROT_ONE+i));
-                }
+				//CHECKIN PARAMS
+				PF_UNLOCK_HANDLE(arbH);
+				ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
+				ERR2(PF_CHECKIN_PARAM(in_data, &description_param));
+				ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
+				ERR2(PF_CHECKIN_PARAM(in_data, &math_reset_param));
+				for (int i = 0; i < 10; i++) {
+					ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[i]));
+					ERR2(PF_CHECKIN_PARAM(in_data, &point_param[i]));
+					ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[i]));
+					ERR2(PF_CHECKIN_PARAM(in_data, &color_param[i]));
+					ERR2(PF_CHECKIN_PARAM(in_data, &rot_param[i]));
+				}
 
-			AEFX_CLR_STRUCT(cb_getarb_param);
-			ERR(PF_CHECKOUT_PARAM(in_data,
-				MATH_CEP_GET_ARB_DATA,
-				in_data->current_time,
-				in_data->time_step,
-				in_data->time_scale,
-				&cb_getarb_param));
-			//layer size
-			miP->scale_x = in_data->downsample_x.num*in_data->pixel_aspect_ratio.num / (float)in_data->downsample_x.den;
-			miP->scale_y = in_data->downsample_y.num*in_data->pixel_aspect_ratio.den / (float)in_data->downsample_y.den;
-			miP->layerSizeF[0]= PF_FpShort(in_data->width*miP->scale_x);
-			miP->layerSizeF[1] = PF_FpShort(in_data->height* miP->scale_y);
-			//time params
-			miP->layerTime_Sec = PF_FpShort(in_data->current_time) / PF_FpShort(in_data->time_scale);
-			miP->layerTime_Frame = PF_FpShort(in_data->current_time / (float)in_data->time_step);
-			miP->layerDuration = PF_FpShort(in_data->total_time / in_data->time_scale);
-            for (int i =0; i<10; i++){
-                miP->inSliderF[i] = slider_param[i].u.fs_d.value;
-                }
-            //user param points
-            for (int i =0; i<10; i++){
-                copyPointsParam(point_param[i], &miP->inPoints[i]);
-                }
-             for (int i =0; i<10; i++){
-                 miP->inCboxF[i] = bool (cb_param[i].u.bd.value);
-                }
-			 for (int i = 0; i < 10; i++) {
-				 miP->inRotF[i] = PF_FpShort(rot_param[i].u.ad.value);
-			 }
-			//CONVERT COLOR PARAMS TO FLOAT BYSMART WAY
-             PF_PixelFloat tempFloat;
-             for (int i =0; i<10; i++){
-                 AEFX_CLR_STRUCT(tempFloat)
-                 ERR(suites.ColorParamSuite1()->PF_GetFloatingPointColorFromColorDef(in_data->effect_ref, &color_param[i], &tempFloat));
-                 //user param color
-                 miP->inColors[i].color[0] =tempFloat.red;
-                 miP->inColors[i].color[1] =tempFloat.green;
-                 miP->inColors[i].color[2] =tempFloat.blue;
-                }
-			//CALL SEQP
-			std::string redExprStr, greenExprStr, blueExprStr, alphaExprStr, frag1Str, vertStr, rgbstr;
-			if (seqP && !err) {
-				redExprStr = seqP->redExAc;
-				greenExprStr = seqP->greenExAc;
-				blueExprStr = seqP->blueExAc;
-				alphaExprStr = seqP->alphaExAc;
-                rgbstr =  seqP->rgbExprExAc;
-				frag1Str = seqP->Glsl33_FragmentShAc;
-				vertStr = seqP->Glsl33_VertexShAc;
+				ERR2(PF_CHECKIN_PARAM(in_data, &cb_getarb_param));
 
-                for (int i=0; i<4;i++){
-                    flagsP.PixelsCallExternalInputB[i] = seqP->pixelsCallExternalInputB[i];
-                }
-				flagsP.PresetHasWideInput = seqP->presetHasWideInputB;
-				flagsP.parserModeB = seqP->exprModeB;
-                flagsP.exprRGBModeB = seqP->exprRGBModeB;
+				if (extL1W.data) {
+					ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL1W));
+				}
+				if (extL2W.data) {
+					ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL2W));
+				}
+				if (extL3W.data) {
+					ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL3W));
+				}
+				if (extL4W.data) {
+					ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL4W));
+				}
+				ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
+				ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
+				ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_TWO));
+				ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_THREE));
+				ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_FOUR));
 			}
+			
 
-			ExprP.redstr = &redExprStr;
-			ExprP.greenstr = &greenExprStr;
-			ExprP.bluestr = &blueExprStr;
-			ExprP.alphastr = &alphaExprStr;
-			ExprP.frag1str = &frag1Str;
-			ExprP.vertexstr = &vertStr;
-			ExprP.frag2str = &glfrag2str;
-            ExprP.rgbstr = &rgbstr;
-			//CALL EXTERNAL LAYER AND TRANSFORM WORLD IF NEEDED
-
-            if (flagsP.PixelsCallExternalInputB[0]) {
-				ERR(tlmath::ExtLayerInput(in_data,
-					inputP,
-					extL1P,
-					&extL1W,
-					suites,
-					format));
-			}
-            if (flagsP.PixelsCallExternalInputB[1]) {
-                ERR(tlmath::ExtLayerInput(in_data,
-                                          inputP,
-                                          extL2P,
-                                          &extL2W,
-                                          suites,
-                                          format));
-            }
-            if (flagsP.PixelsCallExternalInputB[2]) {
-                ERR(tlmath::ExtLayerInput(in_data,
-                                          inputP,
-                                          extL3P,
-                                          &extL3W,
-                                          suites,
-                                          format));
-            }
-            if (flagsP.PixelsCallExternalInputB[3]) {
-                ERR(tlmath::ExtLayerInput(in_data,
-                                          inputP,
-                                          extL4P,
-                                          &extL4W,
-                                          suites,
-                                          format));
-            }
-            if (!err) {
-                ERR(tlmath::Render_GLSL(in_data,
-					out_data,
-					inputP,
-					outputP,
-					&extL1W,
-                    &extL2W,
-                    &extL3W,
-                    &extL4W,
-					format,
-					suites,
-					(void*)miP,
-					*ExprP.vertexstr,
-					*ExprP.frag1str,
-					*ExprP.frag2str));
-
-			}
-
-			//CHECKIN PARAMS
-			PF_UNLOCK_HANDLE(arbH);
-
-			ERR2(PF_CHECKIN_PARAM(in_data, &setup_param));
-            ERR2(PF_CHECKIN_PARAM(in_data, &description_param));
-			ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
-			ERR2(PF_CHECKIN_PARAM(in_data, &math_reset_param));
-			for (int i = 0; i<10; i++) {
-				ERR2(PF_CHECKIN_PARAM(in_data, &slider_param[i]));
-				ERR2(PF_CHECKIN_PARAM(in_data, &point_param[i]));
-				ERR2(PF_CHECKIN_PARAM(in_data, &cb_param[i]));
-				ERR2(PF_CHECKIN_PARAM(in_data, &color_param[i]));
-				ERR2(PF_CHECKIN_PARAM(in_data, &rot_param[i]));
-			}
-
-			ERR2(PF_CHECKIN_PARAM(in_data, &cb_getarb_param));
-
-			if (extL1W.data) {
-				ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL1W));
-            }
-            if (extL2W.data) {
-                ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL2W));
-            }
-            if (extL3W.data) {
-                ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL3W));
-            }
-            if (extL4W.data) {
-                ERR2(wsP->PF_DisposeWorld(in_data->effect_ref, &extL4W));
-            }
-			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INPUT));
-			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_ONE));
-			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_TWO));
-			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_THREE));
-			ERR2(extraP->cb->checkin_layer_pixels(in_data->effect_ref, MATH_INP_LAYER_FOUR));
 		}
-
 		suites.HandleSuite1()->host_unlock_handle(reinterpret_cast<PF_Handle>(extraP->input->pre_render_data));
 	}
 

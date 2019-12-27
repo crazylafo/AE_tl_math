@@ -225,12 +225,14 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/blueExpr", seqDataP->blueExAc);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alphaExpr", seqDataP->alphaExAc);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgbExpr", seqDataP->rgbExprExAc);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/commonExpr", seqDataP->commonExpr);
 
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/red_error", seqDataP->redError);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/green_error", seqDataP->greenError);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/blue_error", seqDataP->blueError);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/alpha_error", seqDataP->alphaError);
 	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/rgb_error", seqDataP->rgbError);
+	tlmath::copyExprFromJsonToSeqData(arbDataJS, "/math_expression/common_error", seqDataP->commonError);
 	
 	if (!seqDataP->exprModeB) {
 		std::string curr_fragSh = seqDataP->Glsl33_FragmentShAc;

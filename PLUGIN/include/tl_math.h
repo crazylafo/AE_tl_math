@@ -82,6 +82,7 @@ typedef struct {
     A_char  blueExAc[4096];
     A_char  alphaExAc[4096];
 	A_char  rgbExprExAc[4096];
+	A_char  commonExpr[8192];
     A_char  Glsl33_VertexShAc[25000];
     A_char  Glsl33_FragmentShAc[50000];
 
@@ -90,6 +91,7 @@ typedef struct {
     A_char blueError[4096];
     A_char alphaError[4096];
 	A_char rgbError[4096];
+	A_char commonError[4096];
 
     A_char Glsl33_VertError[25000];
     A_char Glsl33_fragError[25000];
@@ -500,7 +502,7 @@ typedef struct {
 
 class tlmath{
 private:
-    std::string evalMathExprStr(std::string expr, seqDataP    *seqP);
+    //std::string evalMathExprStr(std::string expr, seqDataP    *seqP);
     void evalFragShader(std::string inFragmentShaderStr, std::string& errReturn);
     void evalVertShader(std::string inVertShaderStr, std::string& errReturn);
 

@@ -16,13 +16,13 @@ GetLayerData(PF_InData     *in_data,
 				A_long *effectIndex)
 {
 	PF_Err				err = PF_Err_NONE, err2 = PF_Err_NONE;
-	AEGP_LayerH        layerH = NULL;
-	AEGP_CompH        compH = NULL;
-	AEGP_ItemH      itemH = NULL;
-	AEGP_StreamRefH streamH = NULL;
-	AEGP_EffectRefH effectH = NULL;
-	AEGP_StreamRefH parentStreamH = NULL;
-	my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+	AEGP_LayerH        layerH = nullptr;
+	AEGP_CompH        compH = nullptr;
+	AEGP_ItemH      itemH = nullptr;
+	AEGP_StreamRefH streamH = nullptr;
+	AEGP_EffectRefH effectH = nullptr;
+	AEGP_StreamRefH parentStreamH = nullptr;
+	const my_global_dataP		globP = static_cast<my_global_dataP>(DH(out_data->global_data));
 
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
@@ -179,10 +179,10 @@ tlmath::CallCepDialog(PF_InData        *in_data,
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
 	PF_Err err = PF_Err_NONE;
 
-	AEGP_MemHandle     resultMemH = NULL;
-	A_char *resultAC = NULL;
+	AEGP_MemHandle     resultMemH = nullptr;
+	A_char *resultAC = nullptr;
 	A_char          scriptAC[1500]{ '\0' };
-	my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+	const my_global_dataP        globP = static_cast<my_global_dataP>(DH(out_data->global_data));
 
 	A_long compId = NULL, layerIndex = NULL, effectIndex = NULL;
 	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
@@ -215,10 +215,10 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     PF_Err err = PF_Err_NONE, err2 = PF_Err_NONE;
 	
     AEGP_SuiteHandler    suites(in_data->pica_basicP);
-    my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-    seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
-    AEGP_MemHandle     resultMemH = NULL;
-    A_char *resultAC = NULL;
+    const my_global_dataP        globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+    const  seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
+    AEGP_MemHandle     resultMemH =nullptr;
+    A_char *resultAC = nullptr;
     A_char          scriptAC[120000] { '\0' };
     std::string Majvers = std::to_string(MAJOR_VERSION);
     std::string MinVers = std::to_string(MINOR_VERSION);
@@ -230,7 +230,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
 
     //ARB
     PF_ParamDef arb_param;
-    m_ArbData        *arbInP = NULL;
+    m_ArbData        *arbInP = nullptr;
     AEFX_CLR_STRUCT(arb_param);
     ERR(PF_CHECKOUT_PARAM(    in_data,
                           MATH_ARB_DATA,
@@ -239,9 +239,9 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
                           in_data->time_scale,
                           &arb_param));
         AEFX_CLR_STRUCT(arbInP);
-        arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+        arbInP = static_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (!arbInP){
-            err = PF_Err_OUT_OF_MEMORY;
+            return err = PF_Err_OUT_OF_MEMORY;
         }
     auto  arbDataJS = nlohmann::json::parse(arbInP->arbDataAc);
 
@@ -284,9 +284,13 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
 			arbDataJS["math_expression"]["green_error"] = exprGreenErrStr;
 			arbDataJS["math_expression"]["blue_error"] = exprBlueErrStr;
 			}
+		std::string commonexprErrStr = seqP->commonError;
 		std::string exprAlphaErrStr = seqP->alphaError;
+		tlmath::jsonCorrectorStr(commonexprErrStr);
 		tlmath::jsonCorrectorStr(exprAlphaErrStr);
+		strReplace(commonexprErrStr, "ERROR:", "\\nERROR:");
 		strReplace(exprAlphaErrStr, "ERROR:", "\\nERROR:");
+		arbDataJS["math_expression"]["common_error"] = commonexprErrStr;
 		arbDataJS["math_expression"]["alpha_error"] = exprAlphaErrStr;
 		}
 
@@ -317,13 +321,13 @@ tlmath::SetupGetDataBack(
 {
     PF_Err err = PF_Err_NONE;
      AEGP_SuiteHandler    suites(in_data->pica_basicP);
-    my_global_dataP globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
-    PF_Handle        arbOutH = NULL;
+    const my_global_dataP globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+    PF_Handle        arbOutH = nullptr;
     PF_ParamDef arb_param;
-	AEGP_MemHandle     resultMemH = NULL;
-	A_char *resultAC = NULL;
+	AEGP_MemHandle     resultMemH = nullptr;
+	A_char *resultAC = nullptr;
 	std::string resultStr;
-    m_ArbData *arbOutP= NULL;
+    m_ArbData *arbOutP = nullptr;
 
 	AEFX_CLR_STRUCT(arb_param);
 	ERR(PF_CHECKOUT_PARAM(in_data,
@@ -332,7 +336,7 @@ tlmath::SetupGetDataBack(
 		in_data->time_step,
 		in_data->time_scale,
 		&arb_param));
-	arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+	arbOutP = static_cast<m_ArbData*>(*arb_param.u.arb_d.value);
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, script_getDataBackFromMathCEP.c_str(), FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
@@ -350,7 +354,7 @@ tlmath::SetupGetDataBack(
 	PF_Handle    seq_dataH = suites.HandleSuite1()->host_new_handle(sizeof(seqData));
 
 	if (seq_dataH) {
-		seqData  	*seqP = reinterpret_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
+		seqData  	*seqP = static_cast<seqData*>(suites.HandleSuite1()->host_lock_handle(seq_dataH));
 		ERR(tlmath::copyFromArbToSeqData(in_data, out_data,resultStr, seqP));
 		if (seqP->exprModeB) {
 			ERR(tlmath::embedExprInShaders(seqP));
@@ -375,8 +379,9 @@ AppendGlslInput2dText(std::string& newSh,
                      std::string varStr,
 					 bool*  hasTexture){
     const std::size_t found = expr.find(varStr);
+	tlmath_shaders tlms;
     if (found!=std::string::npos){
-        newSh.append(import2dTextGlStr+ varStr+ endLineStr);
+        newSh.append(tlms.import2dTextGlStr+ varStr+ tlms.endLineStr);
 		*hasTexture = true;
     }
 }
@@ -386,8 +391,9 @@ AppendGlslInputFloat(std::string& newSh,
                      std::string  expr,
                 std::string varStr){
     const std::size_t found = expr.find(varStr);
+	tlmath_shaders tlms;
     if (found!=std::string::npos){
-        newSh.append(importFloatGlStr+ varStr+ endLineStr);
+        newSh.append(tlms.importFloatGlStr+ varStr+ tlms.endLineStr);
     }
 }
 static void
@@ -396,7 +402,8 @@ AppendGlslInputVec2d(std::string& newSh,
                      std::string varStr){
     const std::size_t found = expr.find(varStr);
     if (found!=std::string::npos){
-        newSh.append(importVec2GlStr+varStr+endLineStr );
+		tlmath_shaders tlms;
+        newSh.append(tlms.importVec2GlStr+varStr+ tlms.endLineStr );
     }
 }
 static void
@@ -405,7 +412,8 @@ AppendGlslInputVec3d(std::string& newSh,
                      std::string varStr){
     const std::size_t found = expr.find(varStr);
     if (found!=std::string::npos){
-        newSh.append(importVec3GlStr+ varStr+ endLineStr);
+		tlmath_shaders tlms;
+        newSh.append(tlms.importVec3GlStr+ varStr+ tlms.endLineStr);
     }
 }
 static void
@@ -414,7 +422,8 @@ AppendGlslInputBool (std::string& newSh,
                      std::string varStr){
     const std::size_t found = expr.find(varStr);
     if (found!=std::string::npos){
-        newSh.append(importBoolGlStr+ varStr+ endLineStr);
+		tlmath_shaders tlms;
+        newSh.append(tlms.importBoolGlStr+ varStr+ tlms.endLineStr);
     }
 }
 
@@ -423,12 +432,12 @@ PF_Err
 tlmath::embedExprInShaders (seqData  *seqP){
     PF_Err err = PF_Err_NONE;
 
-
-    std::string redExprStr = redFunctionStr+seqP->redExAc+endFunctionStr ;
-    std::string greenExprStr = greenFunctionStr+seqP->greenExAc+endFunctionStr;
-    std::string blueExprStr = blueFunctionStr+seqP->blueExAc+endFunctionStr;   
-    std::string rgbExprStr = rgbFunctionStr+ seqP->rgbExprExAc +endFunctionStr;
-	std::string alphaExprStr = alphaFunctionStr + seqP->alphaExAc + endFunctionStr;
+	tlmath_shaders tlms;
+    std::string redExprStr = tlms.redFunctionStr+seqP->redExAc+ tlms.endFunctionStr ;
+    std::string greenExprStr = tlms.greenFunctionStr+seqP->greenExAc+ tlms.endFunctionStr;
+    std::string blueExprStr = tlms.blueFunctionStr+seqP->blueExAc+ tlms.endFunctionStr;
+    std::string rgbExprStr = tlms.rgbFunctionStr+ seqP->rgbExprExAc + tlms.endFunctionStr;
+	std::string alphaExprStr = tlms.alphaFunctionStr + seqP->alphaExAc + tlms.endFunctionStr;
 
     std::string exprGrpStr =redExprStr+ greenExprStr+blueExprStr+alphaExprStr;
     if (seqP->exprRGBModeB){
@@ -440,7 +449,7 @@ tlmath::embedExprInShaders (seqData  *seqP){
 	strReplace(exprGrpStr, "inputLayer0", seqP->paramLayer00NameAc);
 
     //start new Shader as string
-    std::string fragShStr = gl33GeneriqueShInput; //get the classic input
+    std::string fragShStr = tlms.gl33GeneriqueShInput; //get the classic input
 
     //bool
     AppendGlslInputBool(fragShStr,exprGrpStr, seqP-> paramCb01NameAc);
@@ -513,7 +522,7 @@ tlmath::embedExprInShaders (seqData  *seqP){
 
     //for texttures
 	//we force to import texture0, alias current layer
-	fragShStr.append(import2dTextGlStr + seqP->paramLayer00NameAc + endLineStr);
+	fragShStr.append(tlms.import2dTextGlStr + seqP->paramLayer00NameAc + tlms.endLineStr);
 	//the other only if they are called
 	bool  hasTexture1B = false, hasTexture2B = false , hasTexture3B = false, hasTexture4B  = false;
     AppendGlslInput2dText (fragShStr,exprGrpStr, seqP->paramLayer01NameAc, &hasTexture1B);
@@ -521,42 +530,39 @@ tlmath::embedExprInShaders (seqData  *seqP){
     AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer03NameAc, &hasTexture3B);
     AppendGlslInput2dText (fragShStr,exprGrpStr,seqP-> paramLayer04NameAc, &hasTexture4B);
 
-	fragShStr.append(gl33getLuma);
-    fragShStr.append(gl33InputTexture);
-	
+	fragShStr.append("//BEGIN IMPORT COMMON EXPR \n");
+	fragShStr.append(seqP->commonExpr);
+	fragShStr.append("//END OF IMPORT COMMON EXPR \n");
 
 
      //embed expressions in shaders and add uniforms in shaders depending of expression.
 	fragShStr.append(exprGrpStr);
     if (seqP->exprRGBModeB){
-        strReplace(gl33InputMainGrp,"inputLayer0", seqP->paramLayer00NameAc);
-        fragShStr.append (gl33InputMainGrp);
+        strReplace(tlms.gl33InputMainGrp,"inputLayer0", seqP->paramLayer00NameAc);
+        fragShStr.append (tlms.gl33InputMainGrp);
     }else{
-		strReplace(gl33InputMainSplit, "inputLayer0", seqP->paramLayer00NameAc);
-		fragShStr.append(gl33InputMainSplit);
+		strReplace(tlms.gl33InputMainSplit, "inputLayer0", seqP->paramLayer00NameAc);
+		fragShStr.append(tlms.gl33InputMainSplit);
 
     }
 	std::size_t length = fragShStr.copy(seqP->Glsl33_FragmentShAc, fragShStr.size());
 	seqP->Glsl33_FragmentShAc[length] = '\0';
 	//keep the default vertex shader
-	std::size_t  vertLength = glvertstr.copy(seqP->Glsl33_VertexShAc, glvertstr.length());
+	std::size_t  vertLength = tlms.glvertstr.copy(seqP->Glsl33_VertexShAc, tlms.glvertstr.length());
 	seqP->Glsl33_VertexShAc[vertLength] = '\0';
     return err;
 
 }
-
-
-
-void
+void 
 tlmath::evalScripts(seqData  *seqP)
 {
     std::string evalVertSh, evalFragSh;
 
-
+	tlmath_shaders tlms;
     tlmath::evalVertShader (seqP->Glsl33_VertexShAc, evalVertSh);
-    if (evalVertSh != compile_success){
+    if (evalVertSh != tlms.compile_success){
         #ifdef AE_OS_WIN
-                strncpy_s(seqP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+                strncpy_s(seqP->Glsl33_VertexShAc, tlms.glvertstr.c_str(), tlms.glvertstr.length() + 1);
         #else
         strncpy(seqP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
         #endif
@@ -564,14 +570,14 @@ tlmath::evalScripts(seqData  *seqP)
 
     tlmath::evalFragShader (seqP->Glsl33_FragmentShAc, evalFragSh);
 	std::string originalfragSh = seqP->Glsl33_FragmentShAc;
-    if (evalFragSh != compile_success){
+    if (evalFragSh != tlms.compile_success){
         std::string setting_resolutionName = "resolution";
         #ifdef AE_OS_WIN
                  strncpy_s(seqP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
-                 strncpy_s(seqP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+                 strncpy_s(seqP->Glsl33_FragmentShAc, tlms.glErrorMessageStr.c_str(), tlms.glErrorMessageStr .length() + 1);
         #else
                 strncpy(seqP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
-        strncpy(seqP->Glsl33_FragmentShAc, glErrorMessageStr.c_str(),  glErrorMessageStr .length() + 1);
+        strncpy(seqP->Glsl33_FragmentShAc, tlms.glErrorMessageStr.c_str(), tlms.glErrorMessageStr .length() + 1);
         #endif
 
     }
@@ -598,9 +604,9 @@ tlmath::evalScripts(seqData  *seqP)
 			#endif
 		}
 		else {
-			size_t redExprIndex = originalfragSh.find("float redExpr(");
-			size_t greenExprIndex = originalfragSh.find("float greenExpr(");
-			size_t blueExprIndex = originalfragSh.find("float blueExpr(");
+			const size_t redExprIndex = originalfragSh.find("float redExpr(");
+			const size_t greenExprIndex = originalfragSh.find("float greenExpr(");
+			const size_t blueExprIndex = originalfragSh.find("float blueExpr(");
 			//redExprStr
 			std::string exprRedErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, redExprIndex, greenExprIndex);
 			//greenExprStr
@@ -618,11 +624,16 @@ tlmath::evalScripts(seqData  *seqP)
 			#endif
 		}
 		//alphaExprStr
-		size_t mainFunIndex = originalfragSh.find("main(void)"); //to delimit the end of the alpha expr
+		size_t commonExprBeginIndex = originalfragSh.find("//BEGIN IMPORT COMMON EXPR");
+		size_t commonExprEndIndex = originalfragSh.find("//END OF IMPORT COMMON EXPR");
+		std::string commonErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, commonExprBeginIndex, commonExprEndIndex);
+		const size_t mainFunIndex = originalfragSh.find("main(void)"); //to delimit the end of the alpha expr
 		std::string exprAlphaErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, alphaExprIndex, mainFunIndex);
 		#ifdef AE_OS_WIN
+			strncpy_s(seqP->commonError, commonErrStr.c_str(), commonErrStr.length() + 1);
 			strncpy_s(seqP->alphaError, exprAlphaErrStr.c_str(), exprAlphaErrStr.length() + 1);
 		#else
+			strncpy(seqP->commonError, commonErrStr.c_str(), commonErrStr.length() + 1);
 			strncpy(seqP->alphaError, exprAlphaErrStr.c_str(), exprAlphaErrStr.length() + 1);
 		#endif
 	 }
