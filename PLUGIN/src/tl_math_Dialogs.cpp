@@ -439,13 +439,18 @@ tlmath::embedExprInShaders (seqData  *seqP){
     std::string rgbExprStr = tlms.rgbFunctionStr+ seqP->rgbExprExAc + tlms.endFunctionStr;
 	std::string alphaExprStr = tlms.alphaFunctionStr + seqP->alphaExAc + tlms.endFunctionStr;
 
-    std::string exprGrpStr =redExprStr+ greenExprStr+blueExprStr+alphaExprStr;
+	std::string commonGrpStr = ("//BEGIN IMPORT COMMON EXPR \n");
+	commonGrpStr.append(seqP->commonExpr);
+	commonGrpStr.append("//END OF IMPORT COMMON EXPR \n");
+
+    std::string exprGrpStr = commonGrpStr+redExprStr+ greenExprStr+blueExprStr+alphaExprStr;
     if (seqP->exprRGBModeB){
         AEFX_CLR_STRUCT(exprGrpStr);
-        exprGrpStr =rgbExprStr + alphaExprStr;
+        exprGrpStr = commonGrpStr+rgbExprStr + alphaExprStr;
     }
 	strReplace(exprGrpStr, "fragCoord", seqP->expr_pixNameAc);
 	strReplace(exprGrpStr, "colorCh", seqP->expr_ColorChNameAc);
+	strReplace(exprGrpStr, "inputRgb", seqP->expr_rgbChNameAc);
 	strReplace(exprGrpStr, "inputLayer0", seqP->paramLayer00NameAc);
 
     //start new Shader as string
@@ -530,9 +535,7 @@ tlmath::embedExprInShaders (seqData  *seqP){
     AppendGlslInput2dText (fragShStr,exprGrpStr, seqP-> paramLayer03NameAc, &hasTexture3B);
     AppendGlslInput2dText (fragShStr,exprGrpStr,seqP-> paramLayer04NameAc, &hasTexture4B);
 
-	fragShStr.append("//BEGIN IMPORT COMMON EXPR \n");
-	fragShStr.append(seqP->commonExpr);
-	fragShStr.append("//END OF IMPORT COMMON EXPR \n");
+
 
 
      //embed expressions in shaders and add uniforms in shaders depending of expression.

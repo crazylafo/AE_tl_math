@@ -256,6 +256,7 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 
      //copy expressions params name
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_current_channel",seqDataP->expr_ColorChNameAc);
+	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_rgb_channel", seqDataP->expr_rgbChNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/math_expression/expr_pix",seqDataP->expr_pixNameAc);
     // copy compositions params
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_position",seqDataP->cameraPosNameAc);
