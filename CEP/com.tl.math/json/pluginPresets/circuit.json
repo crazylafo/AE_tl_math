@@ -52,7 +52,7 @@
 "pluginVersion": 115,
 
 
-"presetName": "eletric_circuit",
+"presetName": "eletric_light",
 
 
 "tags": [
@@ -92,9 +92,6 @@
 },
 
 "flags": {
-
-
-"needsLumaB": false,
 
 
 "pixelsCallExternalInputB": [
@@ -1176,16 +1173,6 @@ false
 
 
 
-"poffName": "layer1_position_off",
-
-
-
-
-"toffName": "layer1_time_off",
-
-
-
-
 "visibleB": false
 
 
@@ -1200,16 +1187,6 @@ false
 
 
 "name": "texture2",
-
-
-
-
-"poffName": "layer2_position_off",
-
-
-
-
-"toffName": "layer2_time_off",
 
 
 
@@ -1232,16 +1209,6 @@ false
 
 
 
-"poffName": "layer3_position_off",
-
-
-
-
-"toffName": "layer3_time_off",
-
-
-
-
 "visibleB": false
 
 
@@ -1256,16 +1223,6 @@ false
 
 
 "name": "texture4",
-
-
-
-
-"poffName": "layer4_position_off",
-
-
-
-
-"toffName": "layer4_time_off",
 
 
 
