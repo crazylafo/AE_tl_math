@@ -2710,6 +2710,9 @@ false
 "exprRGBModeB": true,
 
 
+"expr_rgb_channel":"inputRgb",
+
+
 "expr_current_channel": "inChannel",
 
 

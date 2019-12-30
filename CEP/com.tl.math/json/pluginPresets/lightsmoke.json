@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on https://logik-matchbook.org/shader/AFX_DeSpill\\n\\nThis is a simple green, blue or red despiller, which great for keeping on the skintone looking natural.\\nSelect the layer source, the channel to despill and the amount of the  effect.",
+"description": "generate three lighted smokes. You can play with the density, intensity speed, color and position of each source. the three smokes are additives with others.\\n",
 
 
 "effectName": "tlMath",
@@ -52,26 +52,26 @@
 "pluginVersion": 115,
 
 
-"presetName": "Despiller",
+"presetName": "lighted_smoke",
 
 
 "tags": [
 
 
 
-"despill",
+"smoke",
 
 
 
-" color",
+" generator",
 
 
 
-" simple",
+" particule",
 
 
 
-" "
+" light"
 
 
 ]
@@ -94,11 +94,14 @@
 "flags": {
 
 
+"needsLumaB": false,
+
+
 "pixelsCallExternalInputB": [
 
 
 
-true,
+false,
 
 
 
@@ -116,7 +119,7 @@ false
 ],
 
 
-"presetHasWideInputB": false,
+"presetHasWideInputB": true,
 
 
 "usesCameraB": false
@@ -129,7 +132,7 @@ false
 "gl33_frag_error": "compiled successfully",
 
 
-"gl33_frag_sh": "//based on https://logik-matchbook.org/shader/AFX_DeSpill\\n#version 330 // glsls version for opengl 3.3\\nuniform sampler2D front; //call the layer source\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\nuniform float amount;\\nuniform bool despillG;\\nuniform bool despillR;\\nuniform bool despillB;\\n\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d)\\n{\\n    vec2 uv_AE = out_uvs;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    return textureIn;\\n}\\n\\nvoid main (){\\n\\t// Standard Autodesk Stuff\\n\\tvec4 source =  loadTextureFromAE (front);\\n\\tvec3 result \\t\\t= source.rgb;\\n\\tvec3 suppressed \\t= source.rgb;\\n\\n\\tif(despillG)\\n\\t\\tsuppressed.g \\t\\t= min((source.r+source.b)*0.5, suppressed.g);\\t\\n\\telse if(despillB)\\n\\t\\tsuppressed.b \\t\\t= min((source.g+source.r)*0.5, suppressed.b);\\n\\telse if(despillR)\\n\\t\\tsuppressed.r \\t\\t= min((source.g+source.b)*0.5, suppressed.r);\\t\\n\\n\\tresult\\t\\t\\t\\t=  mix( source.rgb, suppressed, amount );\\n\\tfragColorOut \\t= \\tvec4( result, source.a);\\n}\\n",
+"gl33_frag_sh": "#version 330 // glsls version for opengl 3.3\\nuniform float time;\\nuniform vec2 resolution;\\nuniform float density_1;\\nuniform float density_2;\\nuniform float density_3;\\nuniform float intensity_1;\\nuniform float intensity_2;\\nuniform float intensity_3;\\nuniform float speed_1;\\nuniform float speed_2;\\nuniform float speed_3;\\nuniform vec3 center;\\nuniform vec3 position_1;\\nuniform vec3 position_2;\\nuniform vec3 position_3;\\nuniform vec3 color_1;\\nuniform vec3 color_2;\\nuniform vec3 color_3;\\nout vec4 fragColorOut;\\n\\nvec3 mod289(vec3 x) {\\n  return x - floor(x * (1.0 / 289.0)) * 289.0;\\n}\\n\\nvec4 mod289(vec4 x) {\\n  return x - floor(x * (1.0 / 289.0)) * 289.0;\\n}\\n\\nvec4 permute(vec4 x) {\\n     return mod289(((x*34.0)+1.0)*x);\\n}\\n\\nvec4 taylorInvSqrt(vec4 r)\\n{\\n  return 1.79284291400159 - 0.85373472095314 * r;\\n}\\n\\nfloat snoise(vec3 v)\\n  { \\n  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;\\n  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);\\n\\n// First corner\\n  vec3 i  = floor(v + dot(v, C.yyy) );\\n  vec3 x0 =   v - i + dot(i, C.xxx) ;\\n\\n// Other corners\\n  vec3 g = step(x0.yzx, x0.xyz);\\n  vec3 l = 1.0 - g;\\n  vec3 i1 = min( g.xyz, l.zxy );\\n  vec3 i2 = max( g.xyz, l.zxy );\\n\\n  //   x0 = x0 - 0.0 + 0.0 * C.xxx;\\n  //   x1 = x0 - i1  + 1.0 * C.xxx;\\n  //   x2 = x0 - i2  + 2.0 * C.xxx;\\n  //   x3 = x0 - 1.0 + 3.0 * C.xxx;\\n  vec3 x1 = x0 - i1 + C.xxx;\\n  vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y\\n  vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y\\n\\n// Permutations\\n  i = mod289(i); \\n  vec4 p = permute( permute( permute( \\n             i.z + vec4(0.0, i1.z, i2.z, 1.0 ))\\n           + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) \\n           + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));\\n\\n// Gradients: 7x7 points over a square, mapped onto an octahedron.\\n// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)\\n  float n_ = 0.142857142857; \\n  vec3  ns = n_ * D.wyz - D.xzx;\\n\\n  vec4 j = p - 49.0 * floor(p * ns.z * ns.z); \\n\\n  vec4 x_ = floor(j * ns.z);\\n  vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)\\n\\n  vec4 x = x_ *ns.x + ns.yyyy;\\n  vec4 y = y_ *ns.x + ns.yyyy;\\n  vec4 h = 1.0 - abs(x) - abs(y);\\n\\n  vec4 b0 = vec4( x.xy, y.xy );\\n  vec4 b1 = vec4( x.zw, y.zw );\\n\\n  //vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;\\n  //vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;\\n  vec4 s0 = floor(b0)*2.0 + 1.0;\\n  vec4 s1 = floor(b1)*2.0 + 1.0;\\n  vec4 sh = -step(h, vec4(0.0));\\n\\n  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;\\n  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;\\n\\n  vec3 p0 = vec3(a0.xy,h.x);\\n  vec3 p1 = vec3(a0.zw,h.y);\\n  vec3 p2 = vec3(a1.xy,h.z);\\n  vec3 p3 = vec3(a1.zw,h.w);\\n\\n//Normalise gradients\\n  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));\\n  p0 *= norm.x;\\n  p1 *= norm.y;\\n  p2 *= norm.z;\\n  p3 *= norm.w;\\n\\n// Mix final noise value\\n  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);\\n  m = m * m;\\n  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), \\n                                dot(p2,x2), dot(p3,x3) ) );\\n  }\\n\\nfloat normnoise(float noise) {\\n    return 0.5*(noise+1.0);\\n}\\n\\nfloat clouds(vec2 uv, float speed, float density) {\\n    uv += vec2(time/speed, + time/speed);\\n    \\n    vec2 off1 = vec2(50.0,33.0);\\n    vec2 off2 = vec2(100.0, 50.0);\\n    vec2 off3 = vec2(-300.0, 50.0);\\n    vec2 off4 = vec2(-100.0, 200.0);\\n    vec2 off5 = vec2(400.0, -200.0);\\n    vec2 off6 = vec2(100.0, -1000.0);\\n    float scale1 = 3.0;\\n    float scale2 = 6.0;\\n    float scale3 = 12.0;\\n    float scale4 = 24.0;\\n    float scale5 = 48.0;\\n    float scale6 = 96.0;\\n    return density*normnoise(snoise(vec3((uv+off1)*scale1,time*0.5))*0.8 + \\n                     snoise(vec3((uv+off2)*scale2,time*0.4))*0.4 +\\n                     snoise(vec3((uv+off3)*scale3,time*0.1))*0.2 +\\n                     snoise(vec3((uv+off4)*scale4,time*0.7))*0.1 +\\n                     snoise(vec3((uv+off5)*scale5,time*0.2))*0.05 +\\n                     snoise(vec3((uv+off6)*scale6,time*0.3))*0.025);\\n}\\n\\n\\nvoid main()\\n{\\n  vec2  fragCoord =gl_FragCoord.xy;\\n    //fragCoord.y = resolution.y -fragCoord.y;\\n    vec2 uv =  fragCoord.xy/resolution.xy;\\n   \\n    vec2 light1 = position_1.xy/resolution.xy;\\n    vec3 lightColor1 = color_1;\\n    \\n    vec2 light2 = position_2.xy/resolution.xy;\\n    vec3 lightColor2 = color_2;\\n    \\n    vec2 light3 = position_3.xy/resolution.xy;\\n    vec3 lightColor3 = color_3;\\n\\n    \\n    float cloudIntensity1 = density_1/100*(1.0-(2.5*distance(uv, light1)));\\n    float lighIntensity1 = intensity_1/(1000.0*distance(uv,light1));\\n\\n    float cloudIntensity2 =density_2/100*(1.0-(2.5*distance(uv, light2)));\\n    float lighIntensity2 = intensity_2/(1000.0*distance(uv,light2));\\n    \\n    float cloudIntensity3 =density_3/100*(1.0-(2.5*distance(uv, light3)));\\n    float lighIntensity3 = intensity_3/(1000.0*distance(uv,light3));\\n    \\n    \\n   fragColorOut  = vec4(vec3(cloudIntensity1*clouds(uv,speed_1,density_1/100))*lightColor1 + lighIntensity1*lightColor1 +\\n                     vec3(cloudIntensity2*clouds(uv, speed_2,density_1/100))*lightColor2 + lighIntensity2*lightColor2 +\\n                     vec3(cloudIntensity3*clouds(uv,speed_3,density_1/100))*lightColor3 + lighIntensity3*lightColor3 \\n                     ,1.0);\\n}",
 
 
 "gl33_vert_error": "compiled successfully",
@@ -146,11 +149,11 @@ false
 
 
 
-"grpName": "despills",
+"grpName": "check box Group",
 
 
 
-"grpVisibleB": true,
+"grpVisibleB": false,
 
 
 
@@ -184,54 +187,13 @@ false
 
 
 
-"name": "despillR",
+"name": "cbox_1",
 
 
 
 
 
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "despillG",
-
-
-
-
-
-"visibleB": true
+"visibleB": false
 
 
 
@@ -266,13 +228,54 @@ false
 
 
 
-"name": "despillB",
+"name": "cbox_2",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+0
+
+
+
+
+
+],
+
+
+
+
+
+"name": "cbox_3",
+
+
+
+
+
+"visibleB": false
 
 
 
@@ -582,7 +585,7 @@ false
 
 
 
-"grpVisibleB": false,
+"grpVisibleB": true,
 
 
 
@@ -611,14 +614,14 @@ false
 
 
 
-1,
+0,
 
 
 
 
 
 
-1
+0
 
 
 
@@ -636,7 +639,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -659,7 +662,7 @@ false
 
 
 
-1,
+0,
 
 
 
@@ -673,7 +676,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -691,7 +694,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -714,14 +717,14 @@ false
 
 
 
-1,
+0,
 
 
 
 
 
 
-1,
+0,
 
 
 
@@ -746,7 +749,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1168,12 +1171,22 @@ false
 
 
 
-"name": "front",
+"name": "texture1",
 
 
 
 
-"visibleB": true
+"poffName": "layer1_position_off",
+
+
+
+
+"toffName": "layer1_time_off",
+
+
+
+
+"visibleB": false
 
 
 
@@ -1187,6 +1200,16 @@ false
 
 
 "name": "texture2",
+
+
+
+
+"poffName": "layer2_position_off",
+
+
+
+
+"toffName": "layer2_time_off",
 
 
 
@@ -1209,6 +1232,16 @@ false
 
 
 
+"poffName": "layer3_position_off",
+
+
+
+
+"toffName": "layer3_time_off",
+
+
+
+
 "visibleB": false
 
 
@@ -1227,6 +1260,16 @@ false
 
 
 
+"poffName": "layer4_position_off",
+
+
+
+
+"toffName": "layer4_time_off",
+
+
+
+
 "visibleB": false
 
 
@@ -1239,7 +1282,7 @@ false
 
 
 
-"grpVisibleB": true
+"grpVisibleB": false
 
 
 },
@@ -1301,7 +1344,7 @@ false
 
 
 
-"name": "point_1",
+"name": "center",
 
 
 
@@ -1356,68 +1399,13 @@ false
 
 
 
-"name": "point_2",
+"name": "position_1",
 
 
 
 
 
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_3",
-
-
-
-
-
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1466,13 +1454,68 @@ false
 
 
 
-"name": "point_4",
+"name": "position_2",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+50,
+
+
+
+
+
+
+50,
+
+
+
+
+
+
+50
+
+
+
+
+
+],
+
+
+
+
+
+"name": "position_3",
+
+
+
+
+
+"visibleB": true
 
 
 
@@ -1825,7 +1868,7 @@ false
 
 
 
-"grpVisibleB": false,
+"grpVisibleB": true,
 
 
 
@@ -1847,7 +1890,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -1859,13 +1902,13 @@ false
 
 
 
-"name": "rotation_1",
+"name": "speed_1",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1888,7 +1931,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -1900,13 +1943,13 @@ false
 
 
 
-"name": "rotation_2",
+"name": "speed_2",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1929,7 +1972,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -1941,13 +1984,13 @@ false
 
 
 
-"name": "rotation_3",
+"name": "speed_3",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2279,7 +2322,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2291,7 +2334,7 @@ false
 
 
 
-"name": "amount",
+"name": "density_1",
 
 
 
@@ -2320,7 +2363,7 @@ false
 
 
 
-0
+20
 
 
 
@@ -2332,13 +2375,13 @@ false
 
 
 
-"name": "slider_2",
+"name": "density_2",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2361,7 +2404,7 @@ false
 
 
 
-0
+15
 
 
 
@@ -2373,13 +2416,13 @@ false
 
 
 
-"name": "slider_3",
+"name": "density_3",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2402,7 +2445,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2414,13 +2457,13 @@ false
 
 
 
-"name": "slider_4",
+"name": "intensity_1",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2443,7 +2486,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2455,13 +2498,13 @@ false
 
 
 
-"name": "slider_5",
+"name": "intensity_2",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2484,7 +2527,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2496,13 +2539,13 @@ false
 
 
 
-"name": "slider_6",
+"name": "intensity_3",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2697,7 +2740,7 @@ false
 "blue_error": " compiled successfully",
 
 
-"commonExpr":  "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
+"commonExpr": "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
 
 
 "common_error": "compiled successfully",
@@ -2706,14 +2749,13 @@ false
 "exprRGBModeB": true,
 
 
-"expr_rgb_channel":"inputRgb",
-
-
-
 "expr_current_channel": "inChannel",
 
 
 "expr_pix": "pix",
+
+
+"expr_rgb_channel": "inputRgb",
 
 
 "greenExpr": "return inChannel;",
@@ -2728,7 +2770,7 @@ false
 "red_error": "compiled successfully",
 
 
-"rgbExpr": "return inChannel;",
+"rgbExpr": "    vec3 result;\\n    //in this mode the channel0 texture is automatically a rgb channel\\n    vec3 premix =mix (inputRgb,color_1, slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        //gl_FragCoord returns the coordonate of the current pixel.\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        result = mix (inputRgb,textureLayer.rgb, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         result =premix; // if checkbox not selected return premix\\n\\n    }\\n    return result;",
 
 
 "rgb_error": "compiled successfully"

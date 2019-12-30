@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on https://logik-matchbook.org/shader/AFX_DeSpill\\n\\nThis is a simple green, blue or red despiller, which great for keeping on the skintone looking natural.\\nSelect the layer source, the channel to despill and the amount of the  effect.",
+"description": "generates an electric circuit with an editable background and foreground",
 
 
 "effectName": "tlMath",
@@ -52,26 +52,26 @@
 "pluginVersion": 115,
 
 
-"presetName": "Despiller",
+"presetName": "eletric_circuit",
 
 
 "tags": [
 
 
 
-"despill",
+"generator",
 
 
 
-" color",
+" glslsandbox",
 
 
 
-" simple",
+" electric",
 
 
 
-" "
+" voronoi"
 
 
 ]
@@ -94,11 +94,14 @@
 "flags": {
 
 
+"needsLumaB": false,
+
+
 "pixelsCallExternalInputB": [
 
 
 
-true,
+false,
 
 
 
@@ -116,7 +119,7 @@ false
 ],
 
 
-"presetHasWideInputB": false,
+"presetHasWideInputB": true,
 
 
 "usesCameraB": false
@@ -129,7 +132,7 @@ false
 "gl33_frag_error": "compiled successfully",
 
 
-"gl33_frag_sh": "//based on https://logik-matchbook.org/shader/AFX_DeSpill\\n#version 330 // glsls version for opengl 3.3\\nuniform sampler2D front; //call the layer source\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\nuniform float amount;\\nuniform bool despillG;\\nuniform bool despillR;\\nuniform bool despillB;\\n\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d)\\n{\\n    vec2 uv_AE = out_uvs;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    return textureIn;\\n}\\n\\nvoid main (){\\n\\t// Standard Autodesk Stuff\\n\\tvec4 source =  loadTextureFromAE (front);\\n\\tvec3 result \\t\\t= source.rgb;\\n\\tvec3 suppressed \\t= source.rgb;\\n\\n\\tif(despillG)\\n\\t\\tsuppressed.g \\t\\t= min((source.r+source.b)*0.5, suppressed.g);\\t\\n\\telse if(despillB)\\n\\t\\tsuppressed.b \\t\\t= min((source.g+source.r)*0.5, suppressed.b);\\n\\telse if(despillR)\\n\\t\\tsuppressed.r \\t\\t= min((source.g+source.b)*0.5, suppressed.r);\\t\\n\\n\\tresult\\t\\t\\t\\t=  mix( source.rgb, suppressed, amount );\\n\\tfragColorOut \\t= \\tvec4( result, source.a);\\n}\\n",
+"gl33_frag_sh": "//shader from glslsandbox\\n// Author: Marco Gomez        | @marcogomez_ | http://mgz.me    |\\n// Sample Shader for ShaderLab    | http://shaderlab.mgz.me    |\\n#version 330\\n\\n\\nin vec4 out_pos;\\nin vec2 out_uvs;\\n\\nuniform    vec2    resolution;\\nuniform    float    time;\\nuniform    float fg_seed;\\nuniform    float bg_seed;\\nuniform    float fg_evolution;\\nuniform    float fg_light;\\nuniform    float bg_light;\\nuniform    float bg_distort;\\nuniform    float fg_size;\\nuniform float   zoom;\\n\\nuniform vec3 cl1;\\n\\nout vec4 colourOut;\\n\\n\\nfloat    rndc = bg_seed*1000;\\n\\nfloat fMix (float x, float y, float a) { return  x* (1-a) + (y*a); } //for macos error\\n\\nfloat rand (float n) { return fract(sin(n) * rndc); }\\n\\nvec2 rand2 (in vec2 p) { return fract(vec2(sin(p.x * 591.32 + p.y * 154.077), cos(p.x * 391.32 + p.y * 49.077))); }\\n\\nfloat noiseD (float p) { float fl = floor(p), fc = fract(p); return fMix(rand(fl), rand(fl + 1.000004), fc); }\\n\\n// voronoi distance noise based on iq's articles ( http://www.iquilezles.org/www/index.htm )\\nfloat voronoi (vec2 x) {\\n    vec2 p = floor(x), f = fract(x), res = vec2(8.0);\\n    for(int j = -1; j <= 1; j ++)\\n    for(int i = -1; i <= 1; i ++) {\\n        vec2 b = vec2(i, j), r = vec2(b) - f + rand2(p + b);\\n        float d = max(abs(r.x), abs(r.y));\\n        if(d < res.x) { res.y = res.x; res.x = d; } else if(d < res.y) { res.y = d; }\\n    }\\n    return res.y - res.x;\\n}\\n\\nvoid main (void) {\\n    vec2 xy = gl_FragCoord.xy / resolution.xy;    xy = (xy - 0.5) * 3.0;\\n    vec2 xy2 = xy;\\n    xy.x *= resolution.x / resolution.y;\\n    float v = 0.0; v = 0.21 - length(xy) * 0.21;\\n   xy /= zoom/50;\\n    //xy += time * 0.12;\\n    //xy.y -= time * 0.12;\\n    float a = 0.7, f = 1.0;\\n    for(int i = 0; i < int(fg_light); i ++) {\\n        float v1 = voronoi(xy * f + bg_seed);\\n        float v2 = 0.0;\\n        if(i > 0) {\\n            float va = 0.0, vb = 0.0;\\n            if (i == 1) {\\n                va = 1.0 - smoothstep(0.0, 0.2, v1);\\n                v2 = voronoi(xy * f * 0.5 / 5.0 + 8694.0 +  fg_evolution -10 * 0.125);\\n                vb = 1.0 - smoothstep(0.0, 0.1, v2);\\n            } else {\\n                va = 1.0 - smoothstep(0.0, 0.1, v1);\\n                v2 = voronoi(xy * f * 0.5 + 50.0  + fg_evolution );\\n                vb = 1.0 - smoothstep(0.0, 0.08, v2);\\n            }\\n            v += a * pow(va * (2.915 *vb), fg_light/10);\\n        }\\n        v1 = 1.0 - smoothstep(bg_distort/100, .2, v1);\\n        v2 =    fMix (0.12, a * (noiseD(v1 * 7.5 + 0.3)), bg_light/100);\\n        if(i == 0) { v += v2; }\\n        f *= 3.0*fg_size;\\n        a *=  fg_light/105;\\n    }\\n    v *= exp(-0.6 * length(xy2)) * 1.2;\\n    vec3 cexp = 0.2+(vec3(1)-cl1); //vec3(4.0, 1.5, 1.2);\\n    cexp *= 6.012;\\n    //vec3 col = cl1*v*4.0;\\n    vec3 col = vec3(pow(v, cexp.x), pow(v, cexp.y), pow(v, cexp.z)) * 4.0;\\n    colourOut= vec4(col, 1.0);\\n}",
 
 
 "gl33_vert_error": "compiled successfully",
@@ -146,7 +149,7 @@ false
 
 
 
-"grpName": "despills",
+"grpName": "check box Group",
 
 
 
@@ -184,7 +187,7 @@ false
 
 
 
-"name": "despillR",
+"name": "cbox_1",
 
 
 
@@ -225,7 +228,7 @@ false
 
 
 
-"name": "despillG",
+"name": "cbox_2",
 
 
 
@@ -266,7 +269,7 @@ false
 
 
 
-"name": "despillB",
+"name": "cbox_3",
 
 
 
@@ -313,7 +316,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -354,7 +357,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -395,7 +398,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -436,7 +439,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -477,7 +480,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -518,7 +521,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -559,7 +562,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -582,7 +585,7 @@ false
 
 
 
-"grpVisibleB": false,
+"grpVisibleB": true,
 
 
 
@@ -630,13 +633,13 @@ false
 
 
 
-"name": "color_1",
+"name": "cl1",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -691,7 +694,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -746,7 +749,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -801,7 +804,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -856,7 +859,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -911,7 +914,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -966,7 +969,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1021,7 +1024,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1076,7 +1079,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1131,7 +1134,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1168,12 +1171,22 @@ false
 
 
 
-"name": "front",
+"name": "texture1",
 
 
 
 
-"visibleB": true
+"poffName": "layer1_position_off",
+
+
+
+
+"toffName": "layer1_time_off",
+
+
+
+
+"visibleB": false
 
 
 
@@ -1187,6 +1200,16 @@ false
 
 
 "name": "texture2",
+
+
+
+
+"poffName": "layer2_position_off",
+
+
+
+
+"toffName": "layer2_time_off",
 
 
 
@@ -1209,6 +1232,16 @@ false
 
 
 
+"poffName": "layer3_position_off",
+
+
+
+
+"toffName": "layer3_time_off",
+
+
+
+
 "visibleB": false
 
 
@@ -1227,6 +1260,16 @@ false
 
 
 
+"poffName": "layer4_position_off",
+
+
+
+
+"toffName": "layer4_time_off",
+
+
+
+
 "visibleB": false
 
 
@@ -1239,7 +1282,7 @@ false
 
 
 
-"grpVisibleB": true
+"grpVisibleB": false
 
 
 },
@@ -1301,7 +1344,7 @@ false
 
 
 
-"name": "point_1",
+"name": "center",
 
 
 
@@ -2279,7 +2322,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2291,7 +2334,253 @@ false
 
 
 
-"name": "amount",
+"name": "fg_seed",
+
+
+
+
+
+"visibleB": true
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+10
+
+
+
+
+
+],
+
+
+
+
+
+"name": "bg_seed",
+
+
+
+
+
+"visibleB": true
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+10
+
+
+
+
+
+],
+
+
+
+
+
+"name": "bg_light",
+
+
+
+
+
+"visibleB": true
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+10
+
+
+
+
+
+],
+
+
+
+
+
+"name": "fg_light",
+
+
+
+
+
+"visibleB": true
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+10
+
+
+
+
+
+],
+
+
+
+
+
+"name": "fg_evolution",
+
+
+
+
+
+"visibleB": true
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+15
+
+
+
+
+
+],
+
+
+
+
+
+"name": "zoom",
+
+
+
+
+
+"visibleB": true
+
+
+
+
+},
+
+
+
+
+{
+
+
+
+
+
+"defaultVal": [
+
+
+
+
+
+
+1
+
+
+
+
+
+],
+
+
+
+
+
+"name": "fg_size",
 
 
 
@@ -2332,54 +2621,13 @@ false
 
 
 
-"name": "slider_2",
+"name": "bg_distort",
 
 
 
 
 
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_3",
-
-
-
-
-
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2414,212 +2662,7 @@ false
 
 
 
-"name": "slider_4",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_5",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_6",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_7",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_8",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_9",
+"name": "",
 
 
 
@@ -2697,7 +2740,7 @@ false
 "blue_error": " compiled successfully",
 
 
-"commonExpr":  "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
+"commonExpr": "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
 
 
 "common_error": "compiled successfully",
@@ -2706,14 +2749,13 @@ false
 "exprRGBModeB": true,
 
 
-"expr_rgb_channel":"inputRgb",
-
-
-
 "expr_current_channel": "inChannel",
 
 
 "expr_pix": "pix",
+
+
+"expr_rgb_channel": "inputRgb",
 
 
 "greenExpr": "return inChannel;",
@@ -2728,7 +2770,7 @@ false
 "red_error": "compiled successfully",
 
 
-"rgbExpr": "return inChannel;",
+"rgbExpr": "    vec3 result;\\n    //in this mode the channel0 texture is automatically a rgb channel\\n    vec3 premix =mix (inputRgb,color_1, slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        //gl_FragCoord returns the coordonate of the current pixel.\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        result = mix (inputRgb,textureLayer.rgb, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         result =premix; // if checkbox not selected return premix\\n\\n    }\\n    return result;",
 
 
 "rgb_error": "compiled successfully"

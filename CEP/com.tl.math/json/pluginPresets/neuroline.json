@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on https://logik-matchbook.org/shader/AFX_DeSpill\\n\\nThis is a simple green, blue or red despiller, which great for keeping on the skintone looking natural.\\nSelect the layer source, the channel to despill and the amount of the  effect.",
+"description": "a work in progress shader to generate illustration of neuronal networks",
 
 
 "effectName": "tlMath",
@@ -52,26 +52,22 @@
 "pluginVersion": 115,
 
 
-"presetName": "Despiller",
+"presetName": "neurolines_wip",
 
 
 "tags": [
 
 
 
-"despill",
+"neurolines",
 
 
 
-" color",
+" experiment",
 
 
 
-" simple",
-
-
-
-" "
+" wip"
 
 
 ]
@@ -94,11 +90,14 @@
 "flags": {
 
 
+"needsLumaB": false,
+
+
 "pixelsCallExternalInputB": [
 
 
 
-true,
+false,
 
 
 
@@ -116,7 +115,7 @@ false
 ],
 
 
-"presetHasWideInputB": false,
+"presetHasWideInputB": true,
 
 
 "usesCameraB": false
@@ -129,7 +128,7 @@ false
 "gl33_frag_error": "compiled successfully",
 
 
-"gl33_frag_sh": "//based on https://logik-matchbook.org/shader/AFX_DeSpill\\n#version 330 // glsls version for opengl 3.3\\nuniform sampler2D front; //call the layer source\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\nuniform float amount;\\nuniform bool despillG;\\nuniform bool despillR;\\nuniform bool despillB;\\n\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d)\\n{\\n    vec2 uv_AE = out_uvs;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    return textureIn;\\n}\\n\\nvoid main (){\\n\\t// Standard Autodesk Stuff\\n\\tvec4 source =  loadTextureFromAE (front);\\n\\tvec3 result \\t\\t= source.rgb;\\n\\tvec3 suppressed \\t= source.rgb;\\n\\n\\tif(despillG)\\n\\t\\tsuppressed.g \\t\\t= min((source.r+source.b)*0.5, suppressed.g);\\t\\n\\telse if(despillB)\\n\\t\\tsuppressed.b \\t\\t= min((source.g+source.r)*0.5, suppressed.b);\\n\\telse if(despillR)\\n\\t\\tsuppressed.r \\t\\t= min((source.g+source.b)*0.5, suppressed.r);\\t\\n\\n\\tresult\\t\\t\\t\\t=  mix( source.rgb, suppressed, amount );\\n\\tfragColorOut \\t= \\tvec4( result, source.a);\\n}\\n",
+"gl33_frag_sh": "#version 330\\n\\nuniform float layers;\\nuniform float line_length;\\nuniform float line_bg_size;\\nuniform float time;\\n\\nuniform vec2 resolution;\\nuniform float zoom;\\nuniform vec3 center;\\nuniform vec3 color;\\nuniform float evolution;\\nuniform float dot_size;\\nuniform bool use_time;\\n\\nuniform float rotation;\\n\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 colourOut;\\n\\nvec2 iMouse = center.xy;\\n\\n\\n#define S(a, b, t) smoothstep(a, b, t)\\n\\n\\nfloat N21(vec2 p) {\\n    vec3 a = fract(vec3(p.xyx) * vec3(213.897, 653.453, 253.098));\\n    a += dot(a, a.yzx + 79.76);\\n    return fract((a.x + a.y) * a.z);\\n}\\n\\nvec2 GetPos(vec2 id, vec2 offs, float t) {\\n    float n = N21(id+offs);\\n    float n1 = fract(n*10.);\\n    float n2 = fract(n*100.);\\n    float a = t+n;\\n    return offs + vec2(sin(a*n1), cos(a*n2))*.4;\\n}\\n\\nfloat GetT(vec2 ro, vec2 rd, vec2 p) {\\n    return dot(p-ro, rd); \\n}\\n\\nfloat LineDist(vec3 a, vec3 b, vec3 p) {\\n    return length(cross(b-a, p-a))/length(p-a);\\n}\\n\\nfloat df_line( in vec2 a, in vec2 b, in vec2 p)\\n{\\n    vec2 pa = p - a, ba = b - a;\\n    float h = clamp(dot(pa,ba) / dot(ba,ba), 0., 1.);    \\n    return length(pa - ba * h);\\n}\\n\\nfloat line(vec2 a, vec2 b, vec2 uv) {\\n    float r1 = line_length/1000;\\n    float r2 = r1*line_bg_size/100;\\n    \\n    float d = df_line(a, b, uv);\\n    float d2 = length(a-b);\\n    float fade = S(1.5, .5, d2);\\n    \\n    fade += S(.05, .02, abs(d2-.75));\\n    return S(r1, r2, d)*fade;\\n}\\n\\nfloat NetLayer(vec2 st, float n, float t) {\\n    vec2 id = floor(st)+n;\\n\\n    st = fract(st)-.5;\\n   \\n    vec2 p[9];\\n    int i=0;\\n    for(float y=-1.; y<=1.; y++) {\\n        for(float x=-1.; x<=1.; x++) {\\n            p[i++] = GetPos(id, vec2(x,y), t);\\n        }\\n    }\\n    \\n    float m = 0.;\\n    float sparkle = 0.;\\n    \\n    for(int i=0; i<9; i++) {\\n        m += line(p[4], p[i], st);\\n\\n        float d = length(st-p[i]);\\n\\n        float s = (dot_size*0.001/(d*d));\\n        s *= S(1., .7, d);\\n        float pulse = sin((fract(p[i].x)+fract(p[i].y)+t)*5.)*.4+.6;\\n        pulse = pow(pulse, 20.);\\n\\n        s *= pulse;\\n        sparkle += s;\\n    }\\n    \\n    m += line(p[1], p[3], st);\\n    m += line(p[1], p[5], st);\\n    m += line(p[7], p[5], st);\\n    m += line(p[7], p[3], st);\\n    \\n    float sPhase = (sin(t+n)+sin(t*.1))*.25+.5;\\n    sPhase += pow(sin(t*.1)*.5+.5, 50.)*5.;\\n    m += sparkle*sPhase;//(*.5+.5);\\n    \\n    return m;\\n}\\n\\nvoid main()\\n{\\n    vec2 uv =( gl_FragCoord.xy-resolution.xy*.5)/resolution.y;\\n    vec2 M = iMouse.xy/resolution.xy-.5;\\n    float layertime = 0.;\\n    if (use_time){\\n        layertime = time;\\n    }\\n    float t =(layertime+ evolution)*.1;\\n    float c = cos (t);\\n     float s = sin (t+rotation);\\n    mat2 rot = mat2(c, -s, s, c);\\n    vec2 st = uv*rot;  \\n    M *= rot*2.;\\n    \\n    float m = 0.;\\n    for(float i=0.; i<1.; i+=1./layers) {\\n        float z = fract(t+i);\\n        float size = mix(100/zoom, 1., z);\\n        float fade = S(0., .6, z)*S(1., .8, z);\\n        \\n        m += fade * NetLayer(st*size-M*z, i, evolution);\\n    }\\n     \\n    float fft  = 0.;\\n    float glow = -uv.y*fft*2.;\\n   \\n    vec3 baseCol = color;\\n    vec3 col = baseCol*m;\\n    col += baseCol*glow;\\n    \\n\\n    col *= 1.-dot(uv,uv);\\n    t = mod(evolution, 230.);\\n    col *= S(0., 20., t)*S(224., 200., t);\\n\\n   colourOut= vec4(col,1);\\n}",
 
 
 "gl33_vert_error": "compiled successfully",
@@ -146,7 +145,7 @@ false
 
 
 
-"grpName": "despills",
+"grpName": "check box Group",
 
 
 
@@ -184,7 +183,7 @@ false
 
 
 
-"name": "despillR",
+"name": "use_time",
 
 
 
@@ -225,13 +224,13 @@ false
 
 
 
-"name": "despillG",
+"name": "cbox_2",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -266,13 +265,13 @@ false
 
 
 
-"name": "despillB",
+"name": "cbox_3",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -582,7 +581,7 @@ false
 
 
 
-"grpVisibleB": false,
+"grpVisibleB": true,
 
 
 
@@ -630,13 +629,13 @@ false
 
 
 
-"name": "color_1",
+"name": "color",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1168,12 +1167,22 @@ false
 
 
 
-"name": "front",
+"name": "texture1",
 
 
 
 
-"visibleB": true
+"poffName": "layer1_position_off",
+
+
+
+
+"toffName": "layer1_time_off",
+
+
+
+
+"visibleB": false
 
 
 
@@ -1187,6 +1196,16 @@ false
 
 
 "name": "texture2",
+
+
+
+
+"poffName": "layer2_position_off",
+
+
+
+
+"toffName": "layer2_time_off",
 
 
 
@@ -1209,6 +1228,16 @@ false
 
 
 
+"poffName": "layer3_position_off",
+
+
+
+
+"toffName": "layer3_time_off",
+
+
+
+
 "visibleB": false
 
 
@@ -1227,6 +1256,16 @@ false
 
 
 
+"poffName": "layer4_position_off",
+
+
+
+
+"toffName": "layer4_time_off",
+
+
+
+
 "visibleB": false
 
 
@@ -1239,7 +1278,7 @@ false
 
 
 
-"grpVisibleB": true
+"grpVisibleB": false
 
 
 },
@@ -1253,7 +1292,7 @@ false
 
 
 
-"grpVisibleB": false,
+"grpVisibleB": true,
 
 
 
@@ -1301,13 +1340,13 @@ false
 
 
 
-"name": "point_1",
+"name": "center",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1825,7 +1864,7 @@ false
 
 
 
-"grpVisibleB": false,
+"grpVisibleB": true,
 
 
 
@@ -1859,13 +1898,13 @@ false
 
 
 
-"name": "rotation_1",
+"name": "rotation",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2279,7 +2318,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2291,7 +2330,7 @@ false
 
 
 
-"name": "amount",
+"name": "layers",
 
 
 
@@ -2320,7 +2359,7 @@ false
 
 
 
-0
+30
 
 
 
@@ -2332,13 +2371,13 @@ false
 
 
 
-"name": "slider_2",
+"name": "line_length",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2361,7 +2400,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2373,13 +2412,13 @@ false
 
 
 
-"name": "slider_3",
+"name": "line_bg_size",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2402,7 +2441,7 @@ false
 
 
 
-0
+10
 
 
 
@@ -2414,13 +2453,13 @@ false
 
 
 
-"name": "slider_4",
+"name": "evolution",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2443,7 +2482,7 @@ false
 
 
 
-0
+30
 
 
 
@@ -2455,13 +2494,13 @@ false
 
 
 
-"name": "slider_5",
+"name": "zoom",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2484,7 +2523,7 @@ false
 
 
 
-0
+1
 
 
 
@@ -2496,13 +2535,13 @@ false
 
 
 
-"name": "slider_6",
+"name": "dot_size",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2584,7 +2623,7 @@ false
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2697,7 +2736,7 @@ false
 "blue_error": " compiled successfully",
 
 
-"commonExpr":  "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
+"commonExpr": "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
 
 
 "common_error": "compiled successfully",
@@ -2706,14 +2745,13 @@ false
 "exprRGBModeB": true,
 
 
-"expr_rgb_channel":"inputRgb",
-
-
-
 "expr_current_channel": "inChannel",
 
 
 "expr_pix": "pix",
+
+
+"expr_rgb_channel": "inputRgb",
 
 
 "greenExpr": "return inChannel;",
@@ -2728,7 +2766,7 @@ false
 "red_error": "compiled successfully",
 
 
-"rgbExpr": "return inChannel;",
+"rgbExpr": "    vec3 result;\\n    //in this mode the channel0 texture is automatically a rgb channel\\n    vec3 premix =mix (inputRgb,color_1, slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        //gl_FragCoord returns the coordonate of the current pixel.\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        result = mix (inputRgb,textureLayer.rgb, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         result =premix; // if checkbox not selected return premix\\n\\n    }\\n    return result;",
 
 
 "rgb_error": "compiled successfully"
