@@ -137,6 +137,10 @@
 									<td>Current Channel</td>
 									<td><input type="text" id = "expr_current_channelName" value="inChannel" maxlength="31"></td>
 									</tr>
+									<tr class = "exprSettingsGrp">
+										<td>Current Channel</td>
+										<td><input type="text" id = "expr_rgb_channelName" value="rgbInput" maxlength="31"></td>
+										</tr>
 								<tr class = "exprSettingsGrp">
 									<td>Pixel Coordonates</td>
 									<td><input type="text" id = "expr_pixName" value="pix" maxlength="31"></td>
@@ -214,7 +218,7 @@
 				<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
 				</div>
 		<br/>
-		<button class="mathGUI" id="redExpBtn" onclickj="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
+		<button class="mathGUI" id="redExpBtn" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
 		<button class="mathGUI" id="greenExpBtn" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
 		<button class="mathGUI" id="blueExpBtn" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
 		<button class="mathGUI" id="rgbExpBtn"  onclick="openEditor(event, 'expr_rgb_tab', 'expr_rgb_editor')" >rgb channels expression</button>
