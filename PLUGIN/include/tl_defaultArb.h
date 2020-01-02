@@ -43,6 +43,7 @@ static std::string defaultArb = R"=====(
 		"common_error": "compiled successfully",
         "exprRGBModeB":true,
         "expr_current_channel":"inChannel",
+		"expr_rgb_channel":"inputRgb",
         "expr_pix":"pix"
         },
     "flags":{
