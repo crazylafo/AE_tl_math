@@ -359,10 +359,10 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 		var paramStr ='<tr>'+
 			'<td>'+paramName+' '+indexName+'</td> \n'+
 			'<td ><input type="checkbox" id="'+paramName+i+'_visible"  class="cb'+paramName+'" checked></td> \n'+
-			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+indexName+'" maxlength="31"></td> \n'+
+			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+indexName+'" maxlength="31" size =10></td> \n'+
 			'<td><table>';
 		for (var j=0; j<paramDimension; j++){
-			paramStr += '<td><input type="text" id = "'+paramName+i+'_defaultVal'+j+'" value="'+j+'" maxlength="10"></td> \n';
+			paramStr += '<td><input type="text" id = "'+paramName+i+'_defaultVal'+j+'" value="'+j+'" maxlength="10" size=4</td> \n';
 		}
 		paramStr +='</table></td> \n'+
 			'</tr> \n'
@@ -591,14 +591,14 @@ function setFlags (arbData){
 		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom, "c	ameraMat"]);	
 		}
 	return arbData
-}
+	}
 function setVersion(minimalVersion, reqVersion){
 	if (parseInt(minimalVersion) < parseInt(reqVersion)){
 		return reqVersion
 	}else{
 		return minimalVersion;
 	}
-}
+	}
 function setMinimalVersion (arbData){
 	var minimalVersion = 115;
 	for (var i=0; i<arbData.flags.pixelsCallExternalInputB.length; i++){
@@ -613,7 +613,7 @@ function setMinimalVersion (arbData){
 		minimalVersion = setVersion(minimalVersion, 115);
 	}
 	return minimalVersion;
-}
+	}
 function toggleCheckbox(className, currId){
 	var classItems = document.getElementsByClassName(className);
 	var parentItem =  document.getElementById(currId);
@@ -642,7 +642,7 @@ function resizeEditorsMarginLeft (size){
 	var tabCl = document.getElementsByClassName("tabEditors");
 	var newSize = (size+"px").toString();
 	tabCl[0].style.marginLeft =  newSize;
-}
+	}
 function toggleSideBar(){
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
@@ -658,7 +658,7 @@ function toggleSideBar(){
 		sidebar.style.display = "block";
 		resizeEditorsMarginLeft (450);
 		}
-}
+	}
 function toggleEditor(){
 	var presetsMenu = document.getElementById("tabEditsMenu");
 	if (presetsMenu.style.display === "none"){
@@ -670,7 +670,7 @@ function toggleEditor(){
 		$('#SettingsCol').css("width", "100%");
 		}
 
-}
+	}
 function toggleMenus(id){
 
 	var idArr =  ['presetSettingId', 'presetId', 'paramSettingsId'];
@@ -693,7 +693,7 @@ function toggleMenus(id){
 		descrMenu.style.display = "none";
 		}
 	toggleSideBar();
-}
+	}
 function toggleDescription(){
 	var parentMenu = document.getElementById('presetSettingId');
 	var descrMenu = document.getElementById("descriptionId");
