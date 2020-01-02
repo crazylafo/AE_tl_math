@@ -22,7 +22,7 @@ GetLayerData(PF_InData     *in_data,
 	AEGP_StreamRefH streamH = nullptr;
 	AEGP_EffectRefH effectH = nullptr;
 	AEGP_StreamRefH parentStreamH = nullptr;
-	const my_global_dataP		globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+	const my_global_dataP		globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 
 	AEFX_SuiteScoper<AEGP_PFInterfaceSuite1> PFInterfaceSuite = AEFX_SuiteScoper<AEGP_PFInterfaceSuite1>(in_data,
 		kAEGPPFInterfaceSuite,
@@ -182,7 +182,7 @@ tlmath::CallCepDialog(PF_InData        *in_data,
 	AEGP_MemHandle     resultMemH = nullptr;
 	A_char *resultAC = nullptr;
 	A_char          scriptAC[1500]{ '\0' };
-	const my_global_dataP        globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+	const my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
 
 	A_long compId = NULL, layerIndex = NULL, effectIndex = NULL;
 	ERR(GetLayerData(in_data, out_data, &compId, &layerIndex, &effectIndex));
@@ -215,7 +215,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     PF_Err err = PF_Err_NONE, err2 = PF_Err_NONE;
 	
     AEGP_SuiteHandler    suites(in_data->pica_basicP);
-    const my_global_dataP        globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+    const my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
     const  seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
     AEGP_MemHandle     resultMemH =nullptr;
     A_char *resultAC = nullptr;
@@ -239,7 +239,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
                           in_data->time_scale,
                           &arb_param));
         AEFX_CLR_STRUCT(arbInP);
-        arbInP = static_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+        arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
         if (!arbInP){
             return err = PF_Err_OUT_OF_MEMORY;
         }
@@ -321,7 +321,7 @@ tlmath::SetupGetDataBack(
 {
     PF_Err err = PF_Err_NONE;
      AEGP_SuiteHandler    suites(in_data->pica_basicP);
-    const my_global_dataP globP = static_cast<my_global_dataP>(DH(out_data->global_data));
+    const my_global_dataP globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
     PF_Handle        arbOutH = nullptr;
     PF_ParamDef arb_param;
 	AEGP_MemHandle     resultMemH = nullptr;
@@ -336,7 +336,7 @@ tlmath::SetupGetDataBack(
 		in_data->time_step,
 		in_data->time_scale,
 		&arb_param));
-	arbOutP = static_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+	arbOutP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
 	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, script_getDataBackFromMathCEP.c_str(), FALSE, &resultMemH, NULL));
 	AEFX_CLR_STRUCT(resultAC);
 	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
@@ -567,7 +567,7 @@ tlmath::evalScripts(seqData  *seqP)
         #ifdef AE_OS_WIN
                 strncpy_s(seqP->Glsl33_VertexShAc, tlms.glvertstr.c_str(), tlms.glvertstr.length() + 1);
         #else
-        strncpy(seqP->Glsl33_VertexShAc, glvertstr.c_str(),  glvertstr.length() + 1);
+                    strncpy(seqP->Glsl33_VertexShAc, tlms.glvertstr.c_str(),  tlms.glvertstr.length() + 1);
         #endif
     }
 
@@ -580,7 +580,7 @@ tlmath::evalScripts(seqData  *seqP)
                  strncpy_s(seqP->Glsl33_FragmentShAc, tlms.glErrorMessageStr.c_str(), tlms.glErrorMessageStr .length() + 1);
         #else
                 strncpy(seqP->resolutionNameAc, setting_resolutionName.c_str(),  setting_resolutionName.length() + 1);
-        strncpy(seqP->Glsl33_FragmentShAc, tlms.glErrorMessageStr.c_str(), tlms.glErrorMessageStr .length() + 1);
+               strncpy(seqP->Glsl33_FragmentShAc, tlms.glErrorMessageStr.c_str(), tlms.glErrorMessageStr.length() + 1);
         #endif
 
     }

@@ -105,6 +105,7 @@ typedef struct {
 	A_char  frame_rateNameAc[32];
 
     A_char expr_ColorChNameAc[32];
+    A_char expr_rgbChNameAc[32];
 	A_char	expr_pixNameAc[32];
 
 
