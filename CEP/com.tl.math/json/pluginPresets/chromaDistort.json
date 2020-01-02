@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on  https://www.shadertoy.com/view/XssGz\\nand k_chroma https://logik-matchbook.org/shader/K_Chroma\\n\\nCreative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. \\ndistort the chroma channel with distortion.",
+"description": "based on  https://www.shadertoy.com/view/XssGz\\nand k_chroma https://logik-matchbook.org/shader/K_Chroma\\n\\nCreative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. \\ndistort the chroma.",
 
 
 "effectName": "tlMath",
@@ -2704,7 +2704,8 @@ false
 
 "blue_error": " compiled successfully",
 
-"commonExpr":  "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
+
+"commonExpr": "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
 
 
 "common_error": "compiled successfully",
@@ -2713,8 +2714,7 @@ false
 "exprRGBModeB": true,
 
 
-"expr_rgb_channel":"inputRgb",
-
+"expr_rgb_channel": "inputRgb",
 
 
 "expr_current_channel": "inChannel",
