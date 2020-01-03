@@ -219,7 +219,7 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
     const  seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
     AEGP_MemHandle     resultMemH =nullptr;
     A_char *resultAC = nullptr;
-    A_char          scriptAC[120000] { '\0' };
+    A_char          scriptAC[220000] { '\0' };
     std::string Majvers = std::to_string(MAJOR_VERSION);
     std::string MinVers = std::to_string(MINOR_VERSION);
     std::string Bugvers = std::to_string(BUG_VERSION);
@@ -295,19 +295,22 @@ tlmath::SetupDialogSend( PF_InData        *in_data,
 		}
 
 
-	std::string jsonDump = "'''";
-    jsonDump.append(arbDataJS.dump());
-	jsonDump.append("'''");
-
-	AEFX_CLR_STRUCT(scriptAC);
-        sprintf(scriptAC,
-		script_sendToMathCEP.c_str(),
-		jsonDump.c_str());
-	ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
-	AEFX_CLR_STRUCT(resultAC);
-	ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
-	ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
-
+	try {
+		std::string jsonDump = "'''";
+		jsonDump.append(arbDataJS.dump());
+		jsonDump.append("'''");
+		AEFX_CLR_STRUCT(scriptAC);
+		sprintf(scriptAC,
+			script_sendToMathCEP.c_str(),
+			jsonDump.c_str());
+		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+		AEFX_CLR_STRUCT(resultAC);
+		ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+		ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
+	}
+	catch (nlohmann::json::exception& e) {
+		err = PF_Err_BAD_CALLBACK_PARAM;
+	}
 	ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
 	return err;
 }

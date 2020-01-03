@@ -1400,9 +1400,9 @@ R"=====(
     }
 	if (which_hitP->param_index == MATH_SETUP)
 	{
-		ERR(CallCepDialog(in_data, out_data));
+		ERR(tlmath::CallCepDialog(in_data, out_data));
 		ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
-        ERR(SetupDialogSend(in_data, out_data, params));
+        ERR(tlmath::SetupDialogSend(in_data, out_data, params));
 	}
 	if (which_hitP->param_index == MATH_CEP_GET_ARB_DATA)
 	{
@@ -1417,7 +1417,7 @@ R"=====(
                                                                 params[MATH_CEP_GET_ARB_DATA]));
 			
 
-			ERR(SetupDialogSend(in_data, out_data, params));
+			ERR(tlmath::SetupDialogSend(in_data, out_data, params));
 		}
 	}
 	if (which_hitP->param_index == MATH_RESET) {
