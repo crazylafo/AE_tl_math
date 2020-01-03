@@ -1,6 +1,6 @@
 /*************************************************************************
 * tl math plugin and CEP
-*thomas laforge  Copyright 2019
+*thomas laforge  Copyright 2020
 **************************************************************************/
 /**
  * load panel function when opening. Also contain event listener
@@ -93,6 +93,7 @@ function onLoaded() {
 		var  presetSelectedIndex = $('input[name="presetListRb"]:checked').val();
 		var descriptionStr = "description : \n "+ presetsList.preset[presetSelectedIndex].description;
 		$("#presetDescr").val(cleanJsonFromArbStr(presetsList.preset[presetSelectedIndex].description.toString()));
+		$("#presetDescr").autoResize();
 		});
 	$("#btnLoad").on("click", function() {		
 		loadPresetJSONFile();
@@ -312,7 +313,7 @@ function setflagFromGL (arbData, strArr){
  * input : obj arbdata, array strArr (with strings to find)
  * return  bool boolResultB
  */
-function setflagFromExpr (arbData, strArr){
+function setflagFromExpr(arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
 		if (arbData.math_expression.alphaExpr.indexOf(strArr[i]) !=-1){
@@ -441,7 +442,7 @@ function copyDataToGUI (arbData, editors, numParams) {
 	if(arbData.effectMode.expr_modeB){
 		$("#langSelec").val("mExpr");
 	}
-	toggleRgbModeBox ("rgbmodeB", arbData.math_expression.exprRGBModeB)
+	toggleRgbModeBox ("rgbmodeB", arbData.math_expression.exprRGBModeB);
 	//$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
 	$("#resolutionName").val(arbData.composition.resolution.toString());
 	$("#layerPositionName").val(arbData.composition.layerPosition.toString());
@@ -458,11 +459,11 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#expr_rgb_channelName").val(arbData.math_expression.expr_rgb_channel.toString());
 	$("#expr_pixName").val(arbData.math_expression.expr_pix.toString());
 	getParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
+	
 	getParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	getParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
 	getParamsSettings(arbData, "color", numParams, 3, "colorGrp");
 	getParamsSettings(arbData, "rotation", numParams, 1, "rotationGrp");
-
 	$("#layerGrpName").val(arbData.gui_settings.layerGrp.grpName.toString());
 	$("input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
@@ -582,13 +583,13 @@ function setFlags (arbData){
 			arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
 		}
 		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom, "cameraMat"]);	
 	}else{
 		for (var i=0; i<listLayers.length; i++){			
 			arbData.flags.pixelsCallExternalInputB[i] = setflagFromExpr (arbData,[listLayers[i]]);
 		}
 		arbData.flags.presetHasWideInputB = setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom, "c	ameraMat"]);	
+		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom, "cameraMat"]);
 		}
 	return arbData
 	}
@@ -637,7 +638,6 @@ function toggleCheckbox(className, currId){
 		}
 	}
 function defaultVal(){
-
 	$("#langSelec").val("mExpr");
 	langSelecFunc();
 	toggleMenus("presetId");

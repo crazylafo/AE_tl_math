@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on https://logik-matchbook.org/shader/crok_flow\\nshare alike non commercial license. \\nFlow is a noise  generator, similar to theAE tools but with a other approach.",
+"description": "This example explains ho to load textures and calculzte the offset.",
 
 
 "effectName": "tlMath",
@@ -52,34 +52,30 @@
 "pluginVersion": 115,
 
 
-"presetName": "flow",
+"presetName": "rgb_offset",
 
 
 "tags": [
 
 
 
-"shadertoy",
+"expression",
 
 
 
-" flow",
+"basic",
 
 
 
-" generator",
+"tuto",
 
 
 
-" noise",
+" offset",
 
 
 
-" warp",
-
-
-
-" matchbox"
+" color"
 
 
 ]
@@ -92,10 +88,10 @@
 "evalModeB": false,
 
 
-"expr_modeB": false,
+"expr_modeB": true,
 
 
-"gl33_modeB": true
+"gl33_modeB": false
 
 },
 
@@ -124,7 +120,7 @@ false
 ],
 
 
-"presetHasWideInputB": true,
+"presetHasWideInputB": false,
 
 
 "usesCameraB": false
@@ -137,13 +133,13 @@ false
 "gl33_frag_error": "compiled successfully",
 
 
-"gl33_frag_sh": "// http://www.kamend.com/2012/06/perlin-noise-and-glsl/\\n//from  https://logik-matchbook.org/ for Autodesk flame\\n#version 330\\nuniform float time;\\nuniform vec2 resolution;\\nout vec4 colourOut;\\n\\n\\nuniform float warp;\\nuniform float offset;\\nuniform float amplitude;\\nuniform float zoom;\\n\\nuniform float Speed;\\nuniform float noise;\\nuniform float itterations;\\nuniform float brightness;\\nuniform float contrast;\\nuniform float gain;\\n\\nuniform vec3 center;\\nuniform vec2 speed;\\nuniform vec3 tint;\\n\\n\\n\\n\\n float fxtime = time *.0025 * Speed + offset;\\n\\n\\n\\n\\n\\n\\nfloat s_x = speed.x + 1.0;\\nfloat s_y = speed.y + 1.0;\\n\\nconst vec3 lumc = vec3(0.2125, 0.7154, 0.0721);\\n\\n\\n\\nvec4 mod289(vec4 x)\\n{\\n    return x - floor(x * (1.0 / 289.0)) * 289.0;\\n}\\n \\nvec4 permute(vec4 x)\\n{\\n    return mod289(((x*34.0)+1.0)*x);\\n}\\n \\nvec4 taylorInvSqrt(vec4 r)\\n{\\n    return 1.79284291400159 - 0.85373472095314 * r;\\n}\\n \\nvec2 fade(vec2 t) {\\n    return t*t*t*(t*(t*6.0-15.0)+10.0);\\n}\\n \\n// Classic Perlin noise\\nfloat cnoise(vec2 P)\\n{\\n    vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);\\n    vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);\\n    Pi = mod289(Pi); // To avoid truncation effects in permutation\\n    vec4 ix = Pi.xzxz;\\n    vec4 iy = Pi.yyww;\\n    vec4 fx = Pf.xzxz;\\n    vec4 fy = Pf.yyww;\\n     \\n    vec4 i = permute(permute(ix) + iy);\\n     \\n    vec4 gx = fract(i * (1.0 / 41.0)) * 2.0 - 1.0 ;\\n    vec4 gy = abs(gx) - 0.5 ;\\n    vec4 tx = floor(gx + 0.5);\\n    gx = gx - tx;\\n     \\n    vec2 g00 = vec2(gx.x,gy.x);\\n    vec2 g10 = vec2(gx.y,gy.y);\\n    vec2 g01 = vec2(gx.z,gy.z);\\n    vec2 g11 = vec2(gx.w,gy.w);\\n     \\n    vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));\\n    g00 *= norm.x;  \\n    g01 *= norm.y;  \\n    g10 *= norm.z;  \\n    g11 *= norm.w;  \\n     \\n    float n00 = dot(g00, vec2(fx.x, fy.x));\\n    float n10 = dot(g10, vec2(fx.y, fy.y));\\n    float n01 = dot(g01, vec2(fx.z, fy.z));\\n    float n11 = dot(g11, vec2(fx.w, fy.w));\\n     \\n    vec2 fade_xy = fade(Pf.xy);\\n    vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);\\n    float n_xy = mix(n_x.x, n_x.y, fade_xy.y);\\n    return 2.3 * n_xy;\\n}\\n \\n// Classic Perlin noise, periodic variant\\nfloat pnoise(vec2 P, vec2 rep)\\n{\\n    vec4 Pi = floor(P.xyxy) + vec4(0.0, 0.0, 1.0, 1.0);\\n    vec4 Pf = fract(P.xyxy) - vec4(0.0, 0.0, 1.0, 1.0);\\n    Pi = mod(Pi, rep.xyxy); // To create noise with explicit period\\n    Pi = mod289(Pi);        // To avoid truncation effects in permutation\\n    vec4 ix = Pi.xzxz;\\n    vec4 iy = Pi.yyww;\\n    vec4 fx = Pf.xzxz;\\n    vec4 fy = Pf.yyww;\\n     \\n    vec4 i = permute(permute(ix) + iy);\\n     \\n    vec4 gx = fract(i * (1.0 / 41.0)) * 2.0 - 1.0 ;\\n    vec4 gy = abs(gx) - 0.5 ;\\n    vec4 tx = floor(gx + 0.5);\\n    gx = gx - tx;\\n     \\n    vec2 g00 = vec2(gx.x,gy.x);\\n    vec2 g10 = vec2(gx.y,gy.y);\\n    vec2 g01 = vec2(gx.z,gy.z);\\n    vec2 g11 = vec2(gx.w,gy.w);\\n     \\n    vec4 norm = taylorInvSqrt(vec4(dot(g00, g00), dot(g01, g01), dot(g10, g10), dot(g11, g11)));\\n    g00 *= norm.x;  \\n    g01 *= norm.y;  \\n    g10 *= norm.z;  \\n    g11 *= norm.w;  \\n     \\n    float n00 = dot(g00, vec2(fx.x, fy.x));\\n    float n10 = dot(g10, vec2(fx.y, fy.y));\\n    float n01 = dot(g01, vec2(fx.z, fy.z));\\n    float n11 = dot(g11, vec2(fx.w, fy.w));\\n     \\n    vec2 fade_xy = fade(Pf.xy);\\n    vec2 n_x = mix(vec2(n00, n01), vec2(n10, n11), fade_xy.x);\\n    float n_xy = mix(n_x.x, n_x.y, fade_xy.y);\\n    return 2.3 * n_xy;\\n}\\n \\nfloat fbm(vec2 P, int octaves, float lacunarity, float gain)\\n{\\n    float sum = 0.0;\\n    float amp = 0.5 * amplitude;\\n    vec2 pp = P;\\n     \\n    int i;\\n     \\n     \\n    for(int i=0 ; i < itterations; i++)\\n    {\\n        amp *= gain; \\n        sum += amp * cnoise(pp);\\n        pp *= lacunarity;\\n    }\\n    return sum;\\n \\n}\\n\\n \\nfloat pattern( in vec2 p, out vec2 q, out vec2 r , in float fxtime)\\n{\\n    float l = 2.3 * noise;\\n    float g = 0.4;\\n    int oc = 1; \\n     \\n    q.x = fbm( p + vec2(1.0 + (s_x * -1.2 * fxtime),1.0 + (s_y * -1.5 * fxtime)),oc,l,g);\\n    q.y = fbm( p + vec2(1.2 * fxtime,1.5 * time) ,oc,l,g);\\n     \\n    r.x = fbm( p + 4.0 * q + vec2(s_x *9.7,s_y * 3.8),oc,l,g );\\n    r.y = fbm( p + 4.0 * q + vec2(fxtime * -9.7,fxtime * -3.8) ,oc,l,g);\\n     \\n    return fbm( p + warp * r ,oc,l,g);\\n}\\n \\nvoid main() {\\n    vec3 avg_lum = vec3(0.5, 0.5, 0.5);\\n    vec2 q = 2.0 * (((gl_FragCoord.xy / resolution.xy) - 0.5) * 0.5 * zoom) + (center.xy * vec2(-1.0));\\n\\n    vec2 p = -1.0 + 2.0 * q;\\n    vec2 qq;\\n    vec2 r;\\n    \\n    float col = pattern(p,qq,r,fxtime);\\n    vec3 color = vec3(col);\\n    \\n    color = vec3(dot(color.rgb, lumc));\\n    color = mix(avg_lum, color, 0.8 * contrast);\\n    color = color - 1.0 + brightness;\\n    color = color * 2.0*gain;\\n    \\n          \\n    colourOut = vec4(color * tint,color);\\n}\\n",
+"gl33_frag_sh": "\\n//EXEMPE TO SHOW HOW THE PLUGIN WORKS\\n//A SHADER MUST START ITH A DEFINITION OF THE GLSL VERSION USED\\n// FOR NOW THE PLUGIN WORKS ONLY ITH 330 (for opengl 3.3)\\n// the same effect is written in expression rgb mode. \\n#version 330 \\n// let's call variables from After Effect\\n// THE PROCES IS uniform [TYPE] [variableName];\\n//uniform--> the function to call an external element in glsl\\n//type--> sampler2D for a texture from AE\\n// ------ float for a single dimention (time, slider or rotation param)\\n//-------- vec2  for a two dimension item (resolution)\\n//--------vec3 for a three dimension item (points/ color)\\n//--------bool  for checkbox\\n// Points are alayws defined as vec3 with this plugin. So if you have \\n// a shader with a 2D point, you can convert it latter.\\n// Slider are alays imported as float. if you want an integer you can convert\\n//on the fly: int(sliderName) \\n//variable Name: you define it in param setting.\\n//for the exemple we keep the default name\\nuniform sampler2D texture0; //get the layer source\\nuniform sampler2D texture1; // get an other layer\\nuniform float slider_1;// get  a slider from the UI\\nuniform vec3 point_1; // get  a pioint from the UI\\nuniform bool cbox_1; // get  a checkbox from the UI\\nuniform vec3 color_1; //get a color input\\nuniform vec2 resolution; //get  the resolution\\nin vec2 out_uvs; // get the uv (1,1) size of the layer\\n //invert texture for AE on y corrd. it's faster in glsl\\n  vec2 textUvs =vec2 (out_uvs.x, 1- out_uvs.y);\\nout vec4 fragColorOut; // the output varaible\\n// in glsl you can use gl_FragColorOut for the output but\\n// on some version of macos we have to define an out vec4 variable.\\n//if you develop on pc and want to share shaders, don't forget mac users...\\n// you can give it the name you want \\n\\n\\n// void main is the main part of the glsl program.\\n//here you make the main work of the effect.\\nvoid main(void)\\n{\\n    vec4 textureInput = texture(texture0,textUvs); // call the orginal  layer with the orginal position\\n    vec4 premix =mix (textureInput,vec4(color_1, 1.0), slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        fragColorOut = mix (textureInput,textureLayer, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         fragColorOut =premix; // if checkbox not selected return premix\\n\\n    }\\n             //if you want to play with pixel coordonate activate the alpha ramp\\n         //alpha ramp \\n         //fragColorOut.a = gl_FragCoord.x/resolution.x;\\n}\\n\\n\\n\\n",
 
 
 "gl33_vert_error": "compiled successfully",
 
 
-"gl33_vert_sh": "#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}"
+"gl33_vert_sh": "#version 330 \\nin vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}\\n"
 
 },
 
@@ -180,7 +176,7 @@ false
 
 
 
-0
+1
 
 
 
@@ -590,7 +586,7 @@ false
 
 
 
-"grpVisibleB": true,
+"grpVisibleB": false,
 
 
 
@@ -638,13 +634,13 @@ false
 
 
 
-"name": "tint",
+"name": "color_1",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -1309,7 +1305,7 @@ false
 
 
 
-"name": "center",
+"name": "red_offset",
 
 
 
@@ -1364,13 +1360,13 @@ false
 
 
 
-"name": "point_2",
+"name": "green_offset",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -1419,13 +1415,13 @@ false
 
 
 
-"name": "point_3",
+"name": "blue_offset",
 
 
 
 
 
-"visibleB": false
+"visibleB": true
 
 
 
@@ -2265,7 +2261,7 @@ false
 
 
 
-"grpVisibleB": true,
+"grpVisibleB": false,
 
 
 
@@ -2287,7 +2283,7 @@ false
 
 
 
-1
+50
 
 
 
@@ -2299,13 +2295,13 @@ false
 
 
 
-"name": "warp",
+"name": "slider_1",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2328,7 +2324,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2340,13 +2336,13 @@ false
 
 
 
-"name": "offset",
+"name": "slider_2",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2369,7 +2365,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2381,13 +2377,13 @@ false
 
 
 
-"name": "amplitude",
+"name": "slider_3",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2410,7 +2406,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2422,13 +2418,13 @@ false
 
 
 
-"name": "zoom",
+"name": "slider_4",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2451,7 +2447,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2463,13 +2459,13 @@ false
 
 
 
-"name": "Speed",
+"name": "slider_5",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2492,7 +2488,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2504,13 +2500,13 @@ false
 
 
 
-"name": "noise",
+"name": "slider_6",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2533,7 +2529,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2545,13 +2541,13 @@ false
 
 
 
-"name": "itterations",
+"name": "slider_7",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2574,7 +2570,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2586,13 +2582,13 @@ false
 
 
 
-"name": "brightness",
+"name": "slider_8",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2615,7 +2611,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2627,13 +2623,13 @@ false
 
 
 
-"name": "contrast",
+"name": "slider_9",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2656,7 +2652,7 @@ false
 
 
 
-1
+0
 
 
 
@@ -2668,13 +2664,13 @@ false
 
 
 
-"name": "gain",
+"name": "slider_10",
 
 
 
 
 
-"visibleB": true
+"visibleB": false
 
 
 
@@ -2693,50 +2689,49 @@ false
 "math_expression": {
 
 
-"alphaExpr": "return inChannel;",
+"alphaExpr": "return inChannel; //we keep the original alpha",
 
 
 "alpha_error": "compiled successfully",
 
 
-"blueExpr": "return inChannel;",
+"blueExpr": "vec2 off =getOff(blue_offset.xy, resolution.xy); \\nfloat result = texture(texture0, textUvs+off).b;//let's load the the texture with offset\\nreturn result;",
 
 
-"blue_error": " compiled successfully",
+"blue_error": "compiled successfully",
 
 
-"commonExpr":  "//unsued",
+"commonExpr": "//the useful function for th preset.\\n//we calculate the offset to load the texture for each channels\\n//when you load a texture, yo call the sampler2d source and uv coordonate\\n//UV are expected in normalized values that is to say between 0 and 1.\\n// but after effects send pixel coordonates.\\n// for exemple in HD at the center of the screen AE send to glsl (960, 540);\\n//and we want it to be vec2(0.5, 0.5)\\n// let's just divied the offset coordonates by the resolution in pixel.\\n// vec2 offset_normalized = offset/resolution;\\n// we devied a vec2 by a vec2 so no convertion needed\\n\\n//be know we want to define the center of the frame as the reference\\n//that mean if the point is in the center of the frame, nothing move.\\n// if it's displaced on the left the image is on left etcetc\\n\\n\\n//let's devived the resolution/2 and substract the offset coordonate and tadaaa...\\n//but don't// forget to devided all by the resolution to be normalized\\n \\nvec2 getOff (vec2 off, vec2 res){\\n    return (res*0.5 - vec2(off.x, res.y-off.y))/res;\\n    \\n}\\n\\n//look ay  vec2(off.x, res.y-off.y)\\n// why x is only the offset but y has an interacton with resolution?\\n//because in opengl (0,0) coord is on the left side DOWN of the frame butin \\n//AE it's on the left UP side. so we have to do the convetion when loading texture",
 
 
 "common_error": "compiled successfully",
 
 
-"exprRGBModeB": true,
-
+"exprRGBModeB": false,
 
 
 "expr_current_channel": "inChannel",
 
 
-"expr_rgb_channel":"inputRgb",
-
-
 "expr_pix": "pix",
 
 
-"greenExpr": "return inChannel;",
+"expr_rgb_channel": "inputRgb",
+
+
+"greenExpr": "vec2 off =getOff(green_offset.xy, resolution.xy); \\nfloat result = texture(texture0, textUvs+off).g;//let's load the the texture with offset\\nreturn result;",
 
 
 "green_error": "compiled successfully",
 
 
-"redExpr": "return inChannel;",
+"redExpr": "vec2 off =getOff(red_offset.xy, resolution.xy); //defined in common part\\nfloat result = texture(texture0, textUvs+off).r; //let's load the the texture with offset\\nreturn result;//texture0 is the source layer of the effet. but you can call it as you want",
 
 
 "red_error": "compiled successfully",
 
 
-"rgbExpr": "return inChannel;",
+"rgbExpr": "    vec3 result;\\n    //in this mode the channel0 texture is automatically a rgb channel\\n    vec3 premix =mix (inputRgb,color_1, slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        //gl_FragCoord returns the coordonate of the current pixel.\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        result = mix (inputRgb,textureLayer.rgb, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         result =premix; // if checkbox not selected return premix\\n\\n    }\\n    return result;",
 
 
 "rgb_error": "compiled successfully"

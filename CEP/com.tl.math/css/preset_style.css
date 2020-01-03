@@ -1,10 +1,17 @@
 #presetToolBar{
     overflow: hidden;
     position: fixed;
+    background-color: #111;
     top: 0; 
     padding: 5px;
 }
+#presetId{
+    overflow-x: auto;
+    overflow-y: hidden;
+}
 #presetsListAccess{
+    margin-top: 150px;
+    overflow: auto;
     display: flex;
     flex-flow: column wrap;
     align-items: center;
@@ -15,7 +22,7 @@
     align-self: flex-start;
     margin-left: auto;
     margin: 2%; 
-    margin-right:10%;
+    margin-right:15%;
     color: #aaa;
 }
 .presetIconImgsId{
@@ -25,13 +32,17 @@
     width: 50px;
     height: 50px;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 45%;
+    
+}
+presetIconImgsId :active{
+    border-color: green;
 }
 #seachBarInput{
     margin: 2%;
     width: 150px;
     height: 25px;   
-    border-radius: 10px;
+    border-radius: 7px;
 }
 #presetDescr{
     background-color: #111;

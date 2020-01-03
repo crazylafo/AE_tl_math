@@ -1,6 +1,6 @@
 ﻿/*************************************************************************
 * tl math plugin and CEP
-*thomas laforge  Copyright 2019
+*thomas laforge  Copyright 2020
 **************************************************************************/
 function getDate() {
   var x = new Date();
@@ -12,7 +12,17 @@ function getDate() {
   var yyyymmdd = y + m + d;
   return yyyymmdd;
 }
-
+function compareObjStr(a,b){
+  var bandA = a.name.toUpperCase();
+  var bandB = b.name.toUpperCase();
+  var comparison = 0;
+  if (bandA > bandB) {
+    comparison = 1;
+  } else if (bandA < bandB) {
+    comparison = -1;
+  }
+  return comparison;
+}
 function copyArrayStr (arr){
   var newArr = [];
   for (var i=0; i< arr.length; i++){
@@ -58,20 +68,21 @@ function getLastSlashofFilePath (scannedFile){
       }
   return slash;
   }
-function searchFileInFolder (presetFileName, presetFolder, extensionPath){
+function searchFileInFolder(presetFileName, presetFolder, extensionPath){
     var iconFile = null;
-    var newIconFolder = Folder (presetFolder.fsName);
+    
+    var newIconFolder = Folder (presetFolder);
     var iconFileName = presetFileName.toString().substr(0,presetFileName.lastIndexOf("."))+".png";
-      try{
-        iconFile = newIconFolder.getFiles(iconFileName);
-        if (typeof (iconFile)=== "undefined" || iconFile.length==0){
-          iconFile = extensionPath+"/imgs/tl_defaultPreset.png";
-        }
+    try{
+      iconFile = newIconFolder.getFiles(iconFileName);
+      if (typeof (iconFile)=== "undefined" || iconFile.length==0){
+        iconFile = extensionPath+"/imgs/tl_defaultPreset.png";
+      }
     }
     catch (e){
       iconFile = extensionPath+"/imgs/tl_defaultPreset.png";
     }
-    return iconFile;
+    return iconFile.toString();
     
 };
 
@@ -172,14 +183,14 @@ $._ext = {
           preset.tags = copyArrayStr (jsonObj.effectInfo.tags);
           preset.tags.unshift (preset.jsonPath.toString());
           preset.description = jsonObj.effectInfo.description;
-          preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder, objData.extensionPath);
+          preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder.toString(), objData.extensionPath);
           preset.str = jsonTemp.toString();
           listJsonFiles.preset[i] = preset;
           listJsonFiles.length =i+1;
         }
       }
     }
-    listJsonFiles.preset.sort();
+    listJsonFiles.preset.sort(compareObjStr);
     var newData = JSON.stringify (listJsonFiles);
     var externalObjectName = "PlugPlugExternalObject"; 
     var csxslib = new ExternalObject( "lib:" + externalObjectName);

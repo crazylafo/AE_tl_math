@@ -2,7 +2,7 @@
 <!--
 /*************************************************************************
 * tl math plugin and CEP
-*thomas laforge  Copyright 2019
+*thomas laforge  Copyright 2020
 **************************************************************************/
 -->
 <html>
@@ -22,10 +22,10 @@
 
 <body onLoad="onLoaded()">	
     <div id="MenuColId">
-		<input type="image" src="./imgs/preset_settings.png" onClick="toggleMenus('presetSettingId')" ></input>
-		<input type="image" src="./imgs/param_settings.png"onClick= "toggleMenus('paramSettingsId')" ></input>
-		<input type="image" src="./imgs/library.png"onCLick="toggleMenus('presetId')"></input>
-		<input type="image" src="./imgs/editor.png" onCLick=" toggleEditor()"></input>
+		<input type="image" class="menuIcons" src="./imgs/preset_settings.png" onClick="toggleMenus('presetSettingId')" ></input>
+		<input type="image" class="menuIcons" src="./imgs/param_settings.png"onClick= "toggleMenus('paramSettingsId')" ></input>
+		<input type="image" class="menuIcons" src="./imgs/library.png"onCLick="toggleMenus('presetId')"></input>
+		<input type="image" class="menuIcons"  src="./imgs/editor.png" onCLick=" toggleEditor()"></input>
 		</div>
 	<div id="SettingsCol" class="sidebar">
 		<div id="split-bar"></div>
@@ -56,10 +56,12 @@
 				<textarea  rows = "30" cols = "60" maxlength="2000" id="descriptionText">describe here</textarea>
 				</div>
 			<div id="presetId">
+				<div id="presetToolBar">
 					<button id="btnLoadAndApplyPresetFromMenu">Load And Apply</button>
 					<button id="btnLoadPresetFromMenu">Open in Editor</button>
 					<input type="text" id="seachBarInput" placeholder = "search for presets or tags..." title="Type a preset or tag name"></br>
 					<textarea readonly rows = "6" cols = "10" maxlength="256" id="presetDescr">description : </textarea></br>
+					</div>
 					<form action="#">
 						<div  id="presetsListAccess"></div>
 					</form>

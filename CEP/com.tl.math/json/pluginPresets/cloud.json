@@ -1,2775 +1,1 @@
-{
-
-"composition": {
-
-
-"camera_position": "camera_pos",
-
-
-"camera_rotation": "camera_rotation",
-
-
-"camera_target": "camera_target",
-
-
-"camera_zoom": "camera_zoom",
-
-
-"compResolution": "compResolution",
-
-
-"frame_rate": "fps",
-
-
-"layerPosition": "layerPosition",
-
-
-"layerScale": "layerScale",
-
-
-"resolution": "resolution",
-
-
-"time_frame": "timef",
-
-
-"time_sec": "iTime"
-
-},
-
-"effectInfo": {
-
-
-"description": "based on https://www.shadertoy.com/view/4tdSWr\\nCreative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.\\n\\nGenerates a sky with clouds. have fun with the tint, cloud's scale, speed etc...",
-
-
-"effectName": "tlMath",
-
-
-"minimalPluginVersion": 115,
-
-
-"pluginVersion": 115,
-
-
-"presetName": "cloudy_sky",
-
-
-"tags": [
-
-
-
-"shadertoy",
-
-
-
-" clouds",
-
-
-
-" sky"
-
-
-]
-
-},
-
-"effectMode": {
-
-
-"evalModeB": false,
-
-
-"expr_modeB": false,
-
-
-"gl33_modeB": true
-
-},
-
-"flags": {
-
-
-"needsLumaB": false,
-
-
-"pixelsCallExternalInputB": [
-
-
-
-false,
-
-
-
-false,
-
-
-
-false,
-
-
-
-false
-
-
-],
-
-
-"presetHasWideInputB": true,
-
-
-"usesCameraB": false
-
-},
-
-"gl_expression": {
-
-
-"gl33_frag_error": "compiled successfully",
-
-
-"gl33_frag_sh": "//https://www.shadertoy.com/view/4tdSWr\\n#version 330 // glsls version for opengl 3.3\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n\\nuniform vec2 resolution;\\nuniform float scale;\\nuniform float speed;\\nuniform float dark;\\nuniform float light;\\nuniform float cover;\\nuniform float cloud_alpha;\\nuniform float sky_tint;\\n\\nuniform vec3 skycolor_1;\\nuniform vec3 skycolor_2;\\nuniform vec3 cloud_color;\\n\\nuniform float iTime;\\n\\nfloat cloudscale = scale/100;\\nfloat clouddark = dark/100;\\nfloat cloudlight =light/100;\\nfloat cloudcover = cover/100;\\nfloat cloudalpha = cloud_alpha/10;\\nfloat skytint =sky_tint/100;\\n\\n\\nconst mat2 m = mat2( 1.6,  1.2, -1.2,  1.6 );\\n\\nvec2 hash( vec2 p ) {\\n    p = vec2(dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)));\\n    return -1.0 + 2.0*fract(sin(p)*43758.5453123);\\n}\\n\\nfloat noise( in vec2 p ) {\\n    const float K1 = 0.366025404; // (sqrt(3)-1)/2;\\n    const float K2 = 0.211324865; // (3-sqrt(3))/6;\\n    vec2 i = floor(p + (p.x+p.y)*K1);    \\n    vec2 a = p - i + (i.x+i.y)*K2;\\n    vec2 o = (a.x>a.y) ? vec2(1.0,0.0) : vec2(0.0,1.0); //vec2 of = 0.5 + 0.5*vec2(sign(a.x-a.y), sign(a.y-a.x));\\n    vec2 b = a - o + K2;\\n    vec2 c = a - 1.0 + 2.0*K2;\\n    vec3 h = max(0.5-vec3(dot(a,a), dot(b,b), dot(c,c) ), 0.0 );\\n    vec3 n = h*h*h*h*vec3( dot(a,hash(i+0.0)), dot(b,hash(i+o)), dot(c,hash(i+1.0)));\\n    return dot(n, vec3(70.0));    \\n}\\n\\nfloat fbm(vec2 n) {\\n    float total = 0.0, amplitude = 0.1;\\n    for (int i = 0; i < 7; i++) {\\n        total += noise(n) * amplitude;\\n        n = m * n;\\n        amplitude *= 0.4;\\n    }\\n    return total;\\n}\\n\\n// -----------------------------------------------\\n\\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\\n    vec2 p = fragCoord.xy / resolution.xy;\\n    vec2 uv = p*vec2(resolution.x/resolution.y,1.0);    \\n    float time = iTime * speed/100;\\n    float q = fbm(uv * cloudscale * 0.5);\\n    \\n    //ridged noise shape\\n    float r = 0.0;\\n    uv *= cloudscale;\\n    uv -= q - time;\\n    float weight = 0.8;\\n    for (int i=0; i<8; i++){\\n        r += abs(weight*noise( uv ));\\n        uv = m*uv + time;\\n        weight *= 0.7;\\n    }\\n    \\n    //noise shape\\n    float f = 0.0;\\n    uv = p*vec2(resolution.x/resolution.y,1.0);\\n    uv *= cloudscale;\\n    uv -= q - time;\\n    weight = 0.7;\\n    for (int i=0; i<8; i++){\\n        f += weight*noise( uv );\\n        uv = m*uv + time;\\n        weight *= 0.6;\\n    }\\n    \\n    f *= r + f;\\n    \\n    //noise colour\\n    float c = 0.0;\\n    time = iTime * speed * .02;\\n    uv = p*vec2(resolution.x/resolution.y,1.0);\\n    uv *= cloudscale*2.0;\\n    uv -= q - time;\\n    weight = 0.4;\\n    for (int i=0; i<7; i++){\\n        c += weight*noise( uv );\\n        uv = m*uv + time;\\n        weight *= 0.6;\\n    }\\n    \\n    //noise ridge colour\\n    float c1 = 0.0;\\n    time = iTime * speed * .03;\\n    uv = p*vec2(resolution.x/resolution.y,1.0);\\n    uv *= cloudscale*3.0;\\n    uv -= q - time;\\n    weight = 0.4;\\n    for (int i=0; i<7; i++){\\n        c1 += abs(weight*noise( uv ));\\n        uv = m*uv + time;\\n        weight *= 0.6;\\n    }\\n    \\n    c += c1;\\n    \\n    vec3 skycolour = mix(skycolor_2, skycolor_1, p.y);\\n    vec3 cloudcolour = cloud_color * clamp((clouddark + cloudlight*c), 0.0, 1.0);\\n   \\n    f = cloudcover + cloudalpha*f*r;\\n    \\n    vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, 0.0, 1.0), clamp(f + c, 0.0, 1.0));\\n    \\n    fragColor = vec4( result, 1.0 );\\n}\\n\\nvoid  main ()\\n{\\n     mainImage (fragColorOut, gl_FragCoord.xy);\\n}\\n",
-
-
-"gl33_vert_error": "compiled successfully",
-
-
-"gl33_vert_sh": "#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}"
-
-},
-
-"gui_settings": {
-
-
-"cboxGrp": {
-
-
-
-"grpName": "check box Group",
-
-
-
-"grpVisibleB": false,
-
-
-
-"params": [
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_1",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_2",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_3",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_4",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_5",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_6",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_7",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_8",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_9",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cbox_10",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-}
-
-
-
-]
-
-
-},
-
-
-"colorGrp": {
-
-
-
-"grpName": "3d color Group",
-
-
-
-"grpVisibleB": true,
-
-
-
-"params": [
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0.2,
-
-
-
-
-
-
-0.4,
-
-
-
-
-
-
-0.6
-
-
-
-
-
-],
-
-
-
-
-
-"name": "skycolor_1",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0.4,
-
-
-
-
-
-
-0.7,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "skycolor_2",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cloud_color",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "color_4",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "color_5",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "color_6",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "color_7",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "color_8",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "color_9",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1,
-
-
-
-
-
-
-1
-
-
-
-
-
-],
-
-
-
-
-
-"name": "color_10",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-}
-
-
-
-]
-
-
-},
-
-
-"layerGrp": {
-
-
-
-"current_layer": {
-
-
-
-
-"name": "texture0"
-
-
-
-},
-
-
-
-"extLayer_1": {
-
-
-
-
-"name": "texture1",
-
-
-
-
-"poffName": "layer1_position_off",
-
-
-
-
-"toffName": "layer1_time_off",
-
-
-
-
-"visibleB": false
-
-
-
-},
-
-
-
-"extLayer_2": {
-
-
-
-
-"name": "texture2",
-
-
-
-
-"poffName": "layer2_position_off",
-
-
-
-
-"toffName": "layer2_time_off",
-
-
-
-
-"visibleB": false
-
-
-
-},
-
-
-
-"extLayer_3": {
-
-
-
-
-"name": "texture3",
-
-
-
-
-"poffName": "layer3_position_off",
-
-
-
-
-"toffName": "layer3_time_off",
-
-
-
-
-"visibleB": false
-
-
-
-},
-
-
-
-"extLayer_4": {
-
-
-
-
-"name": "texture4",
-
-
-
-
-"poffName": "layer4_position_off",
-
-
-
-
-"toffName": "layer4_time_off",
-
-
-
-
-"visibleB": false
-
-
-
-},
-
-
-
-"grpName": "Layer Group",
-
-
-
-"grpVisibleB": false
-
-
-},
-
-
-"pointGrp": {
-
-
-
-"grpName": "3d Point Group",
-
-
-
-"grpVisibleB": false,
-
-
-
-"params": [
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "center",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_2",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_3",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_4",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_5",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_6",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_7",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_8",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_9",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50,
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "point_10",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-}
-
-
-
-]
-
-
-},
-
-
-"rotationGrp": {
-
-
-
-"grpName": "rotation Group",
-
-
-
-"grpVisibleB": false,
-
-
-
-"params": [
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_1",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_2",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_3",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_4",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_5",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_6",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_7",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_8",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_9",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "rotation_10",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-}
-
-
-
-]
-
-
-},
-
-
-"sliderGrp": {
-
-
-
-"grpName": "Slider Group",
-
-
-
-"grpVisibleB": true,
-
-
-
-"params": [
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-100
-
-
-
-
-
-],
-
-
-
-
-
-"name": "scale",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-3
-
-
-
-
-
-],
-
-
-
-
-
-"name": "speed",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "dark",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-30
-
-
-
-
-
-],
-
-
-
-
-
-"name": "light",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-20
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cover",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-80
-
-
-
-
-
-],
-
-
-
-
-
-"name": "cloud_alpha",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-50
-
-
-
-
-
-],
-
-
-
-
-
-"name": "sky_tint",
-
-
-
-
-
-"visibleB": true
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_8",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_9",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-},
-
-
-
-
-{
-
-
-
-
-
-"defaultVal": [
-
-
-
-
-
-
-0
-
-
-
-
-
-],
-
-
-
-
-
-"name": "slider_10",
-
-
-
-
-
-"visibleB": false
-
-
-
-
-}
-
-
-
-]
-
-
-}
-
-},
-
-"math_expression": {
-
-
-"alphaExpr": "return inChannel;",
-
-
-"alpha_error": "compiled successfully",
-
-
-"blueExpr": "return inChannel;",
-
-
-"blue_error": " compiled successfully",
-
-
-"commonExpr": "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
-
-
-"common_error": "compiled successfully",
-
-
-"exprRGBModeB": true,
-
-
-"expr_current_channel": "inChannel",
-
-
-"expr_pix": "pix",
-
-
-"expr_rgb_channel": "inputRgb",
-
-
-"greenExpr": "return inChannel;",
-
-
-"green_error": "compiled successfully",
-
-
-"redExpr": "return inChannel;",
-
-
-"red_error": "compiled successfully",
-
-
-"rgbExpr": "    vec3 result;\\n    //in this mode the channel0 texture is automatically a rgb channel\\n    vec3 premix =mix (inputRgb,color_1, slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        //gl_FragCoord returns the coordonate of the current pixel.\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        result = mix (inputRgb,textureLayer.rgb, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         result =premix; // if checkbox not selected return premix\\n\\n    }\\n    return result;",
-
-
-"rgb_error": "compiled successfully"
-
-}
-}
+{"composition": {"camera_position": "camera_pos","camera_rotation": "camera_rotation","camera_target": "camera_target","camera_zoom": "camera_zoom","compResolution": "compResolution","frame_rate": "fps","layerPosition": "layerPosition","layerScale": "layerScale","resolution": "resolution","time_frame": "timef","time_sec": "iTime"},"effectInfo": {"description": "based on https://www.shadertoy.com/view/4tdSWr\\nCreative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.\\n\\nGenerates a sky with clouds. \\nHave fun with the tint, cloud's scale, speed etc...","effectName": "tlMath","minimalPluginVersion": 115,"pluginVersion": 115,"presetName": "cloudy_sky","tags": ["shadertoy"," clouds"," sky"]},"effectMode": {"evalModeB": false,"expr_modeB": false,"gl33_modeB": true},"flags": {"pixelsCallExternalInputB": [false,false,false,false],"presetHasWideInputB": true,"usesCameraB": false},"gl_expression": {"gl33_frag_error": "compiled successfully","gl33_frag_sh": "//https://www.shadertoy.com/view/4tdSWr\\n#version 330 // glsls version for opengl 3.3\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\n\\nuniform vec2 resolution;\\nuniform float scale;\\nuniform float speed;\\nuniform float dark;\\nuniform float light;\\nuniform float cover;\\nuniform float cloud_alpha;\\nuniform float sky_tint;\\n\\nuniform vec3 skycolor_1;\\nuniform vec3 skycolor_2;\\nuniform vec3 cloud_color;\\n\\nuniform float iTime;\\n\\nfloat cloudscale = scale/100;\\nfloat clouddark = dark/100;\\nfloat cloudlight =light/100;\\nfloat cloudcover = cover/100;\\nfloat cloudalpha = cloud_alpha/10;\\nfloat skytint =sky_tint/100;\\n\\n\\nconst mat2 m = mat2( 1.6,  1.2, -1.2,  1.6 );\\n\\nvec2 hash( vec2 p ) {\\n    p = vec2(dot(p,vec2(127.1,311.7)), dot(p,vec2(269.5,183.3)));\\n    return -1.0 + 2.0*fract(sin(p)*43758.5453123);\\n}\\n\\nfloat noise( in vec2 p ) {\\n    const float K1 = 0.366025404; // (sqrt(3)-1)/2;\\n    const float K2 = 0.211324865; // (3-sqrt(3))/6;\\n    vec2 i = floor(p + (p.x+p.y)*K1);    \\n    vec2 a = p - i + (i.x+i.y)*K2;\\n    vec2 o = (a.x>a.y) ? vec2(1.0,0.0) : vec2(0.0,1.0); //vec2 of = 0.5 + 0.5*vec2(sign(a.x-a.y), sign(a.y-a.x));\\n    vec2 b = a - o + K2;\\n    vec2 c = a - 1.0 + 2.0*K2;\\n    vec3 h = max(0.5-vec3(dot(a,a), dot(b,b), dot(c,c) ), 0.0 );\\n    vec3 n = h*h*h*h*vec3( dot(a,hash(i+0.0)), dot(b,hash(i+o)), dot(c,hash(i+1.0)));\\n    return dot(n, vec3(70.0));    \\n}\\n\\nfloat fbm(vec2 n) {\\n    float total = 0.0, amplitude = 0.1;\\n    for (int i = 0; i < 7; i++) {\\n        total += noise(n) * amplitude;\\n        n = m * n;\\n        amplitude *= 0.4;\\n    }\\n    return total;\\n}\\n\\n// -----------------------------------------------\\n\\nvoid mainImage( out vec4 fragColor, in vec2 fragCoord ) {\\n    vec2 p = fragCoord.xy / resolution.xy;\\n    vec2 uv = p*vec2(resolution.x/resolution.y,1.0);    \\n    float time = iTime * speed/100;\\n    float q = fbm(uv * cloudscale * 0.5);\\n    \\n    //ridged noise shape\\n    float r = 0.0;\\n    uv *= cloudscale;\\n    uv -= q - time;\\n    float weight = 0.8;\\n    for (int i=0; i<8; i++){\\n        r += abs(weight*noise( uv ));\\n        uv = m*uv + time;\\n        weight *= 0.7;\\n    }\\n    \\n    //noise shape\\n    float f = 0.0;\\n    uv = p*vec2(resolution.x/resolution.y,1.0);\\n    uv *= cloudscale;\\n    uv -= q - time;\\n    weight = 0.7;\\n    for (int i=0; i<8; i++){\\n        f += weight*noise( uv );\\n        uv = m*uv + time;\\n        weight *= 0.6;\\n    }\\n    \\n    f *= r + f;\\n    \\n    //noise colour\\n    float c = 0.0;\\n    time = iTime * speed * .02;\\n    uv = p*vec2(resolution.x/resolution.y,1.0);\\n    uv *= cloudscale*2.0;\\n    uv -= q - time;\\n    weight = 0.4;\\n    for (int i=0; i<7; i++){\\n        c += weight*noise( uv );\\n        uv = m*uv + time;\\n        weight *= 0.6;\\n    }\\n    \\n    //noise ridge colour\\n    float c1 = 0.0;\\n    time = iTime * speed * .03;\\n    uv = p*vec2(resolution.x/resolution.y,1.0);\\n    uv *= cloudscale*3.0;\\n    uv -= q - time;\\n    weight = 0.4;\\n    for (int i=0; i<7; i++){\\n        c1 += abs(weight*noise( uv ));\\n        uv = m*uv + time;\\n        weight *= 0.6;\\n    }\\n    \\n    c += c1;\\n    \\n    vec3 skycolour = mix(skycolor_2, skycolor_1, p.y);\\n    vec3 cloudcolour = cloud_color * clamp((clouddark + cloudlight*c), 0.0, 1.0);\\n   \\n    f = cloudcover + cloudalpha*f*r;\\n    \\n    vec3 result = mix(skycolour, clamp(skytint * skycolour + cloudcolour, 0.0, 1.0), clamp(f + c, 0.0, 1.0));\\n    \\n    fragColor = vec4( result, 1.0 );\\n}\\n\\nvoid  main ()\\n{\\n     mainImage (fragColorOut, gl_FragCoord.xy);\\n}\\n","gl33_vert_error": "compiled successfully","gl33_vert_sh": "#version 330 \\n in vec4 Position;\\nin vec2 UVs;\\nout vec4 out_pos;\\nout vec2 out_uvs;\\nuniform mat4 ModelviewProjection;\\nvoid main(void)\\n{\\nout_pos = ModelviewProjection * Position; \\n gl_Position = out_pos; \\nout_uvs = UVs;\\n}"},"gui_settings": {"cboxGrp": {"grpName": "check box Group","grpVisibleB": false,"params": [{"defaultVal": [0],"name": "cbox_1","visibleB": false},{"defaultVal": [0],"name": "cbox_2","visibleB": false},{"defaultVal": [0],"name": "cbox_3","visibleB": false},{"defaultVal": [0],"name": "cbox_4","visibleB": false},{"defaultVal": [0],"name": "cbox_5","visibleB": false},{"defaultVal": [0],"name": "cbox_6","visibleB": false},{"defaultVal": [0],"name": "cbox_7","visibleB": false},{"defaultVal": [0],"name": "cbox_8","visibleB": false},{"defaultVal": [0],"name": "cbox_9","visibleB": false},{"defaultVal": [0],"name": "cbox_10","visibleB": false}]},"colorGrp": {"grpName": "3d color Group","grpVisibleB": true,"params": [{"defaultVal": [0.2,0.4,0.6],"name": "skycolor_1","visibleB": true},{"defaultVal": [0.4,0.7,1],"name": "skycolor_2","visibleB": true},{"defaultVal": [1,1,1],"name": "cloud_color","visibleB": true},{"defaultVal": [1,1,1],"name": "color_4","visibleB": false},{"defaultVal": [1,1,1],"name": "color_5","visibleB": false},{"defaultVal": [1,1,1],"name": "color_6","visibleB": false},{"defaultVal": [1,1,1],"name": "color_7","visibleB": false},{"defaultVal": [1,1,1],"name": "color_8","visibleB": false},{"defaultVal": [1,1,1],"name": "color_9","visibleB": false},{"defaultVal": [1,1,1],"name": "color_10","visibleB": false}]},"layerGrp": {"current_layer": {"name": "texture0"},"extLayer_1": {"name": "texture1","visibleB": false},"extLayer_2": {"name": "texture2","visibleB": false},"extLayer_3": {"name": "texture3","visibleB": false},"extLayer_4": {"name": "texture4","visibleB": false},"grpName": "Layer Group","grpVisibleB": false},"pointGrp": {"grpName": "3d Point Group","grpVisibleB": false,"params": [{"defaultVal": [50,50,50],"name": "center","visibleB": false},{"defaultVal": [50,50,50],"name": "point_2","visibleB": false},{"defaultVal": [50,50,50],"name": "point_3","visibleB": false},{"defaultVal": [50,50,50],"name": "point_4","visibleB": false},{"defaultVal": [50,50,50],"name": "point_5","visibleB": false},{"defaultVal": [50,50,50],"name": "point_6","visibleB": false},{"defaultVal": [50,50,50],"name": "point_7","visibleB": false},{"defaultVal": [50,50,50],"name": "point_8","visibleB": false},{"defaultVal": [50,50,50],"name": "point_9","visibleB": false},{"defaultVal": [50,50,50],"name": "point_10","visibleB": false}]},"rotationGrp": {"grpName": "rotation Group","grpVisibleB": false,"params": [{"defaultVal": [0],"name": "rotation_1","visibleB": false},{"defaultVal": [0],"name": "rotation_2","visibleB": false},{"defaultVal": [0],"name": "rotation_3","visibleB": false},{"defaultVal": [0],"name": "rotation_4","visibleB": false},{"defaultVal": [0],"name": "rotation_5","visibleB": false},{"defaultVal": [0],"name": "rotation_6","visibleB": false},{"defaultVal": [0],"name": "rotation_7","visibleB": false},{"defaultVal": [0],"name": "rotation_8","visibleB": false},{"defaultVal": [0],"name": "rotation_9","visibleB": false},{"defaultVal": [0],"name": "rotation_10","visibleB": false}]},"sliderGrp": {"grpName": "Slider Group","grpVisibleB": true,"params": [{"defaultVal": [100],"name": "scale","visibleB": true},{"defaultVal": [3],"name": "speed","visibleB": true},{"defaultVal": [50],"name": "dark","visibleB": true},{"defaultVal": [30],"name": "light","visibleB": true},{"defaultVal": [20],"name": "cover","visibleB": true},{"defaultVal": [80],"name": "cloud_alpha","visibleB": true},{"defaultVal": [50],"name": "sky_tint","visibleB": true},{"defaultVal": [0],"name": "slider_8","visibleB": false},{"defaultVal": [0],"name": "slider_9","visibleB": false},{"defaultVal": [0],"name": "slider_10","visibleB": false}]}},"math_expression": {"alphaExpr": "return inChannel;","alpha_error": "compiled successfully","blueExpr": "return inChannel;","blue_error": " compiled successfully","commonExpr": "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}","common_error": "compiled successfully","exprRGBModeB": true,"expr_current_channel": "inChannel","expr_pix": "pix","expr_rgb_channel": "inputRgb","greenExpr": "return inChannel;","green_error": "compiled successfully","redExpr": "return inChannel;","red_error": "compiled successfully","rgbExpr": "    vec3 result;\\n    //in this mode the channel0 texture is automatically a rgb channel\\n    vec3 premix =mix (inputRgb,color_1, slider_1/100); //let's make a simple mix with color 1 influence by a slider\\n    //note we wrote vec4(color_1, 1.0). becaufe we have to mix a four color channel so we add a full alpha\\n    if (cbox_1){ // if the checkbox is activated\\n        // we import the layer1 ith an offset ith point1.\\n        \\n        // an offset has to be nromalized: (1,1) =(the layer x size normalized, the layer y scale normalized)\\n        // so an offset to stay in the picture has to be defined wetween 0 and 1\\n        // lets start with resolution/2 get the center. (for ex in fullhd wi get center (960/540)\\n        //if we substract the point coord we get the off value\\n        // 0 if the point is in the center. to get a normalized value to the layer we divide by the resoluton \\n        vec2 off;\\n        //gl_FragCoord returns the coordonate of the current pixel.\\n        off.x =textUvs.x +( resolution.x/2 -point_1.x)/resolution.x;\\n        off.y =textUvs.y -( resolution.y/2 -point_1.y)/resolution.y;\\n        vec4 textureLayer = texture (texture1,off );\\n        result = mix (inputRgb,textureLayer.rgb, slider_1/100); //let's do some mix with a slider\\n    }else{\\n         result =premix; // if checkbox not selected return premix\\n\\n    }\\n    return result;","rgb_error": "compiled successfully"}}
