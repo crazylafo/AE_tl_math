@@ -36,7 +36,7 @@ body {
         top: 0;
         left: 0;
         background-color: #111;
-        overflow-x: hidden;
+        overflow-x: auto;
         padding-top: 10px;
     }
     #SettingsCol a:active {
@@ -53,13 +53,12 @@ body {
     #tabEditsMenu button:hover {
         background-color: #ddd;
       }
-      
-      #split-bar {
-        background-color:white;
-        height:100%;
-        width: 6px;
-        float: right;
-        cursor: col-resize;
+    #split-bar {
+    background-color:white;
+    height:100%;
+    width: 6px;
+    float: right;
+    cursor: col-resize;
     }
     
     #grpSett{

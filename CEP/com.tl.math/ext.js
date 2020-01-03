@@ -200,8 +200,7 @@ function updatePresetMenu (presetsList){
 	for (var i =0; i< presetsList.preset.length; i++){
 		var inputStr = '<label  id="'+presetsList.preset[i].name+'"  class="presetsBlock">'+
 		'<input type="radio" class="presetIconRadio" id="presetIconRadio'+i+'" name="presetListRb" value="'+i+'"/>'+
-		'<img src="'+presetsList.preset[i].icon+'" id="presetIconImgsId">'+
-		'<div id="iconText">'+presetsList.preset[i].name+'</div>'
+		'<img src="'+presetsList.preset[i].icon+'" class="presetIconImgsId">'+presetsList.preset[i].name+
 		'</label>';
 		$("#presetsListAccess").append(inputStr);
 		}
@@ -292,7 +291,7 @@ function cleanJsonFromArbStr (str){
 function setConsoleStr (consoleName, strRepport){
 	var newStr = consoleName.toString()+"<br/>"+ cleanJsonFromArbStr(strRepport).replace("\\n", "<br/>");
 	return newStr
-}
+	}
 /**
  * set flags from shaders str 
  * input : obj arbdata, array strArr (with strings to find)
@@ -442,7 +441,8 @@ function copyDataToGUI (arbData, editors, numParams) {
 	if(arbData.effectMode.expr_modeB){
 		$("#langSelec").val("mExpr");
 	}
-	$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
+	toggleRgbModeBox ("rgbmodeB", arbData.math_expression.exprRGBModeB)
+	//$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
 	$("#resolutionName").val(arbData.composition.resolution.toString());
 	$("#layerPositionName").val(arbData.composition.layerPosition.toString());
 	$("#layerScaleName").val(arbData.composition.layerScale.toString());
@@ -614,6 +614,14 @@ function setMinimalVersion (arbData){
 	}
 	return minimalVersion;
 	}
+function toggleRgbModeBox (idIn, boolIn){
+	var currId = document.getElementById(idIn);
+	if (boolIn){
+		currId.checked =true;
+	}else{
+		currId.checked = false;
+	}
+}
 function toggleCheckbox(className, currId){
 	var classItems = document.getElementsByClassName(className);
 	var parentItem =  document.getElementById(currId);

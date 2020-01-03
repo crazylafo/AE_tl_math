@@ -1,21 +1,32 @@
-
-label.presetsBlock{
-    vertical-align: top;
-    display: inline-block;
-    text-align:center;
-    margin: 2%;
+#presetToolBar{
+    overflow: hidden;
+    position: fixed;
+    top: 0; 
+    padding: 5px;
+}
+#presetsListAccess{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    align-content: space-around;
+}
+.presetsBlock{
+    align-self: flex-start;
+    margin-left: auto;
+    margin: 2%; 
     margin-right:10%;
     color: #aaa;
 }
-#presetIconImgsId{
+.presetIconImgsId{
+    vertical-align: middle;
     padding: 5px;
     margin: 5px;
-    width: 100px;
-    height: 100px;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
     border-radius: 50%;
 }
-
 #seachBarInput{
     margin: 2%;
     width: 150px;
