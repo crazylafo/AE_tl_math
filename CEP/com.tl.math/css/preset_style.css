@@ -1,6 +1,7 @@
 #presetToolBar{
     overflow: hidden;
     position: fixed;
+    z-index: 2;
     background-color: #111;
     top: 0; 
     padding: 5px;
@@ -48,7 +49,6 @@ presetIconImgsId :active{
     background-color: #111;
     color : #aaa;
     margin: 2%;
-    width: 75%;
     margin-right:10%;
 
 }

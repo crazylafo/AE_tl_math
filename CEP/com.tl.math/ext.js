@@ -91,9 +91,9 @@ function onLoaded() {
 		});
 	$("#presetsListAccess").on("change", function(){
 		var  presetSelectedIndex = $('input[name="presetListRb"]:checked').val();
-		var descriptionStr = "description : \n "+ presetsList.preset[presetSelectedIndex].description;
-		$("#presetDescr").val(cleanJsonFromArbStr(presetsList.preset[presetSelectedIndex].description.toString()));
-		$("#presetDescr").autoResize();
+		var inputStr =  presetsList.preset[presetSelectedIndex].description.toString().replace("\\n", "<br>");
+		var descriptionStr = "Description : <br> "+cleanJsonFromArbStr(inputStr);
+		$("#presetDescr").html(descriptionStr);
 		});
 	$("#btnLoad").on("click", function() {		
 		loadPresetJSONFile();
@@ -160,7 +160,7 @@ function onLoaded() {
 		$(document).mousemove(function (e) {
 			e.preventDefault();
 			var x = e.pageX - $('#SettingsCol').offset().left;
-			if (x>160){
+			if (x>70){
 				$('#SettingsCol').css("width", x);
 				resizeEditorsMarginLeft(x+$('#SettingsCol').offset().left);
 			}
@@ -651,6 +651,11 @@ function resizeEditorsMarginLeft (size){
 	var newSize = (size+"px").toString();
 	tabCl[0].style.marginLeft =  newSize;
 	}
+function resizeSettingsMarginRight(size){
+	var tabCl = document.getElementsByClassName("SettingsCol");
+	var newSize = (size+"px").toString();
+	tabCl[0].style.marginRight =  newSize;
+	}
 function toggleSideBar(){
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
@@ -660,11 +665,11 @@ function toggleSideBar(){
 	Presetslib.style.display === "none"&& 
 	settingsMenu.style.display === "none"){
 		sidebar.style.display = "none";
-		resizeEditorsMarginLeft (160);
+		resizeEditorsMarginLeft (70);
 	}
 	else{
 		sidebar.style.display = "block";
-		resizeEditorsMarginLeft (450);
+		resizeEditorsMarginLeft (350);
 		}
 	}
 function toggleEditor(){
@@ -821,6 +826,10 @@ function glslEditor(glMode){
 		//editor.setAutoScrollEditorIntoView(true);
 		editor.session.setUseSoftTabs(true);
 		editor.resize();
+		editor.setOptions({
+			fontFamily: "arial",
+			fontSize: "12t"
+		  });
 		return editor;
 	}
 /**

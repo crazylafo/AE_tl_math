@@ -47,16 +47,21 @@ body {
     }
     #tabEditsMenu{
         position: sticky;
-        margin-left: 360px;
+        z-index: 3;
+        margin-left: 320px;
         height: 100%;
+        background-color: #111;
     }
     #tabEditsMenu button:hover {
         background-color: #ddd;
       }
     #split-bar {
-    background-color:white;
+    background-color:gray;
+    position: relative;
+    box-sizing: border-box;
+    z-index:4;
     height:100%;
-    width: 6px;
+    width: 10px;
     float: right;
     cursor: col-resize;
     }

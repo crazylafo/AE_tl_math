@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on  https://www.shadertoy.com/view/XssGz\\nand k_chroma https://logik-matchbook.org/shader/K_Chroma\\n\\nCreative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License. \\ndistort the chroma.",
+"description": "based on  https://www.shadertoy.com/view/XssGz\\nand k_chroma https://logik-matchbook.org/shader/K_Chroma\\n\\nCreative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.\\nDistorts the chroma.",
 
 
 "effectName": "tlMath",
