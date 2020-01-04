@@ -70,19 +70,21 @@ function getLastSlashofFilePath (scannedFile){
   }
 function searchFileInFolder(presetFileName, presetFolder, extensionPath){
     var iconFile = null;
-    
+    var filePathStr = extensionPath+"/imgs/tl_defaultPreset.png";
     var newIconFolder = Folder (presetFolder);
     var iconFileName = presetFileName.toString().substr(0,presetFileName.lastIndexOf("."))+".png";
     try{
-      iconFile = newIconFolder.getFiles(iconFileName);
-      if (typeof (iconFile)=== "undefined" || iconFile.length==0){
-        iconFile = extensionPath+"/imgs/tl_defaultPreset.png";
+      newFile = newIconFolder.getFiles(iconFileName);
+      iconFile = new File (newFile);
+      iconFileStr = (iconFile.fsName).toString();
+      if (typeof (iconFile)=== "undefined" || newFile.length==0){
+        return filePathStr;
       }
     }
     catch (e){
-      iconFile = extensionPath+"/imgs/tl_defaultPreset.png";
-    }
-    return iconFile.toString();
+      return filePathStr;
+    } 
+    return iconFileStr;
     
 };
 
