@@ -212,6 +212,129 @@
 						</td>
 				</table>
 				</div>
+			<div id="wiki">
+					<p><strong>tl Math Wiki.</strong></p>
+				
+					<p>Tl Math Copyright (C) 2020 Thomas Laforge</p>
+				
+					<p>The code contains:</p>
+				
+					<ul>
+					<li><a href="https://github.com/nlohmann">json for modern c++ by Niels  Lohmann</a></li>
+				
+					<li><a href="https://github.com/ajaxorg/ace">ace.js library</a></li>
+				
+					<li><a href="https://shadertoy.com">Shadertoy examples with there own license</a></li>
+					</ul>
+				
+					<hr />
+				
+					<p><strong>Table of contents</strong></p>
+				
+					<h4 id="1-whatistlmath">1-What is tl Math?</h6>
+				
+					<h4 id="2-whatisglsl">2-What is GLSL?</h6>
+				
+					<h4 id="3-isitpossibletoloadapresetwithoutcoding">3-Is it possible to load a preset without coding ?</h6>
+				
+					<h4 id="4-quickmenuoverview">4-Quick menu overview</h6>
+				
+					<h4 id="5-expressionvsfullshader">5-Expression vs full Shader</h6>
+				
+					<h4 id="6-examplestepbystepinexpressionrgbmode">6-Example step by step in expression rgb mode</h6>
+				
+					<h4 id="7-examplestepbystepinexpressionsplitmode">7-Example step by step in expression split mode</h6>
+				
+					<h4 id="8-examplestepbystepinglslmode">8-Example step by step in glsl mode</h6>
+				
+					<hr />
+				
+					<p><strong>1-What is tlMath?</strong></p>
+				
+					<p>tlMath is an After Effect Hybrid add-on for After Effect. That means there is a plug-in side and a panel side.
+					The plug-in interpret GLSL shaders, convert them to Effects, with customizable parameters. The panel side is the interface to write the shader, customize parameters, access to the library, give a name and tags to the preset, import or export it.a</p>
+				
+					<hr />
+				
+					<p><strong>2- What is GLSL?</strong></p>
+				
+					<p>GLSL is a high level language made by the kronos group. It's written for graphic cards and is rendered in an opengl context. Video games use it since 2004 and opengl2, in 3d programs  but some vfx production tools also use it, like Autodesk Flame. A web and mobile version has been created: openglES. Some example on the web are based on this version but the plugin <strong><em>uses the glsl 330 version</em></strong>. (wich goes with openg 3.3) Don't worry most of openglES shaders work in 330 version.
+					On the hardware requirement, opengl 3.3 was realized ten years ago, so if you can use After Effect 2017 or higher the plugin may works. Each shaders installed  in the library works on an intel graphic card so don"t worry on this side.</p>
+				
+					<p>The wiki will teach you the basic of this language but you should have a look to some nice websites to learn it.</p>
+				
+					<ul>
+					<li><p><a href="https://thebookofshaders.com">the book of shaders</a> In my opinion it's one of the best to enter in GLSL's world.</p></li>
+				
+					<li><p><a href="www.shadertoy.com">shadertoy</a>. It's the best library of shader. There are all type of shaders, from basic to complex. One of the creator team, Inigo Quilez has made a nice video tutorial for beginner https://www.youtube.com/watch?v=0ifChJ0nJfM.</p>
+				
+					<ul>
+					<li><p><a href="http://glslsandbox.com/">glsl-Sandbox</a> It's also a library but without search engine. So you can navigate explore</p></li>
+				
+					<li><p><a href="https://logik-matchbook.org/">logik matchbook</a>. This website has a lot of glsl shaders written for autodesk Flame, but it's easy to adapt in the plugin. (some of the library are based on shaders from this library themselves inspired by shadertoy's shaders.</p></li></ul></li>
+					</ul>
+				
+					<hr />
+				
+					<p><strong>3-Is it possible to load a preset without coding ?</strong></p>
+				
+					<p>Yes it's possible. When the setup is loaded, the first window you see it's a library. You can select a preset and click on "load and apply" button. More details here.</p>
+				
+					<hr />
+				
+					<p><strong>4-Quick menu overview</strong></p>
+				
+					<ol>
+					<li><p>The plugin.</p>
+				
+					<p>When you apply the plug-in on a layer, you get a result like that:</p></li>
+					</ol>
+				
+					<p><img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Effect_00.PNG" alt="" /></p>
+				
+					<pre><code> In the example, the effect is applied on a white solid. The result is the same.
+					</code></pre>
+				
+					<p>You get a lot of parameters: 3 button, 10 sliders, 10 points, 10 colors, 10 rotations and 4 layers. 
+					But in fact those parameters do nothing, until you enter in the setup. But before to click on it, have a look to the three button.</p>
+				
+					<ul>
+					<li>Setup: will call the panel, to load, or to edit/write  a preset.</li>
+				
+					<li>Effect description: Print the description of the preset. read=only</li>
+				
+					<li>Reset preset: similar to After Effect reset button. But why this button? Because the after effect reset button will reset to the default preset inside the plug-in. But this button will keep you chosen preset but will reset to the preset's default values, defined in the panel.</li>
+					</ul>
+				
+					<ol>
+					<li><p>The Panel.
+					*The library (default menu)
+					When you open the panel, by the setup or by the After Effect extension menu you'll get something like this:
+					<img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Menu_00.PNG" alt="" /></p>
+				
+					<p><strong>The column on the left is the menu access</strong></p></li>
+					</ol>
+				
+					<hr />
+				
+					<p><strong>5-Expression vs full Shader</strong></p>
+				
+					<hr />
+				
+					<p><strong>6-Example step by step in expression rgb mode</strong></p>
+				
+					<hr />
+				
+					<p><strong>7-Example step by step in expression split mode</strong></p>
+				
+					<hr />
+				
+					<p><strong>8-Example step by step in glsl mode</strong></p>
+				
+					<hr />
+				
+					<p><strong>9-Preset structure in the json file</strong></p>
+				</div>
 			</div>
 		</div>
 	

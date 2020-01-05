@@ -659,11 +659,13 @@ function resizeSettingsMarginRight(size){
 function toggleSideBar(){
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
+	var wiki = document.getElementById("wiki");
 	var settingsMenu = document.getElementById("paramSettingsId");
 	var sidebar = document.getElementById("SettingsCol");
 	if (presetsSettingMenu.style.display === "none"&&
 	Presetslib.style.display === "none"&& 
-	settingsMenu.style.display === "none"){
+	settingsMenu.style.display === "none"&&
+	wiki.style.display === "none"){
 		sidebar.style.display = "none";
 		resizeEditorsMarginLeft (70);
 	}
@@ -686,7 +688,7 @@ function toggleEditor(){
 	}
 function toggleMenus(id){
 
-	var idArr =  ['presetSettingId', 'presetId', 'paramSettingsId'];
+	var idArr =  ['presetSettingId', 'presetId', 'paramSettingsId', 'wiki'];
 	for (var i=0; i<idArr.length; i++){
 		var menu = document.getElementById(idArr[i]);
 		if( id=== idArr[i]){
@@ -826,10 +828,10 @@ function glslEditor(glMode){
 		//editor.setAutoScrollEditorIntoView(true);
 		editor.session.setUseSoftTabs(true);
 		editor.resize();
-		editor.setOptions({
+		/*editor.setOptions({
 			fontFamily: "arial",
-			fontSize: "12t"
-		  });
+			fontSize: "12pt"
+		  });*/
 		return editor;
 	}
 /**
