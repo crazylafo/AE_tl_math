@@ -2,6 +2,14 @@
 * tl math plugin and CEP
 *thomas laforge  Copyright 2020
 **************************************************************************/
+//the jsx file is written for the After Effect scripts. It's an old js version
+//more info https://estk.aenhancers.com/ and http://docs.aenhancers.com/
+
+/**
+ * get date as str
+ * input : void
+ * return sstring date
+ */
 function getDate() {
   var x = new Date();
   var y = x.getFullYear().toString();
@@ -11,7 +19,12 @@ function getDate() {
   (m.length == 1) && (m = '0' + m);
   var yyyymmdd = y + m + d;
   return yyyymmdd;
-}
+  }
+/**
+ * compare two strings embeded in the  same  object
+ * input : string a, string b 
+ * return int comparaison
+ */
 function compareObjStr(a,b){
   var bandA = a.name.toUpperCase();
   var bandB = b.name.toUpperCase();
@@ -22,20 +35,50 @@ function compareObjStr(a,b){
     comparison = -1;
   }
   return comparison;
-}
+  }
+/**
+ * safe copy of an array of strings
+ * input : array
+ * return array
+ */
 function copyArrayStr (arr){
   var newArr = [];
   for (var i=0; i< arr.length; i++){
     newArr.push (arr[i].toString());
   }
   return newArr;
-}
-
+  }
+/**
+ * get the index of the last dot of a string (tu use with path)
+ * input : string scannedFile (path)
+ * return int (the dot index)
+ */
 function getLastDotOfFile (scannedFile){
   var dot = 0;
   dot = scannedFile.fsName.lastIndexOf(".");
   return dot;
   }
+/**
+ * get the index of the last slash of a string (tu use with path)
+ * input : string scannedFile (path)
+ * return int (the last slash index)
+ */
+function getLastSlashofFilePath (scannedFile){
+  var slash = 0;
+  if ($.os.indexOf ("Windows") !=-1){
+      var delimitationStr = "\\";
+      slash = scannedFile.fsName.lastIndexOf (delimitationStr);
+      }
+      else {
+      slash =  scannedFile.fsName.lastIndexOf("/");
+      }
+  return slash;
+  }
+  /**
+ * creates a folder to store file in user data location of the local machine 
+ * input : string plugIdStr: id of the plugin version
+ * return path created
+ */
 function createUserDataFolder(plugIdStr){
     var userLibFolder = new Folder (Folder.userData);
     var folderStr = userLibFolder.absoluteURI.toString()+"/tl";
@@ -48,7 +91,12 @@ function createUserDataFolder(plugIdStr){
       thisPluginFolder.create();
       }
     return thisPluginFolder;
-}
+  }
+/**
+ * creates a folder to store user library
+ * input : string plugIdStr: id of the plugin version
+ * return path created
+ */
 function createUserPresetFolder(plugIdStr){
     var userFolder = createUserDataFolder(plugIdStr);
     var userPresetsFolder =new Folder (userFolder.absoluteURI.toString()+"/presets");
@@ -56,18 +104,12 @@ function createUserPresetFolder(plugIdStr){
       userPresetsFolder .create();
       }
     return userPresetsFolder;
-}
-function getLastSlashofFilePath (scannedFile){
-  var slash = 0;
-  if ($.os.indexOf ("Windows") !=-1){
-      var delimitationStr = "\\";
-      slash = scannedFile.fsName.lastIndexOf (delimitationStr);
-      }
-      else {
-      slash =  scannedFile.fsName.lastIndexOf("/");
-      }
-  return slash;
   }
+/**
+ * get icons  files (in png) for preset or load the default if not
+ * input :string presetFileName, path presetFolder (for user), path extensionPath 
+ * return path iconFileStr
+ */
 function searchFileInFolder(presetFileName, presetFolder, extensionPath){
     var iconFile = null;
     var filePathStr = extensionPath+"/imgs/tl_defaultPreset.png";
@@ -86,11 +128,12 @@ function searchFileInFolder(presetFileName, presetFolder, extensionPath){
     } 
     return iconFileStr;
     
-};
-
-/*@in empty
- @return bool*/
-
+}
+/**
+ *get info about activeItem as comp in AE
+ * input void
+ * return bool
+ */
 function isCompActiveItem(){
     if (app.project.activeItem instanceof (CompItem)){
         return true
@@ -99,6 +142,11 @@ function isCompActiveItem(){
         alert ("please select a composition");
         return false}
 }
+/**
+ * print an alert  message in AE GUI
+ * input void
+ * return void
+ */
 function alertSelecEffect(){
   alert ('select a tl Math Effect');
 }
@@ -106,6 +154,7 @@ if ( ! $._ext )
 {
   $._ext = {};
 }
+//part to communicate with the main js file.
 $._ext = {
   sendMessageToPlugin : function(){
     try{

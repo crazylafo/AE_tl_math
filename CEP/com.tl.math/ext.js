@@ -658,9 +658,9 @@ function setMinimalVersion (arbData){
 	return minimalVersion;
 	}
 /**
- * 
- *input:
-*return:
+ * set default values when launching panel 
+ *input: void
+*return: void
 */
 function defaultVal(){
 	$("#langSelec").val("mExpr");
@@ -672,9 +672,9 @@ function defaultVal(){
 	openSettingsMenu("settingsGrp");
 	}
 /**
- * 
-*input:
-*return:
+ * toggleRgbModeBox: force toggling in expression mode
+*input: id id of the checkbox
+*return: void
 */
 function toggleRgbModeBox (idIn, boolIn){
 	var currId = document.getElementById(idIn);
@@ -685,9 +685,9 @@ function toggleRgbModeBox (idIn, boolIn){
 	}
 }
 /**
-* 
-*input:
-*return:
+* toggleCheckbox: toggle checkboxes of the same class
+*input: string className, id currId of the parent checkbox
+*return: void
 */
 function toggleCheckbox(className, currId){
 	var classItems = document.getElementsByClassName(className);
@@ -704,9 +704,9 @@ function toggleCheckbox(className, currId){
 		}
 	}
 /**
-*
-*input:
-*return:
+* resizeEditorsMarginLeft 
+*input: int size of the margin on the left side
+*return: void
 */
 function resizeEditorsMarginLeft (size){
 	var tabCl = document.getElementsByClassName("tabEditors");
@@ -714,15 +714,20 @@ function resizeEditorsMarginLeft (size){
 	tabCl[0].style.marginLeft =  newSize;
 	}
 /**
-*input:
-*return:
+* resizeEditorsMarginRight
+*input: int size of the margin on the right side
+*return: void
 */
 function resizeSettingsMarginRight(size){
 	var tabCl = document.getElementsByClassName("SettingsCol");
 	var newSize = (size+"px").toString();
 	tabCl[0].style.marginRight =  newSize;
 	}
-
+/**
+* toggleSideBar: toggle the side bar of the menus
+*input: void
+*return: void
+*/
 function toggleSideBar(){
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
@@ -741,6 +746,11 @@ function toggleSideBar(){
 		resizeEditorsMarginLeft (350);
 		}
 	}
+/**
+* toggleEditor  toggle the editor's window on the right
+*input: void
+*return: void
+*/
 function toggleEditor(){
 	var presetsMenu = document.getElementById("tabEditsMenu");
 	if (presetsMenu.style.display === "none"){
@@ -753,6 +763,11 @@ function toggleEditor(){
 		}
 
 	}
+/**
+* toggleEditor  toggle the menus's window on the left
+*input: id of the menu
+*return: void
+*/
 function toggleMenus(id){
 
 	var idArr =  ['presetSettingId', 'presetId', 'paramSettingsId', 'wiki'];
@@ -776,6 +791,11 @@ function toggleMenus(id){
 		}
 	toggleSideBar();
 	}
+/**
+* toggleDescription  toggle the description editor inside the preset settings menu
+*input: void
+*return: void
+*/
 function toggleDescription(){
 	var parentMenu = document.getElementById('presetSettingId');
 	var descrMenu = document.getElementById("descriptionId");
@@ -786,6 +806,11 @@ function toggleDescription(){
 		descrMenu.style.display = "none";
 		}
 	}
+/**
+* openSettingsMenu open the selected setting menu inside the preset settings menu
+*input: id settingIdName
+*return: void
+*/
 function openSettingsMenu (settingIdName){
 	var settArray = ["settingsGrp","exprSettingsGrp", "layerGrp", "sliderGrp", "pointGrp", "cboxGrp", "colorGrp","rotationGrp"];
 	
@@ -799,6 +824,11 @@ function openSettingsMenu (settingIdName){
 			}
 		}
 	}
+/**
+* set editors: create glsl editors in ace context
+*input: void
+*return: object edirtors
+*/
 function setEditors(){
 	var editors = {};
 	editors.gl33_frag_editor = glslEditor("gl33_frag_editor");
@@ -811,6 +841,11 @@ function setEditors(){
 	editors.expr_common_editor  = glslEditor("expr_common_editor");
 	return editors;
 	}
+/**
+* OpenEditor: open the window of  the tabbed editor
+*input: event evt, string tabName
+*return: void
+*/
 function openEditor(evt, tabName) {
 		// Declare all variables
 		var i, tabEditorList, glslGUILinks, consoleList;
@@ -838,6 +873,11 @@ function openEditor(evt, tabName) {
 			}
 		}	
 	}
+/**
+* mathGuiModeFunc: switch between expression mode and gl33 mode
+*input: void
+*return: void
+*/
 function mathGuiModeFunc(){
 	var mathGui = document.getElementsByClassName("mathGUI");
 		var glslGui = document.getElementsByClassName("glslGUI");
@@ -851,6 +891,11 @@ function mathGuiModeFunc(){
 	}
 	mathGUIRgbModeFunc();
 	}
+/**
+* mathGUIRgbModeFunc: in expression mode, switch between group of rgb mode and splited rgb mode expressions
+*input: void
+*return: void
+*/
 function mathGUIRgbModeFunc(){
 	if ($("#rgbmodeB").is(':checked')){
 		$("#rgbExpBtn").show();
@@ -867,18 +912,28 @@ function mathGUIRgbModeFunc(){
 	}
 
 	}
+/**
+* glslGuiModeFunc: hide epxressions window and show gl330 windows
+*input: void
+*return: void
+*/
 function glslGuiModeFunc(){
-		var mathGui = document.getElementsByClassName("mathGUI");
-		 var glslGui = document.getElementsByClassName("glslGUI");
-		for (var i =0; i< mathGui.length; i++){
-				$(mathGui[i]).hide();
-			}
-		for (var i =0; i< glslGui.length; i++){
-			$(glslGui[i]).show();
+	var mathGui = document.getElementsByClassName("mathGUI");
+	var glslGui = document.getElementsByClassName("glslGUI");
+	for (var i =0; i< mathGui.length; i++){
+			$(mathGui[i]).hide();
 		}
-		openEditor(event, 'gl33_frag_tab');
+	for (var i =0; i< glslGui.length; i++){
+		$(glslGui[i]).show();
+	}
+	openEditor(event, 'gl33_frag_tab');
 
 	}	
+/**
+* langSelecFunc(): call functions to switch between epxression and gl330 modes
+*input: void
+*return: void
+*/
 function langSelecFunc() {
 		var langSelec = document.getElementById("langSelec").value;
 		if (langSelec === "mExpr"){
@@ -888,6 +943,11 @@ function langSelecFunc() {
 			glslGuiModeFunc();
 		  }
 	 }
+/**
+* glslEditor: create editor context with ace
+*input: string glMode
+*return: obj editor
+*/
 function glslEditor(glMode){
 		var editor = ace.edit(glMode);
 		editor.setTheme("ace/theme/ambiance");
@@ -900,6 +960,37 @@ function glslEditor(glMode){
 			fontSize: "12pt"
 		  });*/
 		return editor;
+	}
+/**
+* loadPluginPresets: call jsx to load presets in panel and user lib folders.
+*input: obj arbData (the function  extract  some infos from it)
+*return: void
+*/
+function loadPluginPresets(arbData){
+	var csInterface = new CSInterface();
+	var extensionPath = csInterface.getSystemPath(SystemPath.EXTENSION)+"";
+	var folderPluginpresetsPath  = csInterface.getSystemPath(SystemPath.EXTENSION)+"/json/pluginPresets/";
+	var plugIdStr = arbData.effectInfo.effectName.toString()+arbData.effectInfo.pluginVersion;
+	var objData = {};
+	objData.extensionPath =extensionPath;
+	objData.folderPluginpresetsPath = folderPluginpresetsPath;
+	objData.plugIdStr = plugIdStr;
+	objDataStr = JSON.stringify (objData);
+	csInterface.evalScript('$._ext.listJsonFiles('+objDataStr+')');
+	}
+/**
+* loadDefaultArb(): load the default arb preset, when lauching the  panel
+*input: void
+*return: void
+*/
+function loadDefaultArb(){
+	var csInterface = new CSInterface();
+	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/json/pluginPresets";
+	var defaultArbFile  =extensionRoot+ "/tl_defaultPreset.JSON";
+	var result =  window.cep.fs.readFile(defaultArbFile);
+	if (result.err == 0) {
+		return  result.data;
+		}
 	}
 /**
  * Convert the Color object to string in hexadecimal format;
@@ -924,28 +1015,6 @@ function toHex(color, delta) {
         };
     }
 	return "#" + hex;
-	}
-function loadPluginPresets(arbData){
-	var csInterface = new CSInterface();
-	var extensionPath = csInterface.getSystemPath(SystemPath.EXTENSION)+"";
-	var folderPluginpresetsPath  = csInterface.getSystemPath(SystemPath.EXTENSION)+"/json/pluginPresets/";
-	var plugIdStr = arbData.effectInfo.effectName.toString()+arbData.effectInfo.pluginVersion;
-
-	var objData = {};
-	objData.extensionPath =extensionPath;
-	objData.folderPluginpresetsPath = folderPluginpresetsPath;
-	objData.plugIdStr = plugIdStr;
-	objDataStr = JSON.stringify (objData);
-	csInterface.evalScript('$._ext.listJsonFiles('+objDataStr+')');
-	}
-function loadDefaultArb(){
-	var csInterface = new CSInterface();
-	var extensionRoot = csInterface.getSystemPath(SystemPath.EXTENSION) + "/json/pluginPresets";
-	var defaultArbFile  =extensionRoot+ "/tl_defaultPreset.JSON";
-	var result =  window.cep.fs.readFile(defaultArbFile);
-	if (result.err == 0) {
-		return  result.data;
-		}
 	}
 /**
  * Load JSX file into the scripting context of the product. All the jsx files in 
