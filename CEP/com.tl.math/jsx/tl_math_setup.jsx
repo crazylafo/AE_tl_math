@@ -1,8 +1,36 @@
 ﻿/*************************************************************************
 * tl math plugin and CEP
-*thomas laforge  Copyright 2019
+*thomas laforge  Copyright 2020
 **************************************************************************/
-//global variables
+function getDate() {
+  var x = new Date();
+  var y = x.getFullYear().toString();
+  var m = (x.getMonth() + 1).toString();
+  var d = x.getDate().toString();
+  (d.length == 1) && (d = '0' + d);
+  (m.length == 1) && (m = '0' + m);
+  var yyyymmdd = y + m + d;
+  return yyyymmdd;
+}
+function compareObjStr(a,b){
+  var bandA = a.name.toUpperCase();
+  var bandB = b.name.toUpperCase();
+  var comparison = 0;
+  if (bandA > bandB) {
+    comparison = 1;
+  } else if (bandA < bandB) {
+    comparison = -1;
+  }
+  return comparison;
+}
+function copyArrayStr (arr){
+  var newArr = [];
+  for (var i=0; i< arr.length; i++){
+    newArr.push (arr[i].toString());
+  }
+  return newArr;
+}
+
 function getLastDotOfFile (scannedFile){
   var dot = 0;
   dot = scannedFile.fsName.lastIndexOf(".");
@@ -40,20 +68,23 @@ function getLastSlashofFilePath (scannedFile){
       }
   return slash;
   }
-function searchFileInFolder (presetFileName, presetFolder, extensionPath){
+function searchFileInFolder(presetFileName, presetFolder, extensionPath){
     var iconFile = null;
-    var newIconFolder = Folder (presetFolder.fsName);
+    var filePathStr = extensionPath+"/imgs/tl_defaultPreset.png";
+    var newIconFolder = Folder (presetFolder);
     var iconFileName = presetFileName.toString().substr(0,presetFileName.lastIndexOf("."))+".png";
-      try{
-        iconFile = newIconFolder.getFiles(iconFileName);
-        if (typeof (iconFile)=== "undefined" || iconFile.length==0){
-          iconFile = extensionPath+"/imgs/tl_defaultPreset.png";
-        }
+    try{
+      newFile = newIconFolder.getFiles(iconFileName);
+      iconFile = new File (newFile);
+      iconFileStr = (iconFile.fsName).toString();
+      if (typeof (iconFile)=== "undefined" || newFile.length==0){
+        return filePathStr;
+      }
     }
     catch (e){
-      iconFile = extensionPath+"/imgs/tl_defaultPreset.png";
-    }
-    return iconFile;
+      return filePathStr;
+    } 
+    return iconFileStr;
     
 };
 
@@ -94,7 +125,7 @@ $._ext = {
     var listSelectedProps = app.project.activeItem.selectedProperties;
     if (!listSelectedProps[0]){alertSelecEffect(); return }
     for (var i=0; i<listSelectedProps.length; i++){
-      if (listSelectedProps[i].name == "tl_math-BETA"){
+      if (listSelectedProps[i].name.indexOf("tl_math") !=-1){
           propIndex = i;
           listSelectedProps[propIndex].property("get arb").setValue(1);
           break;
@@ -151,18 +182,17 @@ $._ext = {
           preset.fileName = preset.jsonPath.fsName.substr (slash+1, dot )
           preset.parentFolder = preset.jsonPath.fsName.substr (0, slash);
           preset.name = jsonObj.effectInfo.presetName;
-          preset.tags = jsonObj.effectInfo.tags;
-          preset.tags.unshift (preset.name);
+          preset.tags = copyArrayStr (jsonObj.effectInfo.tags);
+          preset.tags.unshift (preset.jsonPath.toString());
           preset.description = jsonObj.effectInfo.description;
-         
-          preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder, objData.extensionPath);
+          preset.icon =  searchFileInFolder (preset.fileName, preset.parentFolder.toString(), objData.extensionPath);
           preset.str = jsonTemp.toString();
           listJsonFiles.preset[i] = preset;
           listJsonFiles.length =i+1;
         }
       }
     }
-    listJsonFiles.preset.sort();
+    listJsonFiles.preset.sort(compareObjStr);
     var newData = JSON.stringify (listJsonFiles);
     var externalObjectName = "PlugPlugExternalObject"; 
     var csxslib = new ExternalObject( "lib:" + externalObjectName);
@@ -182,10 +212,19 @@ $._ext = {
   exportPresetFileToUserLib : function(dataStr){
     var plugIdStr = dataStr.effectInfo.effectName.toString()+dataStr.effectInfo.pluginVersion; 
     var userPresetsFolder = createUserPresetFolder(plugIdStr);
-    var presetFile = new File (userPresetsFolder.absoluteURI+"\\"+dataStr.effectInfo.presetName+".JSON");
+    var presetFileStr =dataStr.effectInfo.presetName+".JSON";
+    var scanFolder =userPresetsFolder.getFiles(presetFileStr);
+     var presetFile;
+    if (scanFolder.length >0){
+      var date = getDate();
+      presetFile = new File (userPresetsFolder.absoluteURI+"/"+dataStr.effectInfo.presetName+date.toString()+".JSON");
+    }else{
+      presetFile = new File (userPresetsFolder.absoluteURI+"/"+dataStr.effectInfo.presetName+".JSON");
+    }
+    
       if (presetFile.open("w")){
          presetFile.encoding ='UTF-8';
-         presetFile.write(JSON.stringify(dataStr,undefined, '\r\n'));
+         presetFile.write(JSON.stringify(dataStr,undefined,'\r\n'));
          presetFile.close();
       } 
      

@@ -297,6 +297,7 @@ namespace AESDK_OpenGL
 		GLuint CreateQuad(u_int16 widthL, u_int16 heightL)
 		{
 			// X, Y, X, U, V
+
 			float positions[] = {
 				0,				0,				0.0f, 0.0f, 0.0f, // A
 				(float)widthL,	0,				0.0f, 1.0f, 0.0f, // B
@@ -308,9 +309,9 @@ namespace AESDK_OpenGL
 			glGenBuffers(1, &vbo);
 			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
-
 			return vbo;
 		}
+
 
 	} // namespace anonymous
 

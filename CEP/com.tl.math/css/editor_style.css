@@ -1,18 +1,16 @@
-
-
 #gl33_frag_tab, #gl33_vert_tab{
     width:97%;
-    min-height: 600px;
-    height: 100%;
-    position:relative;
+    height: 600px;
+    display:inline-block;
+    position:relative
 }
 
 
-#expr_red_tab, #expr_green_tab,#expr_blue_tab, #expr_alpha_tab, #expr_rgb_tab {
+#expr_red_tab, #expr_green_tab,#expr_blue_tab, #expr_alpha_tab, #expr_common_tab, #expr_rgb_tab {
     width:97%;
-    min-height: 600px;
-    max-height: 100%;
-    position:relative;
+    height: 600px;
+    display:inline-block;
+    position:relative
 }
 
 
@@ -25,7 +23,7 @@
     right: 0;
 }
 
-#expr_red_editor, #expr_green_editor, #expr_blue_editor, #expr_rgb_editor, #expr_alpha_editor{
+#expr_red_editor, #expr_green_editor, #expr_blue_editor, #expr_rgb_editor, #expr_common_editor, #expr_alpha_editor{
     position: absolute;
     margin: 1%;
     top: 5%;
@@ -33,9 +31,6 @@
     left: 0;
     right: 0;
 }
-
-
-
 #editor_name{
     color: #ddd;
     margin: 1%;
@@ -52,7 +47,7 @@
     right: 0;
 }
 
-#expr_red_tab_console, #expr_green_tab_console, #expr_blue_tab_console, #expr_alpha_tab_console,#expr_rgb_tab_console{
+#expr_red_tab_console, #expr_green_tab_console, #expr_blue_tab_console, #expr_alpha_tab_console,#expr_common_tab_console, #expr_rgb_tab_console{
     background: black;
     color: #ddd;
     width:90%;

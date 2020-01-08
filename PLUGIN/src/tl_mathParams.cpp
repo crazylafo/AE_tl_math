@@ -62,6 +62,16 @@ tlmath::ParamsSetup  (
                   MATH_EFFECT_DESCRIPTION_DISK_ID);
 
     AEFX_CLR_STRUCT(def);
+
+	
+
+		PF_ADD_BUTTON("reset preset",
+			STR(StrID_MATH_RESET_Param_Name),
+			0,
+			PF_ParamFlag_SUPERVISE,
+			MATH_RESET_DISK_ID);
+
+	AEFX_CLR_STRUCT(def);
     def.flags= PF_ParamFlag_SUPERVISE | PF_ParamFlag_COLLAPSE_TWIRLY;
     PF_ADD_TOPIC(STR( StrID_TOPIC_INPUTS_Param_Name),  MATH_TOPIC_SLIDER_DISK_ID);
 
@@ -376,12 +386,7 @@ tlmath::ParamsSetup  (
                          0,
                          PF_ParamFlag_SUPERVISE ,
                          MATH_INP_TOFF_ONE_DISK_ID);
-     AEFX_CLR_STRUCT(def);
-    PF_ADD_POINT(STR(StrID_POFF_ONE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_ONE_DISK_ID);
     AEFX_CLR_STRUCT(def);
-
-
-
 
 	def.flags = PF_ParamFlag_SUPERVISE;
 	PF_ADD_LAYER(STR(StrID_LAYER_TWO_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_TWO_DISK_ID);
@@ -396,8 +401,7 @@ tlmath::ParamsSetup  (
 		0,
 		PF_ParamFlag_SUPERVISE,
 		MATH_INP_TOFF_TWO_DISK_ID);
-     AEFX_CLR_STRUCT(def);
-	PF_ADD_POINT(STR(StrID_POFF_TWO_Param_Name), 50, 50, FALSE, MATH_INP_POFF_TWO_DISK_ID);
+
 	AEFX_CLR_STRUCT(def);   
 	def.flags = PF_ParamFlag_SUPERVISE;
 	PF_ADD_LAYER(STR(StrID_LAYER_THREE_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_THREE_DISK_ID);
@@ -412,10 +416,9 @@ tlmath::ParamsSetup  (
 		0,
 		PF_ParamFlag_SUPERVISE,
 		MATH_INP_TOFF_THREE_DISK_ID);
-     AEFX_CLR_STRUCT(def);
-	PF_ADD_POINT(STR(StrID_POFF_THREE_Param_Name), 50, 50, FALSE, MATH_INP_POFF_THREE_DISK_ID);
 
-	AEFX_CLR_STRUCT(def); 
+	AEFX_CLR_STRUCT(def);
+
 	def.flags = PF_ParamFlag_SUPERVISE;
 	PF_ADD_LAYER(STR(StrID_LAYER_FOUR_Param_Name), PF_LayerDefault_MYSELF, MATH_INP_LAYER_FOUR_DISK_ID);
 	AEFX_CLR_STRUCT(def);
@@ -430,8 +433,7 @@ tlmath::ParamsSetup  (
 		PF_ParamFlag_SUPERVISE,
 		MATH_INP_TOFF_FOUR_DISK_ID);
  AEFX_CLR_STRUCT(def);
-	PF_ADD_POINT(STR(StrID_POFF_FOUR_Param_Name), 50, 50, FALSE, MATH_INP_POFF_FOUR_DISK_ID);
-	AEFX_CLR_STRUCT(def);
+
 
     PF_END_TOPIC(MATH_TOPIC_INPUTS_DISK_ID);
     AEFX_CLR_STRUCT(def);
@@ -530,16 +532,12 @@ tlmath::MakeParamCopy(
 	copy[MATH_TOPIC_INPUTS] = *actual[MATH_TOPIC_INPUTS];
 	copy[MATH_INP_LAYER_ONE] = *actual[MATH_INP_LAYER_ONE];
 	copy[MATH_INP_TOFF_ONE] = *actual[MATH_INP_TOFF_ONE];
-	copy[MATH_INP_POFF_ONE] = *actual[MATH_INP_POFF_ONE];
 	copy[MATH_INP_LAYER_TWO] = *actual[MATH_INP_LAYER_TWO];
 	copy[MATH_INP_TOFF_TWO] = *actual[MATH_INP_TOFF_TWO];
-	copy[MATH_INP_POFF_TWO] = *actual[MATH_INP_POFF_TWO];
 	copy[MATH_INP_LAYER_THREE] = *actual[MATH_INP_LAYER_THREE];
 	copy[MATH_INP_TOFF_THREE] = *actual[MATH_INP_TOFF_THREE];
-	copy[MATH_INP_POFF_THREE] = *actual[MATH_INP_POFF_THREE];
 	copy[MATH_INP_LAYER_FOUR] = *actual[MATH_INP_LAYER_FOUR];
 	copy[MATH_INP_TOFF_FOUR] = *actual[MATH_INP_TOFF_FOUR];
-	copy[MATH_INP_POFF_FOUR] = *actual[MATH_INP_POFF_FOUR];
 
 	copy[MATH_CEP_GET_ARB_DATA] = *actual[MATH_CEP_GET_ARB_DATA];
     copy[ MATH_CEP_RETURN_MESSAGE] = *actual[MATH_CEP_RETURN_MESSAGE];
@@ -627,43 +625,14 @@ tlmath::UpdateParameterUI(
 		MATH_TOPIC_INPUTS_streamH = NULL,
 		MATH_INP_LAYER_ONE_streamH = NULL,
 		MATH_INP_TOFF_ONE_streamH = NULL,
-		MATH_INP_POFF_ONE_streamH = NULL,
 		MATH_INP_LAYER_TWO_streamH = NULL,
 		MATH_INP_TOFF_TWO_streamH = NULL,
-		MATH_INP_POFF_TWO_streamH = NULL,
 		MATH_INP_LAYER_THREE_streamH = NULL,
 		MATH_INP_TOFF_THREE_streamH = NULL,
-		MATH_INP_POFF_THREE_streamH = NULL,
 		MATH_INP_LAYER_FOUR_streamH = NULL,
-		MATH_INP_TOFF_FOUR_streamH = NULL,
-		MATH_INP_POFF_FOUR_streamH = NULL;
+    MATH_INP_TOFF_FOUR_streamH = NULL;
 	if (seqP) {
 
-		PF_State		new_state;
-		A_Boolean		something_changedB = FALSE;
-
-		//access to global data with read/write
-
-			ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
-				MATH_ARB_DATA,
-				NULL,
-				NULL,
-				&new_state));
-
-			ERR(suites.ParamUtilsSuite3()->PF_AreStatesIdentical(in_data->effect_ref,
-				&seqP->state,
-				&new_state,
-				&something_changedB));
-
-			if (something_changedB) {
-				//	If something changed (or it's the first time we're being called),
-				//	get the new state and store it in our sequence data
-				ERR(suites.ParamUtilsSuite3()->PF_GetCurrentState(in_data->effect_ref,
-					MATH_ARB_DATA,
-					NULL,
-					NULL,
-					&seqP->state));
-			}
 
 
 			strcpy(param_copy[MATH_ARB_DATA].name, seqP->presetNameAc);
@@ -956,54 +925,25 @@ tlmath::UpdateParameterUI(
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 				MATH_INP_LAYER_ONE,
 				&param_copy[MATH_INP_LAYER_ONE]));
-			strcpy(param_copy[MATH_INP_TOFF_ONE].name, seqP->paramLayer01ToffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_TOFF_ONE,
-				&param_copy[MATH_INP_TOFF_ONE]));
-			strcpy(param_copy[MATH_INP_POFF_ONE].name, seqP->paramLayer01PoffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_POFF_ONE,
-				&param_copy[MATH_INP_POFF_ONE]));
+
+
 			strcpy(param_copy[MATH_INP_LAYER_TWO].name, seqP->paramLayer02NameAc);
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 				MATH_INP_LAYER_TWO,
 				&param_copy[MATH_INP_LAYER_TWO]));
-			strcpy(param_copy[MATH_INP_TOFF_TWO].name, seqP->paramLayer02ToffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_TOFF_TWO,
-				&param_copy[MATH_INP_TOFF_TWO]));
-			strcpy(param_copy[MATH_INP_POFF_TWO].name, seqP->paramLayer02PoffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_POFF_TWO,
-				&param_copy[MATH_INP_POFF_TWO]));
+
 
 			strcpy(param_copy[MATH_INP_LAYER_THREE].name, seqP->paramLayer03NameAc);
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 				MATH_INP_LAYER_THREE,
 				&param_copy[MATH_INP_LAYER_THREE]));
-			strcpy(param_copy[MATH_INP_TOFF_THREE].name, seqP->paramLayer03ToffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_TOFF_THREE,
-				&param_copy[MATH_INP_TOFF_THREE]));
-			strcpy(param_copy[MATH_INP_POFF_THREE].name, seqP->paramLayer03PoffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_POFF_THREE,
-				&param_copy[MATH_INP_POFF_THREE]));
+
+
 
 			strcpy(param_copy[MATH_INP_LAYER_FOUR].name, seqP->paramLayer04NameAc);
 			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
 				MATH_INP_LAYER_FOUR,
 				&param_copy[MATH_INP_LAYER_FOUR]));
-			strcpy(param_copy[MATH_INP_TOFF_FOUR].name, seqP->paramLayer04ToffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_TOFF_FOUR,
-				&param_copy[MATH_INP_TOFF_FOUR]));
-			strcpy(param_copy[MATH_INP_POFF_FOUR].name, seqP->paramLayer04PoffNameAc);
-			ERR(suites.ParamUtilsSuite3()->PF_UpdateParamUI(in_data->effect_ref,
-				MATH_INP_POFF_FOUR,
-				&param_copy[MATH_INP_POFF_FOUR]));
-
-
 
 
 			ERR(suites.PFInterfaceSuite1()->AEGP_GetNewEffectForEffect(globP->my_id, in_data->effect_ref, &meH));
@@ -1073,16 +1013,12 @@ tlmath::UpdateParameterUI(
 
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_ONE, &MATH_INP_LAYER_ONE_streamH));
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_ONE, &MATH_INP_TOFF_ONE_streamH));
-			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_ONE, &MATH_INP_POFF_ONE_streamH));
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_TWO, &MATH_INP_LAYER_TWO_streamH));
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_TWO, &MATH_INP_TOFF_TWO_streamH));
-			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_TWO, &MATH_INP_POFF_TWO_streamH));
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_THREE, &MATH_INP_LAYER_THREE_streamH));
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_THREE, &MATH_INP_TOFF_THREE_streamH));
-			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_THREE, &MATH_INP_POFF_THREE_streamH));
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_LAYER_FOUR, &MATH_INP_LAYER_FOUR_streamH));
 			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_TOFF_FOUR, &MATH_INP_TOFF_FOUR_streamH));
-			ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH, MATH_INP_POFF_FOUR, &MATH_INP_POFF_FOUR_streamH));
 
 
 			//ERR(suites.StreamSuite2()->AEGP_GetNewEffectStreamByIndex(globP->my_id, meH,MATH_CEP_GET_ARB_DATA, &MATH_CEP_GET_ARB_DATA_streamH));
@@ -1148,23 +1084,15 @@ tlmath::UpdateParameterUI(
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_NINE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot09VisibleB));
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_ROT_TEN_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramRot10VisibleB));
 
-
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_TOPIC_INPUTS_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->layerGrpVisibleB));
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
-			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_ONE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer01VisibleB));
-
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
-			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_TWO_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer02VisibleB));
-
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
-			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_THREE_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer03VisibleB));
-
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_LAYER_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
 			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_TOFF_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
-			ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_INP_POFF_FOUR_streamH, AEGP_DynStreamFlag_HIDDEN, FALSE, !seqP->paramLayer04VisibleB));
 
 			//ERR(suites.DynamicStreamSuite2()->AEGP_SetDynamicStreamFlag(MATH_CEP_GET_ARB_DATA_streamH,AEGP_DynStreamFlag_HIDDEN, FALSE, TRUE));
 
@@ -1351,35 +1279,26 @@ tlmath::UpdateParameterUI(
 			if (MATH_INP_TOFF_ONE_streamH) {
 				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_ONE_streamH));
 			}
-			if (MATH_INP_POFF_ONE_streamH) {
-				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_ONE_streamH));
-			}
+
 			if (MATH_INP_LAYER_TWO_streamH) {
 				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_TWO_streamH));
 			}
 			if (MATH_INP_TOFF_TWO_streamH) {
 				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_TWO_streamH));
 			}
-			if (MATH_INP_POFF_TWO_streamH) {
-				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_TWO_streamH));
-			}
+
 			if (MATH_INP_LAYER_THREE_streamH) {
 				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_THREE_streamH));
 			}
 			if (MATH_INP_TOFF_THREE_streamH) {
 				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_THREE_streamH));
 			}
-			if (MATH_INP_POFF_THREE_streamH) {
-				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_THREE_streamH));
-			}
+
 			if (MATH_INP_LAYER_FOUR_streamH) {
 				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_LAYER_FOUR_streamH));
 			}
 			if (MATH_INP_TOFF_FOUR_streamH) {
 				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_TOFF_FOUR_streamH));
-			}
-			if (MATH_INP_POFF_FOUR_streamH) {
-				ERR2(suites.StreamSuite2()->AEGP_DisposeStream(MATH_INP_POFF_FOUR_streamH));
 			}
 			seqP->initializedB = true;
 		}
@@ -1390,7 +1309,6 @@ tlmath::UpdateParameterUI(
 
 
 	if (!err) {
-            out_data->out_flags |= PF_OutFlag_REFRESH_UI;
 			out_data->out_flags |= PF_OutFlag_FORCE_RERENDER;
 		}
 	return err;
@@ -1433,22 +1351,42 @@ tlmath::UserChangedParam(
 	PF_LayerDef						*outputP,
 	const PF_UserChangedParamExtra	*which_hitP)
 {
-	PF_Err				err = PF_Err_NONE;
+	PF_Err				err = PF_Err_NONE, err2 = PF_Err_NONE;
 	AEGP_SuiteHandler    suites(in_data->pica_basicP);
 
     seqDataP seqP = reinterpret_cast<seqDataP>(DH(out_data->sequence_data));
 	
 
     if(which_hitP->param_index == MATH_EFFECT_DESCRIPTION){
-
+		std::string script_description =
+R"=====(
+	//
+    //  scipt TO CALL THE CEP 
+    //  tlMath
+    //
+    //
+		try{
+			alert ('''+%s+''');	
+		}catch(e){
+			alert ("error in preset description: "+e)
+		}
+    )=====";
+		my_global_dataP        globP = reinterpret_cast<my_global_dataP>(DH(out_data->global_data));
+		AEGP_MemHandle     resultMemH = NULL;
+		A_char* resultAC = NULL;
         AEGP_SuiteHandler suites(in_data->pica_basicP);
         std::string descrStr =seqP->descriptionAc;
         tlmath::descriptionCorrectorStr (descrStr);
+		A_char scriptAC[2100];
+		AEFX_CLR_STRUCT(scriptAC);
+		sprintf(scriptAC,
+			script_description.c_str(),
+			descrStr.c_str());
+		ERR(suites.UtilitySuite6()->AEGP_ExecuteScript(globP->my_id, scriptAC, FALSE, &resultMemH, NULL));
+		AEFX_CLR_STRUCT(resultAC);
+		ERR(suites.MemorySuite1()->AEGP_LockMemHandle(resultMemH, reinterpret_cast<void**>(&resultAC)));
+		ERR(suites.MemorySuite1()->AEGP_FreeMemHandle(resultMemH));
 
-        suites.ANSICallbacksSuite1()->sprintf(out_data->return_msg,
-                                              "%s",
-                                              descrStr.c_str());
-        
     }
     if(which_hitP->param_index == MATH_CEP_RETURN_MESSAGE &&
        params[MATH_CEP_RETURN_MESSAGE]->u.bd.value == TRUE){
@@ -1462,9 +1400,9 @@ tlmath::UserChangedParam(
     }
 	if (which_hitP->param_index == MATH_SETUP)
 	{
-		ERR(CallCepDialog(in_data, out_data));
+		ERR(tlmath::CallCepDialog(in_data, out_data));
 		ERR(suites.AdvAppSuite2()->PF_RefreshAllWindows());
-        ERR(SetupDialogSend(in_data, out_data, params));
+        ERR(tlmath::SetupDialogSend(in_data, out_data, params));
 	}
 	if (which_hitP->param_index == MATH_CEP_GET_ARB_DATA)
 	{
@@ -1479,8 +1417,24 @@ tlmath::UserChangedParam(
                                                                 params[MATH_CEP_GET_ARB_DATA]));
 			
 
-			ERR(SetupDialogSend(in_data, out_data, params));
+			ERR(tlmath::SetupDialogSend(in_data, out_data, params));
 		}
+	}
+	if (which_hitP->param_index == MATH_RESET) {
+		PF_ParamDef arb_param;
+		m_ArbData* arbInP = NULL;
+		AEFX_CLR_STRUCT(arb_param);
+		ERR(PF_CHECKOUT_PARAM(in_data,
+			MATH_ARB_DATA,
+			in_data->current_time,
+			in_data->time_step,
+			in_data->time_scale,
+			&arb_param));
+		AEFX_CLR_STRUCT(arbInP);
+		arbInP = reinterpret_cast<m_ArbData*>(*arb_param.u.arb_d.value);
+		ERR(tlmath::updateParamsValue(in_data, params, arbInP->arbDataAc));
+		ERR2(PF_CHECKIN_PARAM(in_data, &arb_param));
+
 	}
 	/*
 	else {

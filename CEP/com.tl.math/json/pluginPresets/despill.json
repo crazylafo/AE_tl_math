@@ -40,7 +40,7 @@
 "effectInfo": {
 
 
-"description": "based on AFX_DeSpill\\n\\nThis is a simple green, blue or red despiller, which great for keeping on the skintone looking natural.\\nSelect the layer source, the channel to despill and the amount of the  effect.",
+"description": "based on https://logik-matchbook.org/shader/AFX_DeSpill\\n\\nThis is a simple green, blue or red despiller, which great for keeping on the skintone looking natural.\\nSelect the layer source, the channel to despill and the amount of the  effect.",
 
 
 "effectName": "tlMath",
@@ -52,26 +52,26 @@
 "pluginVersion": 115,
 
 
-"presetName": "default_preset",
+"presetName": "Despiller",
 
 
 "tags": [
 
 
 
-"default",
+"despill",
 
 
 
-"glsl",
+" color",
 
 
 
-"expr",
+" simple",
 
 
 
-"skeleton"
+" "
 
 
 ]
@@ -92,9 +92,6 @@
 },
 
 "flags": {
-
-
-"needsLumaB": false,
 
 
 "pixelsCallExternalInputB": [
@@ -132,7 +129,7 @@ false
 "gl33_frag_error": "compiled successfully",
 
 
-"gl33_frag_sh": "//based on https://logik-matchbook.org/shader/AFX_DeSpill\\n#version 330 // glsls version for opengl 3.3\\nuniform sampler2D front; //call the layer source\\nuniform float multiplier16bit; //proper to AE 16 bits depth.\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\nuniform float amount;\\nuniform bool despillG;\\nuniform bool despillR;\\nuniform bool despillB;\\n\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d)\\n{\\n    vec2 uv_AE = out_uvs;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    textureIn =  textureIn * multiplier16bit;\\n    textureIn= vec4( textureIn.g,  textureIn.b,  textureIn.a,  textureIn.r);\\n    textureIn= vec4( textureIn.a *  textureIn.r,  textureIn.a *  textureIn.g,  textureIn.a * textureIn.b,  textureIn.a);\\n    return  textureIn ;\\n}\\n\\nvoid main (){\\n\\t// Standard Autodesk Stuff\\n\\tvec4 source =  loadTextureFromAE (front);\\n\\tvec3 result \\t\\t= source.rgb;\\n\\tvec3 suppressed \\t= source.rgb;\\n\\n\\tif(despillG)\\n\\t\\tsuppressed.g \\t\\t= min((source.r+source.b)*0.5, suppressed.g);\\t\\n\\telse if(despillB)\\n\\t\\tsuppressed.b \\t\\t= min((source.g+source.r)*0.5, suppressed.b);\\n\\telse if(despillR)\\n\\t\\tsuppressed.r \\t\\t= min((source.g+source.b)*0.5, suppressed.r);\\t\\n\\n\\tresult\\t\\t\\t\\t= mix( source.rgb, suppressed, amount );\\n\\tfragColorOut \\t= \\tvec4( result, source.a);\\n}\\n",
+"gl33_frag_sh": "//based on https://logik-matchbook.org/shader/AFX_DeSpill\\n#version 330 // glsls version for opengl 3.3\\nuniform sampler2D front; //call the layer source\\nin vec4 out_pos;\\nin vec2 out_uvs;\\nout vec4 fragColorOut;\\nuniform float amount;\\nuniform bool despillG;\\nuniform bool despillR;\\nuniform bool despillB;\\n\\n// to use instead of texture(sampler2D, vec2 uv) because of swizzle RGBA/ ARGBs\\nvec4 loadTextureFromAE (sampler2D tex2d)\\n{\\n    vec2 uv_AE = out_uvs;\\n    uv_AE.y = 1.- out_uvs.y;\\n    vec4 textureIn = texture( tex2d, uv_AE);\\n    return textureIn;\\n}\\n\\nvoid main (){\\n\\t// Standard Autodesk Stuff\\n\\tvec4 source =  loadTextureFromAE (front);\\n\\tvec3 result \\t\\t= source.rgb;\\n\\tvec3 suppressed \\t= source.rgb;\\n\\n\\tif(despillG)\\n\\t\\tsuppressed.g \\t\\t= min((source.r+source.b)*0.5, suppressed.g);\\t\\n\\telse if(despillB)\\n\\t\\tsuppressed.b \\t\\t= min((source.g+source.r)*0.5, suppressed.b);\\n\\telse if(despillR)\\n\\t\\tsuppressed.r \\t\\t= min((source.g+source.b)*0.5, suppressed.r);\\t\\n\\n\\tresult\\t\\t\\t\\t=  mix( source.rgb, suppressed, amount );\\n\\tfragColorOut \\t= \\tvec4( result, source.a);\\n}\\n",
 
 
 "gl33_vert_error": "compiled successfully",
@@ -1176,16 +1173,6 @@ false
 
 
 
-"poffName": "layer1_position_off",
-
-
-
-
-"toffName": "layer1_time_off",
-
-
-
-
 "visibleB": true
 
 
@@ -1200,16 +1187,6 @@ false
 
 
 "name": "texture2",
-
-
-
-
-"poffName": "layer2_position_off",
-
-
-
-
-"toffName": "layer2_time_off",
 
 
 
@@ -1232,16 +1209,6 @@ false
 
 
 
-"poffName": "layer3_position_off",
-
-
-
-
-"toffName": "layer3_time_off",
-
-
-
-
 "visibleB": false
 
 
@@ -1256,16 +1223,6 @@ false
 
 
 "name": "texture4",
-
-
-
-
-"poffName": "layer4_position_off",
-
-
-
-
-"toffName": "layer4_time_off",
 
 
 
@@ -2737,10 +2694,20 @@ false
 "blueExpr": "return inChannel;",
 
 
-"blue_error": "compiled successfully",
+"blue_error": " compiled successfully",
+
+
+"commonExpr":  "float getLuma(vec4 text)\\n {\\n return 0.3 * text.r + 0.59 * text.g + 0.11 * text.b; \\n}\\nvec4 textureOffset(sampler2D tex2d, vec2 off) {\\nvec2 uv_AE = out_uvs;\\nuv_AE.x =textUvs.x + off.x; \\nuv_AE.y = textUvs.y + off.y; \\nvec4 textureIn = texture(tex2d, uv_AE); \\n return  textureIn; \\n}",
+
+
+"common_error": "compiled successfully",
 
 
 "exprRGBModeB": true,
+
+
+"expr_rgb_channel":"inputRgb",
+
 
 
 "expr_current_channel": "inChannel",

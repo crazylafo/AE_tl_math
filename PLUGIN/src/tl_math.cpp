@@ -106,15 +106,43 @@ namespace {
 	}
 
 
+	struct CopyPixel16_t {
+		PF_Pixel16* BufferP;
+		PF_EffectWorld* input_worldP;
+	};
+
+	PF_Err
+		CopyPixel16In(
+			void* refcon,
+			A_long            x,
+			A_long            y,
+			PF_Pixel16* inP,
+			PF_Pixel16*)
+	{
+		// CopyPixelFloat_t    *thiS = reinterpret_cast<CopyPixelFloat_t*>(refcon);
+		// PF_PixelFloat        *outP = thiS->floatBufferP + y * thiS->input_worldP->width + x;
+
+		CopyPixel16_t* thiS = reinterpret_cast<CopyPixel16_t*>(refcon);
+		PF_Pixel16* outP = thiS->BufferP + y * thiS->input_worldP->width + x;
+
+		float multiplier16bitOut = 65535.0f / 32768.0f;
+		outP->red = inP->red * multiplier16bitOut;
+		outP->green = inP->green * multiplier16bitOut;
+		outP->blue = inP->blue * multiplier16bitOut;
+		outP->alpha = inP->alpha * multiplier16bitOut;
+		return PF_Err_NONE;
+	}
+
+
 	gl::GLuint UploadTexture(AEGP_SuiteHandler& suites,					// >>
 		PF_PixelFormat			format,				// >>
-		PF_EffectWorld			*input_worldP,		// >>
-		PF_EffectWorld			*output_worldP,		// >>
-		PF_InData				*in_data,			// >>
+		PF_EffectWorld* input_worldP,		// >>
+		PF_EffectWorld* output_worldP,		// >>
+		PF_InData* in_data,			// >>
 		size_t& pixSizeOut,						// <<
 		gl::GLenum& glFmtOut,						// <<
 		float& multiplier16bitOut,
-	    gl::GLuint  textureNum )					// <<
+		gl::GLuint  textureNum)					// <<
 	{
 		// - upload to texture memory
 		// - we will convert on-the-fly from ARGB to RGBA, and also to pre-multiplied alpha,
@@ -127,19 +155,17 @@ namespace {
 
 		gl::GLuint inputFrameTexture;
 		glGenTextures(1, &inputFrameTexture);
-
 		glBindTexture(GL_TEXTURE_2D, inputFrameTexture);
-
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)GL_CLAMP_TO_EDGE);
-
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)GL_CLAMP_TO_BORDER);
 		glTexImage2D(GL_TEXTURE_2D, 0, (GLint)GL_RGBA32F, input_worldP->width, input_worldP->height, 0, GL_RGBA, GL_FLOAT, nullptr);
 
-		
+
 
 		multiplier16bitOut = 1.0f;
+		const GLint  SwizzleColorSpace[] = { (GLint)GL_GREEN, (GLint)GL_BLUE,  (GLint)GL_ALPHA, (GLint)GL_RED };
 		switch (format)
 		{
 		case PF_PixelFormat_ARGB128:
@@ -160,6 +186,7 @@ namespace {
 				output_worldP));
 
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->width);
+			glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, SwizzleColorSpace);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_FLOAT, bufferFloat.get());
 			break;
 		}
@@ -170,10 +197,21 @@ namespace {
 			pixSizeOut = sizeof(PF_Pixel16);
 			multiplier16bitOut = 65535.0f / 32768.0f;
 
+			std::auto_ptr<PF_Pixel16> buffer16(new PF_Pixel16[input_worldP->width * input_worldP->height]);
+			CopyPixel16_t refcon = { buffer16.get(), input_worldP };
+
+			CHECK(suites.Iterate16Suite1()->iterate(in_data,
+				0,
+				input_worldP->height,
+				input_worldP,
+				nullptr,
+				reinterpret_cast<void*>(&refcon),
+				CopyPixel16In,
+				output_worldP));
+
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->rowbytes / sizeof(PF_Pixel16));
-			PF_Pixel16 *pixelDataStart = NULL;
-			PF_GET_PIXEL_DATA16(input_worldP, NULL, &pixelDataStart);
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_SHORT, pixelDataStart);
+			glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, SwizzleColorSpace);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_SHORT, buffer16.get());
 			break;
 		}
 
@@ -183,8 +221,9 @@ namespace {
 			pixSizeOut = sizeof(PF_Pixel8);
 
 			glPixelStorei(GL_UNPACK_ROW_LENGTH, input_worldP->rowbytes / sizeof(PF_Pixel8));
-			PF_Pixel8 *pixelDataStart = NULL;
+			PF_Pixel8* pixelDataStart = NULL;
 			PF_GET_PIXEL_DATA8(input_worldP, NULL, &pixelDataStart);
+			glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, SwizzleColorSpace);
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, input_worldP->width, input_worldP->height, GL_RGBA, GL_UNSIGNED_BYTE, pixelDataStart);
 			break;
 		}
@@ -248,7 +287,8 @@ namespace {
 
 	PF_FpShort convertYCoordAEToGL( PF_FpShort ypt, PF_FpShort wHeight)
 	{
-		return wHeight - ypt; 
+        //return ypt;
+		return wHeight - ypt;
 
 	}
 
@@ -289,6 +329,8 @@ namespace {
 		// program uniforms
 		GLint location = glGetUniformLocation(renderContext->mProgramObjSu, "ModelviewProjection");
 		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)&ModelviewProjection);
+		location = glGetUniformLocation(renderContext->mProgramObjSu, "cameraMat");
+		glUniformMatrix4fv(location, 1, GL_FALSE, (GLfloat*)& miP->camMat);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider01NameAc);
 		glUniform1f(location, miP->inSliderF[0]);
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->paramSlider02NameAc);
@@ -440,8 +482,7 @@ namespace {
 		location = glGetUniformLocation(renderContext->mProgramObjSu, seqP->cameraZoomNameAc);
 		glUniform1f(location, miP->cameraZoom);
 
-		location = glGetUniformLocation(renderContext->mProgramObjSu, "multiplier16bit");
-		glUniform1f(location, multiplier16bit);
+
 		// Identify the texture to use and bind it to texture unit 0
 		AESDK_OpenGL_BindTexture0ToTarget(renderContext->mProgramObjSu, inputFrameTexture, seqP->paramLayer00NameAc);
 		AESDK_OpenGL_BindTexture1ToTarget(renderContext->mProgramObjSu, inputExtFrame1Texture, seqP->paramLayer01NameAc);
@@ -468,7 +509,7 @@ namespace {
 	)
 	{
 		//download from texture memory onto the same surface
-		PF_Handle bufferH = NULL;
+		PF_Handle bufferH = nullptr;
 		bufferH = suites.HandleSuite1()->host_new_handle(((renderContext->mRenderBufferWidthSu * renderContext->mRenderBufferHeightSu)* pixSize));
 		if (!bufferH) {
 			CHECK(PF_Err_OUT_OF_MEMORY);
@@ -539,7 +580,6 @@ namespace {
 	}
 } // anonymous namespace
 
-
 static PF_Err 
 About (	
 	PF_InData		*in_data,
@@ -582,8 +622,8 @@ GlobalSetup (
 	out_data->out_flags = PF_OutFlag_CUSTOM_UI |
 		PF_OutFlag_SEND_UPDATE_PARAMS_UI |
 		PF_OutFlag_DEEP_COLOR_AWARE |	// just 16bpc, not 32bpc
-		PF_OutFlag_NON_PARAM_VARY ;
-	//		PF_OutFlag_WIDE_TIME_INPUT |
+		PF_OutFlag_NON_PARAM_VARY;
+        //PF_OutFlag_WIDE_TIME_INPUT;
 
 
 	out_data->out_flags2 = PF_OutFlag2_SUPPORTS_QUERY_DYNAMIC_FLAGS |
@@ -591,7 +631,7 @@ GlobalSetup (
 		PF_OutFlag2_I_USE_3D_CAMERA |
 		PF_OutFlag2_FLOAT_COLOR_AWARE |
 		PF_OutFlag2_SUPPORTS_SMART_RENDER;
-		//PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
+        //PF_OutFlag2_AUTOMATIC_WIDE_TIME_INPUT;
     
 
     
@@ -663,7 +703,8 @@ void tlmath::evalVertShader(std::string inVertShaderStr, std::string& errReturn)
         errReturn = str;
     }
     else {
-        errReturn = compile_success;
+		tlmath_shaders tlms;
+        errReturn = tlms.compile_success;
     }
     glDeleteShader(vertShaderSu);
     glFlush();
@@ -699,7 +740,8 @@ void tlmath::evalFragShader(std::string inFragmentShaderStr, std::string& errRet
         errReturn = str;
     }
     else {
-        errReturn = compile_success;
+		tlmath_shaders tlms;
+        errReturn = tlms.compile_success;
     }
     glDeleteShader(fragmentShaderSu);
     glFlush();
@@ -909,9 +951,9 @@ QueryDynamicFlags(
 
 	if (seqP && !err) {
         if (seqP->cameraB){
-            out_data->out_flags2 &= ~PF_OutFlag2_I_USE_3D_CAMERA;
-        }else{
             out_data->out_flags2 &= PF_OutFlag2_I_USE_3D_CAMERA;
+        }else{
+            out_data->out_flags2 &= ~PF_OutFlag2_I_USE_3D_CAMERA;
         }
 		if (seqP->presetHasWideInputB) {
 			out_data->out_flags &= ~PF_OutFlag_WIDE_TIME_INPUT;

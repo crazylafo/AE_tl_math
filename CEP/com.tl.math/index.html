@@ -2,7 +2,7 @@
 <!--
 /*************************************************************************
 * tl math plugin and CEP
-*thomas laforge  Copyright 2019
+*thomas laforge  Copyright 2020
 **************************************************************************/
 -->
 <html>
@@ -20,260 +20,388 @@
 	<link rel="stylesheet" type="text/css" href="./css/preset_style.css"  media="screen"> 
 	</head>
 
-<body onLoad="onLoaded()">
+<body onLoad="onLoaded()">	
     <div id="MenuColId">
-		<a id="btnApply">Apply</a>
-		<a onClick="toogleFile()">file</a>
-		<a onClick="tooglePresetSettings()">preset settings</a>
-		<a onClick= "toggleSettings()" >param settings</a>
-		<a onCLick="tooglePresets()">library</a>
+		<input type="image" class="menuIcons" src="./imgs/preset_settings.png" onClick="toggleMenus('presetSettingId')" ></input>
+		<input type="image" class="menuIcons" src="./imgs/param_settings.png"onClick= "toggleMenus('paramSettingsId')" ></input>
+		<input type="image" class="menuIcons" src="./imgs/library.png"onCLick="toggleMenus('presetId')"></input>
+		<input type="image" class="menuIcons"  src="./imgs/editor.png" onCLick=" toggleEditor()"></input>
+		<input type="image" class="menuIcons" src="./imgs/wiki.png"onCLick="toggleMenus('wiki')"></input>
 		</div>
 	<div id="SettingsCol" class="sidebar">
-		<div id="fileId">
-			<button id="btnLoad">Load File</button></br>
-			<button id="btnExport">Export As JSON</button></br>
-			<button id="btnSavePreset">Save as Preset</button></br>
-			</div>
-		<div id="presetSettingId">	
-			<td>Preset Name</td>
-			<td><input type="text"   id="presetName" value="preset_Name" maxlength="31"></td></br>
-			</br>
-			<td>Preset Tags</td>
-			<input type="text" id="presetTags" placeholder = "effect skeleton someTags" title="tags"></br>
-			</br>
-			<div id = langSelecGrp>
-					<td>Coding Langage</td>
-					<select id="langSelec" , onChange= "langSelecFunc()" >
-						<option   value="mExpr" >Math Expression Mode</option>
-						<option  value="GLSL">GLSL Mode</option>
-						</select>
-						</div>
-			<button id="descriptionGUI"  onClick= "toggleDescription()">Description</button></br>
+		<div id="split-bar"></div>
+		<div id="grpSett">
+			<div id="fileId">
 
-			</div>
-		<div id="descriptionId">Description</br>
-			<textarea  rows = "6" cols = "42" maxlength="256" id="descriptionText">describe here</textarea>
-			</div>
-		<div id="presetId">
-				<td id="searchBar">tl Math Presets</td> </br>
-				<button id="btnLoadPresetFromMenu">Load Preset</button>
-				<input type="text" id="seachBarInput" placeholder = "search for presets or tags..." title="Type a preset or tag name"></br>
-				<div id="presetDescr">description : </div></br>
-				<form action="#">
-					<div  id="presetsListAccess"></div>
-				</form>
-			
-			
-			</div>
-		<div id="paramSettingsId">
-			<br />
-			<button class="settingsGUI" id="compSettBtn" onclick="openSettingsMenu('settingsGrp')">composition</button></br>
-			<button class="settingsGUI" id="exprSettBtn" onclick="openSettingsMenu('exprSettingsGrp')">epxressions</button></br>
-			<button class="settingsGUI" id="layerSettBtn" onclick="openSettingsMenu('layerGrp')">layer</button></br>
-			<button class="settingsGUI" id="sliderSettBtn" onclick="openSettingsMenu('sliderGrp')">sliders</button></br>
-			<button class="settingsGUI" id="pointGSettBtn" onclick="openSettingsMenu('pointGrp')">points</button></br>
-			<button class="settingsGUI" id="cboxSettBtn" onclick="openSettingsMenu('cboxGrp')">checkboxes</button></br>
-			<button class="settingsGUI" id="colorSettBtn" onclick="openSettingsMenu('colorGrp')">colors</button></br>
-			<button class="settingsGUI" id="rotationSettBtn" onclick="openSettingsMenu('rotationGrp')">rotations</button></br>
-			<br />
-			<br />
-			<table id="group_of_tables">
-				<td>
-					<table id= "settingsGrp">
-						<tr class = "settingsGrp">
-							<th>Parameter</th>
-							<th>GUI Name</th>
-							<tr class = "settingsGrp">
-								<td>time in seconds</td>
-								<td ><input type="text" id ="tsecName"  value="time" maxlength="31"></td>
-								</tr>
-							<tr class = "settingsGrp">
-								<td>time in frames</td>
-								<td><input type="text" id ="tframeName"  value="time_frame" maxlength="31"></td>
-								</tr>
-							<tr class = "settingsGrp">
-								<td>Frame Rate</td>
-								<td><input type="text" id ="fpsName" value="fps" maxlength="31"></td>
-								</tr>
-							<tr class = "settingsGrp">
-								<td>resolution</td>
-								<td><input type="text" id ="resolutionName"  value="resolution" maxlength="31"></td>
-								</tr>
-							<tr class = "settingsGrp">
-								<td>layerPosition</td>
-								<td><input type="text" id ="layerPositionName"  value="layerPosition" maxlength="31"></td>
-								</tr>
-							<tr class = "settingsGrp">
-								<td>layerScale</td>
-								<td><input type="text" id ="layerScaleName"  value="layerScale" maxlength="31"></td>
-								</tr>
-							<tr class = "settingsGrp">
-									<td>compResolution</td>
-									<td><input type="text" id ="compResolutionName"  value="compResolution" maxlength="31"></td>
-									</tr>
-								<tr class = "settingsGrp">
-									<td>camera position</td>
-									<td><input type="text" id ="camera_pos"  value="camera_position" maxlength="31"></td>
-									</tr>
-								<tr class = "settingsGrp">
-									<td>camera target</td>
-									<td><input type="text" id ="camera_targ" value="camera_target" maxlength="31"></td>
-									</tr>
-								<tr class = "settingsGrp">
-									<td>camera rotation</td>
-									<td><input type="text" id ="camera_rot" value="camera_rotation" maxlength="31"></td>
-									</tr>
-								<tr class = "settingsGrp">
-									<td>camera zoom</td>
-									<td><input type="text" id ="camera_zoom" value="camera_zoom" maxlength="31"></td>
-									</tr>
-								</tr>
-						</table>
-					</td>
-				<td>
-					<table id="exprSettingsGrp">
-						<tr class = "exprSettingsGrp">
-							<th>Parameter</th>
-							<th>GUI Name</th>
-							<tr class = "exprSettingsGrp">
-								<td>Current Channel</td>
-								<td><input type="text" id = "expr_current_channelName" value="inChannel" maxlength="31"></td>
-								</tr>
-							<tr class = "exprSettingsGrp">
-								<td>Pixel Coordonates</td>
-								<td><input type="text" id = "expr_pixName" value="pix" maxlength="31"></td>
-								</tr>
-								</tr>
-						</table>
-					</td>
-				<td>
-					<table id="layerGrp">
-						<tr id>
-							<th>Parameter</th>
-							<th>GUI Name</th> 
-							<th>Visible</th>
-							<tr class = "LayerGrp">
-								<tr>
-									<td>layer Group</td>
-									<td><input type="text"   id="layerGrpName" value="layerGrp" maxlength="31"></td>
-									<td><input type="checkbox" name="layerGrpVisible" id="layerGrpVisible" onClick= "toogleCheckbox('cblayers', 'layerGrpVisible')" checked ></td>
-									</tr>
-								<tr>
-									<td>current layer</td>
-									<td><input type="text" id = "layer00_name" value="texture0" maxlength="31"></td>
-									</tr>
-								<tr>
-									<td>layer 01</td>
-									<td><input type="text" id = "layer01_name" value="texture1" maxlength="31"></td>
-									<td><input type="text" id = "layer01_toffName" value="layer1_time_off" maxlength="31"></td>
-									<td><input type="text" id = "layer01_poffName" value="layer1_position_off" maxlength="31"></td>
-									<td><input type="checkbox" id = "layer01Visible" name="layer01Visible" class="cblayers" checked></td>
-									</tr>
-								<tr>
-									<td>layer 02</td>
-									<td><input type="text" id = "layer02_name" value="texture2" maxlength="31"></td>
-									<td><input type="text" id = "layer02_toffName" value="layer2_time_off" maxlength="31"></td>
-									<td><input type="text" id = "layer012poffName" value="layer2_position_off" maxlength="31"></td>
-									<td><input type="checkbox" id = "layer02Visible" name="layer02Visible" class="cblayers" checked></td>
-									</tr>
-								<tr>
-									<td>layer 03</td>
-									<td><input type="text" id = "layer03_name" value="texture3" maxlength="31"></td>
-									<td><input type="text" id = "layer03_toffName" value="layer3_time_off" maxlength="31"></td>
-									<td><input type="text" id = "layer03_poffName" value="layer3_position_off" maxlength="31"></td>
-									<td><input type="checkbox" id = "layer03Visible" name="layer03Visible" class="cblayers" checked></td>
-									</tr>
-								<tr>
-									<td>layer 04</td>
-									<td><input type="text" id = "layer04_name" value="texture4" maxlength="31"></td>
-									<td><input type="text" id = "layer04_toffName" value="layer4_time_off" maxlength="31"></td>
-									<td><input type="text" id = "layer04_poffName" value="layer4_position_off" maxlength="31"></td>
-									<td><input type="checkbox" id = "layer04Visible" name="layer04Visible" class="cblayers" checked></td>
-									</tr>
-							</tr>
-						</table>
-					</td>
-				<td>
-					<table  id="sliderGrp">
-						</table>
-					</td>
-				<td>
-					<table id="pointGrp">
-						</table>
-					</td>
-				<td>
-					<table id="cboxGrp">
-						</table>
-					</td>
-				<td>
-					<table id="colorGrp">
-						</table>
-					</td>
-				<td>
-					<table id="rotationGrp">
-						</table>
-					</td>
-			</table>
-			</div>
-
-		</div>
-	<div class="tabEditors">
-			<div id ="expr_editor_settings" class="mathGUI">
-					<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
-					</div>
-			<br/>
-			<button class="mathGUI" id="redExpBtn" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
-			<button class="mathGUI" id="greenExpBtn" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
-			<button class="mathGUI" id="blueExpBtn" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
-			<button class="mathGUI" id="rgbExpBtn"  onclick="openEditor(event, 'expr_rgb_tab', 'expr_rgb_editor')" >rgb channels expression</button>
-			<button class="mathGUI" id="alphaExpBtn"  onclick="openEditor(event, 'expr_alpha_tab', 'expr_alpha_editor')">Alpha channel expression</button>
-			<button class="glslGUI" onclick="openEditor(event, 'gl33_frag_tab', 'gl33_frag_editor')" >GLSL Fragment Shader</button>
-			<button class="glslGUI" onclick="openEditor(event, 'gl33_vert_tab', 'gl33_vert_editor')">GLSL Vertex Shader</button>
-			<br/>
-			<div id=consoleGrp>
-				<div id="gl33_frag_tab_console" class="console" > glsl frag console</div>
-				<div id="gl33_vert_tab_console"class="console" > glsl vert console</div>
-				<div id="expr_red_tab_console"class="console"> math red channel console</div>
-				<div id="expr_green_tab_console"class="console"> math green channel console</div>
-				<div id="expr_blue_tab_console"class="console"> math blue channel console</div>
-				<div id="expr_rgb_tab_console"class="console"> math rgb channels console</div>
-				<div id="expr_alpha_tab_console"class="console"> math alpha channel console</div>
-			</div>
-			<div class="text_editor">
-				<div id="gl33_frag_tab" class="tabEditor">
-					<h3 id="editor_name">fragment shader code</h3>
-					<pre id="gl33_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
-					</div>
-				<div id="gl33_vert_tab" class="tabEditor">	
-					<h3 id="editor_name">vertex shader code</h3>
-					<pre id="gl33_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
-					</div>
-			
-				<div id="expr_red_tab" class="tabEditor">
-					<h3 id="editor_name">red expression code</h3>	
-					<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>
-					</div>
-			
-				<div id="expr_green_tab" class="tabEditor">
-					<h3 id="editor_name">green expression code</h3>	
-					<pre id="expr_green_editor" class="textEditor">//write your green expresion here</pre>
-					</div>
-				
-				<div id="expr_blue_tab" class="tabEditor">
-					<h3 id="editor_name">blue expression code</h3>	
-					<pre id="expr_blue_editor" class="textEditor">//write your blue expression here</pre>
-					</div>	
-				<div id="expr_rgb_tab" class="tabEditor">
-					<h3 id="editor_name">rgb expression code</h3>	
-					<pre id="expr_rgb_editor" class="textEditor">//write your RGB expression here</pre>
-					</div>
-				<div id="expr_alpha_tab" class="tabEditor">
-					<h3 id="editor_name">alpha expression code</h3>	
-					<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
-					</div>
 				</div>
+			<div id="presetSettingId">
+				<button id="btnLoad">Load File</button>
+				<button id="btnExport">Export As JSON</button>
+				<button id="btnSavePreset">Save as Preset</button></br>
+				<td>Preset Name</td>
+				<td><input type="text"   id="presetName" value="preset_Name" maxlength="31"></td></br>
+				</br>
+				<td>Preset Tags</td>
+				<input type="text" id="presetTags" placeholder = "effect skeleton someTags" title="tags"></br>
+				</br>
+				<div id = langSelecGrp>
+						<td>Coding Langage</td>
+						<select id="langSelec" , onChange= "langSelecFunc()" >
+							<option   value="mExpr" >Math Expression Mode</option>
+							<option  value="GLSL">GLSL Mode</option>
+							</select>
+					</div>
+				<button id="descriptionGUI"  onClick= "toggleDescription()">Description</button></br>
+				</div>
+			<div id="descriptionId">Description</br>
+				<textarea  rows = "30" cols = "60" maxlength="2000" id="descriptionText">describe here</textarea>
+				</div>
+			<div id="presetId">
+				<div id="presetToolBar">
+					<button id="btnLoadAndApplyPresetFromMenu">Load And Apply</button>
+					<button id="btnLoadPresetFromMenu">Open in Editor</button>
+					<input type="text" id="seachBarInput" placeholder = "search for presets or tags..." title="Type a preset or tag name"></br>
+					<p id="presetDescr">description : </p></br>
+					</div>
+					<form action="#">
+						<div  id="presetsListAccess"></div>
+					</form>
+				</div>
+			<div id="paramSettingsId">
+				<br />
+				<button class="settingsGUI" id="compSettBtn" onclick="openSettingsMenu('settingsGrp')">composition</button></br>
+				<button class="settingsGUI" id="exprSettBtn" onclick="openSettingsMenu('exprSettingsGrp')">epxressions</button></br>
+				<button class="settingsGUI" id="layerSettBtn" onclick="openSettingsMenu('layerGrp')">layer</button></br>
+				<button class="settingsGUI" id="sliderSettBtn" onclick="openSettingsMenu('sliderGrp')">sliders</button></br>
+				<button class="settingsGUI" id="pointGSettBtn" onclick="openSettingsMenu('pointGrp')">points</button></br>
+				<button class="settingsGUI" id="cboxSettBtn" onclick="openSettingsMenu('cboxGrp')">checkboxes</button></br>
+				<button class="settingsGUI" id="colorSettBtn" onclick="openSettingsMenu('colorGrp')">colors</button></br>
+				<button class="settingsGUI" id="rotationSettBtn" onclick="openSettingsMenu('rotationGrp')">rotations</button></br>
+				<br />
+				<table id="group_of_tables">
+					<td>
+						<table id= "settingsGrp">
+							<tr class = "settingsGrp">
+								<th>Parameter</th>
+								<th>GUI Name</th>
+								<tr class = "settingsGrp">
+									<td>time in seconds</td>
+									<td ><input type="text" id ="tsecName"  value="time" maxlength="31"></td>
+									</tr>
+								<tr class = "settingsGrp">
+									<td>time in frames</td>
+									<td><input type="text" id ="tframeName"  value="time_frame" maxlength="31"></td>
+									</tr>
+								<tr class = "settingsGrp">
+									<td>Frame Rate</td>
+									<td><input type="text" id ="fpsName" value="fps" maxlength="31"></td>
+									</tr>
+								<tr class = "settingsGrp">
+									<td>resolution</td>
+									<td><input type="text" id ="resolutionName"  value="resolution" maxlength="31"></td>
+									</tr>
+								<tr class = "settingsGrp">
+									<td>layerPosition</td>
+									<td><input type="text" id ="layerPositionName"  value="layerPosition" maxlength="31"></td>
+									</tr>
+								<tr class = "settingsGrp">
+									<td>layerScale</td>
+									<td><input type="text" id ="layerScaleName"  value="layerScale" maxlength="31"></td>
+									</tr>
+								<tr class = "settingsGrp">
+										<td>compResolution</td>
+										<td><input type="text" id ="compResolutionName"  value="compResolution" maxlength="31"></td>
+										</tr>
+									<tr class = "settingsGrp">
+										<td>camera position</td>
+										<td><input type="text" id ="camera_pos"  value="camera_position" maxlength="31"></td>
+										</tr>
+									<tr class = "settingsGrp">
+										<td>camera target</td>
+										<td><input type="text" id ="camera_targ" value="camera_target" maxlength="31"></td>
+										</tr>
+									<tr class = "settingsGrp">
+										<td>camera rotation</td>
+										<td><input type="text" id ="camera_rot" value="camera_rotation" maxlength="31"></td>
+										</tr>
+									<tr class = "settingsGrp">
+										<td>camera zoom</td>
+										<td><input type="text" id ="camera_zoom" value="camera_zoom" maxlength="31"></td>
+										</tr>
+									</tr>
+							</table>
+						</td>
+					<td>
+						<table id="exprSettingsGrp">
+							<tr class = "exprSettingsGrp">
+								<th>Parameter</th>
+								<th>GUI Name</th>
+								<tr class = "exprSettingsGrp">
+									<td>Current Channel</td>
+									<td><input type="text" id = "expr_current_channelName" value="inChannel" maxlength="31"></td>
+									</tr>
+									<tr class = "exprSettingsGrp">
+										<td>Current Channel</td>
+										<td><input type="text" id = "expr_rgb_channelName" value="rgbInput" maxlength="31"></td>
+										</tr>
+								<tr class = "exprSettingsGrp">
+									<td>Pixel Coordonates</td>
+									<td><input type="text" id = "expr_pixName" value="pix" maxlength="31"></td>
+									</tr>
+									</tr>
+							</table>
+						</td>
+					<td>
+						<table id="layerGrp">
+							<tr id>
+								<th>Parameter</th>
+								<th>GUI Name</th> 
+								<th>Visible</th>
+								<tr class = "LayerGrp">
+									<tr>
+										<td>layer Group</td>
+										<td><input type="text"   id="layerGrpName" value="layerGrp" maxlength="31"></td>
+										<td><input type="checkbox" name="layerGrpVisible" id="layerGrpVisible" onClick= "toogleCheckbox('cblayers', 'layerGrpVisible')" checked ></td>
+										</tr>
+									<tr>
+										<td>current layer</td>
+										<td><input type="text" id = "layer00_name" value="texture0" maxlength="31"></td>
+										</tr>
+									<tr>
+										<td>layer 01</td>
+										<td><input type="text" id = "layer01_name" value="texture1" maxlength="31"></td>
+										<td><input type="checkbox" id = "layer01Visible" name="layer01Visible" class="cblayers" checked></td>
+										</tr>
+									<tr>
+										<td>layer 02</td>
+										<td><input type="text" id = "layer02_name" value="texture2" maxlength="31"></td>
+										<td><input type="checkbox" id = "layer02Visible" name="layer02Visible" class="cblayers" checked></td>
+										</tr>
+									<tr>
+										<td>layer 03</td>
+										<td><input type="text" id = "layer03_name" value="texture3" maxlength="31"></td>
+										<td><input type="checkbox" id = "layer03Visible" name="layer03Visible" class="cblayers" checked></td>
+										</tr>
+									<tr>
+										<td>layer 04</td>
+										<td><input type="text" id = "layer04_name" value="texture4" maxlength="31"></td>
+										<td><input type="checkbox" id = "layer04Visible" name="layer04Visible" class="cblayers" checked></td>
+										</tr>
+								</tr>
+							</table>
+						</td>
+					<td>
+						<table  id="sliderGrp">
+							</table>
+						</td>
+					<td>
+						<table id="pointGrp">
+							</table>
+						</td>
+					<td>
+						<table id="cboxGrp">
+							</table>
+						</td>
+					<td>
+						<table id="colorGrp">
+							</table>
+						</td>
+					<td>
+						<table id="rotationGrp">
+							</table>
+						</td>
+				</table>
+				</div>
+			<div id="wiki">
+					<p><strong>tl Math Wiki.</strong></p>
+				
+					<p>Tl Math Copyright (C) 2020 Thomas Laforge</p>
+				
+					<p>The code contains:</p>
+				
+					<ul>
+					<li><a href="https://github.com/nlohmann">json for modern c++ by Niels  Lohmann</a></li>
+				
+					<li><a href="https://github.com/ajaxorg/ace">ace.js library</a></li>
+				
+					<li><a href="https://shadertoy.com">Shadertoy examples with there own license</a></li>
+					</ul>
+				
+					<hr />
+				
+					<p><strong>Table of contents</strong></p>
+				
+					<h4 id="1-whatistlmath">1-What is tl Math?</h6>
+				
+					<h4 id="2-whatisglsl">2-What is GLSL?</h6>
+				
+					<h4 id="3-isitpossibletoloadapresetwithoutcoding">3-Is it possible to load a preset without coding ?</h6>
+				
+					<h4 id="4-quickmenuoverview">4-Quick menu overview</h6>
+				
+					<h4 id="5-expressionvsfullshader">5-Expression vs full Shader</h6>
+				
+					<h4 id="6-examplestepbystepinexpressionrgbmode">6-Example step by step in expression rgb mode</h6>
+				
+					<h4 id="7-examplestepbystepinexpressionsplitmode">7-Example step by step in expression split mode</h6>
+				
+					<h4 id="8-examplestepbystepinglslmode">8-Example step by step in glsl mode</h6>
+				
+					<hr />
+				
+					<p><strong>1-What is tlMath?</strong></p>
+				
+					<p>tlMath is an After Effect Hybrid add-on for After Effect. That means there is a plug-in side and a panel side.
+					The plug-in interpret GLSL shaders, convert them to Effects, with customizable parameters. The panel side is the interface to write the shader, customize parameters, access to the library, give a name and tags to the preset, import or export it.a</p>
+				
+					<hr />
+				
+					<p><strong>2- What is GLSL?</strong></p>
+				
+					<p>GLSL is a high level language made by the kronos group. It's written for graphic cards and is rendered in an opengl context. Video games use it since 2004 and opengl2, in 3d programs  but some vfx production tools also use it, like Autodesk Flame. A web and mobile version has been created: openglES. Some example on the web are based on this version but the plugin <strong><em>uses the glsl 330 version</em></strong>. (wich goes with openg 3.3) Don't worry most of openglES shaders work in 330 version.
+					On the hardware requirement, opengl 3.3 was realized ten years ago, so if you can use After Effect 2017 or higher the plugin may works. Each shaders installed  in the library works on an intel graphic card so don"t worry on this side.</p>
+				
+					<p>The wiki will teach you the basic of this language but you should have a look to some nice websites to learn it.</p>
+				
+					<ul>
+					<li><p><a href="https://thebookofshaders.com">the book of shaders</a> In my opinion it's one of the best to enter in GLSL's world.</p></li>
+				
+					<li><p><a href="www.shadertoy.com">shadertoy</a>. It's the best library of shader. There are all type of shaders, from basic to complex. One of the creator team, Inigo Quilez has made a nice video tutorial for beginner https://www.youtube.com/watch?v=0ifChJ0nJfM.</p>
+				
+					<ul>
+					<li><p><a href="http://glslsandbox.com/">glsl-Sandbox</a> It's also a library but without search engine. So you can navigate explore</p></li>
+				
+					<li><p><a href="https://logik-matchbook.org/">logik matchbook</a>. This website has a lot of glsl shaders written for autodesk Flame, but it's easy to adapt in the plugin. (some of the library are based on shaders from this library themselves inspired by shadertoy's shaders.</p></li></ul></li>
+					</ul>
+				
+					<hr />
+				
+					<p><strong>3-Is it possible to load a preset without coding ?</strong></p>
+				
+					<p>Yes it's possible. When the setup is loaded, the first window you see it's a library. You can select a preset and click on "load and apply" button. More details here.</p>
+				
+					<hr />
+				
+					<p><strong>4-Quick menu overview</strong></p>
+				
+					<ol>
+					<li><p>The plugin.</p>
+				
+					<p>When you apply the plug-in on a layer, you get a result like that:</p></li>
+					</ol>
+				
+					<p><img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Effect_00.PNG" alt="" /></p>
+				
+					<pre><code> In the example, the effect is applied on a white solid. The result is the same.
+					</code></pre>
+				
+					<p>You get a lot of parameters: 3 button, 10 sliders, 10 points, 10 colors, 10 rotations and 4 layers. 
+					But in fact those parameters do nothing, until you enter in the setup. But before to click on it, have a look to the three button.</p>
+				
+					<ul>
+					<li>Setup: will call the panel, to load, or to edit/write  a preset.</li>
+				
+					<li>Effect description: Print the description of the preset. read=only</li>
+				
+					<li>Reset preset: similar to After Effect reset button. But why this button? Because the after effect reset button will reset to the default preset inside the plug-in. But this button will keep you chosen preset but will reset to the preset's default values, defined in the panel.</li>
+					</ul>
+				
+					<ol>
+					<li><p>The Panel.
+					*The library (default menu)
+					When you open the panel, by the setup or by the After Effect extension menu you'll get something like this:
+					<img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Menu_00.PNG" alt="" /></p>
+				
+					<p><strong>The column on the left is the menu access</strong></p></li>
+					</ol>
+				
+					<hr />
+				
+					<p><strong>5-Expression vs full Shader</strong></p>
+				
+					<hr />
+				
+					<p><strong>6-Example step by step in expression rgb mode</strong></p>
+				
+					<hr />
+				
+					<p><strong>7-Example step by step in expression split mode</strong></p>
+				
+					<hr />
+				
+					<p><strong>8-Example step by step in glsl mode</strong></p>
+				
+					<hr />
+				
+					<p><strong>9-Preset structure in the json file</strong></p>
+				</div>
+			</div>
 		</div>
-
+	
+	<div  id="tabEditsMenu" class="tabEditors">
+		<button id="btnApply">Apply</button><br/>
+		<div id ="expr_editor_settings" class="mathGUI">
+				<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
+				</div>
+		<br/>
+		<button class="mathGUI" id="redExpBtn" onclick="openEditor(event, 'expr_red_tab', 'expr_red_editor')">Red channel expression</button>
+		<button class="mathGUI" id="greenExpBtn" onclick="openEditor(event, 'expr_green_tab', 'expr_green_editor')" >Green channel expression</button>
+		<button class="mathGUI" id="blueExpBtn" onclick="openEditor(event, 'expr_blue_tab', 'expr_blue_editor')" >Blue channel expression</button>
+		<button class="mathGUI" id="rgbExpBtn"  onclick="openEditor(event, 'expr_rgb_tab', 'expr_rgb_editor')" >rgb channels expression</button>
+		<button class="mathGUI" id="alphaExpBtn"  onclick="openEditor(event, 'expr_alpha_tab', 'expr_alpha_editor')">Alpha channel expression</button>
+		<button class="mathGUI" id="commonExpBtn"  onclick="openEditor(event, 'expr_common_tab', 'expr_common_editor')">Common expression</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl33_frag_tab', 'gl33_frag_editor')" >GLSL Fragment Shader</button>
+		<button class="glslGUI" onclick="openEditor(event, 'gl33_vert_tab', 'gl33_vert_editor')">GLSL Vertex Shader</button>
+		<br/>
+		<div id=consoleGrp>
+			<div id="gl33_frag_tab_console" class="console" > glsl frag console</div>
+			<div id="gl33_vert_tab_console"class="console" > glsl vert console</div>
+			<div id="expr_red_tab_console"class="console"> math red channel console</div>
+			<div id="expr_green_tab_console"class="console"> math green channel console</div>
+			<div id="expr_blue_tab_console"class="console"> math blue channel console</div>
+			<div id="expr_rgb_tab_console"class="console"> math rgb channels console</div>
+			<div id="expr_alpha_tab_console"class="console"> math alpha channel console</div>
+			<div id="expr_common_tab_console"class="console"> math common console</div>
+		</div>
+		<div class="text_editor">
+			<div id="gl33_frag_tab" class="tabEditor">
+				<h3 id="editor_name">fragment shader code</h3>
+				<pre id="gl33_frag_editor" class="textEditor">//write your Fragment shader code here</pre>
+				</div>
+			<div id="gl33_vert_tab" class="tabEditor">	
+				<h3 id="editor_name">vertex shader code</h3>
+				<pre id="gl33_vert_editor" class="textEditor">//write your Vertex shader code here</pre>
+				</div>
+		
+			<div id="expr_red_tab" class="tabEditor">
+				<h3 id="editor_name">red expression code</h3>	
+				<pre id="expr_red_editor" class="textEditor">//write your red expression here</pre>
+				</div>
+		
+			<div id="expr_green_tab" class="tabEditor">
+				<h3 id="editor_name">green expression code</h3>	
+				<pre id="expr_green_editor" class="textEditor">//write your green expresion here</pre>
+				</div>
+			
+			<div id="expr_blue_tab" class="tabEditor">
+				<h3 id="editor_name">blue expression code</h3>	
+				<pre id="expr_blue_editor" class="textEditor">//write your blue expression here</pre>
+				</div>	
+			<div id="expr_rgb_tab" class="tabEditor">
+				<h3 id="editor_name">rgb expression code</h3>	
+				<pre id="expr_rgb_editor" class="textEditor">//write your RGB expression here</pre>
+				</div>
+			<div id="expr_alpha_tab" class="tabEditor">
+				<h3 id="editor_name">alpha expression code</h3>	
+				<pre id="expr_alpha_editor" class="textEditor">//write your alpha expression here</pre>
+				</div>
+			<div id="expr_common_tab" class="tabEditor">
+				<h3 id="editor_name">common expression code</h3>	
+				<pre id="expr_common_editor" class="textEditor">//write your common expression here</pre>
+				</div>
+			</div>
+	</div>
+		
 </body>
 
 </html>

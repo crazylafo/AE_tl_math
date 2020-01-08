@@ -1,5 +1,5 @@
 # AE_tl_math
-Copyright © Thomas Laforge. 2018
+Copyright © Thomas Laforge. 2020
 Free  use  of  tl_math  is
 permitted under the guidelines and in accordance with the most current
 version of the https://opensource.org/licenses/gpl-3.0.html.
@@ -11,37 +11,28 @@ An After Effect plugin project.
 The user can write math expression for each pixels and by channels (RGBA) or GLSL Shaders.
 In math expression mode, whatever your Color Space, the expected values are between 0 and 1.
 
-# some exemples.
-Most of theme are based on www.shadertoy.com and wwww.glslsandbox.com. they are aivable in the demo project
-
-![Imgur Image](./demo/demo_images/34_fire.gif)
-![Imgur Image](./demo/demo_images/Defocus.gif)
-![Imgur Image](./demo/demo_images/Engrenage.gif)
-![Imgur Image](./demo/demo_images/WTF_organic.gif)
-![Imgur Image](./demo/demo_images/neural_universe.gif)
-![Imgur Image](./demo/demo_images/volume_effect.gif)
-![Imgur Image](./demo/demo_images/neurolines.gif)
-![Imgur Image](./demo/demo_images/clouds.gif)
-![Imgur Image](./demo/demo_images/light_moke.gif)
-![Imgur Image](./demo/demo_images/dogShit.gif)
-![Imgur Image](./demo/demo_images/dithering.gif)
-![Imgur Image](./demo/demo_images/worms.gif)
-![Imgur Image](./demo/demo_images/bokeh_shape.gif)
-![Imgur Image](./demo/demo_images/bricks.gif)
-![Imgur Image](./demo/demo_images/piano_1.gif)
-![Imgur Image](./demo/demo_images/flow.gif)
-![Imgur Image](./demo/demo_images/futurGUI.gif)
-![Imgur Image](./demo/demo_images/futurGUI2_1.gif)
-![Imgur Image](./demo/demo_images/GLITCH.gif)
-![Imgur Image](./demo/demo_images/lines.gif)
-![Imgur Image](./demo/demo_images/particules_1.gif)
-![Imgur Image](./demo/demo_images/particules_2.gif)
-![Imgur Image](./demo/demo_images/sky_color.gif)
 
 
       
 
 Verion note:
+
+# BETA 01 (V1.15)
+-A nicer editor for shader in a panel with ACE.js API
+
+-the panel has a library (20 exemples for now), the user can save or export it's own presets. 
+
+-new paramaters: 10 sliders, 10 points, 10 checkboxes, 10 colors, 10 rotations.
+
+-new settings: define a default value for each parameter and the plugin has a button to reset (for the preset)
+ 
+
+ ![Imgur Image](./docs/screenshots/Effect_01.png)
+ ![Imgur Image](./docs/screenshots/Effect_02.png)
+ ![Imgur Image](./docs/screenshots/Menu_01.png)
+ ![Imgur Image](./docs/screenshots/Menu_02.png)
+ ![Imgur Image](./docs/screenshots/Menu_03.png)
+
 # Alpha 05 (v 1.14)
 
 -fix layer Width and layer height downscales in glsl mode
@@ -97,72 +88,5 @@ Verion note:
  -The expression language is based on Exprtk grammar  https://github.com/ArashPartow/exprtk
  
  
-table of contents
-01-HOW TO INSTALL
-02- GLSL LANGAGE
 
- 
- 
-**1-HOW TO INSTALL**
-
-extract the zip file in the folder : 
-
-On mac : /Library/Application Support/Adobe/Common/Plug-ins/7.0/MediaCore/tl
-
-on Windows : C:\Program Files\Adobe\Common\Plug-ins\7.0\MediaCore\tl
-
- 
-**2-GLSL**
-**2-1 GLSL SPECIFICATIONS**
-
-The GLSL engine is based on opengL 3.3. You can see the specification :  https://www.khronos.org/registry/OpenGL/specs/gl/GLSLangSpec.3.30.pdf
-
-The plugin is tested on few graphic cards but it may works on graphic card from 2011 and newer. (it works on an intel igpu 620 !)
-
-For now (version 1.13) the plugin edits only fragment Shaders. 
-
-
-Note: For the output on Macos you have to define a output vec4 like **out vec4 fragColorOut**. On windows you can define a out vec4, but gl_FragColor can also works. (version 1.13/1.14).
-
-
-**2-2 SOME WEBSITE EXEMPLES**
-
--www.shadertoy.com is the biggest website with exemples. But using it's code in the plugin requiere some adaptations.
-   -The website uses uniform input  like iTime, iResolution that the plugins has. But  the plugin is limited to 2 textures: the layer source and one external layer.
-   
-www.glslsandbox.com  Most of the glsl exemples can be copy past to the plugin but don't forget to keep #version 330 at the beginning of the code
-
-**2-3 GLSL VARIABLES**
-
-
-**2-3-1 UNIFORMS**
-
-
-NAME| TYPE | DESCRIPTION|
----------|--------|--------|
-`resolution`       | vec2  | resolution of the frame|
-`iResolution`       | vec2 | resolution of the frame|
-`time` | float  |  current time in seconds|
-`iTime`| float  |  current time in seconds|
-`layerTime_frame` | float  | current time in frames|
-`layerDuration`| float  | duration of the layer in seconds|
-`layerPosition`| vec3  | position of the layer (params in the transform menu on the timeline)|
-`layerScale`| vec3| scale of the layer (params in the transform menu on the timeline)| |
-`compFps`| float  | frame rate of the compositions|
-
-
-NAME| TYPE | DESCRIPTION|
----------|--------|--------|
-`layerTex`  | 2D sample | 2D texture of the effect's layer|
-`extLayerTex`| 2D sample  | 2D texture of the external layer|
-`var1`  |float | value of slider 1|
-`var2`| float | value of slider 2|
-`var3`  | float|value of slider 3|
-`var4`|float  | value of slider 4|
-'mouse`  | vec2 | x and y postion of point 1 but named as mouse|
-`iMouse`| vec2 | x and y postion of point 1 but named as iMouse|
-`pt1`  | vec2 | x and y postion of point 1|
-`pt2`| vec2  | x and y postion of point 2|
-`cl1`  | vec3 | rgb float values of param color 1|
-`cl2`| vec3  |  rgb float values of param color 2|
 

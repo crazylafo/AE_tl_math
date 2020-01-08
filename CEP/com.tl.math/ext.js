@@ -1,6 +1,6 @@
 /*************************************************************************
 * tl math plugin and CEP
-*thomas laforge  Copyright 2019
+*thomas laforge  Copyright 2020
 **************************************************************************/
 /**
  * load panel function when opening. Also contain event listener
@@ -15,20 +15,19 @@ function onLoaded() {
 	csInterface.setWindowTitle = "tl Math Setup";
 	var numParams =10;
 	var err = defineErr();
-
+    //prepare settings GUI
 	setParamsSettings("slider", numParams, 1, "sliderGrp");
 	setParamsSettings("point", numParams, 3, "pointGrp");
 	setParamsSettings("cbox", numParams, 1, "cboxGrp");
 	setParamsSettings("color", numParams, 3, "colorGrp");
 	setParamsSettings("rotation", numParams, 1, "rotationGrp");
-	loadJSX();
-	sendMessageToPlugin();	
+	loadJSX(); //load jsx scripts to communicate with AE
+	sendMessageToPlugin();	 //if plugin is selected tell us the panel is opened
 	defaultVal(); //load default ddl val
-	var editors = setEditors();
+	var editors = setEditors(); // set ace.js editors
 	//laod default arb
-	var arbdefaultStr = loadDefaultArb();
-	
-	var arbData = JSON.parse(arbdefaultStr);
+	var arbdefaultStr = loadDefaultArb(); 
+	var arbData = JSON.parse(arbdefaultStr); 
 	try{
 		copyDataToGUI (arbData, editors,numParams);
 	}catch(e){
@@ -57,6 +56,7 @@ function onLoaded() {
 			}
 			try{
 				copyDataToGUI (arbData, editors,numParams);
+				langSelecFunc();
 			}catch(e){
 				alert("error in data to copy "+e)
 			}
@@ -91,46 +91,84 @@ function onLoaded() {
 		});
 	$("#presetsListAccess").on("change", function(){
 		var  presetSelectedIndex = $('input[name="presetListRb"]:checked').val();
-		var descriptionStr = "description : "+ presetsList.preset[presetSelectedIndex].description;
-		$("#presetDescr").text(descriptionStr);
+		var inputStr =  presetsList.preset[presetSelectedIndex].description.toString().replace("\\n", "<br>");
+		var descriptionStr = "Description : <br> "+cleanJsonFromArbStr(inputStr);
+		$("#presetDescr").html(descriptionStr);
 		});
 	$("#btnLoad").on("click", function() {		
 		loadPresetJSONFile();
 		});
 	$("#btnExport").on("click", function() {
 		try{
-			var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);	
+			var arbDataToSend = copyDataFromGUI(editors, arbData,numParams);	
 			exportPresetAsJSON(arbDataToSend);
 		}catch(e){
 			alert(err.collectingDataForPlugin+e);
-		}
-			
-		
+			}
 		});
 	$("#btnSavePreset").on("click", function() {
-		var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);		
+		var arbDataToSend = copyDataFromGUI(editors, arbData,numParams);		
 		savePresetAsJSON(arbDataToSend);
+		csInterface.evalScript('$._ext.listJsonFiles('+objDataStr+')'); //reupdate list
 		});
 	$("#btnLoadPresetFromMenu").on("click", function(){
 		loadPresetFromMenu(presetsList, editors,numParams);
-		tooglePresets();
+		langSelecFunc();
+		//force to open editor if not yet
+		var presetsMenu = document.getElementById("tabEditsMenu");
+		if (presetsMenu.style.display === "none"){
+			presetsMenu.style.display = "block";
+			$('#SettingsCol').css("width",  290);
+			}
 	});
-	$("#btnApply").on("click", function() {
+	$("#btnLoadAndApplyPresetFromMenu").on("click", function(){
+		loadPresetFromMenu(presetsList, editors,numParams);
+		langSelecFunc();
 		try{
-			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
+			var arbDataToSend = copyDataFromGUI(editors, arbData, numParams);
 			}catch(e){
 				alert(err.collectingDataForPlugin+e);
 			}
-			if (arbDataToSend){
-				var arbDataStr = JSON.stringify(arbDataToSend);
-				try{
-					evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
-				}catch(e){
-					alert (err.exportToPlugin+e)
-					}
+		if (arbDataToSend){
+			var arbDataStr = JSON.stringify(arbDataToSend);
+			try{
+				evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+			}catch(e){
+				alert (err.exportToPlugin+e)
 				}
+			}
+
+	});
+	$("#btnApply").on("click", function() {
+		try{
+			var arbDataToSend = copyDataFromGUI(editors, arbData, numParams);
+			}catch(e){
+				alert(err.collectingDataForPlugin+e);
+			}
+		if (arbDataToSend){
+			var arbDataStr = JSON.stringify(arbDataToSend);
+			try{
+				evalScript("$._ext.sendDataToPlugin("+arbDataStr+")");
+			}catch(e){
+				alert (err.exportToPlugin+e)
+				}
+			}
 		
 		});
+	$('#split-bar').mousedown(function (e) {
+		e.preventDefault();
+		$(document).mousemove(function (e) {
+			e.preventDefault();
+			var x = e.pageX - $('#SettingsCol').offset().left;
+			if (x>70){
+				$('#SettingsCol').css("width", x);
+				resizeEditorsMarginLeft(x+$('#SettingsCol').offset().left);
+			}
+		})
+	});
+	$(document).mouseup(function (e) {
+		$(document).unbind('mousemove');
+	});
 	}
 /**
  * send a messag to plugin (if selected)
@@ -163,8 +201,7 @@ function updatePresetMenu (presetsList){
 	for (var i =0; i< presetsList.preset.length; i++){
 		var inputStr = '<label  id="'+presetsList.preset[i].name+'"  class="presetsBlock">'+
 		'<input type="radio" class="presetIconRadio" id="presetIconRadio'+i+'" name="presetListRb" value="'+i+'"/>'+
-		'<img src="'+presetsList.preset[i].icon+'" id="presetIconImgsId">'+
-		'<div id="iconText">'+presetsList.preset[i].name+'</div>'
+		'<img src="'+presetsList.preset[i].icon+'" class="presetIconImgsId">'+presetsList.preset[i].name+
 		'</label>';
 		$("#presetsListAccess").append(inputStr);
 		}
@@ -255,7 +292,7 @@ function cleanJsonFromArbStr (str){
 function setConsoleStr (consoleName, strRepport){
 	var newStr = consoleName.toString()+"<br/>"+ cleanJsonFromArbStr(strRepport).replace("\\n", "<br/>");
 	return newStr
-}
+	}
 /**
  * set flags from shaders str 
  * input : obj arbdata, array strArr (with strings to find)
@@ -276,10 +313,14 @@ function setflagFromGL (arbData, strArr){
  * input : obj arbdata, array strArr (with strings to find)
  * return  bool boolResultB
  */
-function setflagFromExpr (arbData, strArr){
+function setflagFromExpr(arbData, strArr){
 	var boolResultB = false;
 	for (var i =0; i<strArr.length; i++){
 		if (arbData.math_expression.alphaExpr.indexOf(strArr[i]) !=-1){
+			boolResultB = true;
+			return boolResultB;
+		}
+		if (arbData.math_expression.commonExpr.indexOf(strArr[i]) !=-1){
 			boolResultB = true;
 			return boolResultB;
 		}
@@ -299,6 +340,11 @@ function setflagFromExpr (arbData, strArr){
 
 	return boolResultB;
 	}
+/**
+ * setParamsSettings :create param settings GUI 
+ * input : str ParamName, int numParams (number of parameters), int paramDimension (dimension of the parameter in AE),  paramGroupId (id of the group of parameter) 
+ * return  void
+ */
 function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 	var grp = document.getElementById(paramGroupId);
 	var paramGrpStr = '<th>Parameter</th> \n'+
@@ -308,7 +354,7 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 		'<tr>'+
 		'<td>'+paramName+' Group</td> \n'+
 		'<td><input type="checkbox" name="'+paramName+'GrpVisible" id="'+paramName+'GrpVisible"'+
-		'onClick= "toogleCheckbox(\'cb'+paramName+'\', \''+paramName+'GrpVisible\')" checked ></td> \n'+
+		'onClick= "toggleCheckbox(\'cb'+paramName+'\', \''+paramName+'GrpVisible\')" checked ></td> \n'+
 		'<td><input type="text"   id="'+paramName+'GrpName" value="'+paramName+'Grp" maxlength="31"></td> \n'+
 		'</tr> \n';
 	grp.innerHTML =paramGrpStr;
@@ -318,10 +364,10 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 		var paramStr ='<tr>'+
 			'<td>'+paramName+' '+indexName+'</td> \n'+
 			'<td ><input type="checkbox" id="'+paramName+i+'_visible"  class="cb'+paramName+'" checked></td> \n'+
-			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+indexName+'" maxlength="31"></td> \n'+
+			'<td><input type="text" id = "'+paramName+i+'_name" value="'+paramName+indexName+'" maxlength="31" size =10></td> \n'+
 			'<td><table>';
 		for (var j=0; j<paramDimension; j++){
-			paramStr += '<td><input type="text" id = "'+paramName+i+'_defaultVal'+j+'" value="'+j+'" maxlength="10"></td> \n';
+			paramStr += '<td><input type="text" id = "'+paramName+i+'_defaultVal'+j+'" value="'+j+'" maxlength="10" size=4</td> \n';
 		}
 		paramStr +='</table></td> \n'+
 			'</tr> \n'
@@ -329,6 +375,11 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 		}
 		grp.innerHTML +=strGrp;
 	}
+/**
+ * getParamsSettings :catch the param settings values  from the arbData and  store it into the GUI
+ * input : obj arbData (to read the data), int numParams (number of parameter to updated), int paramDimension (dimension of the parameter), paramGroupId (id of the group of parameter) 
+ * return  void
+ */
 function getParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
 	$("#"+paramName+"GrpName").val(arbData.gui_settings[paramGroupId].grpName.toString());
 	$("input[name="+paramName+"GrpVisible]").prop('checked', arbData.gui_settings[paramGroupId].grpVisibleB);
@@ -340,8 +391,12 @@ function getParamsSettings(arbData, paramName, numParams, paramDimension, paramG
 			}
 		}
 	}
+/**
+ * sendParamsSettings :c atch the param settings value from the GUI
+ * input : obj arbData (to returned updated), int numParams (number of parameter to updated), int paramDimension (dimension of the parameter), paramGroupId (id of the group of parameter) 
+ * return : arbData (updated with new parameters settings)
+ */
 function sendParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
-	
 	arbData.gui_settings[paramGroupId].grpName =safeCharsForName ($("#"+paramName+"GrpName").val().toString());	
 	arbData.gui_settings[paramGroupId].grpVisibleB =$("#"+paramName+"GrpVisible").is(':checked');
 	
@@ -353,12 +408,21 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 			}
 		}
 	return arbData;
-
 }
+/**
+*  safeCharsForName : delete special chars for parameters Name
+*input: string nameStr
+*return: string safeName
+ */
 function safeCharsForName (nameStr){
-	var safeName = nameStr.toString().replace(/[^\w\s]/gi, '');
-	return safeName
+	var safeNameStr = nameStr.toString().replace(/[^\w\s]/gi, '');
+	return safeNameStr
 	}
+/**
+* copyDataToGUI: get data from obj arbData and apply to the GUI using jquery
+*input:obj arbData, obj editors, int numParams
+*return: void
+ */
 function copyDataToGUI (arbData, editors, numParams) {
 	$("#gl33_frag_tab_console").html(setConsoleStr ("Console - Fragment Shader", arbData.gl_expression.gl33_frag_error.toString()));
 	$("#gl33_vert_tab_console").html(setConsoleStr ("Console - Vertex Shader",arbData.gl_expression.gl33_vert_error.toString()));
@@ -367,6 +431,7 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#expr_blue_tab_console").html(setConsoleStr ("Console - Blue Channel",(arbData.math_expression.blue_error.toString())));
 	$("#expr_rgb_tab_console").html(setConsoleStr ("Console - RGB Channels",arbData.math_expression.rgb_error.toString()));
 	$("#expr_alpha_tab_console").html(setConsoleStr ("Console - Alpha Channel",arbData.math_expression.alpha_error.toString()));
+	$("#expr_common_tab_console").html(setConsoleStr ("Console - Common Channel",arbData.math_expression.common_error.toString()));
 	if (arbData.gl_expression.gl33_frag_sh){
 		editors.gl33_frag_editor.setValue(cleanJsonFromArbStr(arbData.gl_expression.gl33_frag_sh.toString()), -1);
 	}
@@ -388,6 +453,9 @@ function copyDataToGUI (arbData, editors, numParams) {
 	if(arbData.math_expression.alphaExpr){
 		editors.expr_alpha_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.alphaExpr.toString(), -1));
 	}
+	if(arbData.math_expression.commonExpr){
+		editors.expr_common_editor.setValue(cleanJsonFromArbStr(arbData.math_expression.commonExpr.toString(), -1));
+	}
 	$("#presetName").val( cleanJsonFromArbStr(arbData.effectInfo.presetName.toString()));
 	$("#descriptionText").val(cleanJsonFromArbStr(arbData.effectInfo.description.toString()));
 	$("#presetTags").val(arbData.effectInfo.tags.toString());
@@ -397,7 +465,7 @@ function copyDataToGUI (arbData, editors, numParams) {
 	if(arbData.effectMode.expr_modeB){
 		$("#langSelec").val("mExpr");
 	}
-	$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
+	toggleRgbModeBox ("rgbmodeB", arbData.math_expression.exprRGBModeB);
 	$("#resolutionName").val(arbData.composition.resolution.toString());
 	$("#layerPositionName").val(arbData.composition.layerPosition.toString());
 	$("#layerScaleName").val(arbData.composition.layerScale.toString());
@@ -410,13 +478,14 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#camera_rot").val(arbData.composition.camera_rotation.toString());
 	$("#camera_zoom").val(arbData.composition.camera_zoom.toString());
 	$("#expr_current_channelName").val(arbData.math_expression.expr_current_channel.toString());
+	$("#expr_rgb_channelName").val(arbData.math_expression.expr_rgb_channel.toString());
 	$("#expr_pixName").val(arbData.math_expression.expr_pix.toString());
 	getParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
+	
 	getParamsSettings(arbData, "point", numParams, 3, "pointGrp");
 	getParamsSettings(arbData, "cbox", numParams, 1, "cboxGrp");
 	getParamsSettings(arbData, "color", numParams, 3, "colorGrp");
 	getParamsSettings(arbData, "rotation", numParams, 1, "rotationGrp");
-
 	$("#layerGrpName").val(arbData.gui_settings.layerGrp.grpName.toString());
 	$("input[name=layerGrpVisible]").prop('checked', arbData.gui_settings.layerGrp.grpVisibleB);
 	$("#layer00_name").val(arbData.gui_settings.layerGrp.current_layer.name.toString());
@@ -429,7 +498,12 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#layer04_name").val(arbData.gui_settings.layerGrp.extLayer_4.name.toString());
 	$("input[name=layer04Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_4.visibleB);
 	}
-function sendDataToPlugin(editors, arbData, numParams) {
+/**
+*copyDataFromGUI:  Catch the values from GUI and copy it to obj arbData
+*input: obj editors, obj arbData, int numParams
+*return: obj arbData (updated)
+*/
+function copyDataFromGUI (editors, arbData, numParams) {
 	var fragLimit = 25000;
 	var VertLimit = 25000;
 	var exprLimit = 4096;
@@ -470,8 +544,13 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	}else{
 		alert ("alpha expression text is tool long");
 	}
+	if (editors.expr_common_editor.getValue().toString().length <exprLimit){
+		arbData.math_expression.commonExpr= cleanJsonToArbStr(( editors.expr_common_editor.getValue()).toString());
+	}else{
+		alert ("common expression text is tool long");
+	}
 	if ($("#descriptionText").val().toString().length <descriptionLimit){
-		arbData.effectInfo.description = $("#descriptionText").val().toString();
+		arbData.effectInfo.description =cleanJsonToArbStr( $("#descriptionText").val()).toString();
 	}else{
 		alert ("description text is too long")
 	}
@@ -500,6 +579,7 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	
 	arbData.math_expression.exprRGBModeB = $("#rgbmodeB").is(':checked');
 	arbData.math_expression.expr_current_channel = safeCharsForName ($("#expr_current_channelName").val().toString());
+	arbData.math_expression.expr_rgb_channel = safeCharsForName ($("#expr_rgb_channelName").val().toString());
 	arbData.math_expression.expr_pix =safeCharsForName ($("#expr_pixName").val().toString());
 	sendParamsSettings(arbData, "slider", numParams, 1, "sliderGrp");
 	sendParamsSettings(arbData, "point", numParams, 3, "pointGrp");
@@ -519,18 +599,97 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.gui_settings.layerGrp.extLayer_3.visibleB= $("#layer03Visible").is(':checked');
 	arbData.gui_settings.layerGrp.extLayer_4.name =safeCharsForName ($("#layer04_name").val().toString());
 	arbData.gui_settings.layerGrp.extLayer_4.visibleB= $("#layer04Visible").is(':checked');
-
-
-	arbData.flags.needsLumaB = false; // only for expr mode
-	var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
-	for (var i=0; i<listLayers.length; i++){			
-		arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
-	}
-	arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
-	arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom]);	
+	arbData = setFlags (arbData);
+	arbData.effectInfo.minimalPluginVersion = setMinimalVersion (arbData);
 	return arbData;
 	}
-function toogleCheckbox(className, currId){
+/**
+* setFlags: setflags for the plugin, depending of the shaders str
+*input: arbData
+*return: arbData updated
+*/
+function setFlags (arbData){
+	var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
+	if(arbData.effectMode.gl33_modeB){
+		for (var i=0; i<listLayers.length; i++){			
+			arbData.flags.pixelsCallExternalInputB[i] =setflagFromGL (arbData,[listLayers[i]]);
+		}
+		arbData.flags.presetHasWideInputB =setflagFromGL (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.usesCameraB =setflagFromGL (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom, "cameraMat"]);	
+	}else{
+		for (var i=0; i<listLayers.length; i++){			
+			arbData.flags.pixelsCallExternalInputB[i] = setflagFromExpr (arbData,[listLayers[i]]);
+		}
+		arbData.flags.presetHasWideInputB = setflagFromExpr (arbData, [arbData.composition.time_sec,arbData.composition.time_frame]);
+		arbData.flags.usesCameraB = setflagFromExpr (arbData, [arbData.composition.camera_position,arbData.composition.camera_target, arbData.composition.camera_rotation, arbData.composition.camera_zoom, "cameraMat"]);
+		}
+	return arbData
+	}
+/**
+*  setVersion  return higher version between currentMinimal and the requiered by the flag
+*input: int minimalVersion int  reqVersion
+*return: int version
+*/
+function setVersion(minimalVersion, reqVersion){
+	if (parseInt(minimalVersion) < parseInt(reqVersion)){
+		return reqVersion
+	}else{
+		return minimalVersion;
+	}
+	}
+/**
+ * setMinimalVersion: set minimal plugin version, depending from the flags
+ *input: arbData
+*return: int minmalVersion
+*/
+function setMinimalVersion (arbData){
+	var minimalVersion = 115;
+	for (var i=0; i<arbData.flags.pixelsCallExternalInputB.length; i++){
+		if (arbData.flags.pixelsCallExternalInputB[i] == true){
+			minimalVersion = setVersion(minimalVersion, 115);
+		}
+	}
+	if (arbData.flags.presetHasWideInputB){
+		minimalVersion = setVersion(minimalVersion, 115);
+	}
+	if (arbData.flags.usesCameraB){
+		minimalVersion = setVersion(minimalVersion, 115);
+	}
+	return minimalVersion;
+	}
+/**
+ * 
+ *input:
+*return:
+*/
+function defaultVal(){
+	$("#langSelec").val("mExpr");
+	langSelecFunc();
+	toggleMenus("presetId");
+	toggleMenus("presetId");
+	toggleDescription();
+	toggleEditor();
+	openSettingsMenu("settingsGrp");
+	}
+/**
+ * 
+*input:
+*return:
+*/
+function toggleRgbModeBox (idIn, boolIn){
+	var currId = document.getElementById(idIn);
+	if (boolIn){
+		currId.checked =true;
+	}else{
+		currId.checked = false;
+	}
+}
+/**
+* 
+*input:
+*return:
+*/
+function toggleCheckbox(className, currId){
 	var classItems = document.getElementsByClassName(className);
 	var parentItem =  document.getElementById(currId);
 	if (parentItem.checked ==true){
@@ -544,88 +703,83 @@ function toogleCheckbox(className, currId){
 			}
 		}
 	}
-
-function defaultVal(){
-	var langSelec = document.getElementById("langSelec");
-	langSelec.value = "GLSL";
-	langSelecFunc();
-
-	toogleFile();
-	tooglePresetSettings();
-	toggleSettings();
-	tooglePresets();
-	toggleDescription();
-	openSettingsMenu("settingsGrp");
+/**
+*
+*input:
+*return:
+*/
+function resizeEditorsMarginLeft (size){
+	var tabCl = document.getElementsByClassName("tabEditors");
+	var newSize = (size+"px").toString();
+	tabCl[0].style.marginLeft =  newSize;
 	}
-function toogleSideBar(){
-	var fileMenu = document.getElementById("fileId");
+/**
+*input:
+*return:
+*/
+function resizeSettingsMarginRight(size){
+	var tabCl = document.getElementsByClassName("SettingsCol");
+	var newSize = (size+"px").toString();
+	tabCl[0].style.marginRight =  newSize;
+	}
+
+function toggleSideBar(){
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
+	var wiki = document.getElementById("wiki");
 	var settingsMenu = document.getElementById("paramSettingsId");
 	var sidebar = document.getElementById("SettingsCol");
-	var tabCl = document.getElementsByClassName("tabEditors");
-	
-
-	if (fileMenu.style.display === "none"&&
-	presetsSettingMenu.style.display === "none"&&
+	if (presetsSettingMenu.style.display === "none"&&
 	Presetslib.style.display === "none"&& 
-	settingsMenu.style.display === "none"){
-
+	settingsMenu.style.display === "none"&&
+	wiki.style.display === "none"){
 		sidebar.style.display = "none";
-		tabCl[0].style.marginLeft = "160px";
-		
+		resizeEditorsMarginLeft (70);
 	}
 	else{
 		sidebar.style.display = "block";
-		tabCl[0].style.marginLeft = "450px";
+		resizeEditorsMarginLeft (350);
+		}
 	}
-
-
-}
-function toogleFile(){
-	var presetsMenu = document.getElementById("fileId");
+function toggleEditor(){
+	var presetsMenu = document.getElementById("tabEditsMenu");
 	if (presetsMenu.style.display === "none"){
 		presetsMenu.style.display = "block";
-
+		$('#SettingsCol').css("width",  290);
 		}
 	else{
 		presetsMenu.style.display = "none";
+		$('#SettingsCol').css("width", "100%");
 		}
-	toogleSideBar();
+
 	}
-function tooglePresetSettings(){
-	var presetsMenu = document.getElementById("presetSettingId");
-	if (presetsMenu.style.display === "none"){
-		presetsMenu.style.display = "block";
+function toggleMenus(id){
+
+	var idArr =  ['presetSettingId', 'presetId', 'paramSettingsId', 'wiki'];
+	for (var i=0; i<idArr.length; i++){
+		var menu = document.getElementById(idArr[i]);
+		if( id=== idArr[i]){
+			if (menu.style.display === "none"){
+				menu.style.display = "block";
+				}
+			else{
+				menu.style.display = "none";
+			}
 		}
-	else{
-		presetsMenu.style.display = "none";
+		else{
+			menu.style.display = "none";
 		}
-	toogleSideBar();
 	}
-function tooglePresets(){
-	var presetsMenu = document.getElementById("presetId");
-	if (presetsMenu.style.display === "none"){
-		presetsMenu.style.display = "block";
+	if (document.getElementById('presetSettingId').style.display==="none"){
+		var descrMenu = document.getElementById("descriptionId");
+		descrMenu.style.display = "none";
 		}
-	else{
-		presetsMenu.style.display = "none";
-		}
-	toogleSideBar();	
-	}
-function toggleSettings(){
-	var settingsMenu = document.getElementById("paramSettingsId");
-	if (settingsMenu.style.display === "none"){
-		settingsMenu.style.display = "block";
-		}
-	else{
-		settingsMenu.style.display = "none";
-		}
-	toogleSideBar();
+	toggleSideBar();
 	}
 function toggleDescription(){
+	var parentMenu = document.getElementById('presetSettingId');
 	var descrMenu = document.getElementById("descriptionId");
-	if (descrMenu.style.display === "none"){
+	if (descrMenu.style.display === "none" && parentMenu.style.display !="none"){
 		descrMenu.style.display = "block";
 		}
 	else{
@@ -654,6 +808,7 @@ function setEditors(){
 	editors.expr_blue_editor = glslEditor("expr_blue_editor");
 	editors.expr_rgb_editor = glslEditor("expr_rgb_editor");
 	editors.expr_alpha_editor  = glslEditor("expr_alpha_editor");
+	editors.expr_common_editor  = glslEditor("expr_common_editor");
 	return editors;
 	}
 function openEditor(evt, tabName) {
@@ -740,6 +895,10 @@ function glslEditor(glMode){
 		//editor.setAutoScrollEditorIntoView(true);
 		editor.session.setUseSoftTabs(true);
 		editor.resize();
+		/*editor.setOptions({
+			fontFamily: "arial",
+			fontSize: "12pt"
+		  });*/
 		return editor;
 	}
 /**

@@ -153,9 +153,6 @@
     <ClCompile Include="..\src\tl_math_Strings.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\tl_math_iterators.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\tl_math_Dialogs.cpp">
       <Filter>src</Filter>
     </ClCompile>
