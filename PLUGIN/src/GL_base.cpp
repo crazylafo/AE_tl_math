@@ -607,9 +607,7 @@ void AESDK_OpenGL_MakeReadyToRender(AESDK_OpenGL_EffectRenderData& inData, gl::G
 {
 	// Bind the frame-buffer object and attach to it a render-buffer object set up as a depth-buffer.
 	glBindFramebuffer(GL_FRAMEBUFFER, inData.mFrameBufferSu);
-
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureHandle, 0);
-
 	// Set the render target - primary surface
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 

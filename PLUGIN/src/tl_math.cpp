@@ -161,9 +161,6 @@ namespace {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, (GLint)GL_CLAMP_TO_BORDER);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, (GLint)GL_CLAMP_TO_BORDER);
 		glTexImage2D(GL_TEXTURE_2D, 0, (GLint)GL_RGBA32F, input_worldP->width, input_worldP->height, 0, GL_RGBA, GL_FLOAT, nullptr);
-
-
-
 		multiplier16bitOut = 1.0f;
 		const GLint  SwizzleColorSpace[] = { (GLint)GL_GREEN, (GLint)GL_BLUE,  (GLint)GL_ALPHA, (GLint)GL_RED };
 		switch (format)

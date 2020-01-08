@@ -1366,7 +1366,7 @@ R"=====(
     //
     //
 		try{
-			alert ('''+%s+''');	
+			alert ("""%s""");
 		}catch(e){
 			alert ("error in preset description: "+e)
 		}
