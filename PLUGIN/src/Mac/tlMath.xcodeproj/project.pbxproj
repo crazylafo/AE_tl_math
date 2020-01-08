@@ -1,0 +1,519 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		040A7FDF222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */; };
+		040A7FE0222FFC8A00E7E6D2 /* tl_math_io.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 040A7FDD222FFC8A00E7E6D2 /* tl_math_io.cpp */; };
+		043D97DA22C6536A003423B2 /* tl_mathRender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 043D97D822C6536A003423B2 /* tl_mathRender.cpp */; };
+		04B1B38622B3912E00D7B7D5 /* tl_mathParams.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */; };
+		04BA3383231D3A6600981A6D /* tl_mathSeqData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04BA3382231D3A6600981A6D /* tl_mathSeqData.cpp */; };
+		04EB1D7923472DB100EA1BD0 /* tl_mathStrOperations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04EB1D7723472DB000EA1BD0 /* tl_mathStrOperations.cpp */; };
+		7ECB51A715DB18A300C5BAD5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7ECB51A615DB18A300C5BAD5 /* Cocoa.framework */; };
+		8F2D54CC0C3DC8BC000535F4 /* tl_math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D54C90C3DC8BC000535F4 /* tl_math.cpp */; };
+		8F2D54D10C3DC8FE000535F4 /* tl_mathPiPL.r in Rez */ = {isa = PBXBuildFile; fileRef = 8F2D54D00C3DC8FD000535F4 /* tl_mathPiPL.r */; };
+		8F463EB80C3DCDBB0040C945 /* GL_base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F463EB60C3DCDBB0040C945 /* GL_base.cpp */; };
+		8F463EC30C3DCE390040C945 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F463EC20C3DCE390040C945 /* OpenGL.framework */; };
+		8F463EC90C3DCE4B0040C945 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F463EC80C3DCE4B0040C945 /* AGL.framework */; };
+		8F463F260C3DD6140040C945 /* tl_math_Strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8F463F240C3DD6140040C945 /* tl_math_Strings.cpp */; };
+		D0FE579D0993C5E500139A60 /* AEGP_SuiteHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FE579A0993C5E500139A60 /* AEGP_SuiteHandler.cpp */; };
+		D0FE579E0993C5E500139A60 /* MissingSuiteError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FE579C0993C5E500139A60 /* MissingSuiteError.cpp */; };
+		D7B73AB51B6C262C00BCC010 /* libglbinding.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D7B73A511B6C20AD00BCC010 /* libglbinding.a */; };
+		D7DCC59C1B2391F6007E769E /* Smart_Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D7DCC59A1B2391F6007E769E /* Smart_Utils.cpp */; };
+		D7DCC5A01B239204007E769E /* AEFX_SuiteHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = D7DCC59D1B239204007E769E /* AEFX_SuiteHelper.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D7B73A501B6C20AD00BCC010 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D7B73A4C1B6C20AC00BCC010 /* glbinding.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D7B73A451B6C20AC00BCC010;
+			remoteInfo = glbinding;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8F1EE4810C51773600D27114 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		040A7FD9222FFBC600E7E6D2 /* vmath.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = vmath.hpp; sourceTree = "<group>"; };
+		040A7FDB222FFBC700E7E6D2 /* json.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = json.hpp; sourceTree = "<group>"; };
+		040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tl_mathArb_Handler.cpp; path = ../src/tl_mathArb_Handler.cpp; sourceTree = SOURCE_ROOT; };
+		040A7FDD222FFC8A00E7E6D2 /* tl_math_io.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_io.cpp; path = ../src/tl_math_io.cpp; sourceTree = SOURCE_ROOT; };
+		0434630B2292DA4F00AE77BD /* tl_defaultArb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tl_defaultArb.h; sourceTree = "<group>"; };
+		043D97D822C6536A003423B2 /* tl_mathRender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathRender.cpp; sourceTree = "<group>"; };
+		0481B760234CCC370020A5EC /* tl_defaultShaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tl_defaultShaders.h; sourceTree = "<group>"; };
+		04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathParams.cpp; sourceTree = "<group>"; };
+		04BA3382231D3A6600981A6D /* tl_mathSeqData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathSeqData.cpp; sourceTree = "<group>"; };
+		04EB1D7723472DB000EA1BD0 /* tl_mathStrOperations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = tl_mathStrOperations.cpp; sourceTree = "<group>"; };
+		04F4617A223BA625003E0F9F /* script.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = script.h; path = ../script/script.h; sourceTree = "<group>"; };
+		04F4617C223BA625003E0F9F /* json_to_js.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = json_to_js.h; path = ../script/json_to_js.h; sourceTree = "<group>"; };
+		7EB428A80FBA1B62003C7DD1 /* tl_math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math.h; path = ../include/tl_math.h; sourceTree = SOURCE_ROOT; };
+		7EB428DB0FBA1C77003C7DD1 /* GL_base.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = GL_base.h; path = ../include/GL_base.h; sourceTree = SOURCE_ROOT; };
+		7EB428DC0FBA1C80003C7DD1 /* tl_math_Strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tl_math_Strings.h; path = ../include/tl_math_Strings.h; sourceTree = SOURCE_ROOT; };
+		7ECB51A615DB18A300C5BAD5 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		8F2D54C90C3DC8BC000535F4 /* tl_math.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = tl_math.cpp; path = ../src/tl_math.cpp; sourceTree = SOURCE_ROOT; };
+		8F2D54D00C3DC8FD000535F4 /* tl_mathPiPL.r */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.rez; name = tl_mathPiPL.r; path = ../tl_mathPiPL.r; sourceTree = SOURCE_ROOT; };
+		8F463EB60C3DCDBB0040C945 /* GL_base.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; name = GL_base.cpp; path = ../src/GL_base.cpp; sourceTree = SOURCE_ROOT; };
+		8F463EC20C3DCE390040C945 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		8F463EC80C3DCE4B0040C945 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = System/Library/Frameworks/AGL.framework; sourceTree = SDKROOT; };
+		8F463F240C3DD6140040C945 /* tl_math_Strings.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = tl_math_Strings.cpp; path = ../src/tl_math_Strings.cpp; sourceTree = SOURCE_ROOT; };
+		C4E618CC095A3CE80012CA3F /* tlMath.plugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = tlMath.plugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		D0FE579A0993C5E500139A60 /* AEGP_SuiteHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = AEGP_SuiteHandler.cpp; path = ../../../Util/AEGP_SuiteHandler.cpp; sourceTree = SOURCE_ROOT; };
+		D0FE579C0993C5E500139A60 /* MissingSuiteError.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MissingSuiteError.cpp; path = ../../../Util/MissingSuiteError.cpp; sourceTree = SOURCE_ROOT; };
+		D7B73A4C1B6C20AC00BCC010 /* glbinding.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = glbinding.xcodeproj; path = glbinding/glbinding.xcodeproj; sourceTree = "<group>"; };
+		D7DCC59A1B2391F6007E769E /* Smart_Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Smart_Utils.cpp; path = ../../../Util/Smart_Utils.cpp; sourceTree = "<group>"; };
+		D7DCC59B1B2391F6007E769E /* Smart_Utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Smart_Utils.h; path = ../../../Util/Smart_Utils.h; sourceTree = "<group>"; };
+		D7DCC59D1B239204007E769E /* AEFX_SuiteHelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AEFX_SuiteHelper.c; path = ../../../Util/AEFX_SuiteHelper.c; sourceTree = "<group>"; };
+		D7DCC59E1B239204007E769E /* AEFX_SuiteHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AEFX_SuiteHelper.h; path = ../../../Util/AEFX_SuiteHelper.h; sourceTree = "<group>"; };
+		D7DCC59F1B239204007E769E /* AEGP_SuiteHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AEGP_SuiteHandler.h; path = ../../../Util/AEGP_SuiteHandler.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C4E618CA095A3CE80012CA3F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7B73AB51B6C262C00BCC010 /* libglbinding.a in Frameworks */,
+				8F463EC30C3DCE390040C945 /* OpenGL.framework in Frameworks */,
+				8F463EC90C3DCE4B0040C945 /* AGL.framework in Frameworks */,
+				7ECB51A715DB18A300C5BAD5 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		04017B8D22300959004E26C6 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				8F2D54C90C3DC8BC000535F4 /* tl_math.cpp */,
+				043D97D822C6536A003423B2 /* tl_mathRender.cpp */,
+				8F463F240C3DD6140040C945 /* tl_math_Strings.cpp */,
+				8F463EB60C3DCDBB0040C945 /* GL_base.cpp */,
+				040A7FDD222FFC8A00E7E6D2 /* tl_math_io.cpp */,
+				04B1B38422B3912E00D7B7D5 /* tl_mathParams.cpp */,
+				040A7FDC222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp */,
+				04BA3382231D3A6600981A6D /* tl_mathSeqData.cpp */,
+				04EB1D7723472DB000EA1BD0 /* tl_mathStrOperations.cpp */,
+			);
+			name = src;
+			path = ../src;
+			sourceTree = "<group>";
+		};
+		04017B8F22300981004E26C6 /* includes */ = {
+			isa = PBXGroup;
+			children = (
+				7EB428A80FBA1B62003C7DD1 /* tl_math.h */,
+				0481B760234CCC370020A5EC /* tl_defaultShaders.h */,
+				7EB428DB0FBA1C77003C7DD1 /* GL_base.h */,
+				7EB428DC0FBA1C80003C7DD1 /* tl_math_Strings.h */,
+				0434630B2292DA4F00AE77BD /* tl_defaultArb.h */,
+			);
+			name = includes;
+			path = ../include;
+			sourceTree = "<group>";
+		};
+		04017B90223009A4004E26C6 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				040A7FDB222FFBC700E7E6D2 /* json.hpp */,
+				040A7FD9222FFBC600E7E6D2 /* vmath.hpp */,
+			);
+			name = lib;
+			path = ../lib;
+			sourceTree = "<group>";
+		};
+		04DB7ED2223AB8660001A457 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				04F4617C223BA625003E0F9F /* json_to_js.h */,
+				04F4617A223BA625003E0F9F /* script.h */,
+			);
+			name = script;
+			sourceTree = "<group>";
+		};
+		C4E6187C095A3C800012CA3F = {
+			isa = PBXGroup;
+			children = (
+				04DB7ED2223AB8660001A457 /* script */,
+				04017B90223009A4004E26C6 /* lib */,
+				04017B8F22300981004E26C6 /* includes */,
+				04017B8D22300959004E26C6 /* src */,
+				D7B73A4C1B6C20AC00BCC010 /* glbinding.xcodeproj */,
+				8F2D54D00C3DC8FD000535F4 /* tl_mathPiPL.r */,
+				D0FE57630993C4FD00139A60 /* Supporting Code */,
+				8F463EC80C3DCE4B0040C945 /* AGL.framework */,
+				7ECB51A615DB18A300C5BAD5 /* Cocoa.framework */,
+				8F463EC20C3DCE390040C945 /* OpenGL.framework */,
+				C4E6188C095A3C800012CA3F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C4E6188C095A3C800012CA3F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C4E618CC095A3CE80012CA3F /* tlMath.plugin */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D0FE57630993C4FD00139A60 /* Supporting Code */ = {
+			isa = PBXGroup;
+			children = (
+				D0FE579A0993C5E500139A60 /* AEGP_SuiteHandler.cpp */,
+				D7DCC59F1B239204007E769E /* AEGP_SuiteHandler.h */,
+				D0FE579C0993C5E500139A60 /* MissingSuiteError.cpp */,
+				D7DCC59D1B239204007E769E /* AEFX_SuiteHelper.c */,
+				D7DCC59E1B239204007E769E /* AEFX_SuiteHelper.h */,
+				D7DCC59A1B2391F6007E769E /* Smart_Utils.cpp */,
+				D7DCC59B1B2391F6007E769E /* Smart_Utils.h */,
+			);
+			name = "Supporting Code";
+			sourceTree = "<group>";
+		};
+		D7B73A4D1B6C20AC00BCC010 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D7B73A511B6C20AD00BCC010 /* libglbinding.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C4E618CB095A3CE80012CA3F /* tlMath */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4E618CE095A3CE90012CA3F /* Build configuration list for PBXNativeTarget "tlMath" */;
+			buildPhases = (
+				C4E618C8095A3CE80012CA3F /* Resources */,
+				C4E618C9095A3CE80012CA3F /* Sources */,
+				C4E618CA095A3CE80012CA3F /* Frameworks */,
+				C4E618EA095A3E040012CA3F /* Rez */,
+				8F1EE4810C51773600D27114 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = tlMath;
+			productName = Skeleton.plugin;
+			productReference = C4E618CC095A3CE80012CA3F /* tlMath.plugin */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C4E6187E095A3C800012CA3F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1010;
+			};
+			buildConfigurationList = C4E6187F095A3C800012CA3F /* Build configuration list for PBXProject "tlMath" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = C4E6187C095A3C800012CA3F;
+			productRefGroup = C4E6188C095A3C800012CA3F /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = D7B73A4D1B6C20AC00BCC010 /* Products */;
+					ProjectRef = D7B73A4C1B6C20AC00BCC010 /* glbinding.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				C4E618CB095A3CE80012CA3F /* tlMath */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		D7B73A511B6C20AD00BCC010 /* libglbinding.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libglbinding.a;
+			remoteRef = D7B73A501B6C20AD00BCC010 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C4E618C8095A3CE80012CA3F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		C4E618EA095A3E040012CA3F /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F2D54D10C3DC8FE000535F4 /* tl_mathPiPL.r in Rez */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C4E618C9095A3CE80012CA3F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D7DCC5A01B239204007E769E /* AEFX_SuiteHelper.c in Sources */,
+				04BA3383231D3A6600981A6D /* tl_mathSeqData.cpp in Sources */,
+				D0FE579D0993C5E500139A60 /* AEGP_SuiteHandler.cpp in Sources */,
+				04B1B38622B3912E00D7B7D5 /* tl_mathParams.cpp in Sources */,
+				D0FE579E0993C5E500139A60 /* MissingSuiteError.cpp in Sources */,
+				8F2D54CC0C3DC8BC000535F4 /* tl_math.cpp in Sources */,
+				D7DCC59C1B2391F6007E769E /* Smart_Utils.cpp in Sources */,
+				8F463EB80C3DCDBB0040C945 /* GL_base.cpp in Sources */,
+				8F463F260C3DD6140040C945 /* tl_math_Strings.cpp in Sources */,
+				040A7FDF222FFC8A00E7E6D2 /* tl_mathArb_Handler.cpp in Sources */,
+				040A7FE0222FFC8A00E7E6D2 /* tl_math_io.cpp in Sources */,
+				043D97DA22C6536A003423B2 /* tl_mathRender.cpp in Sources */,
+				04EB1D7923472DB100EA1BD0 /* tl_mathStrOperations.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		044E825422316BCA002F9741 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
+				GCC_MODEL_TUNING = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
+				GCC_REUSE_STRINGS = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_THREADSAFE_STATICS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../../Headers,
+					../../../Util,
+					../../../Headers/SP,
+					../../../Resources,
+					"../glbinding/source/glbinding/include/**",
+					../script,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				ONLY_ACTIVE_ARCH = YES;
+				REZ_PREPROCESSOR_DEFINITIONS = __MACH__;
+				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = plugin;
+			};
+			name = Release;
+		};
+		044E825522316BCA002F9741 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.5.sdk/System/Library/Frameworks\"";
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					_DEBUG,
+					STRINGS_BY_GL,
+					GLBINDING_STATIC,
+				);
+				GENERATE_PKGINFO_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../../Headers,
+					../../../Util,
+					../../../Headers/SP,
+					../../../Resources,
+					"../lib/GL/glbinding/source/glbinding/include/**",
+					../include,
+				);
+				INFOPLIST_FILE = "tlMath.plugin-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AfterEffects.tlMath;
+				PRODUCT_NAME = tlMath;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		C4E61880095A3C800012CA3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
+				GCC_MODEL_TUNING = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
+				GCC_REUSE_STRINGS = NO;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
+				GCC_THREADSAFE_STATICS = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
+				GCC_WARN_EFFECTIVE_CPLUSPLUS_VIOLATIONS = NO;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../../Headers,
+					../../../Util,
+					../../../Headers/SP,
+					../../../Resources,
+					"../glbinding/source/glbinding/include/**",
+					../script,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				ONLY_ACTIVE_ARCH = YES;
+				REZ_PREPROCESSOR_DEFINITIONS = __MACH__;
+				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = plugin;
+			};
+			name = Debug;
+		};
+		C4E618CF095A3CE90012CA3F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.5.sdk/System/Library/Frameworks\"";
+				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					_DEBUG,
+					STRINGS_BY_GL,
+					GLBINDING_STATIC,
+				);
+				GENERATE_PKGINFO_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					../../../Headers,
+					../../../Util,
+					../../../Headers/SP,
+					../../../Resources,
+					"../lib/GL/glbinding/source/glbinding/include/**",
+					../include,
+				);
+				INFOPLIST_FILE = "tlMath.plugin-Info.plist";
+				INSTALL_PATH = "$(HOME)/Library/Bundles";
+				PRODUCT_BUNDLE_IDENTIFIER = com.adobe.AfterEffects.tlMath;
+				PRODUCT_NAME = tlMath;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C4E6187F095A3C800012CA3F /* Build configuration list for PBXProject "tlMath" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4E61880095A3C800012CA3F /* Debug */,
+				044E825422316BCA002F9741 /* Release */,
+			);
+			defaultConfigurationIsVisible = 1;
+			defaultConfigurationName = Debug;
+		};
+		C4E618CE095A3CE90012CA3F /* Build configuration list for PBXNativeTarget "tlMath" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4E618CF095A3CE90012CA3F /* Debug */,
+				044E825522316BCA002F9741 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C4E6187E095A3C800012CA3F /* Project object */;
+}
