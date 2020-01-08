@@ -15,19 +15,19 @@ function onLoaded() {
 	csInterface.setWindowTitle = "tl Math Setup";
 	var numParams =10;
 	var err = defineErr();
-
+    //prepare settings GUI
 	setParamsSettings("slider", numParams, 1, "sliderGrp");
 	setParamsSettings("point", numParams, 3, "pointGrp");
 	setParamsSettings("cbox", numParams, 1, "cboxGrp");
 	setParamsSettings("color", numParams, 3, "colorGrp");
 	setParamsSettings("rotation", numParams, 1, "rotationGrp");
-	loadJSX();
-	sendMessageToPlugin();	
+	loadJSX(); //load jsx scripts to communicate with AE
+	sendMessageToPlugin();	 //if plugin is selected tell us the panel is opened
 	defaultVal(); //load default ddl val
-	var editors = setEditors();
+	var editors = setEditors(); // set ace.js editors
 	//laod default arb
-	var arbdefaultStr = loadDefaultArb();
-	var arbData = JSON.parse(arbdefaultStr);
+	var arbdefaultStr = loadDefaultArb(); 
+	var arbData = JSON.parse(arbdefaultStr); 
 	try{
 		copyDataToGUI (arbData, editors,numParams);
 	}catch(e){
@@ -100,14 +100,14 @@ function onLoaded() {
 		});
 	$("#btnExport").on("click", function() {
 		try{
-			var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);	
+			var arbDataToSend = copyDataFromGUI(editors, arbData,numParams);	
 			exportPresetAsJSON(arbDataToSend);
 		}catch(e){
 			alert(err.collectingDataForPlugin+e);
 			}
 		});
 	$("#btnSavePreset").on("click", function() {
-		var arbDataToSend = sendDataToPlugin(editors, arbData,numParams);		
+		var arbDataToSend = copyDataFromGUI(editors, arbData,numParams);		
 		savePresetAsJSON(arbDataToSend);
 		csInterface.evalScript('$._ext.listJsonFiles('+objDataStr+')'); //reupdate list
 		});
@@ -125,7 +125,7 @@ function onLoaded() {
 		loadPresetFromMenu(presetsList, editors,numParams);
 		langSelecFunc();
 		try{
-			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
+			var arbDataToSend = copyDataFromGUI(editors, arbData, numParams);
 			}catch(e){
 				alert(err.collectingDataForPlugin+e);
 			}
@@ -141,7 +141,7 @@ function onLoaded() {
 	});
 	$("#btnApply").on("click", function() {
 		try{
-			var arbDataToSend = sendDataToPlugin(editors, arbData, numParams);
+			var arbDataToSend = copyDataFromGUI(editors, arbData, numParams);
 			}catch(e){
 				alert(err.collectingDataForPlugin+e);
 			}
@@ -340,6 +340,11 @@ function setflagFromExpr(arbData, strArr){
 
 	return boolResultB;
 	}
+/**
+ * setParamsSettings :create param settings GUI 
+ * input : str ParamName, int numParams (number of parameters), int paramDimension (dimension of the parameter in AE),  paramGroupId (id of the group of parameter) 
+ * return  void
+ */
 function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 	var grp = document.getElementById(paramGroupId);
 	var paramGrpStr = '<th>Parameter</th> \n'+
@@ -370,6 +375,11 @@ function setParamsSettings(paramName, numParams, paramDimension, paramGroupId){
 		}
 		grp.innerHTML +=strGrp;
 	}
+/**
+ * getParamsSettings :catch the param settings values  from the arbData and  store it into the GUI
+ * input : obj arbData (to read the data), int numParams (number of parameter to updated), int paramDimension (dimension of the parameter), paramGroupId (id of the group of parameter) 
+ * return  void
+ */
 function getParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
 	$("#"+paramName+"GrpName").val(arbData.gui_settings[paramGroupId].grpName.toString());
 	$("input[name="+paramName+"GrpVisible]").prop('checked', arbData.gui_settings[paramGroupId].grpVisibleB);
@@ -381,8 +391,12 @@ function getParamsSettings(arbData, paramName, numParams, paramDimension, paramG
 			}
 		}
 	}
+/**
+ * sendParamsSettings :c atch the param settings value from the GUI
+ * input : obj arbData (to returned updated), int numParams (number of parameter to updated), int paramDimension (dimension of the parameter), paramGroupId (id of the group of parameter) 
+ * return : arbData (updated with new parameters settings)
+ */
 function sendParamsSettings(arbData, paramName, numParams, paramDimension, paramGroupId){
-	
 	arbData.gui_settings[paramGroupId].grpName =safeCharsForName ($("#"+paramName+"GrpName").val().toString());	
 	arbData.gui_settings[paramGroupId].grpVisibleB =$("#"+paramName+"GrpVisible").is(':checked');
 	
@@ -394,12 +408,21 @@ function sendParamsSettings(arbData, paramName, numParams, paramDimension, param
 			}
 		}
 	return arbData;
-
 }
+/**
+*  safeCharsForName : delete special chars for parameters Name
+*input: string nameStr
+*return: string safeName
+ */
 function safeCharsForName (nameStr){
-	var safeName = nameStr.toString().replace(/[^\w\s]/gi, '');
-	return safeName
+	var safeNameStr = nameStr.toString().replace(/[^\w\s]/gi, '');
+	return safeNameStr
 	}
+/**
+* copyDataToGUI: get data from obj arbData and apply to the GUI using jquery
+*input:obj arbData, obj editors, int numParams
+*return: void
+ */
 function copyDataToGUI (arbData, editors, numParams) {
 	$("#gl33_frag_tab_console").html(setConsoleStr ("Console - Fragment Shader", arbData.gl_expression.gl33_frag_error.toString()));
 	$("#gl33_vert_tab_console").html(setConsoleStr ("Console - Vertex Shader",arbData.gl_expression.gl33_vert_error.toString()));
@@ -443,7 +466,6 @@ function copyDataToGUI (arbData, editors, numParams) {
 		$("#langSelec").val("mExpr");
 	}
 	toggleRgbModeBox ("rgbmodeB", arbData.math_expression.exprRGBModeB);
-	//$("input[name=rgbmodeB]").prop('checked', arbData.math_expression.exprRGBModeB);
 	$("#resolutionName").val(arbData.composition.resolution.toString());
 	$("#layerPositionName").val(arbData.composition.layerPosition.toString());
 	$("#layerScaleName").val(arbData.composition.layerScale.toString());
@@ -476,7 +498,12 @@ function copyDataToGUI (arbData, editors, numParams) {
 	$("#layer04_name").val(arbData.gui_settings.layerGrp.extLayer_4.name.toString());
 	$("input[name=layer04Visible]").prop('checked', arbData.gui_settings.layerGrp.extLayer_4.visibleB);
 	}
-function sendDataToPlugin(editors, arbData, numParams) {
+/**
+*copyDataFromGUI:  Catch the values from GUI and copy it to obj arbData
+*input: obj editors, obj arbData, int numParams
+*return: obj arbData (updated)
+*/
+function copyDataFromGUI (editors, arbData, numParams) {
 	var fragLimit = 25000;
 	var VertLimit = 25000;
 	var exprLimit = 4096;
@@ -576,6 +603,11 @@ function sendDataToPlugin(editors, arbData, numParams) {
 	arbData.effectInfo.minimalPluginVersion = setMinimalVersion (arbData);
 	return arbData;
 	}
+/**
+* setFlags: setflags for the plugin, depending of the shaders str
+*input: arbData
+*return: arbData updated
+*/
 function setFlags (arbData){
 	var listLayers = [arbData.gui_settings.layerGrp.extLayer_1.name, arbData.gui_settings.layerGrp.extLayer_2.name, arbData.gui_settings.layerGrp.extLayer_3.name,  arbData.gui_settings.layerGrp.extLayer_4.name];
 	if(arbData.effectMode.gl33_modeB){
@@ -593,6 +625,11 @@ function setFlags (arbData){
 		}
 	return arbData
 	}
+/**
+*  setVersion  return higher version between currentMinimal and the requiered by the flag
+*input: int minimalVersion int  reqVersion
+*return: int version
+*/
 function setVersion(minimalVersion, reqVersion){
 	if (parseInt(minimalVersion) < parseInt(reqVersion)){
 		return reqVersion
@@ -600,6 +637,11 @@ function setVersion(minimalVersion, reqVersion){
 		return minimalVersion;
 	}
 	}
+/**
+ * setMinimalVersion: set minimal plugin version, depending from the flags
+ *input: arbData
+*return: int minmalVersion
+*/
 function setMinimalVersion (arbData){
 	var minimalVersion = 115;
 	for (var i=0; i<arbData.flags.pixelsCallExternalInputB.length; i++){
@@ -615,6 +657,25 @@ function setMinimalVersion (arbData){
 	}
 	return minimalVersion;
 	}
+/**
+ * 
+ *input:
+*return:
+*/
+function defaultVal(){
+	$("#langSelec").val("mExpr");
+	langSelecFunc();
+	toggleMenus("presetId");
+	toggleMenus("presetId");
+	toggleDescription();
+	toggleEditor();
+	openSettingsMenu("settingsGrp");
+	}
+/**
+ * 
+*input:
+*return:
+*/
 function toggleRgbModeBox (idIn, boolIn){
 	var currId = document.getElementById(idIn);
 	if (boolIn){
@@ -623,6 +684,11 @@ function toggleRgbModeBox (idIn, boolIn){
 		currId.checked = false;
 	}
 }
+/**
+* 
+*input:
+*return:
+*/
 function toggleCheckbox(className, currId){
 	var classItems = document.getElementsByClassName(className);
 	var parentItem =  document.getElementById(currId);
@@ -637,25 +703,26 @@ function toggleCheckbox(className, currId){
 			}
 		}
 	}
-function defaultVal(){
-	$("#langSelec").val("mExpr");
-	langSelecFunc();
-	toggleMenus("presetId");
-	toggleMenus("presetId");
-	toggleDescription();
-	toggleEditor();
-	openSettingsMenu("settingsGrp");
-	}
+/**
+*
+*input:
+*return:
+*/
 function resizeEditorsMarginLeft (size){
 	var tabCl = document.getElementsByClassName("tabEditors");
 	var newSize = (size+"px").toString();
 	tabCl[0].style.marginLeft =  newSize;
 	}
+/**
+*input:
+*return:
+*/
 function resizeSettingsMarginRight(size){
 	var tabCl = document.getElementsByClassName("SettingsCol");
 	var newSize = (size+"px").toString();
 	tabCl[0].style.marginRight =  newSize;
 	}
+
 function toggleSideBar(){
 	var presetsSettingMenu = document.getElementById("presetSettingId");
 	var Presetslib = document.getElementById("presetId");
