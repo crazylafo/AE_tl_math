@@ -93,7 +93,7 @@
 									<td><input type="text" id ="tframeName"  value="time_frame" maxlength="31"></td>
 									</tr>
 								<tr class = "settingsGrp">
-									<td>Frame Rate</td>
+									<td>frame rate</td>
 									<td><input type="text" id ="fpsName" value="fps" maxlength="31"></td>
 									</tr>
 								<tr class = "settingsGrp">
@@ -101,15 +101,15 @@
 									<td><input type="text" id ="resolutionName"  value="resolution" maxlength="31"></td>
 									</tr>
 								<tr class = "settingsGrp">
-									<td>layerPosition</td>
+									<td>layer position</td>
 									<td><input type="text" id ="layerPositionName"  value="layerPosition" maxlength="31"></td>
 									</tr>
 								<tr class = "settingsGrp">
-									<td>layerScale</td>
+									<td>layer scale</td>
 									<td><input type="text" id ="layerScaleName"  value="layerScale" maxlength="31"></td>
 									</tr>
 								<tr class = "settingsGrp">
-										<td>compResolution</td>
+										<td>comp resolution</td>
 										<td><input type="text" id ="compResolutionName"  value="compResolution" maxlength="31"></td>
 										</tr>
 									<tr class = "settingsGrp">
@@ -137,15 +137,15 @@
 								<th>Parameter</th>
 								<th>GUI Name</th>
 								<tr class = "exprSettingsGrp">
-									<td>Current Channel</td>
+									<td>crrent channel</td>
 									<td><input type="text" id = "expr_current_channelName" value="inChannel" maxlength="31"></td>
 									</tr>
 									<tr class = "exprSettingsGrp">
-										<td>Current Channel</td>
+										<td>rgb channels</td>
 										<td><input type="text" id = "expr_rgb_channelName" value="rgbInput" maxlength="31"></td>
 										</tr>
 								<tr class = "exprSettingsGrp">
-									<td>Pixel Coordonates</td>
+									<td>pixel coordonates</td>
 									<td><input type="text" id = "expr_pixName" value="pix" maxlength="31"></td>
 									</tr>
 									</tr>
@@ -213,127 +213,254 @@
 				</table>
 				</div>
 			<div id="wiki">
-					<p><strong>tl Math Wiki.</strong></p>
-				
-					<p>Tl Math Copyright (C) 2020 Thomas Laforge</p>
-				
-					<p>The code contains:</p>
-				
+				<!DOCTYPE html><html><head><meta charset="utf-8"><title>Untitled Document.md</title><style></style></head><body id="preview">
+					<p class="has-line-data" data-line-start="0" data-line-end="1"><strong>tl Math Wiki.</strong></p>
+					<p class="has-line-data" data-line-start="2" data-line-end="3">Tl Math Copyright © 2020 Thomas Laforge</p>
+					<p class="has-line-data" data-line-start="4" data-line-end="5">The code contains:</p>
 					<ul>
-					<li><a href="https://github.com/nlohmann">json for modern c++ by Niels  Lohmann</a></li>
-				
-					<li><a href="https://github.com/ajaxorg/ace">ace.js library</a></li>
-				
-					<li><a href="https://shadertoy.com">Shadertoy examples with there own license</a></li>
+					<li class="has-line-data" data-line-start="5" data-line-end="6"><a href="https://github.com/nlohmann">json for modern c++ by Niels  Lohmann</a></li>
+					<li class="has-line-data" data-line-start="6" data-line-end="7"><a href="https://github.com/ajaxorg/ace">ace.js library</a></li>
+					<li class="has-line-data" data-line-start="7" data-line-end="9"><a href="https://shadertoy.com">Shadertoy examples with there own license</a></li>
 					</ul>
-				
-					<hr />
-				
-					<p><strong>Table of contents</strong></p>
-				
-					<h4 id="1-whatistlmath">1-What is tl Math?</h6>
-				
-					<h4 id="2-whatisglsl">2-What is GLSL?</h6>
-				
-					<h4 id="3-isitpossibletoloadapresetwithoutcoding">3-Is it possible to load a preset without coding ?</h6>
-				
-					<h4 id="4-quickmenuoverview">4-Quick menu overview</h6>
-				
-					<h4 id="5-expressionvsfullshader">5-Expression vs full Shader</h6>
-				
-					<h4 id="6-examplestepbystepinexpressionrgbmode">6-Example step by step in expression rgb mode</h6>
-				
-					<h4 id="7-examplestepbystepinexpressionsplitmode">7-Example step by step in expression split mode</h6>
-				
-					<h4 id="8-examplestepbystepinglslmode">8-Example step by step in glsl mode</h6>
-				
-					<hr />
-				
-					<p><strong>1-What is tlMath?</strong></p>
-				
-					<p>tlMath is an After Effect Hybrid add-on for After Effect. That means there is a plug-in side and a panel side.
+					<hr>
+					<p class="has-line-data" data-line-start="10" data-line-end="11"><strong>Table of contents</strong></p>
+					<h6 class="code-line" data-line-start=12 data-line-end=13 ><a id="1What_is_tl_Math_12"></a>1-What is tl Math?</h6>
+					<h6 class="code-line" data-line-start=14 data-line-end=15 ><a id="2What_is_GLSL_14"></a>2-What is GLSL?</h6>
+					<h6 class="code-line" data-line-start=16 data-line-end=17 ><a id="3Is_it_possible_to_load_a_preset_without_coding_16"></a>3-Is it possible to load a preset without coding?</h6>
+					<h6 class="code-line" data-line-start=18 data-line-end=19 ><a id="4Quick_menu_overview_18"></a>4-Quick menu overview</h6>
+					<h6 class="code-line" data-line-start=20 data-line-end=21 ><a id="5Expression_vs_full_Shader_20"></a>5-Expression vs full Shader</h6>
+					<hr>
+					<p class="has-line-data" data-line-start="24" data-line-end="25"><strong>1-What is tlMath?</strong></p>
+					<p class="has-line-data" data-line-start="26" data-line-end="28">tlMath is an After Effect Hybrid add-on for After Effect. That means there is a plug-in side and a panel side.<br>
 					The plug-in interpret GLSL shaders, convert them to Effects, with customizable parameters. The panel side is the interface to write the shader, customize parameters, access to the library, give a name and tags to the preset, import or export it.a</p>
-				
-					<hr />
-				
-					<p><strong>2- What is GLSL?</strong></p>
-				
-					<p>GLSL is a high level language made by the kronos group. It's written for graphic cards and is rendered in an opengl context. Video games use it since 2004 and opengl2, in 3d programs  but some vfx production tools also use it, like Autodesk Flame. A web and mobile version has been created: openglES. Some example on the web are based on this version but the plugin <strong><em>uses the glsl 330 version</em></strong>. (wich goes with openg 3.3) Don't worry most of openglES shaders work in 330 version.
-					On the hardware requirement, opengl 3.3 was realized ten years ago, so if you can use After Effect 2017 or higher the plugin may works. Each shaders installed  in the library works on an intel graphic card so don"t worry on this side.</p>
-				
-					<p>The wiki will teach you the basic of this language but you should have a look to some nice websites to learn it.</p>
-				
+					<hr>
+					<p class="has-line-data" data-line-start="31" data-line-end="32"><strong>2- What is GLSL?</strong></p>
+					<p class="has-line-data" data-line-start="33" data-line-end="35">GLSL is a high level language made by the kronos group. It’s written for graphic cards and is rendered in an opengl context. Video games use it since 2004 and opengl2, in 3d programs  but some vfx production tools also use it, like Autodesk Flame. A web and mobile version has been created: openglES. Some example on the web are based on this version but the plugin <strong><em>uses the glsl 330 version</em></strong>. (wich goes with openg 3.3) Don’t worry most of openglES shaders work in 330 version.<br>
+					On the hardware requirement, opengl 3.3 was realized ten years ago, so if you can use After Effect 2017 or higher the plugin may works. Each shaders installed  in the library works on an intel graphic card so don&quot;t worry on this side.</p>
+					<p class="has-line-data" data-line-start="36" data-line-end="37">The wiki will teach you the basic of this language but you should have a look to some nice websites to learn it.</p>
 					<ul>
-					<li><p><a href="https://thebookofshaders.com">the book of shaders</a> In my opinion it's one of the best to enter in GLSL's world.</p></li>
-				
-					<li><p><a href="www.shadertoy.com">shadertoy</a>. It's the best library of shader. There are all type of shaders, from basic to complex. One of the creator team, Inigo Quilez has made a nice video tutorial for beginner https://www.youtube.com/watch?v=0ifChJ0nJfM.</p>
-				
-					<ul>
-					<li><p><a href="http://glslsandbox.com/">glsl-Sandbox</a> It's also a library but without search engine. So you can navigate explore</p></li>
-				
-					<li><p><a href="https://logik-matchbook.org/">logik matchbook</a>. This website has a lot of glsl shaders written for autodesk Flame, but it's easy to adapt in the plugin. (some of the library are based on shaders from this library themselves inspired by shadertoy's shaders.</p></li></ul></li>
+					<li class="has-line-data" data-line-start="38" data-line-end="40">
+					<p class="has-line-data" data-line-start="38" data-line-end="39"><a href="https://thebookofshaders.com">the book of shaders</a> In my opinion it’s one of the best to enter in GLSL’s world.</p>
+					</li>
+					<li class="has-line-data" data-line-start="40" data-line-end="42">
+					<p class="has-line-data" data-line-start="40" data-line-end="41"><a href="www.shadertoy.com">shadertoy</a>. It’s the best library of shader. There are all type of shaders, from basic to complex. One of the creator team, Inigo Quilez has made a nice video tutorial for beginner <a href="https://www.youtube.com/watch?v=0ifChJ0nJfM">https://www.youtube.com/watch?v=0ifChJ0nJfM</a>.</p>
+					</li>
+					<li class="has-line-data" data-line-start="42" data-line-end="44">
+					<p class="has-line-data" data-line-start="42" data-line-end="43"><a href="http://glslsandbox.com/">glsl-Sandbox</a> It’s also a library but without search engine. So you can navigate explore</p>
+					</li>
+					<li class="has-line-data" data-line-start="44" data-line-end="46">
+					<p class="has-line-data" data-line-start="44" data-line-end="45"><a href="https://logik-matchbook.org/">logik matchbook</a>. This website has a lot of glsl shaders written for autodesk Flame, but it’s easy to adapt in the plugin. (some of the library are based on shaders from this library themselves inspired by shadertoy’s shaders.</p>
+					</li>
 					</ul>
-				
-					<hr />
-				
-					<p><strong>3-Is it possible to load a preset without coding ?</strong></p>
-				
-					<p>Yes it's possible. When the setup is loaded, the first window you see it's a library. You can select a preset and click on "load and apply" button. More details here.</p>
-				
-					<hr />
-				
-					<p><strong>4-Quick menu overview</strong></p>
-				
+					<hr>
+					<p class="has-line-data" data-line-start="48" data-line-end="49"><strong>3-Is it possible to load a preset without coding?</strong></p>
+					<p class="has-line-data" data-line-start="50" data-line-end="51">Yes it’s possible. When the setup is loaded, the first window you see it’s a library. You can select a preset and click on “load and apply” button. More details here.</p>
+					<hr>
+					<p class="has-line-data" data-line-start="54" data-line-end="55"><strong>4-Quick menu overview</strong></p>
 					<ol>
-					<li><p>The plugin.</p>
-				
-					<p>When you apply the plug-in on a layer, you get a result like that:</p></li>
+					<li class="has-line-data" data-line-start="55" data-line-end="59">
+					<p class="has-line-data" data-line-start="55" data-line-end="56">The plugin.</p>
+					<p class="has-line-data" data-line-start="57" data-line-end="58">When you apply the plug-in on a layer, you get a result like that:</p>
+					</li>
 					</ol>
-				
-					<p><img src="./imgs/docs/screenshots/Effect_00.PNG" alt="" /></p>
-				
-					<pre><code> In the example, the effect is applied on a white solid. The result is the same.
+					<p class="has-line-data" data-line-start="59" data-line-end="60"><img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Effect_00.PNG" alt=""></p>
+					<pre><code class="has-line-data" data-line-start="62" data-line-end="64"> In the example, the effect is applied on a white solid. The result is the same.
 					</code></pre>
-				
-					<p>You get a lot of parameters: 3 button, 10 sliders, 10 points, 10 colors, 10 rotations and 4 layers. 
+					<p class="has-line-data" data-line-start="65" data-line-end="67">You get a lot of parameters: 3 button, 10 sliders, 10 points, 10 colors, 10 rotations and 4 layers.<br>
 					But in fact those parameters do nothing, until you enter in the setup. But before to click on it, have a look to the three button.</p>
-				
 					<ul>
-					<li>Setup: will call the panel, to load, or to edit/write  a preset.</li>
-				
-					<li>Effect description: Print the description of the preset. read=only</li>
-				
-					<li>Reset preset: similar to After Effect reset button. But why this button? Because the after effect reset button will reset to the default preset inside the plug-in. But this button will keep you chosen preset but will reset to the preset's default values, defined in the panel.</li>
+					<li class="has-line-data" data-line-start="68" data-line-end="69">Setup: will call the panel, to load, or to edit/write  a preset.</li>
+					<li class="has-line-data" data-line-start="69" data-line-end="70">Effect description: Print the description of the preset. read=only</li>
+					<li class="has-line-data" data-line-start="70" data-line-end="72">Reset preset: similar to After Effect reset button. But why this button? Because the after effect reset button will reset to the default preset inside the plug-in. But this button will keep you chosen preset but will reset to the preset’s default values, defined in the panel.</li>
 					</ul>
-				
-					<ol>
-					<li><p>The Panel.
-					*The library (default menu)
-					When you open the panel, by the setup or by the After Effect extension menu you'll get something like this:
-					<img src="./imgs/docs/screenshots/Menu_00.PNG" alt="" /></p>
-				
-					<p><strong>The column on the left is the menu access</strong></p></li>
+					<ol start="2">
+					<li class="has-line-data" data-line-start="72" data-line-end="77">The Panel.<br>
+					*The library (default menu)<br>
+					When you open the panel, by the setup or by the After Effect extension menu you’ll get something like this:<br>
+					<img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Menu_00.PNG" alt=""></li>
 					</ol>
-				
-					<hr />
-				
-					<p><strong>5-Expression vs full Shader</strong></p>
-				
-					<hr />
-				
-					<p><strong>6-Example step by step in expression rgb mode</strong></p>
-				
-					<hr />
-				
-					<p><strong>7-Example step by step in expression split mode</strong></p>
-				
-					<hr />
-				
-					<p><strong>8-Example step by step in glsl mode</strong></p>
-				
-					<hr />
-				
-					<p><strong>9-Preset structure in the json file</strong></p>
+					<p class="has-line-data" data-line-start="77" data-line-end="78"><strong>The column on the left is the menu access</strong></p>
+					<ul>
+					<li class="has-line-data" data-line-start="79" data-line-end="80">The library: the opened menu when you launch the panel. In this menu, you can look at the list of preset, made by default or presets you added in the library. The search bar can help you to search by name and by tags.</li>
+					</ul>
+					<pre><code class="has-line-data" data-line-start="81" data-line-end="84">The selected preset can be loaded and apply in Aftr Effect, clicking on &quot;Load and Apply&quot;.
+					Or if you want to code, you can send it to the editor by clicking on &quot;Open in Editor&quot;.
+					</code></pre>
+					<ul>
+					<li class="has-line-data" data-line-start="84" data-line-end="87">
+					<p class="has-line-data" data-line-start="84" data-line-end="85">The Preset Setting. In this menu:</p>
+					<ul>
+					<li class="has-line-data" data-line-start="86" data-line-end="87">Write your preset name. It’s not the file name but the name shown in library and in the plugin GUI.</li>
+					</ul>
+					</li>
+					</ul>
+					<pre><code class="has-line-data" data-line-start="88" data-line-end="90"> Special charcaters will be deleted if you use one of them.
+					</code></pre>
+					<ul>
+					<li class="has-line-data" data-line-start="91" data-line-end="93">
+					<p class="has-line-data" data-line-start="91" data-line-end="92">Choose tags used with the search engine.</p>
+					</li>
+					<li class="has-line-data" data-line-start="93" data-line-end="95">
+					<p class="has-line-data" data-line-start="93" data-line-end="94">Choose the coding langage. You can choose the oding langage mode between glsl330, (you will have to write the full shader) and the expression. Look at section 5-Expression vs full Shader for more informations.</p>
+					</li>
+					</ul>
+					<p class="has-line-data" data-line-start="95" data-line-end="96">** Description: Edit text to write the description of the preset, Limited to 2048 characters.</p>
+					<ul>
+					<li class="has-line-data" data-line-start="97" data-line-end="102">
+					<p class="has-line-data" data-line-start="97" data-line-end="98">The Parameters Setting. In this menu:</p>
+					<ul>
+					<li class="has-line-data" data-line-start="99" data-line-end="101">
+					<p class="has-line-data" data-line-start="99" data-line-end="100">You define the name, and the default values when possible for each variables input in the glsl code, coming from after effet.</p>
+					</li>
+					<li class="has-line-data" data-line-start="101" data-line-end="102">
+					<p class="has-line-data" data-line-start="101" data-line-end="102">composition settings. Those parameters are coming from the after effect’s composition, so you cannot set default values, but you can write the name to identify it in the code.</p>
+					</li>
+					</ul>
+					</li>
+					</ul>
+					<table class="table table-striped table-bordered">
+					<thead>
+					<tr>
+					<th>Parameter name</th>
+					<th>Type of variable</th>
+					<th>Function</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+					<td>time in seconds</td>
+					<td>vec2</td>
+					<td>returns the layer time in seconds</td>
+					</tr>
+					<tr>
+					<td>time in frames</td>
+					<td>vec2</td>
+					<td>returns the layer time in frames</td>
+					</tr>
+					<tr>
+					<td>frame rate</td>
+					<td>float</td>
+					<td>returns the layer frame rate</td>
+					</tr>
+					<tr>
+					<td>resolution</td>
+					<td>vec2</td>
+					<td>returns the resolution of the layer</td>
+					</tr>
+					<tr>
+					<td>layer position</td>
+					<td>vec3</td>
+					<td>returns the position of the layer in the composition</td>
+					</tr>
+					<tr>
+					<td>layer scale</td>
+					<td>vec3</td>
+					<td>returns the scale of the layer</td>
+					</tr>
+					<tr>
+					<td>comp resolution</td>
+					<td>vec2</td>
+					<td>returns the resolution of the composition</td>
+					</tr>
+					<tr>
+					<td>camera position</td>
+					<td>vec3</td>
+					<td>returns the position of the camera in the composition world</td>
+					</tr>
+					<tr>
+					<td>camera target</td>
+					<td>vec3</td>
+					<td>returns the position of the camera’s target in the composition world</td>
+					</tr>
+					<tr>
+					<td>camera rotation</td>
+					<td>vec3</td>
+					<td>returns the rotation of the camera  in the composition world</td>
+					</tr>
+					<tr>
+					<td>camera zoom</td>
+					<td>vec3</td>
+					<td>returns the camera’s zoom value</td>
+					</tr>
+					</tbody>
+					</table>
+					<ul>
+					<li class="has-line-data" data-line-start="120" data-line-end="121">expressions settings. As for composition settings, you cannot set default vaues but you can write the name.</li>
+					</ul>
+					<table class="table table-striped table-bordered">
+					<thead>
+					<tr>
+					<th>Parameter name</th>
+					<th>Type of variable</th>
+					<th>Function</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+					<td>current channel</td>
+					<td>float</td>
+					<td>In expression splited mode, returns the current channel (from the input)</td>
+					</tr>
+					<tr>
+					<td>rgb channels</td>
+					<td>vec3</td>
+					<td>In expression RGB mode, returns the rgb channel (from the input)</td>
+					</tr>
+					<tr>
+					<td>Pixel Coordonates</td>
+					<td>vec2</td>
+					<td>In both expression modes, returns the pixel coordonate, equivalent of gl_FragCoord.</td>
+					</tr>
+					</tbody>
+					</table>
+					<ul>
+					<li class="has-line-data" data-line-start="129" data-line-end="131">
+					<p class="has-line-data" data-line-start="129" data-line-end="130">layer settings. Choose the name for each layers (until 4 external layers and the source layer) and if the layer is visible in the plugin part.</p>
+					</li>
+					<li class="has-line-data" data-line-start="131" data-line-end="133">
+					<p class="has-line-data" data-line-start="131" data-line-end="132">Sliders settings. You can write the name you want to the sliders, the default value (1 dimension) and if it’s visible or not. (If not used, why showing it?). a slider can take a <strong>float value</strong> between -1000 and 1000, but the visible values are between 0 and 100, in floting points.</p>
+					</li>
+					<li class="has-line-data" data-line-start="133" data-line-end="135">
+					<p class="has-line-data" data-line-start="133" data-line-end="134">Points settings. You can write the name you want to the points, the default values (3 dimensions) and if it’s visible or not. (If not used, why showing it?). <strong>vec3 value</strong></p>
+					</li>
+					<li class="has-line-data" data-line-start="135" data-line-end="136">
+					<p class="has-line-data" data-line-start="135" data-line-end="136">Checkboxes settings. You can write the name you want to the checkboxes, the default value (1 dimension) and if it’s visible or not. (If not used, why showing it?).<strong>bool value</strong></p>
+					</li>
+					</ul>
+					<ul>
+					<li class="has-line-data" data-line-start="138" data-line-end="140">
+					<p class="has-line-data" data-line-start="138" data-line-end="139">Color settings. You can write the name you want to the color settings, the default values (3 dimensions) and if it’s visible or not. (If not used, why showing it?).<strong>vec3 value</strong></p>
+					</li>
+					<li class="has-line-data" data-line-start="140" data-line-end="142">
+					<p class="has-line-data" data-line-start="140" data-line-end="141">Rotation settings. You can write the name you want to the rotation settings, the default value (1 dimension) and if it’s visible or not. (If not used, why showing it?). <strong>float value</strong></p>
+					</li>
+					</ul>
+					<hr>
+					<p class="has-line-data" data-line-start="144" data-line-end="145"><strong>5-Expression vs full Shader</strong></p>
+					<p class="has-line-data" data-line-start="146" data-line-end="147">The both mode are written in glsl. So why to modes ?</p>
+					<ul>
+					<li class="has-line-data" data-line-start="147" data-line-end="154">
+					<p class="has-line-data" data-line-start="147" data-line-end="148">The Expression mode is for you if:</p>
+					<ul>
+					<li class="has-line-data" data-line-start="148" data-line-end="149">you begin in the glsl world</li>
+					<li class="has-line-data" data-line-start="149" data-line-end="150">you like few lines of expression and don’t want to import variable</li>
+					<li class="has-line-data" data-line-start="150" data-line-end="151">you’re shader have few functions or an be written in one</li>
+					<li class="has-line-data" data-line-start="151" data-line-end="152">you wan’t to affect quickly each color channels separetly.</li>
+					<li class="has-line-data" data-line-start="152" data-line-end="154">you want to do some experiences</li>
+					</ul>
+					</li>
+					<li class="has-line-data" data-line-start="154" data-line-end="159">
+					<p class="has-line-data" data-line-start="154" data-line-end="155">The full shader modeis for you if:</p>
+					<ul>
+					<li class="has-line-data" data-line-start="155" data-line-end="156">you’re a glsl coder.</li>
+					<li class="has-line-data" data-line-start="156" data-line-end="157">you’re not afraid of lots on line</li>
+					<li class="has-line-data" data-line-start="157" data-line-end="159">you want to use a shader from a website</li>
+					</ul>
+					</li>
+					</ul>
+					<hr>
+					
+					</body></html>
 				</div>
 			</div>
 		</div>
