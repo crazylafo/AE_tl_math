@@ -629,7 +629,7 @@ tlmath::evalScripts(seqData  *seqP)
 					strncpy(seqP->blueError, exprBlueErrStr.c_str(), exprBlueErrStr.length() + 1);
 			#endif
 		}
-		//alphaExprStr
+		//common alphaExprStr
 		size_t commonExprBeginIndex = originalfragSh.find("//BEGIN IMPORT COMMON EXPR");
 		size_t commonExprEndIndex = originalfragSh.find("//END OF IMPORT COMMON EXPR");
 		std::string commonErrStr = tlmath::ReIndexErrorInExpr(originalfragSh, evalFragSh, errIndex, commonExprBeginIndex, commonExprEndIndex);

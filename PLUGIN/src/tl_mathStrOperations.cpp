@@ -81,7 +81,7 @@ std::string tlmath::ReIndexErrorInExpr(std::string originalfragSh,
 	tlmath_shaders tlms;
 	std::string reducedStr = originalfragSh.substr(0, index); //from begining of current shader to the begening of the expr
     std::string startToDelimiter =originalfragSh.substr(0, delimiter); // from begining of shader to the end the expr
-	size_t nlignSt = tlmath::getOccurenceFromStr(reducedStr, "\n")[0]+3; // how many line breaks before the current expr
+	size_t nlignSt = tlmath::getOccurenceFromStr(reducedStr, "\n")[0]+2; // how many line breaks before the current expr
     size_t nlignDelimiterSt = tlmath::getOccurenceFromStr( startToDelimiter, "\n")[0]; // how many line breaks before the end of the current expr
 	size_t numErrSt = tlmath::getOccurenceFromStr(evalFragSh, errIndex)[0]; // how manny error globalin shader.
 	std::string exprStr = evalFragSh; // start from original error repport
