@@ -27,11 +27,11 @@ Verion note:
 -new settings: define a default value for each parameter and the plugin has a button to reset (for the preset)
  
 
- ![Imgur Image](./docs/screenshots/Effect_01.png)
- ![Imgur Image](./docs/screenshots/Effect_02.png)
- ![Imgur Image](./docs/screenshots/Menu_01.png)
- ![Imgur Image](./docs/screenshots/Menu_02.png)
- ![Imgur Image](./docs/screenshots/Menu_03.png)
+ ![Imgur Image](https://github.com/crazylafo/AE_tl_math/blob/master/CEP/com.tl.math/imgs/docs/screenshots/Effect_01.png)
+ ![Imgur Image](https://github.com/crazylafo/AE_tl_math/blob/master/CEP/com.tl.math/imgs/docs/screenshots/Effect_02.png)
+ ![Imgur Image](https://github.com/crazylafo/AE_tl_math/blob/master/CEP/com.tl.math/imgs/docs/screenshots/Menu_01.png)
+ ![Imgur Image](https://github.com/crazylafo/AE_tl_math/blob/master/CEP/com.tl.math/imgs/docs/screenshots/Menu_02.png)
+ ![Imgur Image](https://github.com/crazylafo/AE_tl_math/blob/master/CEP/com.tl.math/imgs/docs/screenshots/Menu_03.png)
 
 # Alpha 05 (v 1.14)
 
