@@ -212,260 +212,413 @@
 						</td>
 				</table>
 				</div>
-			<div id="wiki">
-				<!DOCTYPE html><html><head><meta charset="utf-8"><title>Untitled Document.md</title><style></style></head><body id="preview">
-					<p class="has-line-data" data-line-start="0" data-line-end="1"><strong>tl Math Wiki.</strong></p>
-					<p class="has-line-data" data-line-start="2" data-line-end="3">Tl Math Copyright © 2020 Thomas Laforge</p>
-					<p class="has-line-data" data-line-start="4" data-line-end="5">The code contains:</p>
-					<ul>
-					<li class="has-line-data" data-line-start="5" data-line-end="6"><a href="https://github.com/nlohmann">json for modern c++ by Niels  Lohmann</a></li>
-					<li class="has-line-data" data-line-start="6" data-line-end="7"><a href="https://github.com/ajaxorg/ace">ace.js library</a></li>
-					<li class="has-line-data" data-line-start="7" data-line-end="9"><a href="https://shadertoy.com">Shadertoy examples with there own license</a></li>
-					</ul>
-					<hr>
-					<p class="has-line-data" data-line-start="10" data-line-end="11"><strong>Table of contents</strong></p>
-					<h6 class="code-line" data-line-start=12 data-line-end=13 ><a id="1What_is_tl_Math_12"></a>1-What is tl Math?</h6>
-					<h6 class="code-line" data-line-start=14 data-line-end=15 ><a id="2What_is_GLSL_14"></a>2-What is GLSL?</h6>
-					<h6 class="code-line" data-line-start=16 data-line-end=17 ><a id="3Is_it_possible_to_load_a_preset_without_coding_16"></a>3-Is it possible to load a preset without coding?</h6>
-					<h6 class="code-line" data-line-start=18 data-line-end=19 ><a id="4Quick_menu_overview_18"></a>4-Quick menu overview</h6>
-					<h6 class="code-line" data-line-start=20 data-line-end=21 ><a id="5Expression_vs_full_Shader_20"></a>5-Expression vs full Shader</h6>
-					<hr>
-					<p class="has-line-data" data-line-start="24" data-line-end="25"><strong>1-What is tlMath?</strong></p>
-					<p class="has-line-data" data-line-start="26" data-line-end="28">tlMath is an After Effect Hybrid add-on for After Effect. That means there is a plug-in side and a panel side.<br>
-					The plug-in interpret GLSL shaders, convert them to Effects, with customizable parameters. The panel side is the interface to write the shader, customize parameters, access to the library, give a name and tags to the preset, import or export it.a</p>
-					<hr>
-					<p class="has-line-data" data-line-start="31" data-line-end="32"><strong>2- What is GLSL?</strong></p>
-					<p class="has-line-data" data-line-start="33" data-line-end="35">GLSL is a high level language made by the kronos group. It’s written for graphic cards and is rendered in an opengl context. Video games use it since 2004 and opengl2, in 3d programs  but some vfx production tools also use it, like Autodesk Flame. A web and mobile version has been created: openglES. Some example on the web are based on this version but the plugin <strong><em>uses the glsl 330 version</em></strong>. (wich goes with openg 3.3) Don’t worry most of openglES shaders work in 330 version.<br>
-					On the hardware requirement, opengl 3.3 was realized ten years ago, so if you can use After Effect 2017 or higher the plugin may works. Each shaders installed  in the library works on an intel graphic card so don&quot;t worry on this side.</p>
-					<p class="has-line-data" data-line-start="36" data-line-end="37">The wiki will teach you the basic of this language but you should have a look to some nice websites to learn it.</p>
-					<ul>
-					<li class="has-line-data" data-line-start="38" data-line-end="40">
-					<p class="has-line-data" data-line-start="38" data-line-end="39"><a href="https://thebookofshaders.com">the book of shaders</a> In my opinion it’s one of the best to enter in GLSL’s world.</p>
-					</li>
-					<li class="has-line-data" data-line-start="40" data-line-end="42">
-					<p class="has-line-data" data-line-start="40" data-line-end="41"><a href="www.shadertoy.com">shadertoy</a>. It’s the best library of shader. There are all type of shaders, from basic to complex. One of the creator team, Inigo Quilez has made a nice video tutorial for beginner <a href="https://www.youtube.com/watch?v=0ifChJ0nJfM">https://www.youtube.com/watch?v=0ifChJ0nJfM</a>.</p>
-					</li>
-					<li class="has-line-data" data-line-start="42" data-line-end="44">
-					<p class="has-line-data" data-line-start="42" data-line-end="43"><a href="http://glslsandbox.com/">glsl-Sandbox</a> It’s also a library but without search engine. So you can navigate explore</p>
-					</li>
-					<li class="has-line-data" data-line-start="44" data-line-end="46">
-					<p class="has-line-data" data-line-start="44" data-line-end="45"><a href="https://logik-matchbook.org/">logik matchbook</a>. This website has a lot of glsl shaders written for autodesk Flame, but it’s easy to adapt in the plugin. (some of the library are based on shaders from this library themselves inspired by shadertoy’s shaders.</p>
-					</li>
-					</ul>
-					<hr>
-					<p class="has-line-data" data-line-start="48" data-line-end="49"><strong>3-Is it possible to load a preset without coding?</strong></p>
-					<p class="has-line-data" data-line-start="50" data-line-end="51">Yes it’s possible. When the setup is loaded, the first window you see it’s a library. You can select a preset and click on “load and apply” button. More details here.</p>
-					<hr>
-					<p class="has-line-data" data-line-start="54" data-line-end="55"><strong>4-Quick menu overview</strong></p>
-					<ol>
-					<li class="has-line-data" data-line-start="55" data-line-end="59">
-					<p class="has-line-data" data-line-start="55" data-line-end="56">The plugin.</p>
-					<p class="has-line-data" data-line-start="57" data-line-end="58">When you apply the plug-in on a layer, you get a result like that:</p>
-					</li>
-					</ol>
-					<p class="has-line-data" data-line-start="59" data-line-end="60"><img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Effect_00.PNG" alt=""></p>
-					<pre><code class="has-line-data" data-line-start="62" data-line-end="64"> In the example, the effect is applied on a white solid. The result is the same.
-					</code></pre>
-					<p class="has-line-data" data-line-start="65" data-line-end="67">You get a lot of parameters: 3 button, 10 sliders, 10 points, 10 colors, 10 rotations and 4 layers.<br>
-					But in fact those parameters do nothing, until you enter in the setup. But before to click on it, have a look to the three button.</p>
-					<ul>
-					<li class="has-line-data" data-line-start="68" data-line-end="69">Setup: will call the panel, to load, or to edit/write  a preset.</li>
-					<li class="has-line-data" data-line-start="69" data-line-end="70">Effect description: Print the description of the preset. read=only</li>
-					<li class="has-line-data" data-line-start="70" data-line-end="72">Reset preset: similar to After Effect reset button. But why this button? Because the after effect reset button will reset to the default preset inside the plug-in. But this button will keep you chosen preset but will reset to the preset’s default values, defined in the panel.</li>
-					</ul>
-					<ol start="2">
-					<li class="has-line-data" data-line-start="72" data-line-end="77">The Panel.<br>
-					*The library (default menu)<br>
-					When you open the panel, by the setup or by the After Effect extension menu you’ll get something like this:<br>
-					<img src="https://github.com/crazylafo/AE_tl_math/blob/master/docs/screenshots/Menu_00.PNG" alt=""></li>
-					</ol>
-					<p class="has-line-data" data-line-start="77" data-line-end="78"><strong>The column on the left is the menu access</strong></p>
-					<ul>
-					<li class="has-line-data" data-line-start="79" data-line-end="80">The library: the opened menu when you launch the panel. In this menu, you can look at the list of preset, made by default or presets you added in the library. The search bar can help you to search by name and by tags.</li>
-					</ul>
-					<pre><code class="has-line-data" data-line-start="81" data-line-end="84">The selected preset can be loaded and apply in Aftr Effect, clicking on &quot;Load and Apply&quot;.
-					Or if you want to code, you can send it to the editor by clicking on &quot;Open in Editor&quot;.
-					</code></pre>
-					<ul>
-					<li class="has-line-data" data-line-start="84" data-line-end="87">
-					<p class="has-line-data" data-line-start="84" data-line-end="85">The Preset Setting. In this menu:</p>
-					<ul>
-					<li class="has-line-data" data-line-start="86" data-line-end="87">Write your preset name. It’s not the file name but the name shown in library and in the plugin GUI.</li>
-					</ul>
-					</li>
-					</ul>
-					<pre><code class="has-line-data" data-line-start="88" data-line-end="90"> Special charcaters will be deleted if you use one of them.
-					</code></pre>
-					<ul>
-					<li class="has-line-data" data-line-start="91" data-line-end="93">
-					<p class="has-line-data" data-line-start="91" data-line-end="92">Choose tags used with the search engine.</p>
-					</li>
-					<li class="has-line-data" data-line-start="93" data-line-end="95">
-					<p class="has-line-data" data-line-start="93" data-line-end="94">Choose the coding langage. You can choose the oding langage mode between glsl330, (you will have to write the full shader) and the expression. Look at section 5-Expression vs full Shader for more informations.</p>
-					</li>
-					</ul>
-					<p class="has-line-data" data-line-start="95" data-line-end="96">** Description: Edit text to write the description of the preset, Limited to 2048 characters.</p>
-					<ul>
-					<li class="has-line-data" data-line-start="97" data-line-end="102">
-					<p class="has-line-data" data-line-start="97" data-line-end="98">The Parameters Setting. In this menu:</p>
-					<ul>
-					<li class="has-line-data" data-line-start="99" data-line-end="101">
-					<p class="has-line-data" data-line-start="99" data-line-end="100">You define the name, and the default values when possible for each variables input in the glsl code, coming from after effet.</p>
-					</li>
-					<li class="has-line-data" data-line-start="101" data-line-end="102">
-					<p class="has-line-data" data-line-start="101" data-line-end="102">composition settings. Those parameters are coming from the after effect’s composition, so you cannot set default values, but you can write the name to identify it in the code.</p>
-					</li>
-					</ul>
-					</li>
-					</ul>
-					<table class="table table-striped table-bordered">
-					<thead>
-					<tr>
-					<th>Parameter name</th>
-					<th>Type of variable</th>
-					<th>Function</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr>
-					<td>time in seconds</td>
-					<td>vec2</td>
-					<td>returns the layer time in seconds</td>
-					</tr>
-					<tr>
-					<td>time in frames</td>
-					<td>vec2</td>
-					<td>returns the layer time in frames</td>
-					</tr>
-					<tr>
-					<td>frame rate</td>
-					<td>float</td>
-					<td>returns the layer frame rate</td>
-					</tr>
-					<tr>
-					<td>resolution</td>
-					<td>vec2</td>
-					<td>returns the resolution of the layer</td>
-					</tr>
-					<tr>
-					<td>layer position</td>
-					<td>vec3</td>
-					<td>returns the position of the layer in the composition</td>
-					</tr>
-					<tr>
-					<td>layer scale</td>
-					<td>vec3</td>
-					<td>returns the scale of the layer</td>
-					</tr>
-					<tr>
-					<td>comp resolution</td>
-					<td>vec2</td>
-					<td>returns the resolution of the composition</td>
-					</tr>
-					<tr>
-					<td>camera position</td>
-					<td>vec3</td>
-					<td>returns the position of the camera in the composition world</td>
-					</tr>
-					<tr>
-					<td>camera target</td>
-					<td>vec3</td>
-					<td>returns the position of the camera’s target in the composition world</td>
-					</tr>
-					<tr>
-					<td>camera rotation</td>
-					<td>vec3</td>
-					<td>returns the rotation of the camera  in the composition world</td>
-					</tr>
-					<tr>
-					<td>camera zoom</td>
-					<td>vec3</td>
-					<td>returns the camera’s zoom value</td>
-					</tr>
-					</tbody>
-					</table>
-					<ul>
-					<li class="has-line-data" data-line-start="120" data-line-end="121">expressions settings. As for composition settings, you cannot set default vaues but you can write the name.</li>
-					</ul>
-					<table class="table table-striped table-bordered">
-					<thead>
-					<tr>
-					<th>Parameter name</th>
-					<th>Type of variable</th>
-					<th>Function</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr>
-					<td>current channel</td>
-					<td>float</td>
-					<td>In expression splited mode, returns the current channel (from the input)</td>
-					</tr>
-					<tr>
-					<td>rgb channels</td>
-					<td>vec3</td>
-					<td>In expression RGB mode, returns the rgb channel (from the input)</td>
-					</tr>
-					<tr>
-					<td>Pixel Coordonates</td>
-					<td>vec2</td>
-					<td>In both expression modes, returns the pixel coordonate, equivalent of gl_FragCoord.</td>
-					</tr>
-					</tbody>
-					</table>
-					<ul>
-					<li class="has-line-data" data-line-start="129" data-line-end="131">
-					<p class="has-line-data" data-line-start="129" data-line-end="130">layer settings. Choose the name for each layers (until 4 external layers and the source layer) and if the layer is visible in the plugin part.</p>
-					</li>
-					<li class="has-line-data" data-line-start="131" data-line-end="133">
-					<p class="has-line-data" data-line-start="131" data-line-end="132">Sliders settings. You can write the name you want to the sliders, the default value (1 dimension) and if it’s visible or not. (If not used, why showing it?). a slider can take a <strong>float value</strong> between -1000 and 1000, but the visible values are between 0 and 100, in floting points.</p>
-					</li>
-					<li class="has-line-data" data-line-start="133" data-line-end="135">
-					<p class="has-line-data" data-line-start="133" data-line-end="134">Points settings. You can write the name you want to the points, the default values (3 dimensions) and if it’s visible or not. (If not used, why showing it?). <strong>vec3 value</strong></p>
-					</li>
-					<li class="has-line-data" data-line-start="135" data-line-end="136">
-					<p class="has-line-data" data-line-start="135" data-line-end="136">Checkboxes settings. You can write the name you want to the checkboxes, the default value (1 dimension) and if it’s visible or not. (If not used, why showing it?).<strong>bool value</strong></p>
-					</li>
-					</ul>
-					<ul>
-					<li class="has-line-data" data-line-start="138" data-line-end="140">
-					<p class="has-line-data" data-line-start="138" data-line-end="139">Color settings. You can write the name you want to the color settings, the default values (3 dimensions) and if it’s visible or not. (If not used, why showing it?).<strong>vec3 value</strong></p>
-					</li>
-					<li class="has-line-data" data-line-start="140" data-line-end="142">
-					<p class="has-line-data" data-line-start="140" data-line-end="141">Rotation settings. You can write the name you want to the rotation settings, the default value (1 dimension) and if it’s visible or not. (If not used, why showing it?). <strong>float value</strong></p>
-					</li>
-					</ul>
-					<hr>
-					<p class="has-line-data" data-line-start="144" data-line-end="145"><strong>5-Expression vs full Shader</strong></p>
-					<p class="has-line-data" data-line-start="146" data-line-end="147">The both mode are written in glsl. So why to modes ?</p>
-					<ul>
-					<li class="has-line-data" data-line-start="147" data-line-end="154">
-					<p class="has-line-data" data-line-start="147" data-line-end="148">The Expression mode is for you if:</p>
-					<ul>
-					<li class="has-line-data" data-line-start="148" data-line-end="149">you begin in the glsl world</li>
-					<li class="has-line-data" data-line-start="149" data-line-end="150">you like few lines of expression and don’t want to import variable</li>
-					<li class="has-line-data" data-line-start="150" data-line-end="151">you’re shader have few functions or an be written in one</li>
-					<li class="has-line-data" data-line-start="151" data-line-end="152">you wan’t to affect quickly each color channels separetly.</li>
-					<li class="has-line-data" data-line-start="152" data-line-end="154">you want to do some experiences</li>
-					</ul>
-					</li>
-					<li class="has-line-data" data-line-start="154" data-line-end="159">
-					<p class="has-line-data" data-line-start="154" data-line-end="155">The full shader modeis for you if:</p>
-					<ul>
-					<li class="has-line-data" data-line-start="155" data-line-end="156">you’re a glsl coder.</li>
-					<li class="has-line-data" data-line-start="156" data-line-end="157">you’re not afraid of lots on line</li>
-					<li class="has-line-data" data-line-start="157" data-line-end="159">you want to use a shader from a website</li>
-					</ul>
-					</li>
-					</ul>
-					<hr>
-					
-					</body></html>
+				<div id="wiki">
+					<p><strong>tl Math Wiki.</strong></p>
+
+						<p>Tl Math Copyright (C) 2020 Thomas Laforge</p>
+
+						<p>The code contains:</p>
+
+						<ul>
+						<li><a>json for modern c++ by Niels  Lohmannnhttps://github.com/nlohmann</a></li>
+
+						<li><a>ace.js library   https://github.com/ajaxorg/ace</a></li>
+
+						<li><a>Shadertoy examples with their own licenses https://shadertoy.com</a></li>
+						</ul>
+
+						<hr />
+
+						<p><strong>Table of contents</strong></p>
+
+						<h6 id="1whatistlmath">1-What is tl Math?</h6>
+
+						<h6 id="2whatisglsl">2-What is GLSL?</h6>
+
+						<h6 id="3isitpossibletoloadapresetwithoutcoding">3-Is it possible to load a preset without coding?</h6>
+
+						<h6 id="4quickmenuoverview">4-Quick menu overview</h6>
+
+						<h6 id="5expressionvsfullshader">5-Expression vs full Shader</h6>
+
+						<h6 id="6writeanexpressionstepbystep">6-Write an expression step by step</h6>
+
+						<h6 id="7writeafullshaderstepbystep">7-Write a full shader step by step</h6>
+
+						<hr />
+
+						<p><strong>1-What is tlMath?</strong></p>
+
+						<p>tlMath is an After Effect Hybrid add-on. 
+						With this add-on you can write your own effects filters or generator, using the GLSL language (a lot documented on the web) and the After Effect GUI. tlMath also contains some presets, so if your afraid with code, use it as an effect library.</p>
+
+						<p>Hybrid  means there is a plug-in side and a panel side.
+						The plug-in interprets GLSL shaders, convert them to Effects, with customizable parameters.
+						Through the panel side you can:</p>
+
+						<ul>
+						<li><p>access the library</p></li>
+
+						<li><p>write shaders</p></li>
+
+						<li><p>customize parameters/set up</p></li>
+
+						<li><p>rename and tag the preset</p></li>
+
+						<li><p>import and/or export it.</p></li>
+						</ul>
+
+						<hr />
+
+						<p><strong>2- What is GLSL?</strong></p>
+
+						<p>GLSL is a high level language made by the kronos Group.It's written for graphic cards and is rendered in an OpenGL context. Video games use it since 2004 and OpenGL2. it can also be find in 3d programs and in some VFX production tools, like Autodesk Flame. A web and mobile version of the language has been created: OpenGL-ES, for webGL.
+						Each web sites about GLSL are based on this API.</p>
+
+						<p>The plugin <strong><em>uses the glsl 330 version</em></strong>. (witch goes with OpenGL 3.3) Don't worry most of OpenGL-ES shaders works in 330 version.
+						Minimal requirement: After Effect CC 2017 and higher. (cc2017 is now deprecated by Adobe, but the plug-in project was based on it SDK).</p>
+
+						<pre><code>Each shaders installed in the library has been tested on a low intel graphic card (intel UHD 620) in After Effect CC 2019
+						</code></pre>
+
+						<p>The wiki will teach you the basic of this language but you should have a look to some nice websites to learn it.</p>
+
+						<ul>
+						<li><p><a>the book of shaders https://thebookofshaders.com</a> In my opinion it's one of the best to enter in GLSL's world.</p></li>
+
+						<li><p><a>shadertoy www.shadertoy.com</a>. It's the best library of shader. There are all type of shaders, from basic to complex. One of the creator team, Inigo Quilez has made a nice video tutorial for beginner https://www.youtube.com/watch?v=0ifChJ0nJfM.  Inside shadertoy there is also a nice tutorial to read/apply https://www.shadertoy.com/view/Md23DV</p>
+
+						<ul>
+						<li><p><a>glsl-Sandbox http://glslsandbox.com</a> It's also a library but without search engine. So you can navigate to explore and find something randomly.</p></li>
+
+						<li><p><a>logik matchbook https://logik-matchbook.org</a>. This website has a lot of glsl shaders written for Autodesk Flame, but easily adaptable in the plug-in. (some of the library are based on shaders from this library themselves inspired by Shadertoy's shaders.)</p></li></ul></li>
+						</ul>
+
+						<hr />
+
+						<p><strong>3-Is it possible to load a preset without coding ?</strong></p>
+
+						<p>Yes it's possible. When the setup is loaded, the first window you see is a library. You can select a preset and click on the "load and apply" button. You’ll find more details in the next section on the library menu.</p>
+
+						<hr />
+
+						<p><strong>4-Quick menu overview</strong></p>
+
+						<p><strong>1. The plug-in.</strong></p>
+
+						<p>When you apply the plug-in on a layer, you get a result like that:</p>
+
+						<p><img src="./imgs/docs/screenshots/Effect_00.png" alt="" /></p>
+
+						<pre><code> In the example, the effect is applied on a white solid. The result is the same.
+						</code></pre>
+
+						<p>First look</p>
+
+						<p>You get several parameters:</p>
+
+						<p>3 button, 10 sliders, 10 points, 10 colors, 10 rotations and 4 layers.</p>
+
+						<p>But you have to configure them first, if not,</p>
+
+						<p>those parameters do nothing, until you enter in the setup.</p>
+
+						<p>Let’s take a closer look at the 3 buttons</p>
+
+						<ul>
+						<li><p>Setup : will call the panel, to load, or to edit/write a preset.</p></li>
+
+						<li><p>Effect description: Print the description of the preset. (read-only)</p></li>
+
+						<li><p>Reset preset: similar to After Effect reset button. hy this button? Because the after effect reset button will reset to the default preset inside the plug-in. Here, this button will keep your chosen preset and will reset to the preset's default values, defined in the panel.</p></li>
+						</ul>
+
+						<p><strong>2. The Panel.</strong></p>
+
+						<p>When you open the panel, Either though the setup or the After Effect extension menu you'll get something like this:</p>
+
+						<p><img src="./imgs/docs/screenshots/Menu_00.png" alt="" /></p>
+
+						<p><strong>The column on the left is the menu access</strong></p>
+
+						<ul>
+						<li>The library (default menu): the opened menu when you launch the panel. In this menu, you can look at the list of preset, made by default or presets you added in the library. The search bar can help you to search by name and by tags.</li>
+						</ul>
+
+						<pre><code>The selected preset can be loaded and apply in After Effect, clicking on "Load and Apply".
+						Or if you want to code, you can send it to the editor by clicking on "Open in Editor".
+						</code></pre>
+
+						<ul>
+						<li><p>The Preset Setting. </p>
+
+						<p><img src="./imgs/docs/screenshots/Menu_04.png" alt="" /></p>
+
+						<p>In this menu:</p>
+
+						<ul>
+						<li>Write your preset name. It's not the file name but the name shown in library and in the plugin GUI.</li></ul></li>
+						</ul>
+
+						<pre><code> Special characters will be deleted if you use one of them.
+						</code></pre>
+
+						<ul>
+						<li><p>Choose tags used with the search engine.</p></li>
+
+						<li><p>Choose the coding language. You can choose the coding language mode between glsl330, (you will have to write the full shader) and the expression. Look at section 5-Expression vs full Shader for more informations.</p></li>
+						</ul>
+
+						<p>** Description: Edit text to write the description of the preset, Limited to 2048 characters. </p>
+
+						<ul>
+						<li><p>The Parameters Setting. In this menu:</p>
+
+						<p><img src="./imgs/docs/screenshots/Menu_03.png" alt="" /></p>
+
+						<ul>
+						<li><p>You define the name, and the default values when possible for each variables input in the GLSL code, coming from after effect.</p></li>
+
+						<li><p>composition settings. Those parameters are coming from the after effect's composition, so you cannot set default values, but you can write the name to identify it in the code.</p></li></ul></li>
+						</ul>
+
+						<p>Parameter name | Type of variable | Function
+						------------ | ------------- | -------------
+						time in seconds | vec2 | returns the layer time in seconds
+						time in frames | vec2 | returns the layer time in frames
+						frame rate | float | returns the layer frame rate
+						resolution | vec2 | returns the resolution of the layer
+						layer position | vec3 | returns the position of the layer in the composition
+						layer scale | vec3 | returns the scale of the layer
+						comp resolution | vec2 | returns the resolution of the composition
+						camera position| vec3 | returns the position of the camera in the composition world
+						camera target| vec3 | returns the position of the camera's target in the composition world
+						camera rotation| vec3 | returns the rotation of the camera  in the composition world
+						camera zoom| vec3 | returns the camera's zoom value</p>
+
+						<ul>
+						<li>expressions settings. As for composition settings, you cannot set default vaues but you can write the name.</li>
+						</ul>
+
+						<p>Parameter name | Type of variable | Function
+						------------ | ------------- | -------------
+						current channel | float | In expression splited mode, returns the current channel (from the input)
+						rgb channels | vec3| In expression RGB mode, returns the rgb channel (from the input)
+						Pixel Coordinates | vec2 | In both expression modes, returns the pixel coordinate, equivalent of gl_FragCoord.</p>
+
+						<ul>
+						<li><p>layer settings. Choose the name for each layers (until 4 external layers and the source layer) and if the layer is visible in the plug-in part. </p></li>
+
+						<li><p>Sliders settings. You can write the name you want to the sliders, the default value (1 dimension) and if it's visible or not. (If not used, why showing it?). a slider can take a <strong>float value</strong> between -1000 and 1000, but the visible values are between 0 and 100, in floating points. </p></li>
+
+						<li><p>Points settings. You can write the name you want to the points, the default values (3 dimensions) and if it's visible or not. (If not used, why showing it?). <strong>vec3 value</strong></p></li>
+
+						<li><p>Checkboxes settings. You can write the name you want to the checkboxes, the default value (1 dimension) and if it's visible or not. (If not used, why showing it?).<strong>bool value</strong></p></li>
+
+						<li><p>Colour settings. You can write the name you want to the colour settings, the default values (3 dimensions) and if it's visible or not. (If not used, why showing it?).<strong>vec3 value</strong></p></li>
+
+						<li><p>Rotation settings. You can write the name you want to the rotation settings, the default value (1 dimension) and if it's visible or not. (If not used, why showing it?). <strong>float value</strong></p>
+
+						<ul>
+						<li>The Editor Menu.
+						If you want to code, this menu is for you. Based on ace.js library, the editor highlight the GLSL grammar.
+						On the GUI side, you can have only the editor on the screen, or split with the others menu on the left side.
+						Depending of your choice about the mode, the editor will have different window.</li></ul>
+
+						<p><img src="./imgs/docs/screenshots/Menu_06.png" alt="" />
+						<strong>expression group rgb mode</strong></p>
+
+						<p><img src="./imgs/docs/screenshots/Menu_07.png" alt="" />
+						<strong>epxression split rgb mode</strong></p>
+
+						<p><img src="./imgs/docs/screenshots/Menu_05.png" alt="" />
+						<strong>glsl mode</strong></p></li>
+						</ul>
+
+						<hr />
+
+						<p><strong>5-Basic rules of GLSL</strong>
+						The GLSL grammar is similar to the C language but with some restrictions and some specifics (and nice) things.
+						The plug-in uses two shaders, the first is vertex shader, and the second the fragment shader. There are other types   of shaders in opengl world (geometry shaders, compute shaders and other stuff), but for now the plug-in use only vertex and fragment shaders.</p>
+
+						<pre><code> * The vertex shaders is applied on each vertices loaded by opengl. For now, the plug-in send only a 2d image, with 4 vertices so in this version vertex shader are a bit limited. (version 1.15), but with 3d models vertex shader is used to apply displacement, deformation etc. The vertex shader cannot add vertices, or delete it can only change existing things.
+
+						* The fragment shader (also called pixel shader) is applied on the pixels, it's the last step. Most of the works happen here.
+
+						* As in C language, the GLSL language has variables, (global or local), functions, conditions etc.  
+
+						* Swizzling: you can easy swizzle some glsl variable. For example you got the **resolution** of the image. it's type of **vec2** that means this variable has two dimensions of type float. you can write resolution.x to get only the first dimension, resolution.y to access the second or resolution.xy for both. It's possible to do the same with colors. For exemple you get a **vec3 color** variable. You want to access to the red channel: color.r, the green color.g and blue color.b. the alpha channel is the last one.
+
+						* Think with normalized values. Whatever your color-space in After Effect, the color-space in glsl is in floating values between 0 and 1. The plug-in does the conversion in input and in output. Also when you do some image offset, displacement, you'll often have to convert values from parameters like points to normalized values. Look at the step by step example or the  rgb_offset preset
+
+						* In openGL word the origin of the image  (with (0,0) coordinates) is at the down left point of the image, in After Effect is on the top left. The examples show how to do the conversion.
+						</code></pre>
+
+						<hr />
+
+						<p><strong>6-Expression mode vs full Shader mode</strong></p>
+
+						<p>The both mode are written in GLSL. So why two modes ?
+						At the origin, the plug-in was imagined to rights some short expressions for the pixel worlds. But the first experiments were two slow working on the CPU side. So the plug-in switched to the GPU side, faster to interpret high level language, here the GLSL. But the plug-in still has an objective to be used by no professional coders, the same users of the after effect expressions world.</p>
+
+						<p>⚠️  In version 1.15, vertex shaders operation are very limited, so shouldn't use it for now. But in the future some new parameters will be there to play like on /www.vertexshaderart.com/ </p>
+
+						<p>To sum up:  </p>
+
+						<ul>
+						<li><p>The Expression mode is for you if:</p>
+
+						<ul>
+						<li>you begin in the GLSL world</li>
+
+						<li>you like few lines of expression and don't want to import variable</li>
+
+						<li>your shader have few functions or an be written in one</li>
+
+						<li>you want to affect quickly each colour channels separately.</li>
+
+						<li>you want to do some experiences</li>
+
+						<li>⚠️  In expression Mode, use common part to write functions, it s not possible in channel's expression.</li></ul></li>
+
+						<li><p>The full shader models for you if:</p>
+
+						<p><ul>
+						<li>you're a GLSL coder.</li></p>
+
+						<p><li>you're not afraid of lots of lines</li></p>
+
+						<p><li>you want to adapt a shader from a website </li></ul>
+
+						<p></p></li>
+						</ul></p>
+
+						<p>Expression channel | return expected | Function
+						------------ | ------------- | -------------
+						red channel | float | the expression for the red channel
+						green channel | float | the expression for the green channel
+						blue channel | float | the expression for the blue channel
+						alpha channel | float | the expression for the alpha channel
+						rgb channel | vec3 | the expression for the rgb channels</p>
+
+						<p>shader  | return expected | Function
+						------------ | ------------- | -------------
+						vertex shader | vec4 (and vec2 uv) | the vertex shader. First operation in glsl. calculates gl_position and send informations to fragment shader. In V 1.15 yo can work only with four vertices, so a bit limited but a setting is coming to add more.
+						fragment shader | vec4 | Output the RGBA channel. For now the main part of the work appends here. (v1.15)</p>
+
+						<hr />
+
+						<p><strong>7-Write an expression step by step</strong></p>
+
+						<p><strong>EXERCISE I</strong></p>
+
+						<p>In the first example we'll write a basic mix preset, to mix two layers, with an influence for each channel.
+						The final result is in the library: tuto_mixer preset.</p>
+
+						<ul>
+						<li>Open the default preset</li>
+
+						<li>First of all, in preset setting choose "Math Expression Mode"</li>
+
+						<li>At the top the editor menu, uncheck the checkbox "Use the same expression in RGB"</li>
+
+						<li>In parameters we need to access to one other layer (hide the three others), and we need three sliders. And we can hide the others. (hid points, checkboxes, rotations, color etc).
+						<img src="./imgs/docs/screenshots/tuto_01.PNG" alt="" />
+						<img src="./imgs/docs/screenshots/tuto_02.PNG" alt="" /></li>
+						</ul>
+
+						<p>let's start in red channel expression</p>
+
+						<p>At the origin, your expression looks like that.</p>
+
+						<pre><code>return inChannel;
+						</code></pre>
+
+						<p>Each expression much finish by return [float]. Only float variable are accepted.
+						"inChannel" is the default name to get the input of the channel. In other words, this expression returns the same image as in input.</p>
+
+						<p>Now replace "inChannel" by slider_1 in the expression</p>
+
+						<pre><code>return slider_1;
+						</code></pre>
+
+						<p>By default slider<em>1 is on 0 so no red channel. but if you push the slider higher than 1, you'll get the full value of red (if you're in 8bits you'll get 255, if you're in 16, 32768 and 1 in 32 bits). So let's normalize the slider</em>1 value.</p>
+
+						<pre><code>return slider_1/100;
+						</code></pre>
+
+						<p>In the plug-in part, the slider is limited to 100 in visible value, (and 1000 is the max). So for the user it's nicer to get a percent value. if the  slider is set to 100, the red values is the maximum, 0 is the minimum.
+						It's nice but only one color on the screen is a bit poor so let's import an other source layer.
+						By default, the source layer is called texture0, the first new layer texture1 etc... 
+						To load a texture use the function <strong>texture(sampler2D, UV).</strong></p>
+
+						<pre><code> *The sampler2D is the content of the texture, coming from after effect. In expression mode, you don't have to import it, just use the chosen name in parameter settings.("texture1").
+
+						*the UV: the pixel coordinate in the image, it's a normalized value. (expected between 0 and 1) From after Effect the plug-in give out_uvs function and textUvs. What are the differences ? textUvs convert the y coordinates from the After Effect world to opengl world. (so it's flopped vertically).
+						</code></pre>
+
+						<p>⚠️ the texture function returns a vec4(red,green,blue,alpha).Don't forget we have to load only one channel of the texture get a float value, so we need the red channel only.</p>
+
+						<pre><code>float result = texture(texture1, textUvs).r;
+						return result;
+						</code></pre>
+
+						<p>We now got a copy of the red channel from the other layer. 
+						make a mix (equivalent of over merge) with an influence from the slider. </p>
+
+						<p>the mix function works with any types of variables, but they have to be same types. The last value is type of float. 
+						We'll use the slider as influence.
+						mix (source1, source2, float); </p>
+
+						<pre><code>float result = mix( inChannel,texture(texture1, textUvs).r,slider_1/100);
+						return result;
+						</code></pre>
+
+						<p>Let's change the same "slider<em>1" to "red</em>mix". 
+						Go to the parameter settings menu.
+							Click on sliders button and replace the name. If you want to have fun, you can call it "john". 
+						special characters except underscore are forbidden and may have conflict in GLSL part. 
+						Set the default value to 50.
+						We have to update the expression : </p>
+
+						<pre><code>float result = mix( inChannel,texture(texture1, textUvs).r,red_mix/100);
+						return result;
+						</code></pre>
+
+						<p><img src="./imgs/docs/screenshots/tuto_03.PNG" alt="" /></p>
+
+						<p>To finish, we also rename the two others "green<em>mix" and "blue</em>mix". Let's set default values to 50.</p>
+
+						<p>The last part of the first exercise: do the same in rgb expression mode. We have to output a vec3 value and in one block of expression.</p>
+
+						<pre><code>-vec4 layer= texture(texture1, textUvs);//load the texture from the second layer.  
+
+						-vec3 newLayer = vec3(0.0); // create a black screen. In  GLSL if you want to set the same value on the  dimensions of a vector you can do vec(x) (val). x is the dimension of the vector and val the value to set for each dimension. The value must be defined as floating.
+
+						-let's do the same as in split expression mode: mix each channel. Note the channel from the source layer is called inputRgb (you can change it in parameter settings). it's a vec3 returning the rgb values.
+
+						-return newLayer; //finish returning the mix value.
+						</code></pre>
+
+						<pre><code>vec4 layer= texture(texture1, textUvs);
+						vec3 newLayer = vec3(0.0);
+						newLayer.r = mix( inputRgb.r, layer.r ,red_mix/100);
+						newLayer.g = mix( inputRgb.g, layer.g ,green_mix/100);
+						newLayer.b = mix( inputRgb.b, layer.b ,blue_mix/100);
+						return newLayer;
+						</code></pre>
 				</div>
 			</div>
 		</div>
+	
 	<div  id="tabEditsMenu" class="tabEditors">
+		
 		<button id="btnApply">Apply</button><br/>
+		<div id="editor_global_settings">
+			<button id="search">search</button>
+			<button id="replace">replace</button>
+			font size <input type="number" id="font_size" maxlength="3" value="14"></input>
+		</div>
 		<div id ="expr_editor_settings" class="mathGUI">
 				<td><input type="checkbox" id ="rgbmodeB"  onClick="mathGUIRgbModeFunc()" checked>Use the same expression in RGB</td>
 				</div>

@@ -12,7 +12,7 @@
 }
 #presetsListAccess{
     margin-top: 150px;
-    overflow: auto;
+    overflow: visible;
     display: flex;
     flex-flow: column wrap;
     align-items: center;

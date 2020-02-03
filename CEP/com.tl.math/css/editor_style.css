@@ -5,7 +5,16 @@
     position:relative
 }
 
-
+#btnApply{
+    margin: 5%;
+}
+#editor_global_settings{
+    color: #ddd;
+    margin: 5%;
+}
+#font_size{
+    width:30px;
+}
 #expr_red_tab, #expr_green_tab,#expr_blue_tab, #expr_alpha_tab, #expr_common_tab, #expr_rgb_tab {
     width:97%;
     height: 600px;

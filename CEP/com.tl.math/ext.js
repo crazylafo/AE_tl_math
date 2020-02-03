@@ -170,6 +170,13 @@ function onLoaded() {
 		$(document).unbind('mousemove');
 	});
 	}
+	$("#search").on("click", function() {
+		editor.execCommand("find");
+	});
+	$("#btnreplace").on("click", function() {
+		editor.execCommand("replace");
+	});
+
 /**
  * send a messag to plugin (if selected)
  * input : void
@@ -200,7 +207,7 @@ function defineErr(){
 function updatePresetMenu (presetsList){
 	for (var i =0; i< presetsList.preset.length; i++){
 		var inputStr = '<label  id="'+presetsList.preset[i].name+'"  class="presetsBlock">'+
-		'<input type="radio" class="presetIconRadio" id="presetIconRadio'+i+'" name="presetListRb" value="'+i+'"/>'+
+		'<input type="radio" class="presetIconRadio" id="presetIconRadio'+i+'" name="presetListRb" value="'+i+'" />'+
 		'<img src="'+presetsList.preset[i].icon+'" class="presetIconImgsId">'+presetsList.preset[i].name+
 		'</label>';
 		$("#presetsListAccess").append(inputStr);
@@ -955,10 +962,10 @@ function glslEditor(glMode){
 		//editor.setAutoScrollEditorIntoView(true);
 		editor.session.setUseSoftTabs(true);
 		editor.resize();
-		/*editor.setOptions({
-			fontFamily: "arial",
-			fontSize: "12pt"
-		  });*/
+		editor.setOptions({
+			fontFamily: "roboto",
+			fontSize: "14px",
+		  });
 		return editor;
 	}
 /**
