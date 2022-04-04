@@ -265,7 +265,7 @@ PF_Err tlmath::copyFromArbToSeqData(PF_InData* in_data, PF_OutData* out_data, st
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/camera_rotation",seqDataP->cameraRotationNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/resolution",seqDataP->resolutionNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/layerPosition",seqDataP->layerPositionNameAc);
-	copyStrFromJsonToSeqData(arbDataJS, "/composition/layerScale",seqDataP->layerGrpNameAc);
+	copyStrFromJsonToSeqData(arbDataJS, "/composition/layerScale",seqDataP->layerScaleNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/compResolution",seqDataP->compResolutionNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/time_sec",seqDataP->time_secNameAc);
 	copyStrFromJsonToSeqData(arbDataJS, "/composition/time_frame",seqDataP->time_frameNameAc);
