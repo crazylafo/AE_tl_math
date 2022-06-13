@@ -381,6 +381,7 @@ AppendGlslInput2dText(std::string& newSh,
                      std::string  expr,
                      std::string varStr,
 					 bool*  hasTexture){
+    assert(!varStr.empty());
     const std::size_t found = expr.find(varStr);
 	tlmath_shaders tlms;
     if (found!=std::string::npos){
@@ -393,6 +394,7 @@ static void
 AppendGlslInputFloat(std::string& newSh,
                      std::string  expr,
                 std::string varStr){
+    assert(!varStr.empty());
     const std::size_t found = expr.find(varStr);
 	tlmath_shaders tlms;
     if (found!=std::string::npos){
@@ -403,6 +405,7 @@ static void
 AppendGlslInputVec2d(std::string& newSh,
                      std::string  expr,
                      std::string varStr){
+    assert(!varStr.empty());
     const std::size_t found = expr.find(varStr);
     if (found!=std::string::npos){
 		tlmath_shaders tlms;
@@ -413,6 +416,7 @@ static void
 AppendGlslInputVec3d(std::string& newSh,
                      std::string  expr,
                      std::string varStr){
+    assert(!varStr.empty());
     const std::size_t found = expr.find(varStr);
     if (found!=std::string::npos){
 		tlmath_shaders tlms;
@@ -423,6 +427,7 @@ static void
 AppendGlslInputBool (std::string& newSh,
                      std::string  expr,
                      std::string varStr){
+    assert(!varStr.empty());
     const std::size_t found = expr.find(varStr);
     if (found!=std::string::npos){
 		tlmath_shaders tlms;
